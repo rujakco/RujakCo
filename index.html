@@ -10,8 +10,9 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         html { scroll-behavior: smooth; }
+        /* Peningkatan max-height agar teks panjang di FAQ tidak terpotong */
         .faq-content { transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out; max-height: 0; overflow: hidden; }
-        .faq-content.open { max-height: 200px; padding-top: 1.25rem; padding-bottom: 1.25rem; border-top: 1px solid #f3f4f6; }
+        .faq-content.open { max-height: 500px; padding-top: 1.25rem; padding-bottom: 1.25rem; border-top: 1px solid #f3f4f6; }
         .faq-icon { transition: transform 0.3s ease; }
         .faq-icon.rotate { transform: rotate(180deg); }
     </style>
@@ -20,7 +21,9 @@
 
     <!-- NAVIGATION -->
     <nav class="w-full bg-[#0F4D37] py-4 px-6 md:px-12 flex justify-between items-center z-40 relative">
-        <div class="text-white font-black text-2xl tracking-tighter">Rujak<span class="text-[#F4C430]">.co</span></div>
+        <a href="#" class="flex items-center">
+            <img src="1000520119.png" alt="Logo Rujak.co" class="h-12 w-auto" />
+        </a>
         <button onclick="handleWhatsApp('bundle')" class="hidden md:flex bg-white text-[#0F4D37] px-5 py-2.5 rounded-full font-bold text-sm hover:bg-gray-100 transition-colors items-center gap-2">
             <i data-lucide="message-circle" class="w-4 h-4"></i> Pesan Sekarang
         </button>
@@ -39,16 +42,26 @@
                 <h1 class="text-4xl md:text-6xl font-black leading-[1.1] mb-6 text-white tracking-tight">
                     Bukan Sekadar Rujak. <br/> Ini <span class="text-[#F4C430]">Perjalanan Rasa</span> Melintasi Nusantara.
                 </h1>
-                <p class="text-lg md:text-xl text-white/90 mb-10 leading-relaxed font-light max-w-lg">
-                    Tiga resep otentik daerah, potongan buah segar pilihan, dalam satu pengalaman yang tak terlupakan.
+                
+                <!-- Optimasi 1: Perjelas Produk di Hero -->
+                <p class="text-lg md:text-xl text-white/90 mb-8 leading-relaxed font-light max-w-lg">
+                    Paket spesial berisi Rujak Medan, Rujak Aceh, dan Rujak Serut dalam satu pengalaman rasa Nusantara.
                 </p>
-                <div class="flex flex-col sm:flex-row w-full sm:w-auto gap-4">
-                    <button onclick="handleWhatsApp('bundle')" class="bg-[#F4C430] text-[#0F4D37] w-full sm:w-auto px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-400 transition-transform transform hover:-translate-y-1 shadow-lg shadow-yellow-500/20 flex items-center justify-center gap-2">
-                        <i data-lucide="shopping-bag" class="w-5 h-5"></i> Pesan Paket Jelajah
-                    </button>
-                    <a href="#primary-offer" class="bg-transparent text-center text-white border border-white/30 w-full sm:w-auto px-8 py-4 rounded-full font-bold text-lg hover:bg-white/10 transition-colors">
-                        Lihat Isi Paket
-                    </a>
+                
+                <div class="flex flex-col w-full sm:w-auto items-start">
+                    <!-- Optimasi 1: Info Harga Singkat -->
+                    <div class="text-sm font-bold text-[#F4C430] bg-black/20 px-4 py-1.5 rounded-full mb-3 border border-[#F4C430]/30 flex items-center gap-2">
+                        <i data-lucide="tag" class="w-4 h-4"></i> Harga Promo Rp55.000
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row w-full sm:w-auto gap-4">
+                        <button onclick="handleWhatsApp('bundle')" class="bg-[#F4C430] text-[#0F4D37] w-full sm:w-auto px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-400 transition-transform transform hover:-translate-y-1 shadow-lg shadow-yellow-500/20 flex items-center justify-center gap-2">
+                            <i data-lucide="shopping-bag" class="w-5 h-5"></i> Pesan Paket Jelajah
+                        </button>
+                        <a href="#primary-offer" class="bg-transparent text-center text-white border border-white/30 w-full sm:w-auto px-8 py-4 rounded-full font-bold text-lg hover:bg-white/10 transition-colors">
+                            Lihat Isi Paket
+                        </a>
+                    </div>
                 </div>
                 
                 <div class="mt-8 flex items-center gap-3 text-white/80 text-sm font-medium">
@@ -80,24 +93,25 @@
                     <i data-lucide="star" class="w-6 h-6 fill-current"></i>
                     <i data-lucide="star" class="w-6 h-6 fill-current"></i>
                 </div>
-                <h2 class="text-gray-500 font-medium text-sm md:text-base tracking-widest uppercase text-center">Dipercaya oleh 10,000+ Penjelajah Rasa di Jakarta</h2>
+                <h2 class="text-gray-500 font-medium text-sm md:text-base tracking-widest uppercase text-center">Dipercaya oleh 10,000+ Penjelajah Rasa</h2>
             </div>
             
+            <!-- Optimasi 5: Perbaikan Testimonial Natural -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
                     <i data-lucide="quote" class="text-[#7DBA4D] w-6 h-6 mb-4 opacity-50"></i>
-                    <p class="text-gray-700 italic mb-4 leading-relaxed">"Bumbu Medannya gila! Pisang batunya bikin nostalgia kampung halaman. Potongan buahnya besar-besar."</p>
-                    <div class="font-bold text-[#0F4D37]">Sarah M. <span class="text-gray-400 font-normal text-sm">, 28</span></div>
+                    <p class="text-gray-700 italic mb-4 leading-relaxed">"Rujak Medannya paling berkesan. Bumbunya terasa berbeda dan buahnya masih renyah saat sampai."</p>
+                    <div class="font-bold text-[#0F4D37]">Sarah M. <span class="text-gray-400 font-normal text-sm block md:inline">— Jakarta Selatan</span></div>
                 </div>
                 <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
                     <i data-lucide="quote" class="text-[#7DBA4D] w-6 h-6 mb-4 opacity-50"></i>
-                    <p class="text-gray-700 italic mb-4 leading-relaxed">"Packaging rapi banget, buahnya super garing nyampe kantor. Fix langganan buat cemilan sore tim!"</p>
-                    <div class="font-bold text-[#0F4D37]">Budi T. <span class="text-gray-400 font-normal text-sm">, 32</span></div>
+                    <p class="text-gray-700 italic mb-4 leading-relaxed">"Packagingnya rapi banget dan aman. Rasa Rujak Serutnya seger, pas banget dimakan siang-siang."</p>
+                    <div class="font-bold text-[#0F4D37]">Budi T. <span class="text-gray-400 font-normal text-sm block md:inline">— Bekasi</span></div>
                 </div>
                 <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
                     <i data-lucide="quote" class="text-[#7DBA4D] w-6 h-6 mb-4 opacity-50"></i>
-                    <p class="text-gray-700 italic mb-4 leading-relaxed">"Rujak Acehnya seger parah, asam suntinya berasa otentik. Beda banget sama rujak pinggir jalan."</p>
-                    <div class="font-bold text-[#0F4D37]">Dina K. <span class="text-gray-400 font-normal text-sm">, 25</span></div>
+                    <p class="text-gray-700 italic mb-4 leading-relaxed">"Awalnya penasaran sama Rujak Aceh, ternyata rasanya unik dan asam suntinya dapet banget. Gak nyesel beli paket ini."</p>
+                    <div class="font-bold text-[#0F4D37]">Dina K. <span class="text-gray-400 font-normal text-sm block md:inline">— Tangerang</span></div>
                 </div>
             </div>
         </div>
@@ -113,39 +127,38 @@
 
             <div class="bg-white rounded-[2rem] shadow-xl border border-gray-100 overflow-hidden flex flex-col md:flex-row">
                 <div class="md:w-5/12 bg-gray-200 relative min-h-[300px]">
-                    <img src="https://images.unsplash.com/photo-1605851868182-0b29ce4593ce?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Paket Jelajah Nusantara Box" class="w-full h-full object-cover"/>
+                    <img src="https://images.unsplash.com/photo-1605851868182-0b29ce4593ce?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Paket Jelajah Nusantara Box" class="w-full h-full object-cover"/>
                     <div class="absolute top-4 left-4 bg-[#D62828] text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg">Best Seller</div>
                 </div>
                 
                 <div class="md:w-7/12 p-8 md:p-12 flex flex-col justify-center">
                     <h3 class="text-2xl md:text-3xl font-black text-gray-900 mb-2">Paket Jelajah Nusantara</h3>
-                    <p class="text-gray-500 mb-8 border-b border-gray-100 pb-6">Pengalaman komplit 3 rasa ikonik untuk dinikmati sendiri atau berbagi.</p>
+                    <p class="text-gray-500 mb-6 border-b border-gray-100 pb-6">Pengalaman komplit 3 rasa ikonik untuk dinikmati sendiri atau berbagi.</p>
                     
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-start gap-3">
-                            <div class="bg-[#7DBA4D]/20 p-1 rounded-full mt-0.5"><i data-lucide="check" class="w-4 h-4 text-[#0F4D37]"></i></div>
-                            <div>
-                                <span class="font-bold text-gray-900">1x Rujak Medan</span>
-                                <span class="text-gray-500 text-sm block">Kaya, Gurih, dengan ekstrak Pisang Batu otentik (Rp22.000)</span>
+                    <!-- Optimasi 2: Tambahkan Visual Isi Paket (Clear in 3 seconds) -->
+                    <div class="bg-[#F4C430]/10 rounded-2xl p-6 mb-8 border border-[#F4C430]/20">
+                        <div class="font-bold text-[#0F4D37] mb-4 flex items-center gap-2"><i data-lucide="box" class="w-5 h-5"></i> Isi Paket:</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-white p-1 rounded-full shadow-sm"><i data-lucide="check" class="w-4 h-4 text-[#7DBA4D]"></i></div>
+                                <span class="font-medium text-gray-800">Rujak Medan</span>
                             </div>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <div class="bg-[#7DBA4D]/20 p-1 rounded-full mt-0.5"><i data-lucide="check" class="w-4 h-4 text-[#0F4D37]"></i></div>
-                            <div>
-                                <span class="font-bold text-gray-900">1x Rujak Aceh</span>
-                                <span class="text-gray-500 text-sm block">Pedas, Asam, dengan Asam Sunti & Mangga Kweni (Rp25.000)</span>
+                            <div class="flex items-center gap-3">
+                                <div class="bg-white p-1 rounded-full shadow-sm"><i data-lucide="check" class="w-4 h-4 text-[#7DBA4D]"></i></div>
+                                <span class="font-medium text-gray-800">Rujak Aceh</span>
                             </div>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <div class="bg-[#7DBA4D]/20 p-1 rounded-full mt-0.5"><i data-lucide="check" class="w-4 h-4 text-[#0F4D37]"></i></div>
-                            <div>
-                                <span class="font-bold text-gray-900">1x Rujak Serut</span>
-                                <span class="text-gray-500 text-sm block">Ringan, Segar, bumbu meresap sempurna (Rp18.000)</span>
+                            <div class="flex items-center gap-3">
+                                <div class="bg-white p-1 rounded-full shadow-sm"><i data-lucide="check" class="w-4 h-4 text-[#7DBA4D]"></i></div>
+                                <span class="font-medium text-gray-800">Rujak Serut</span>
                             </div>
-                        </li>
-                    </ul>
+                            <div class="flex items-center gap-3">
+                                <div class="bg-white p-1 rounded-full shadow-sm"><i data-lucide="check" class="w-4 h-4 text-[#7DBA4D]"></i></div>
+                                <span class="font-medium text-gray-800">Kemasan Premium</span>
+                            </div>
+                        </div>
+                    </div>
 
-                    <div class="bg-gray-50 p-6 rounded-2xl mb-8 flex items-center justify-between">
+                    <div class="bg-gray-50 p-6 rounded-2xl mb-8 flex items-center justify-between border border-gray-100">
                         <div>
                             <span class="text-gray-400 line-through text-lg font-medium block">Rp 65.000</span>
                             <span class="text-3xl md:text-4xl font-black text-[#D62828]">Rp 55.000</span>
@@ -158,43 +171,41 @@
                     <button onclick="handleWhatsApp('bundle')" class="w-full bg-[#0F4D37] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#0a3626] transition-colors flex items-center justify-center gap-2 shadow-lg shadow-[#0F4D37]/30">
                         <i data-lucide="message-circle" class="w-5 h-5"></i> Pesan via WhatsApp Sekarang
                     </button>
-                    <p class="text-center text-xs text-gray-400 mt-4 font-medium flex items-center justify-center gap-1">
-                        <i data-lucide="leaf" class="w-3 h-3"></i> Dibuat segar setiap pagi. Batch hari ini terbatas.
-                    </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- SECTION 4: WHY DIFFERENT -->
+    <!-- SECTION 4: TRUST & QUALITY -->
+    <!-- Optimasi 4: Section Trust & Quality Khusus -->
     <section class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-5xl font-black text-[#0F4D37] mb-4">Standar Baru Camilan Tradisional</h2>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Kami menolak kompromi. Rujak.co mengangkat level makanan kaki lima menjadi pengalaman premium yang aman dan memuaskan.</p>
+                <h2 class="text-3xl md:text-5xl font-black text-[#0F4D37] mb-4">Komitmen Kualitas Rujak.co</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Standar premium untuk melindungi rasa otentik dan kesehatan Anda.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
                 <div class="text-center px-4">
-                    <div class="w-20 h-20 mx-auto bg-[#7DBA4D]/10 rounded-full flex items-center justify-center mb-6 text-[#7DBA4D]">
-                        <i data-lucide="leaf" class="w-10 h-10"></i>
+                    <div class="w-20 h-20 mx-auto bg-[#F4C430]/10 rounded-full flex items-center justify-center mb-6 text-[#F18C1E]">
+                        <i data-lucide="clock" class="w-10 h-10"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Buah Segar Setiap Pagi</h3>
-                    <p class="text-gray-600 leading-relaxed">Tidak ada buah sisa kemarin. Dipotong hanya saat pesanan Anda masuk untuk menjaga tekstur garing dan kesegaran maksimal.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Dipotong Saat Pesanan Masuk</h3>
+                    <p class="text-gray-600 leading-relaxed">Buah tidak ditumpuk. Persiapan dilakukan murni setelah pesanan diterima untuk mengunci tekstur garing sempurna.</p>
+                </div>
+                <div class="text-center px-4">
+                    <div class="w-20 h-20 mx-auto bg-[#7DBA4D]/10 rounded-full flex items-center justify-center mb-6 text-[#7DBA4D]">
+                        <i data-lucide="shield-check" class="w-10 h-10"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Dikemas Higienis</h3>
+                    <p class="text-gray-600 leading-relaxed">Menggunakan wadah makanan premium yang tertutup rapat, higienis, aman di perjalanan, dan anti tumpah.</p>
                 </div>
                 <div class="text-center px-4">
                     <div class="w-20 h-20 mx-auto bg-[#D62828]/10 rounded-full flex items-center justify-center mb-6 text-[#D62828]">
-                        <i data-lucide="map-pin" class="w-10 h-10"></i>
+                        <i data-lucide="leaf" class="w-10 h-10"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Resep Asli, Tanpa Kompromi</h3>
-                    <p class="text-gray-600 leading-relaxed">Menggunakan bahan langka spesifik daerah seperti Pisang Batu dan Asam Sunti demi menjaga keaslian rasa leluhur.</p>
-                </div>
-                <div class="text-center px-4">
-                    <div class="w-20 h-20 mx-auto bg-[#F18C1E]/10 rounded-full flex items-center justify-center mb-6 text-[#F18C1E]">
-                        <i data-lucide="star" class="w-10 h-10"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Pengalaman Bersih & Modern</h3>
-                    <p class="text-gray-600 leading-relaxed">Dikemas premium, higienis, dan anti-tumpah. Siap dinikmati langsung di meja kerja atau ruang keluarga dengan elegan.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Tanpa Pengawet</h3>
+                    <p class="text-gray-600 leading-relaxed">Kesegaran murni berasal dari buah pilihan kualitas terbaik dan proses produksi harian yang ketat.</p>
                 </div>
             </div>
         </div>
@@ -214,50 +225,91 @@
                 <!-- Medan -->
                 <div class="bg-white/5 border border-white/10 rounded-3xl overflow-hidden hover:bg-white/10 transition-colors group">
                     <div class="h-48 bg-gray-800 relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1596450514735-111a2fe02935?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Rujak Medan" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
+                        <img src="https://images.unsplash.com/photo-1596450514735-111a2fe02935?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" loading="lazy" alt="Rujak Medan" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
                         <div class="absolute top-4 left-4 bg-black/50 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full border border-white/20">Sumatera Utara</div>
                     </div>
                     <div class="p-8">
                         <h3 class="text-2xl font-black text-white mb-2">Rujak Medan</h3>
                         <p class="text-[#F4C430] font-medium text-sm mb-4 tracking-wide uppercase">Manis • Gurih • Berkarakter</p>
                         <p class="text-white/70 text-sm leading-relaxed mb-6">Menggunakan kacang tanah giling kasar dan rahasia pisang batu yang menciptakan rasa sepat-manis yang adiktif. Berpadu sempurna dengan gula merah kental.</p>
-                        <div class="text-xl font-bold">Rp 22.000</div>
                     </div>
                 </div>
 
                 <!-- Aceh -->
                 <div class="bg-white/5 border border-white/10 rounded-3xl overflow-hidden hover:bg-white/10 transition-colors group">
                     <div class="h-48 bg-gray-800 relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1582281298055-e25b84a30b0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Rujak Aceh" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
+                        <img src="https://images.unsplash.com/photo-1582281298055-e25b84a30b0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" loading="lazy" alt="Rujak Aceh" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
                         <div class="absolute top-4 left-4 bg-black/50 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full border border-white/20">Nanggroe Aceh D.</div>
                     </div>
                     <div class="p-8">
                         <h3 class="text-2xl font-black text-white mb-2">Rujak Aceh</h3>
                         <p class="text-[#F18C1E] font-medium text-sm mb-4 tracking-wide uppercase">Asam • Pedas • Kompleks</p>
                         <p class="text-white/70 text-sm leading-relaxed mb-6">Kesegaran mangga kweni berpadu dengan keunikan asam sunti. Kuahnya cair, menyegarkan, dan memiliki tendangan pedas yang langsung membangunkan mata.</p>
-                        <div class="text-xl font-bold">Rp 25.000</div>
                     </div>
                 </div>
 
                 <!-- Serut -->
                 <div class="bg-white/5 border border-white/10 rounded-3xl overflow-hidden hover:bg-white/10 transition-colors group">
                     <div class="h-48 bg-gray-800 relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Rujak Serut" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
+                        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" loading="lazy" alt="Rujak Serut" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
                         <div class="absolute top-4 left-4 bg-black/50 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full border border-white/20">Jawa Dwipa</div>
                     </div>
                     <div class="p-8">
                         <h3 class="text-2xl font-black text-white mb-2">Rujak Serut</h3>
                         <p class="text-[#7DBA4D] font-medium text-sm mb-4 tracking-wide uppercase">Ringan • Menyegarkan • Meresap</p>
                         <p class="text-white/70 text-sm leading-relaxed mb-6">Buah-buahan segar yang diserut tipis, memastikan setiap helai buah terbalut sempurna dalam bumbu manis pedas. Sangat mudah dinikmati kapan saja.</p>
-                        <div class="text-xl font-bold">Rp 18.000</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- SECTION 6: RAHASIA RASA NUSANTARA -->
+    <!-- Optimasi 3: Tambahkan Section "Rahasia Rasa Nusantara" -->
+    <section class="py-20 bg-[#FAFAFA] border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="text-[#F18C1E] font-bold text-sm tracking-widest uppercase mb-2 block">Bahan Otentik</span>
+                <h2 class="text-3xl md:text-5xl font-black text-[#0F4D37] mb-4">Rahasia Rasa Nusantara</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Kami tidak menggunakan perasa buatan. Keunikan Rujak.co berasal dari kekayaan botani asli Indonesia.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Pisang Batu -->
+                <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-shadow relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-[#F4C430]/10 rounded-bl-full"></div>
+                    <div class="w-14 h-14 bg-[#F4C430]/20 rounded-2xl flex items-center justify-center mb-6 text-[#F18C1E]">
+                        <i data-lucide="sparkles" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-[#0F4D37] mb-3">Pisang Batu</h3>
+                    <p class="text-gray-600 leading-relaxed">Rahasia sesungguhnya dari Rujak Medan. Diekstrak dengan cermat untuk memberikan karakter unik manis dan sepat yang menyeimbangkan gula aren.</p>
+                </div>
+
+                <!-- Asam Sunti -->
+                <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-shadow relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-[#D62828]/10 rounded-bl-full"></div>
+                    <div class="w-14 h-14 bg-[#D62828]/20 rounded-2xl flex items-center justify-center mb-6 text-[#D62828]">
+                        <i data-lucide="sun" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-[#0F4D37] mb-3">Asam Sunti</h3>
+                    <p class="text-gray-600 leading-relaxed">Belimbing wuluh yang dikeringkan di bawah sinar matahari khas Aceh. Menciptakan dimensi rasa asam kompleks dan menyegarkan yang tidak bisa ditiru asam biasa.</p>
+                </div>
+
+                <!-- Mangga Kweni -->
+                <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-shadow relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-[#7DBA4D]/10 rounded-bl-full"></div>
+                    <div class="w-14 h-14 bg-[#7DBA4D]/20 rounded-2xl flex items-center justify-center mb-6 text-[#7DBA4D]">
+                        <i data-lucide="droplet" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-[#0F4D37] mb-3">Mangga Kweni</h3>
+                    <p class="text-gray-600 leading-relaxed">Bukan sekadar pewangi, serat mangga kweni pilihan kami leburkan ke dalam kuah bumbu untuk memberikan aroma khas yang membuat rasa rujak jauh lebih kaya.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- SECTION 7: FAQ -->
-    <section class="py-20 bg-white">
+    <section class="py-20 bg-white border-t border-gray-100">
         <div class="max-w-3xl mx-auto px-6">
             <div class="text-center mb-12">
                 <h2 class="text-3xl font-black text-[#0F4D37]">Yang Sering Ditanyakan</h2>
@@ -279,14 +331,17 @@
             <button onclick="handleWhatsApp('bundle')" class="bg-[#F4C430] text-[#0F4D37] px-10 py-5 rounded-full font-black text-xl hover:bg-yellow-400 transition-transform transform hover:scale-105 shadow-2xl flex items-center justify-center gap-3 mx-auto w-full md:w-auto">
                 <i data-lucide="message-circle" class="w-6 h-6"></i> Pesan Sekarang via WhatsApp
             </button>
-            <p class="mt-6 text-white/80 text-sm font-medium">Balasan cepat. Proses mudah. Langsung dikirim.</p>
+            <p class="mt-6 text-white/90 text-sm font-medium tracking-wide">Harga Promo Rp55.000 • Balasan Cepat • Langsung Dikirim</p>
         </div>
     </section>
 
     <!-- FOOTER -->
     <footer class="bg-[#0F4D37] text-white/60 py-10 text-center text-sm border-t border-white/10">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="font-black text-2xl text-white mb-4 tracking-tighter">Rujak<span class="text-[#F4C430]">.co</span></div>
+        <div class="max-w-7xl mx-auto px-6 flex flex-col items-center">
+            <!-- Logo in Footer -->
+            <div class="flex justify-center mb-6">
+                <img src="1000520119.png" loading="lazy" alt="Logo Rujak.co" class="h-16 w-auto" />
+            </div>
             <p>© 2026 Rujak.co. Authentic Indonesian Flavors.</p>
             <p class="mt-2 text-xs opacity-50">Gambar hanya sebagai ilustrasi visual premium.</p>
         </div>
@@ -308,9 +363,9 @@
         // Initialize Icons
         lucide.createIcons();
 
-        // WhatsApp Logic
+        // Optimasi 7: WhatsApp Logic dengan Nomor yang Diperbarui
         function handleWhatsApp(type) {
-            const phone = "628110000000"; // Ganti dengan nomor WhatsApp asli
+            const phone = "6289677161680"; // Nomor WhatsApp terupdate
             const text = "Halo Rujak.co! 🍍 Saya mau pesan 1x Paket Jelajah Nusantara (Promo Rp55.000). Boleh dibantu info ongkir ke alamat saya?";
             window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
         }
@@ -325,29 +380,31 @@
             }
         });
 
-        // FAQ Data & Logic
+        // Optimasi 6: FAQ Data Baru yang Menjawab Keraguan
         const faqs = [
-            { q: "Apakah buahnya dijamin segar saat sampai?", a: "100% Ya. Kami memotong buah hanya saat pesanan masuk, dan kemasan dirancang agar kesegaran terkunci. Garansi ganti baru jika buah layu." },
-            { q: "Seberapa pedas bumbu Rujak.co?", a: "Kami menggunakan level pedas menengah standar. Sensasi rasa dan kesegaran lebih mendominasi daripada rasa panas cabai." },
-            { q: "Berapa porsi untuk Paket Jelajah Nusantara?", a: "Satu paket sangat pas untuk dinikmati bersama berdua hingga bertiga, atau untuk stok camilan sehat Anda seharian." },
-            { q: "Berapa lama tahan di kulkas?", a: "Paling nikmat dimakan langsung! Namun Rujak Serut tahan hingga 3 hari jika disimpan di lemari es tertutup rapat." }
+            { q: "Apakah produk halal?", a: "100% Halal. Kami hanya menggunakan buah segar, gula aren, kacang, dan bumbu dari bahan nabati alami tanpa campuran alkohol atau bahan non-halal lainnya." },
+            { q: "Apakah menggunakan pengawet?", a: "Tidak ada pengawet sama sekali. Kesegaran murni berasal dari buah pilihan yang dipotong saat Anda memesan dan proses produksi bumbu harian." },
+            { q: "Berapa lama produk bertahan?", a: "Paling nikmat dimakan langsung! Jika disimpan di kulkas tertutup rapat, bumbu dan Rujak Serut bisa bertahan hingga 3 hari, namun potongan buah segar sebaiknya dikonsumsi di hari yang sama." },
+            { q: "Area pengiriman mana saja yang dilayani?", a: "Saat ini kami melayani pengiriman ke seluruh area Jakarta, Bogor, Depok, Tangerang, dan Bekasi melalui kurir instan dan sameday agar kualitas tetap terjaga." },
+            { q: "Apakah bisa request tingkat kepedasan?", a: "Untuk menjaga standar rasa otentik sesuai resep aslinya, saat ini kami menggunakan satu level kepedasan menengah (moderate) yang nikmat, menyegarkan, dan aman di perut sebagian besar orang." }
         ];
 
         const faqContainer = document.getElementById('faq-container');
         
+        // Optimasi 7: Menghindari penggunaan innerHTML += di dalam loop
         faqs.forEach((faq, i) => {
             const faqHtml = `
                 <div class="border border-gray-200 rounded-2xl overflow-hidden transition-all duration-300 bg-gray-50 mb-4">
                     <button onclick="toggleFaq(${i})" class="w-full px-6 py-5 text-left flex justify-between items-center bg-white hover:bg-gray-50 focus:outline-none">
                         <span class="font-bold text-gray-900 pr-4">${faq.q}</span>
-                        <i data-lucide="chevron-down" id="icon-${i}" class="faq-icon text-gray-400 w-5 h-5"></i>
+                        <i data-lucide="chevron-down" id="icon-${i}" class="faq-icon text-gray-400 w-5 h-5 flex-shrink-0"></i>
                     </button>
                     <div id="content-${i}" class="faq-content px-6">
                         <p class="text-gray-600 text-sm leading-relaxed">${faq.a}</p>
                     </div>
                 </div>
             `;
-            faqContainer.innerHTML += faqHtml;
+            faqContainer.insertAdjacentHTML('beforeend', faqHtml);
         });
         
         // Re-init icons for dynamic content
