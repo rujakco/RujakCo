@@ -10,7 +10,6 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         html { scroll-behavior: smooth; }
-        /* Peningkatan max-height agar teks panjang di FAQ tidak terpotong */
         .faq-content { transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out; max-height: 0; overflow: hidden; }
         .faq-content.open { max-height: 500px; padding-top: 1.25rem; padding-bottom: 1.25rem; border-top: 1px solid #f3f4f6; }
         .faq-icon { transition: transform 0.3s ease; }
@@ -21,8 +20,11 @@
 
     <!-- NAVIGATION -->
     <nav class="w-full bg-[#0F4D37] py-4 px-6 md:px-12 flex justify-between items-center z-40 relative">
-        <a href="#" class="flex items-center">
-            <img src="1000520119.png" alt="Logo Rujak.co" class="h-12 w-auto" />
+        <a href="#" class="flex items-center gap-3">
+            <!-- Logo Gambar URL Baru -->
+            <img src="https://raw.githubusercontent.com/rujakco/rujak-co/refs/heads/Images/IMG_20260617_112723_045.webp" alt="Logo Rujak.co" class="h-10 w-auto rounded-full" />
+            <!-- Logo Font Teks -->
+            <div class="text-white font-black text-2xl tracking-tighter">Rujak<span class="text-[#F4C430]">.co</span></div>
         </a>
         <button onclick="handleWhatsApp('bundle')" class="hidden md:flex bg-white text-[#0F4D37] px-5 py-2.5 rounded-full font-bold text-sm hover:bg-gray-100 transition-colors items-center gap-2">
             <i data-lucide="message-circle" class="w-4 h-4"></i> Pesan Sekarang
@@ -43,13 +45,11 @@
                     Bukan Sekadar Rujak. <br/> Ini <span class="text-[#F4C430]">Perjalanan Rasa</span> Melintasi Nusantara.
                 </h1>
                 
-                <!-- Optimasi 1: Perjelas Produk di Hero -->
                 <p class="text-lg md:text-xl text-white/90 mb-8 leading-relaxed font-light max-w-lg">
                     Paket spesial berisi Rujak Medan, Rujak Aceh, dan Rujak Serut dalam satu pengalaman rasa Nusantara.
                 </p>
                 
                 <div class="flex flex-col w-full sm:w-auto items-start">
-                    <!-- Optimasi 1: Info Harga Singkat -->
                     <div class="text-sm font-bold text-[#F4C430] bg-black/20 px-4 py-1.5 rounded-full mb-3 border border-[#F4C430]/30 flex items-center gap-2">
                         <i data-lucide="tag" class="w-4 h-4"></i> Harga Promo Rp55.000
                     </div>
@@ -96,7 +96,6 @@
                 <h2 class="text-gray-500 font-medium text-sm md:text-base tracking-widest uppercase text-center">Dipercaya oleh 10,000+ Penjelajah Rasa</h2>
             </div>
             
-            <!-- Optimasi 5: Perbaikan Testimonial Natural -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
                     <i data-lucide="quote" class="text-[#7DBA4D] w-6 h-6 mb-4 opacity-50"></i>
@@ -135,7 +134,6 @@
                     <h3 class="text-2xl md:text-3xl font-black text-gray-900 mb-2">Paket Jelajah Nusantara</h3>
                     <p class="text-gray-500 mb-6 border-b border-gray-100 pb-6">Pengalaman komplit 3 rasa ikonik untuk dinikmati sendiri atau berbagi.</p>
                     
-                    <!-- Optimasi 2: Tambahkan Visual Isi Paket (Clear in 3 seconds) -->
                     <div class="bg-[#F4C430]/10 rounded-2xl p-6 mb-8 border border-[#F4C430]/20">
                         <div class="font-bold text-[#0F4D37] mb-4 flex items-center gap-2"><i data-lucide="box" class="w-5 h-5"></i> Isi Paket:</div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -177,7 +175,6 @@
     </section>
 
     <!-- SECTION 4: TRUST & QUALITY -->
-    <!-- Optimasi 4: Section Trust & Quality Khusus -->
     <section class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16">
@@ -265,7 +262,6 @@
     </section>
 
     <!-- SECTION 6: RAHASIA RASA NUSANTARA -->
-    <!-- Optimasi 3: Tambahkan Section "Rahasia Rasa Nusantara" -->
     <section class="py-20 bg-[#FAFAFA] border-t border-gray-100">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16">
@@ -338,9 +334,10 @@
     <!-- FOOTER -->
     <footer class="bg-[#0F4D37] text-white/60 py-10 text-center text-sm border-t border-white/10">
         <div class="max-w-7xl mx-auto px-6 flex flex-col items-center">
-            <!-- Logo in Footer -->
-            <div class="flex justify-center mb-6">
-                <img src="1000520119.png" loading="lazy" alt="Logo Rujak.co" class="h-16 w-auto" />
+            <!-- Logo Gambar URL Baru + Teks di Footer -->
+            <div class="flex flex-col items-center mb-6">
+                <img src="https://raw.githubusercontent.com/rujakco/rujak-co/refs/heads/Images/IMG_20260617_112723_045.webp" loading="lazy" alt="Logo Rujak.co" class="h-16 w-auto rounded-full mb-4 shadow-lg" />
+                <div class="font-black text-2xl text-white tracking-tighter">Rujak<span class="text-[#F4C430]">.co</span></div>
             </div>
             <p>© 2026 Rujak.co. Authentic Indonesian Flavors.</p>
             <p class="mt-2 text-xs opacity-50">Gambar hanya sebagai ilustrasi visual premium.</p>
@@ -363,7 +360,7 @@
         // Initialize Icons
         lucide.createIcons();
 
-        // Optimasi 7: WhatsApp Logic dengan Nomor yang Diperbarui
+        // WhatsApp Logic
         function handleWhatsApp(type) {
             const phone = "6289677161680"; // Nomor WhatsApp terupdate
             const text = "Halo Rujak.co! 🍍 Saya mau pesan 1x Paket Jelajah Nusantara (Promo Rp55.000). Boleh dibantu info ongkir ke alamat saya?";
@@ -380,7 +377,7 @@
             }
         });
 
-        // Optimasi 6: FAQ Data Baru yang Menjawab Keraguan
+        // FAQ Data
         const faqs = [
             { q: "Apakah produk halal?", a: "100% Halal. Kami hanya menggunakan buah segar, gula aren, kacang, dan bumbu dari bahan nabati alami tanpa campuran alkohol atau bahan non-halal lainnya." },
             { q: "Apakah menggunakan pengawet?", a: "Tidak ada pengawet sama sekali. Kesegaran murni berasal dari buah pilihan yang dipotong saat Anda memesan dan proses produksi bumbu harian." },
@@ -391,7 +388,7 @@
 
         const faqContainer = document.getElementById('faq-container');
         
-        // Optimasi 7: Menghindari penggunaan innerHTML += di dalam loop
+        // FAQ DOM Injection
         faqs.forEach((faq, i) => {
             const faqHtml = `
                 <div class="border border-gray-200 rounded-2xl overflow-hidden transition-all duration-300 bg-gray-50 mb-4">
