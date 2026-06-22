@@ -1,0 +1,2193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Rujak.co | Premium Indonesian Rujak</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+  
+  <script defer src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    window.lucideFallback = true;
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof lucide === 'undefined' || !lucide.createIcons) {
+        document.querySelectorAll('[data-lucide]').forEach(el => {
+          const iconName = el.getAttribute('data-lucide');
+          const emojiMap = { 
+            'flame': '🔥', 'plus': '➕', 'minus': '➖', 'search': '🔍', 
+            'map-pin': '📍', 'gift': '🎁', 'star': '⭐', 'check-circle': '✅', 
+            'box': '📦', 'lock': '🔒', 'map': '🗺️', 'chevron-down': '▼', 
+            'clock': '🕐', 'message-circle': '💬', 'instagram': '📸', 
+            'facebook': '📘', 'youtube': '▶️', 'utensils': '🍽️', 
+            'shopping-bag': '🛍️', 'zap': '⚡', 'image': '🖼️', 
+            'truck': '🚚', 'globe': '🌐', 'rocket': '🚀', 'music': '🎵',
+            'download': '⬇️'
+          };
+          el.textContent = emojiMap[iconName] || '•';
+          el.style.fontSize = '20px';
+        });
+      }
+    });
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* ============================================================
+       ROOT & RESET
+       ============================================================ */
+    :root {
+      --green: #0F4D37;
+      --green-dark: #0a3a2a;
+      --green-light: #1a6b4e;
+      --green-pale: #EAF2EE;
+      --red: #D62828;
+      --gold: #F4C430;
+      --ivory: #FDFDF8;
+      --gray-100: #F5F5F5;
+      --gray-200: #E5E7EB;
+      --gray-300: #D1D5DB;
+      --gray-400: #9CA3AF;
+      --gray-500: #6B7280;
+      --gray-700: #374151;
+      --gray-900: #111827;
+      --radius-card: 16px;
+      --radius-pill: 100px;
+      --max-distance: 50;
+    }
+    
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #EFEFE9;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    body {
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    
+    .no-sb::-webkit-scrollbar { display: none; }
+    .no-sb { -ms-overflow-style: none; scrollbar-width: none; }
+
+    #app {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      background: var(--ivory);
+      position: relative;
+      overflow-x: hidden;
+      padding-bottom: 100px; 
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 30px rgba(15, 77, 55, 0.08);
+    }
+    
+    #app > *:not(#bottom-bar):not(#toast):not(.modal-overlay) {
+      flex-shrink: 0;
+    }
+    
+    .content-wrapper {
+      background: transparent;
+      flex: 1;
+    }
+
+    /* ── HEADER ── */
+    #header {
+      position: sticky;
+      top: 0;
+      background: var(--ivory);
+      z-index: 100;
+      padding: 12px 20px 10px;
+      border-bottom: 1px solid rgba(15, 77, 55, 0.06);
+      transition: box-shadow .2s;
+    }
+    #header.shadowed { box-shadow: 0 4px 20px rgba(15, 77, 55, 0.05); }
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 0;
+    }
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .brand-logo img {
+      height: 36px;
+      width: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--green);
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+    }
+    .brand-name span { color: var(--red); }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .location-pill {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--green-pale);
+      border-radius: var(--radius-pill);
+      padding: 4px 10px 4px 6px;
+      cursor: pointer;
+      transition: background .15s;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .location-pill:active { background: #d4e8de; }
+    .location-text { display: flex; flex-direction: column; }
+    .location-label {
+      font-size: 8px;
+      font-weight: 700;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      line-height: 1;
+    }
+    .location-value {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--green);
+      line-height: 1.2;
+    }
+    .location-loading {
+      font-size: 9px;
+      color: var(--gray-400);
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* ── SHIPPING ESTIMATE ── */
+    .shipping-estimate {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: var(--green-pale);
+      padding: 8px 14px;
+      margin: 0 20px 12px;
+      border-radius: var(--radius-pill);
+      flex-wrap: wrap;
+    }
+    .shipping-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+    .shipping-left svg {
+      width: 16px;
+      height: 16px;
+      color: var(--green);
+    }
+    .shipping-cost {
+      font-weight: 800;
+      color: var(--red);
+      font-size: 14px;
+    }
+    .shipping-distance {
+      font-size: 10px;
+      color: var(--gray-500);
+      font-weight: 500;
+      margin-left: 2px;
+    }
+    .shipping-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+    .shipping-toggle input[type="checkbox"] {
+      width: 36px;
+      height: 20px;
+      appearance: none;
+      background: var(--gray-300);
+      border-radius: 20px;
+      position: relative;
+      cursor: pointer;
+      transition: background .2s;
+      flex-shrink: 0;
+    }
+    .shipping-toggle input[type="checkbox"]::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background: white;
+      border-radius: 50%;
+      transition: transform .2s;
+    }
+    .shipping-toggle input[type="checkbox"]:checked {
+      background: var(--red);
+    }
+    .shipping-toggle input[type="checkbox"]:checked::after {
+      transform: translateX(16px);
+    }
+    .shipping-toggle .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .shipping-toggle .toggle-label svg {
+      width: 14px;
+      height: 14px;
+    }
+    .shipping-toggle .badge-priority {
+      background: var(--red);
+      color: white;
+      font-size: 8px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 10px;
+      text-transform: uppercase;
+    }
+    .shipping-out-of-range {
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      color: var(--red);
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      font-weight: 600;
+      display: none;
+      margin: 0 20px 12px;
+      text-align: center;
+    }
+
+    .search-wrap {
+      padding: 0 20px 16px;
+    }
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: white;
+      border: 1px solid rgba(15, 77, 55, 0.1);
+      box-shadow: 0 2px 10px rgba(15, 77, 55, 0.03);
+      border-radius: 12px;
+      padding: 10px 14px;
+      gap: 8px;
+    }
+    .search-box input {
+      border: none;
+      outline: none;
+      width: 100%;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--gray-900);
+    }
+    .search-box input::placeholder {
+      color: var(--gray-400);
+    }
+
+    .hero-wrap { padding: 16px 20px; }
+    .hero {
+      width: 100%;
+      aspect-ratio: 21/9;
+      background: var(--green);
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+    .hero-img {
+      position: absolute;
+      top:0; left:0; right:0; bottom:0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .hero-grad {
+      position: absolute;
+      top:0; left:0; right:0; bottom:0;
+      background: linear-gradient(to right, rgba(15,77,55,0.85) 0%, rgba(15,77,55,0) 70%);
+    }
+    .hero-content {
+      position: absolute;
+      top:0; left:0; right:0; bottom:0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255,255,255,.18);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      border-radius: var(--radius-pill);
+      padding: 4px 10px;
+      width: fit-content;
+      margin-bottom: 8px;
+      border: 1px solid rgba(255,255,255,.25);
+    }
+    .hero-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: white;
+      line-height: 1.2;
+      margin-bottom: 6px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .hero-sub {
+      font-size: 12px;
+      color: rgba(255,255,255,.9);
+      font-weight: 500;
+      line-height: 1.4;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+
+    .promo-strip {
+      margin: 0 20px 20px;
+      background: #fff3cd;
+      border: 1px solid #e6c87a;
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .promo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gold);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .promo-text { flex: 1; }
+    .promo-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #3d2b00;
+    }
+    .promo-sub {
+      font-size: 12px;
+      color: #5a3e00;
+      margin-top: 1px;
+      font-weight: 500;
+    }
+    .promo-terms {
+      font-size: 10px;
+      color: #3d2b00;
+      opacity: 0.8;
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    .legend-container {
+      padding: 0 20px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gray-500);
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+    .legend-dot.classic { background: #8BC34A; }
+    .legend-dot.signature { background: var(--red); }
+    .legend-dot.reserve { background: #5D4037; }
+
+    .cat-scroll {
+      display: flex;
+      overflow-x: auto;
+      gap: 8px;
+      padding: 0 20px 16px;
+    }
+    .cat-pill {
+      flex-shrink: 0;
+      border: 1px solid transparent;
+      background: var(--green-pale);
+      color: var(--green);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 18px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all .18s;
+      white-space: nowrap;
+    }
+    .cat-pill:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+    .cat-pill:active { transform: scale(.96); }
+    .cat-pill.active {
+      background: var(--green);
+      color: white;
+      box-shadow: 0 4px 12px rgba(15,77,55,.25);
+    }
+
+    .sec-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 20px 16px;
+    }
+    .sec-title { font-size: 18px; font-weight: 800; color: var(--gray-900); }
+
+    .menu-list { padding: 0 20px; display: block; }
+    .menu-item {
+      display: flex;
+      gap: 14px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(15, 77, 55, 0.06);
+      position: relative;
+      cursor: pointer;
+    }
+    .menu-item:focus-visible { outline: 2px solid var(--green); outline-offset: -2px; }
+    .menu-item:active { background: rgba(15, 77, 55, 0.02); }
+    .menu-item:last-child { border-bottom: none; }
+    .item-img-wrap {
+      flex-shrink: 0;
+      width: 110px;
+      height: 110px;
+      border-radius: 14px;
+      background: var(--gray-100);
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(15, 77, 55, 0.05);
+    }
+    .item-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .item-img-wrap .fallback {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e8efeb;
+      color: var(--gray-500);
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      padding: 4px;
+      word-break: break-word;
+    }
+    .item-badge {
+      position: absolute;
+      top: 0; left: 0;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      padding: 4px 8px;
+      border-radius: 0 0 10px 0;
+      z-index: 2;
+    }
+    .badge-red { background: var(--red); color: white; }
+    .badge-gold { background: var(--gray-900); color: var(--gold); }
+    .item-body { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+    .item-name {
+      font-size: 15px; font-weight: 700; color: var(--gray-900);
+      line-height: 1.3; margin-bottom: 2px;
+    }
+    .item-flavor { font-size: 12px; color: var(--gray-500); font-weight: 500; margin-bottom: 2px; }
+    .item-spice { font-size: 11px; color: var(--red); font-weight: 600; margin-bottom: 4px; }
+    .item-desc {
+      font-size: 13px; color: var(--gray-500); line-height: 1.5;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .item-buah-chips { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 4px; }
+    .item-buah-chip {
+      font-size: 9px; font-weight: 600; color: var(--green); background: var(--green-pale);
+      padding: 2px 8px; border-radius: 12px; text-transform: uppercase;
+    }
+    .item-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+    .item-price { font-size: 16px; font-weight: 800; color: var(--gray-900); letter-spacing: -.02em; }
+    .item-portion { font-size: 10px; color: var(--gray-400); font-weight: 500; }
+
+    .addon-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 20px 24px;
+    }
+    .addon-card {
+      background: white; 
+      border: 1px solid rgba(15, 77, 55, 0.08); 
+      box-shadow: 0 4px 14px rgba(15, 77, 55, 0.02);
+      border-radius: 14px;
+      padding: 14px; display: flex; flex-direction: column; transition: border-color .2s;
+    }
+    .addon-card:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+    .addon-icon { margin-bottom: 8px; }
+    .addon-name { font-size: 14px; font-weight: 700; color: var(--gray-900); }
+    .addon-desc { font-size: 11px; color: var(--gray-400); margin: 2px 0 6px; }
+    .addon-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+    .addon-price { font-size: 13px; font-weight: 700; color: var(--gray-700); }
+
+    .qty-control {
+      display: flex; align-items: center; background: var(--green-pale);
+      border-radius: var(--radius-pill); overflow: hidden; transition: all .2s;
+    }
+    .qty-btn {
+      width: 30px; height: 30px; background: none; border: none; color: var(--green);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 300; flex-shrink: 0;
+    }
+    .qty-btn:focus-visible { outline: 2px solid var(--green); }
+    .qty-btn:active { background: rgba(15,77,55,.12); }
+    .qty-num { font-size: 14px; font-weight: 700; color: var(--green); min-width: 22px; text-align: center; }
+    .add-btn {
+      width: 30px; height: 30px; background: var(--green); border: none; border-radius: 50%;
+      color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 3px 10px rgba(15,77,55,.35); flex-shrink: 0;
+    }
+    .add-btn:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+    .add-btn:active { transform: scale(.9); }
+    .addon-add {
+      width: 26px; height: 26px; background: var(--green-pale); border: none; border-radius: 50%;
+      color: var(--green); cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .addon-add:focus-visible { outline: 2px solid var(--green); }
+
+    .edu-container { padding: 0 20px 24px; display: flex; flex-direction: column; gap: 12px; }
+    .edu-card {
+      background: white; 
+      border: 1px solid rgba(15, 77, 55, 0.08); 
+      box-shadow: 0 4px 14px rgba(15, 77, 55, 0.02);
+      border-radius: 14px;
+      padding: 16px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .edu-icon-wrap {
+      width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0;
+    }
+    .edu-title { font-size: 15px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+    .edu-desc { font-size: 13px; color: var(--gray-500); line-height: 1.5; }
+
+    .faq-container { padding: 0 20px 24px; display: flex; flex-direction: column; gap: 8px; }
+    .faq-item {
+      background: white; 
+      border: 1px solid rgba(15, 77, 55, 0.08); 
+      box-shadow: 0 4px 14px rgba(15, 77, 55, 0.02);
+      border-radius: 14px;
+      padding: 14px 16px; cursor: pointer; transition: border-color .2s;
+    }
+    .faq-item:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+    .faq-item:active { background: var(--gray-100); }
+    .faq-question {
+      display: flex; justify-content: space-between; align-items: center;
+      font-weight: 700; font-size: 14px; color: var(--gray-900);
+    }
+    .faq-question svg { color: var(--green); transition: transform .3s; }
+    .faq-answer {
+      font-size: 13px; color: var(--gray-500); line-height: 1.6; margin-top: 0;
+      max-height: 0; overflow: hidden; transition: max-height .3s ease, margin-top .3s ease;
+    }
+    .faq-item.open .faq-answer { max-height: 200px; margin-top: 8px; }
+    .faq-item.open .faq-question svg { transform: rotate(180deg); }
+
+    .divider { 
+      height: 8px; 
+      background: rgba(244, 196, 48, 0.08); 
+      margin: 12px 0; 
+    }
+
+    .footer-brand { background: var(--green); color: white; padding: 28px 20px 20px; margin: 0; }
+    .footer-brand-inner { display: flex; flex-direction: column; gap: 16px; }
+    .footer-brand-row { display: flex; align-items: center; gap: 12px; }
+    .footer-brand-row img { height: 44px; width: 44px; border-radius: 50%; object-fit: cover; }
+    .footer-brand-name {
+      font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 800;
+      color: white; letter-spacing: -0.5px;
+    }
+    .footer-brand-name span { color: var(--gold); }
+    .footer-brand-desc { font-size: 13px; opacity: .85; line-height: 1.6; max-width: 300px; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 8px; }
+    .footer-col h4 {
+      font-size: 14px; font-weight: 700; color: white; margin-bottom: 10px;
+      letter-spacing: .03em; text-transform: uppercase; opacity: .7;
+    }
+    .footer-col ul { list-style: none; padding: 0; margin: 0;}
+    .footer-col ul li {
+      font-size: 13px; opacity: .8; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+    }
+    .footer-col ul li svg { color: var(--gold); width: 16px; height: 16px; }
+    .footer-social {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .footer-social a {
+      color: white;
+      background: rgba(255,255,255,.12);
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .2s, transform .2s;
+      text-decoration: none;
+    }
+    .footer-social a svg {
+      width: 20px;
+      height: 20px;
+    }
+    .footer-social a:hover {
+      background: var(--gold);
+      color: var(--green);
+      transform: translateY(-2px);
+    }
+    .footer-delivery { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+    .footer-delivery a {
+      background: rgba(255,255,255,.08); padding: 6px 12px; border-radius: 8px;
+      color: white; font-size: 12px; font-weight: 600; display: flex; align-items: center;
+      gap: 6px; text-decoration: none; transition: background .2s;
+    }
+    .footer-delivery a svg { width: 14px; height: 14px; }
+    .footer-delivery a:hover { background: rgba(255,255,255,.2); }
+    .footer-wa {
+      display: inline-flex; align-items: center; gap: 8px; background: var(--gold);
+      color: var(--green); padding: 10px 18px; border-radius: 50px; font-weight: 700;
+      font-size: 14px; text-decoration: none; transition: background .2s, color .2s;
+      width: fit-content; border: none; margin-top: 8px;
+    }
+    .footer-wa svg { width: 16px; height: 16px; }
+    .footer-wa:hover { background: #dbaa1a; color: var(--green-dark); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.12); padding-top: 16px;
+      text-align: center; font-size: 11px; opacity: .5; margin-top: 12px;
+    }
+
+    #bottom-bar {
+      position: fixed; bottom: 0; width: 100%; max-width: 480px; background: var(--ivory);
+      border-top: 1px solid rgba(15, 77, 55, 0.1); padding: 12px 20px 20px; z-index: 200;
+      box-shadow: 0 -10px 30px rgba(15, 77, 55, 0.05); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transform: translateY(100%);
+    }
+    #bottom-bar.visible { transform: translateY(0); }
+    .cart-summary {
+      display: flex; align-items: center; background: white; 
+      border: 1px solid rgba(15, 77, 55, 0.1); 
+      box-shadow: 0 2px 10px rgba(15, 77, 55, 0.03);
+      border-radius: 14px; padding: 10px 14px; margin-bottom: 10px; gap: 10px;
+      cursor: pointer;
+    }
+    .cart-summary:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+    .cart-items-preview { flex: 1; font-size: 13px; font-weight: 600; color: var(--gray-700); }
+    .cart-total-wrap { text-align: right; }
+    .cart-total { font-size: 15px; font-weight: 800; color: var(--green); display: block; }
+    .cart-discount-label {
+      font-size: 11px; font-weight: 700; color: var(--red); background: #fef2f2;
+      padding: 2px 6px; border-radius: 4px; margin-right: 6px; display: inline-block;
+    }
+    .wa-btn {
+      width: 100%; background: var(--green); color: white; border: none; border-radius: 16px;
+      padding: 16px 20px; font-family: inherit; font-size: 15px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+      transition: all .18s;
+    }
+    .wa-btn:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+    .wa-btn:active { transform: scale(.98); }
+    .wa-btn-left { display: flex; flex-direction: column; text-align: left; gap: 1px; }
+    .wa-btn-sub { font-size: 11px; font-weight: 500; opacity: .7; text-transform: uppercase; letter-spacing: .05em; }
+    .wa-badge {
+      background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3);
+      border-radius: 10px; padding: 6px 12px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px;
+    }
+
+    #toast {
+      position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px);
+      background: var(--green); color: white; font-size: 14px; font-weight: 600;
+      padding: 10px 20px; border-radius: var(--radius-pill); z-index: 999; opacity: 0;
+      pointer-events: none; transition: all .25s; max-width: 90%; word-wrap: break-word;
+      box-shadow: 0 4px 16px rgba(15,77,55,.4);
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .empty-state { padding: 40px 20px; text-align: center; color: var(--gray-500); font-size: 15px; display: none; }
+
+    .modal-overlay {
+      position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.5);
+      z-index: 300; display: flex; align-items: center; justify-content: center;
+      opacity:0; pointer-events: none; transition: opacity .3s ease; padding: 20px;
+    }
+    .modal-overlay.active { opacity:1; pointer-events: auto; }
+    .modal-content {
+      background: white; border-radius: 24px; max-width: 400px; width:100%;
+      max-height: 90vh; overflow-y: auto; padding: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      transform: scale(0.95); transition: transform .3s ease;
+    }
+    .modal-overlay.active .modal-content { transform: scale(1); }
+    .modal-close { float: right; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--gray-500); padding: 4px; }
+    .modal-close:focus-visible { outline: 2px solid var(--green); }
+    .modal-img {
+      width:100%; aspect-ratio: 1/1; background: var(--gray-100); border-radius: 16px;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+      font-size: 48px; color: var(--gray-400); overflow: hidden;
+    }
+    .modal-img img { width:100%; height:100%; object-fit:cover; }
+    .modal-title { 
+      font-size: 22px; font-weight: 800; color: var(--gray-900); margin-bottom: 4px;
+    }
+    .modal-badge { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 2px 10px; border-radius: 20px; margin-bottom: 8px; }
+    .modal-desc { font-size: 15px; color: var(--gray-500); line-height: 1.6; margin-bottom: 12px; }
+    .modal-detail-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; background: var(--gray-100);
+      border-radius: 12px; padding: 12px 16px; margin-bottom: 12px;
+    }
+    .modal-detail-grid .label { font-size: 12px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: .03em; }
+    .modal-detail-grid .value { font-size: 14px; font-weight: 600; color: var(--gray-900); text-align: right; }
+
+    .modal-buah-text {
+      font-size: 14px;
+      color: var(--gray-700);
+      line-height: 1.6;
+      margin: 8px 0 12px;
+      padding: 10px 14px;
+      background: var(--gray-100);
+      border-radius: 10px;
+    }
+
+    .modal-spice-highlight {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #fce4e4;
+      border: 1px solid #f5c2c2;
+      border-radius: 14px;
+      padding: 12px 18px;
+      margin: 12px 0 16px;
+      box-shadow: 0 2px 8px rgba(214, 40, 40, 0.06);
+    }
+    .modal-spice-highlight svg {
+      width: 24px;
+      height: 24px;
+      color: var(--red);
+      flex-shrink: 0;
+    }
+    .modal-spice-highlight .spice-label {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gray-700);
+      margin-right: 4px;
+    }
+    .modal-spice-highlight .spice-value {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--red);
+    }
+
+    .modal-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+    .modal-tag { font-size: 11px; font-weight: 700; text-transform: uppercase; background: var(--green-pale); color: var(--green); padding: 2px 8px; border-radius: 4px; }
+    .modal-price { font-size: 24px; font-weight: 800; color: var(--green); margin-bottom: 16px; }
+    .modal-add {
+      width:100%; background: var(--green); color: white; border: none; border-radius: 12px;
+      padding: 14px; font-weight: 700; font-size: 17px; cursor: pointer; transition: background .2s;
+    }
+    .modal-add:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+    .modal-add:active { background: var(--green-light); }
+
+    .modal-spice-group {
+      margin: 12px 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .modal-spice-group label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+    .modal-spice-group select {
+      padding: 6px 12px;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-900);
+      background: white;
+      font-family: inherit;
+    }
+    .modal-spice-group select:focus {
+      outline: 2px solid var(--green);
+    }
+
+    .mini-cart-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .mini-cart-item:last-child { border-bottom: none; }
+    .mini-cart-info { flex:1; }
+    .mini-cart-name { font-weight: 600; font-size: 14px; color: var(--gray-900); }
+    .mini-cart-detail { font-size: 12px; color: var(--gray-500); }
+    .mini-cart-qty {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .mini-cart-qty button {
+      background: var(--green-pale);
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--green);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mini-cart-qty button:focus-visible { outline: 2px solid var(--green); }
+    .mini-cart-qty span {
+      font-weight: 700;
+      font-size: 14px;
+      min-width: 20px;
+      text-align: center;
+    }
+    .mini-cart-remove {
+      background: none;
+      border: none;
+      color: var(--red);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .mini-cart-remove:focus-visible { outline: 2px solid var(--red); }
+    .mini-cart-shipping {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-top: 1px dashed var(--gray-200);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+    .mini-cart-shipping .shipping-amount {
+      font-weight: 800;
+      color: var(--red);
+    }
+    .mini-cart-total-final {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 8px;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--green);
+      border-top: 2px solid var(--green);
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 8px;
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .skeleton-item {
+      display: flex;
+      gap: 14px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(15, 77, 55, 0.06);
+    }
+    .skeleton-img { width: 110px; height: 110px; border-radius: 14px; flex-shrink: 0; }
+    .skeleton-body { flex:1; display: flex; flex-direction: column; gap: 8px; }
+    .skeleton-line { height: 14px; border-radius: 6px; width: 100%; }
+    .skeleton-line.short { width: 60%; }
+    .skeleton-line.medium { width: 80%; }
+
+    @media (max-width: 420px) {
+      .brand-name { font-size: 17px; }
+      .location-value { font-size: 10px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 12px; }
+      .modal-detail-grid { grid-template-columns: 1fr; gap: 4px; }
+      .modal-detail-grid .value { text-align: left; }
+    }
+    @media (max-width: 360px) {
+      .shipping-estimate { flex-direction: column; align-items: stretch; gap: 4px; }
+      .shipping-toggle { justify-content: flex-end; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== APP ==================== -->
+<div id="app">
+  <header id="header">
+    <div class="header-top">
+      <div class="header-left">
+        <a href="#" class="brand-logo" onclick="return false;">
+          <img src="https://raw.githubusercontent.com/rujakco/RujakCo/cfee42c6f54943cdec305b8934f9bec4e3a6e0cf/assets/images/brand/logo.webp" alt="Rujak.co" />
+          <span class="brand-name">Rujak<span>.co</span></span>
+        </a>
+      </div>
+      <div class="header-right">
+        <div class="location-pill" id="locationPill" data-action="toast" data-msg="Area pengiriman: Jabodetabek">
+          <i data-lucide="map-pin" class="w-4 h-4 text-[#0F4D37]"></i>
+          <div class="location-text">
+            <span class="location-label">Diantar ke</span>
+            <span class="location-value" id="locationDisplay">Bekasi ▾</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="content-wrapper">
+    <!-- Shipping Estimate -->
+    <div class="shipping-estimate" id="shippingEstimate">
+      <div class="shipping-left">
+        <i data-lucide="truck"></i>
+        <span>Ongkir:</span>
+        <span class="shipping-cost" id="shippingCost">Menghitung...</span>
+        <span class="shipping-distance" id="shippingDistance"></span>
+      </div>
+      <div class="shipping-toggle">
+        <input type="checkbox" id="priorityToggle" />
+        <label for="priorityToggle" class="toggle-label">
+          <i data-lucide="rocket"></i>
+          <span class="badge-priority">Prioritas</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Out of range warning -->
+    <div class="shipping-out-of-range" id="outOfRange">
+      ⚠️ Pengiriman hanya tersedia untuk wilayah Jabodetabek (maks. 50 km)
+    </div>
+
+    <div class="hero-wrap">
+      <div class="hero">
+        <img class="hero-img" src="https://raw.githubusercontent.com/rujakco/RujakCo/7ff86d93fd2428de16c51b25f84ac462befbeaee/assets/images/hero/Banner.webp" alt="Rujak Premium" onerror="this.style.display='none'" />
+        <div class="hero-grad"></div>
+        <div class="hero-content">
+          <div class="hero-eyebrow"><i data-lucide="zap" class="w-3 h-3"></i> Rujak.co</div>
+          <h2 class="hero-title">Indonesia<br>Dalam Satu<br>Wadah</h2>
+          <p class="hero-sub">Pengalaman rujak Indonesia yang dikurasi dalam satu wadah premium.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="search-wrap">
+      <div class="search-box">
+        <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+        <input type="text" id="searchInput" placeholder="Cari rujak atau pelengkap..." autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="promo-strip" data-action="toast" data-msg="Promo otomatis berlaku untuk minimal Rp100.000">
+      <div class="promo-icon"><i data-lucide="gift" class="w-5 h-5 text-[#3d2b00]"></i></div>
+      <div class="promo-text">
+        <div class="promo-title">Sambutan Dari Rujak.co</div>
+        <div class="promo-sub">Potongan Rp10.000 untuk pesanan pertama.</div>
+        <div class="promo-terms">✅ Otomatis berlaku minimal Rp100.000</div>
+      </div>
+    </div>
+
+    <div class="legend-container">
+      <span class="legend-item"><span class="legend-dot classic"></span> Classic — Rasa yang mudah dicintai.</span>
+      <span class="legend-item"><span class="legend-dot signature"></span> Signature — Koleksi khas Rujak.co.</span>
+      <span class="legend-item"><span class="legend-dot reserve"></span> Reserve — Buah premium pilihan terbatas.</span>
+    </div>
+
+    <nav class="cat-scroll no-sb" id="catScroll" aria-label="Kategori Menu">
+      <button type="button" class="cat-pill active" data-cat="all">Rekomendasi</button>
+      <button type="button" class="cat-pill" data-cat="signature">Signature</button>
+      <button type="button" class="cat-pill" data-cat="classic">Classic</button>
+      <button type="button" class="cat-pill" data-cat="reserve">Reserve</button>
+      <button type="button" class="cat-pill" data-cat="addon">Pelengkap</button>
+    </nav>
+
+    <div style="padding: 0 20px 12px; font-size: 13px; color: var(--green); font-weight: 600;">
+      <i data-lucide="star" class="w-4 h-4 inline"></i> Pertama kali? Coba <strong>Rujak Segar</strong> — ringan & mudah disukai.
+    </div>
+
+    <div class="sec-header" id="menuHeader">
+      <span class="sec-title">Koleksi Rasa</span>
+    </div>
+    <div class="empty-state" id="emptyState">Menu tidak ditemukan.</div>
+
+    <div id="skeletonContainer" style="padding:0 20px;">
+      <div class="skeleton-item"><div class="skeleton-img skeleton"></div><div class="skeleton-body"><div class="skeleton-line skeleton"></div><div class="skeleton-line skeleton medium"></div><div class="skeleton-line skeleton short"></div></div></div>
+      <div class="skeleton-item"><div class="skeleton-img skeleton"></div><div class="skeleton-body"><div class="skeleton-line skeleton"></div><div class="skeleton-line skeleton medium"></div><div class="skeleton-line skeleton short"></div></div></div>
+    </div>
+
+    <div class="menu-list" id="menuList" style="display:none;"></div>
+
+    <div class="divider" id="addonDivider"></div>
+
+    <div class="sec-header" id="addonHeader">
+      <span class="sec-title">Pelengkap</span>
+    </div>
+    <div class="addon-grid" id="addonList"></div>
+
+    <div class="divider"></div>
+
+    <div class="sec-header" style="margin-top:16px">
+      <span class="sec-title">Kenapa Memilih Rujak.co?</span>
+    </div>
+    <div class="edu-container">
+      <div class="edu-card">
+        <div class="edu-icon-wrap" style="background: var(--green-pale); color: var(--green);">
+          <i data-lucide="check-circle" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h4 class="edu-title">Buah Dipilih Setiap Hari</h4>
+          <p class="edu-desc">Hanya buah yang memenuhi standar kualitas Rujak.co.</p>
+        </div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-icon-wrap" style="background: rgba(214, 40, 40, 0.1); color: var(--red);">
+          <i data-lucide="box" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h4 class="edu-title">Sambal Diracik Terpisah</h4>
+          <p class="edu-desc">Menjaga kesegaran buah selama pengiriman.</p>
+        </div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-icon-wrap" style="background: rgba(244, 196, 48, 0.2); color: #b58d10;">
+          <i data-lucide="lock" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h4 class="edu-title">Fresh-Lock System™</h4>
+          <p class="edu-desc">Dirancang agar rasa dan tekstur tetap optimal hingga diterima pelanggan.</p>
+        </div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-icon-wrap" style="background: var(--green-pale); color: var(--green);">
+          <i data-lucide="map" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h4 class="edu-title">Indonesia Dalam Satu Wadah</h4>
+          <p class="edu-desc">Mengangkat keberagaman rasa rujak Indonesia dalam pengalaman yang modern.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="sec-header">
+      <span class="sec-title">Pertanyaan Umum</span>
+    </div>
+    <div class="faq-container" id="faqContainer">
+      <div class="faq-item open">
+        <div class="faq-question" data-toggle="faq">
+          <span>Kenapa sambal dipisahkan?</span>
+          <i data-lucide="chevron-down" class="w-4 h-4"></i>
+        </div>
+        <div class="faq-answer">Agar buah tetap segar dan renyah saat diterima.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" data-toggle="faq">
+          <span>Berapa lama rujak bertahan?</span>
+          <i data-lucide="chevron-down" class="w-4 h-4"></i>
+        </div>
+        <div class="faq-answer">Terbaik dikonsumsi pada hari yang sama.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" data-toggle="faq">
+          <span>Apa itu Fresh-Lock System™?</span>
+          <i data-lucide="chevron-down" class="w-4 h-4"></i>
+        </div>
+        <div class="faq-answer">Metode penyajian dan pengemasan khas Rujak.co untuk menjaga kualitas produk.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" data-toggle="faq">
+          <span>Apakah tersedia untuk acara?</span>
+          <i data-lucide="chevron-down" class="w-4 h-4"></i>
+        </div>
+        <div class="faq-answer">Ya, tersedia paket sharing dan Tampah Nusantara untuk berbagai acara.</div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer-brand">
+    <div class="footer-brand-inner">
+      <div class="footer-brand-row">
+        <img src="https://raw.githubusercontent.com/rujakco/RujakCo/cfee42c6f54943cdec305b8934f9bec4e3a6e0cf/assets/images/brand/logo.webp" alt="Rujak.co" />
+        <span class="footer-brand-name">Rujak<span>.co</span></span>
+      </div>
+      <p class="footer-brand-desc">Menghadirkan keberagaman rasa rujak Indonesia dalam satu pengalaman yang segar, modern, dan berkualitas.</p>
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>Jam Operasional</h4>
+          <ul>
+            <li><i data-lucide="clock"></i> Sen–Jum: 10.00–20.00</li>
+            <li><i data-lucide="clock"></i> Sab–Min: 09.00–18.00</li>
+            <li><i data-lucide="map-pin"></i> Bekasi, Jawa Barat</li>
+          </ul>
+          <a href="https://wa.me/6289677161680" target="_blank" class="footer-wa">
+            <i data-lucide="message-circle"></i> Chat WhatsApp
+          </a>
+        </div>
+        <div class="footer-col">
+          <h4>Ikuti Kami</h4>
+          <div class="footer-social">
+            <a href="https://www.tiktok.com/@rujakco" target="_blank" aria-label="TikTok"><i data-lucide="music"></i></a>
+            <a href="https://www.instagram.com/rujakco.id" target="_blank" aria-label="Instagram"><i data-lucide="instagram"></i></a>
+            <a href="https://www.threads.net/@rujakco.id" target="_blank" aria-label="Threads"><i data-lucide="message-circle"></i></a>
+          </div>
+          <h4 style="margin-top: 14px;">Pesan di Aplikasi</h4>
+          <div class="footer-delivery">
+            <a href="#"><i data-lucide="utensils"></i> GrabFood</a>
+            <a href="#"><i data-lucide="utensils"></i> GoFood</a>
+            <a href="#"><i data-lucide="shopping-bag"></i> ShopeeFood</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 Rujak.co — Premium Rujak Experience. All rights reserved.
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- Bottom Bar -->
+<div id="bottom-bar">
+  <div class="cart-summary" id="cartSummary" tabindex="0" role="button" aria-label="Buka keranjang">
+    <span class="cart-items-preview" id="cartPreview">0 item</span>
+    <div class="cart-total-wrap">
+      <span id="discountLabel" class="cart-discount-label" style="display: none;">-Rp10.000</span>
+      <span class="cart-total" id="cartTotalDisplay">Rp0</span>
+    </div>
+  </div>
+  <button type="button" class="wa-btn" data-action="checkout">
+    <div class="wa-btn-left">
+      <span class="wa-btn-sub">Lanjutkan ke</span>
+      <span>WhatsApp Order</span>
+    </div>
+    <div class="wa-badge"><i data-lucide="message-circle" class="w-4 h-4"></i> Pesan</div>
+  </button>
+</div>
+
+<div id="toast" role="alert" aria-live="polite"></div>
+
+<!-- Product Modal -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal-content">
+    <button class="modal-close" id="modalClose" aria-label="Tutup">&times;</button>
+    <div class="modal-img" id="modalImg"></div>
+    <div id="modalBadge" class="modal-badge" style="display:none;"></div>
+    <h2 class="modal-title" id="modalTitle">Nama Produk</h2>
+    <p class="modal-desc" id="modalDesc">Deskripsi produk</p>
+    <div class="modal-detail-grid">
+      <span class="label">Wadah</span>
+      <span class="value" id="modalContainer">-</span>
+      <span class="label">Ukuran</span>
+      <span class="value" id="modalSize">-</span>
+      <span class="label">Sambal</span>
+      <span class="value" id="modalSambal">-</span>
+    </div>
+    <div id="modalBuahContainer">
+      <div style="font-size:13px; font-weight:600; color:var(--gray-500); text-transform:uppercase; letter-spacing:.03em; margin-bottom:4px;">Buah-buahan</div>
+      <div class="modal-buah-text" id="modalBuahText"></div>
+    </div>
+    <div class="modal-tags" id="modalTags"></div>
+
+    <div class="modal-spice-highlight" id="modalSpiceHighlight">
+      <i data-lucide="flame"></i>
+      <span class="spice-label">Level Pedas</span>
+      <span class="spice-value" id="modalSpiceLabel">3 - Pedas</span>
+    </div>
+
+    <div class="modal-spice-group">
+      <label for="spiceSelect">🌶️ Pilih Level</label>
+      <select id="spiceSelect">
+        <option value="1">1 - Mild</option>
+        <option value="2">2 - Sedang</option>
+        <option value="3" selected>3 - Pedas</option>
+        <option value="4">4 - Extra Pedas</option>
+        <option value="5">5 - Very Hot</option>
+      </select>
+    </div>
+
+    <div class="modal-price" id="modalPrice">Rp0</div>
+    <button class="modal-add" id="modalAdd">Tambah ke Keranjang</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     MINI CART MODAL DENGAN QRIS
+     ============================================================ -->
+<div class="modal-overlay" id="miniCartModal">
+  <div class="modal-content">
+    <button class="modal-close" id="miniCartClose" aria-label="Tutup">&times;</button>
+    <div style="font-size:20px; font-weight:800; margin-bottom:16px;">🛒 Keranjang</div>
+    
+    <!-- Daftar Item -->
+    <div id="miniCartList"></div>
+    
+    <!-- Subtotal & Ongkir -->
+    <div id="miniCartShipping" class="mini-cart-shipping" style="display:none;">
+      <span>Ongkir</span>
+      <span class="shipping-amount" id="miniCartShippingAmount">Rp0</span>
+    </div>
+    <div style="margin-top:4px; text-align:right; font-weight:700; font-size:18px; border-top:1px solid var(--gray-200); padding-top:12px; margin-bottom:20px;">
+      Total: <span id="miniCartFinalTotal">Rp0</span>
+    </div>
+
+    <!-- AREA PEMBAYARAN QRIS -->
+    <div style="background: var(--green-pale); border-radius: 14px; padding: 16px; text-align: center; border: 1px solid rgba(15, 77, 55, 0.1);">
+      
+      <!-- Langkah 1 -->
+      <p style="font-size: 14px; font-weight: 800; color: var(--green); margin-bottom: 12px;">Langkah 1: Bayar via QRIS</p>
+      
+      <!-- Gambar QRIS -->
+      <img src="images/qris-rujakco.jpg" alt="QRIS Rujak.co" style="width: 150px; height: 150px; border-radius: 10px; margin: 0 auto 12px; display: block; border: 1px solid rgba(15,77,55,0.1); object-fit: contain; background: white;">
+      
+      <!-- Tombol Unduh (WAJIB relative path) -->
+      <a href="images/qris-rujakco.jpg" download="QRIS-RujakCo.jpg" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: white; color: var(--green); padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 700; text-decoration: none; border: 1px solid var(--green); margin-bottom: 16px; transition: all 0.2s;">
+        <i data-lucide="download" class="w-4 h-4"></i> Unduh Gambar QRIS
+      </a>
+
+      <!-- Separator -->
+      <div style="border-top: 1px dashed rgba(15,77,55,0.2); padding-top: 16px; margin-top: 4px;">
+        
+        <!-- Langkah 2 -->
+        <p style="font-size: 14px; font-weight: 800; color: var(--gray-700); margin-bottom: 10px;">Langkah 2: Konfirmasi</p>
+        
+        <!-- Tombol Kirim Bukti ke WhatsApp -->
+        <button type="button" class="wa-btn" style="width: 100%; border-radius: 10px; padding: 14px; justify-content: center; gap: 8px;" onclick="handleCheckout()">
+          <i data-lucide="message-circle" class="w-5 h-5"></i> Kirim Bukti ke WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    'use strict';
+
+    /* ============================================================
+       DATA PRODUK
+       ============================================================ */
+    const PRODUCTS = [
+      {
+        id: 'p_m1',
+        name: 'Rujak Segar',
+        desc: 'Kombinasi buah pilihan dengan sambal original Rujak.co. Ringan, segar, dan cocok untuk semua penikmat rujak.',
+        price: 28000,
+        cat: 'classic',
+        tags: ['Pilihan Klasik', '5 Buah'],
+        badge: null,
+        badgeColor: null,
+        container: 'Thinwall 750ml (PP Food Grade)',
+        size: '150g Buah',
+        sambal: 'Sambal Original (80g / 1 Cup)',
+        buah: ['Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'],
+        flavor: 'Segar & Autentik',
+        spiceOptions: ['1 - Mild', '2 - Sedang', '3 - Pedas', '4 - Extra Pedas', '5 - Very Hot'],
+        defaultSpice: 3,
+        portion: '1 Orang',
+        thumbnail: 'https://raw.githubusercontent.com/rujakco/RujakCo/05bc3b89f5847c8184012f9d682ea7dca44503e6/assets/images/products/rujak-segar-thumb.webp',
+        image: 'https://raw.githubusercontent.com/rujakco/RujakCo/05bc3b89f5847c8184012f9d682ea7dca44503e6/assets/images/products/rujak-segar-hd.webp'
+      },
+      {
+        id: 'p_m2',
+        name: 'Rujak Serut',
+        desc: 'Buah diserut halus untuk pengalaman rasa yang lebih menyatu di setiap suapan.',
+        price: 26000,
+        cat: 'classic',
+        tags: ['Renyah', 'Serut'],
+        badge: null,
+        badgeColor: null,
+        container: 'Thinwall 750ml (PP Food Grade)',
+        size: '150g Buah',
+        sambal: 'Sambal Original (80g / 1 Cup)',
+        buah: ['Mangga Muda', 'Bengkoang', 'Nanas', 'Ubi Merah'],
+        flavor: 'Renyah Segar',
+        spiceOptions: ['1 - Mild', '2 - Sedang', '3 - Pedas', '4 - Extra Pedas', '5 - Very Hot'],
+        defaultSpice: 3,
+        portion: '1 Orang',
+        thumbnail: 'https://raw.githubusercontent.com/rujakco/RujakCo/1aba277cfcdafe2c53fd2667d6e72252f04dd397/assets/images/products/rujak-serut-thumb.webp',
+        image: 'https://raw.githubusercontent.com/rujakco/RujakCo/1aba277cfcdafe2c53fd2667d6e72252f04dd397/assets/images/products/rujak-serut-hd.webp'
+      },
+      {
+        id: 'p_m3',
+        name: 'Rujak Gaco',
+        desc: 'Enam buah pilihan dengan sambal mete premium yang kaya rasa dan menjadi favorit pelanggan.',
+        price: 40000,
+        cat: 'signature',
+        tags: ['Mete Premium', 'Bestseller'],
+        badge: 'Koleksi Favorit',
+        badgeColor: 'badge-red',
+        container: 'Thinwall 750ml (PP Food Grade)',
+        size: '150g Buah',
+        sambal: 'Sambal Mete Premium (80g / 1 Cup)',
+        buah: ['Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'],
+        flavor: 'Gurih Mete Premium',
+        spiceOptions: ['1 - Mild', '2 - Sedang', '3 - Pedas', '4 - Extra Pedas', '5 - Very Hot'],
+        defaultSpice: 3,
+        portion: '1 Orang',
+        thumbnail: 'https://raw.githubusercontent.com/rujakco/RujakCo/061bdf3fc4fb2188ea7e22fd8e36e3450b07cbbf/assets/images/products/rujak-gaco-thumb.webp',
+        image: 'https://raw.githubusercontent.com/rujakco/RujakCo/061bdf3fc4fb2188ea7e22fd8e36e3450b07cbbf/assets/images/products/rujak-gaco-hd.webp'
+      },
+      {
+        id: 'p_m4',
+        name: 'Rujak Rama',
+        desc: 'Porsi melimpah untuk dua hingga tiga orang dengan cita rasa khas Rujak.co.',
+        price: 48000,
+        cat: 'signature',
+        tags: ['Porsi Besar', 'Sharing'],
+        badge: 'Untuk Dibagi Bersama',
+        badgeColor: 'badge-red',
+        container: 'Thinwall Jumbo 1000ml (PP Food Grade)',
+        size: '250g Buah',
+        sambal: 'Sambal Mete Premium (130g / 2 Cup)',
+        buah: ['Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'],
+        flavor: 'Gurih Mete Extra Pedas',
+        spiceOptions: ['Extra Pedas'],
+        defaultSpice: 4,
+        portion: '2-3 Orang',
+        thumbnail: 'https://raw.githubusercontent.com/rujakco/RujakCo/34c9272edc1389f04f9785dc69a6d79c88ae0003/assets/images/products/rujak-rama-thumb.webp',
+        image: 'https://raw.githubusercontent.com/rujakco/RujakCo/31c2daed2fcb35d4e8ab7067a60cf799deeb9e71/assets/images/products/rujak-rama-hd.webp'
+      },
+      {
+        id: 'p_m5',
+        name: 'Rujak Mahkota',
+        desc: 'Koleksi premium dengan Shine Muscat dan buah pilihan terbaik untuk momen istimewa.',
+        price: 85000,
+        cat: 'reserve',
+        tags: ['Eksklusif', 'Shine Muscat'],
+        badge: 'Reserve Collection',
+        badgeColor: 'badge-gold',
+        container: 'Thinwall Jumbo 1000ml + Paper Bag',
+        size: '165g Buah',
+        sambal: 'Sambal Mete Premium (85g / 2 Cup)',
+        buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'],
+        flavor: 'Eksklusif & Premium',
+        spiceOptions: ['Sesuai Selera'],
+        defaultSpice: 3,
+        portion: '1-2 Orang',
+        thumbnail: 'https://raw.githubusercontent.com/rujakco/RujakCo/34c9272edc1389f04f9785dc69a6d79c88ae0003/assets/images/products/rujak-mahkota-thumb.webp',
+        image: 'https://raw.githubusercontent.com/rujakco/RujakCo/34c9272edc1389f04f9785dc69a6d79c88ae0003/assets/images/products/rujak-mahkota-hd.webp'
+      },
+      {
+        id: 'p_m6',
+        name: 'Tampah Nusantara',
+        desc: 'Sajian kebersamaan dalam tampah bambu dengan koleksi buah pilihan dan sambal khas Rujak.co.',
+        price: 200000,
+        cat: 'reserve',
+        tags: ['Tampah', 'Pre-Order'],
+        badge: 'Untuk 8-10 Orang',
+        badgeColor: 'badge-gold',
+        container: 'Tampah Bambu Ø40cm + Kardus + Wrap',
+        size: '400g Buah',
+        sambal: 'Varian Original & Mete (200g / 4 Cup)',
+        buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong', 'Ubi Merah'],
+        flavor: 'Kemegahan Berbagai Rasa',
+        spiceOptions: ['Sesuai Selera'],
+        defaultSpice: 3,
+        portion: '8-10 Orang',
+        thumbnail: 'https://raw.githubusercontent.com/rujakco/RujakCo/34c9272edc1389f04f9785dc69a6d79c88ae0003/assets/images/products/tampah-nusantara-thumb.webp',
+        image: 'https://raw.githubusercontent.com/rujakco/RujakCo/34c9272edc1389f04f9785dc69a6d79c88ae0003/assets/images/products/tampah-nusantara-hd.webp'
+      }
+    ];
+
+    const ADDONS = [
+      { id: 'a_sambal1', name: 'Sambal Original', price: 8000, icon: 'flame', iconColor: 'text-red-500', desc: 'Warisan rasa klasik.' },
+      { id: 'a_sambal2', name: 'Sambal Mete Premium', price: 12000, icon: 'flame', iconColor: 'text-red-600', desc: 'Lebih gurih dan kaya rasa.' },
+      { id: 'a_extra_jambu', name: 'Extra Jambu Kristal', price: 10000, icon: 'apple', iconColor: 'text-green-500', desc: 'Tambahan jambu kristal segar' },
+      { id: 'a_extra_muscat', name: 'Extra Shine Muscat', price: 15000, icon: 'grape', iconColor: 'text-purple-500', desc: 'Tambahan anggur Shine Muscat impor' }
+    ];
+
+    const SYSTEM = {
+      DISCOUNT_THRESHOLD: 100000,
+      DISCOUNT_AMOUNT: 10000,
+      WA_NUMBER: '6289677161680',
+      TOAST_DURATION: 3000,
+      MAX_DISTANCE: 50
+    };
+
+    const state = {
+      cart: {},
+      activeFilter: 'all',
+      searchQuery: '',
+      isLoaded: false,
+      userLocation: null,
+      userDistance: null,
+      isPriority: false
+    };
+
+    /* ============================================================
+       SHIPPING CALCULATOR
+       ============================================================ */
+    function calculateShipping(distance, isPriority) {
+      if (distance === null || distance === undefined || isNaN(distance)) {
+        return { cost: 0, label: 'Tidak diketahui', distance: distance };
+      }
+      
+      const roundedDistance = Math.ceil(distance);
+      
+      if (roundedDistance > SYSTEM.MAX_DISTANCE) {
+        return { cost: Infinity, label: 'Luar jangkauan', distance: roundedDistance };
+      }
+      
+      if (roundedDistance <= 3) {
+        return { cost: 10000, label: 'Reguler (0-3 km)', distance: roundedDistance };
+      }
+      
+      let baseCost, extraPerKm, label;
+      if (isPriority) {
+        baseCost = 25000;
+        extraPerKm = 2500;
+        label = 'Prioritas';
+      } else {
+        baseCost = 15000;
+        extraPerKm = 1500;
+        label = 'Reguler';
+      }
+      
+      if (roundedDistance < 10) {
+        return { cost: baseCost, label: `${label} (${roundedDistance} km)`, distance: roundedDistance };
+      }
+      
+      const extraKm = roundedDistance - 10;
+      const total = baseCost + (extraKm * extraPerKm);
+      return { cost: total, label: `${label} (${roundedDistance} km)`, distance: roundedDistance };
+    }
+
+    /* ============================================================
+       LOCATION DETECTION
+       ============================================================ */
+    function getLocationFallback() {
+      return new Promise((resolve) => {
+        fetch('https://ipapi.co/json/')
+          .then(res => res.json())
+          .then(data => {
+            const city = data.city || data.region || 'Lokasi';
+            let distance = 10;
+            const cityLower = city.toLowerCase();
+            if (cityLower.includes('bekasi')) distance = 2;
+            else if (cityLower.includes('jakarta')) distance = 15;
+            else if (cityLower.includes('depok')) distance = 20;
+            else if (cityLower.includes('tangerang')) distance = 25;
+            else if (cityLower.includes('bogor')) distance = 30;
+            resolve({ city, distance });
+          })
+          .catch(() => {
+            resolve({ city: 'Bekasi', distance: 2 });
+          });
+      });
+    }
+
+    function detectLocation() {
+      const locationDisplay = document.getElementById('locationDisplay');
+      const shippingCost = document.getElementById('shippingCost');
+      const shippingDistance = document.getElementById('shippingDistance');
+      const outOfRange = document.getElementById('outOfRange');
+      
+      const STORE_LAT = -6.2333;
+      const STORE_LNG = 107.0;
+      
+      function updateLocationUI(city, distance, isPriority) {
+        state.userDistance = distance;
+        const result = calculateShipping(distance, isPriority);
+        const isOutOfRange = distance > SYSTEM.MAX_DISTANCE;
+        
+        locationDisplay.textContent = city + ' ▾';
+        shippingDistance.textContent = `~${Math.ceil(distance)} km`;
+        
+        if (isOutOfRange) {
+          shippingCost.textContent = '❌';
+          shippingCost.style.color = 'var(--red)';
+          outOfRange.style.display = 'block';
+        } else {
+          shippingCost.textContent = 'Rp' + result.cost.toLocaleString('id-ID');
+          shippingCost.style.color = result.cost === 0 ? 'var(--green)' : 'var(--red)';
+          outOfRange.style.display = 'none';
+        }
+        
+        if (document.getElementById('miniCartModal').classList.contains('active')) {
+          renderMiniCart();
+        }
+      }
+      
+      function getDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+      }
+      
+      shippingCost.textContent = '⏳';
+      shippingDistance.textContent = '';
+      
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function(pos) {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+            const distance = getDistance(lat, lng, STORE_LAT, STORE_LNG);
+            
+            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=10&accept-language=id`)
+              .then(res => res.json())
+              .then(data => {
+                const city = data.address?.city || data.address?.town || data.address?.village || 'Lokasi Anda';
+                updateLocationUI(city, distance, state.isPriority);
+              })
+              .catch(() => {
+                updateLocationUI('Lokasi Anda', distance, state.isPriority);
+              });
+          },
+          function(err) {
+            getLocationFallback().then(({ city, distance }) => {
+              updateLocationUI(city, distance, state.isPriority);
+            });
+          },
+          { enableHighAccuracy: true, timeout: 10000 }
+        );
+      } else {
+        getLocationFallback().then(({ city, distance }) => {
+          updateLocationUI(city, distance, state.isPriority);
+        });
+      }
+    }
+
+    /* ============================================================
+       UTILITIES
+       ============================================================ */
+    function fmt(num) { return 'Rp' + num.toLocaleString('id-ID'); }
+
+    function loadCart() {
+      try {
+        const saved = localStorage.getItem('rujak_cart');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (typeof parsed === 'object' && parsed !== null) {
+            state.cart = parsed;
+            return;
+          }
+        }
+      } catch (_) {}
+      state.cart = {};
+    }
+
+    function saveCart() {
+      try {
+        localStorage.setItem('rujak_cart', JSON.stringify(state.cart));
+      } catch (_) {}
+    }
+
+    function getItemById(id) {
+      return PRODUCTS.find(p => p.id === id) || ADDONS.find(a => a.id === id);
+    }
+
+    function debounce(fn, delay) {
+      let timer;
+      return function(...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delay);
+      };
+    }
+
+    /* ============================================================
+       RENDER FUNCTIONS
+       ============================================================ */
+    function renderMenu() {
+      const container = document.getElementById('menuList');
+      const empty = document.getElementById('emptyState');
+      const skeleton = document.getElementById('skeletonContainer');
+
+      skeleton.style.display = 'none';
+      container.style.display = 'block';
+
+      const filtered = PRODUCTS.filter(p => {
+        const matchCat = (state.activeFilter === 'all' || p.cat === state.activeFilter);
+        const matchSearch = p.name.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
+                            p.desc.toLowerCase().includes(state.searchQuery.toLowerCase());
+        return matchCat && matchSearch;
+      });
+
+      if (filtered.length === 0 && state.activeFilter !== 'addon') {
+        empty.style.display = 'block';
+        container.innerHTML = '';
+        return;
+      }
+      empty.style.display = 'none';
+
+      let html = '';
+      filtered.forEach(p => {
+        const entry = state.cart[p.id];
+        const qty = entry ? entry.qty : 0;
+        const control = qty === 0
+          ? `<button type="button" class="add-btn" data-action="open-modal" data-id="${p.id}" aria-label="Tambah ${p.name}">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+             </button>`
+          : `<div class="qty-control">
+              <button type="button" class="qty-btn" data-action="decrease" data-id="${p.id}">−</button>
+              <span class="qty-num">${qty}</span>
+              <button type="button" class="qty-btn" data-action="increase" data-id="${p.id}">+</button>
+             </div>`;
+
+        const imgFallback = p.name.substring(0, 20);
+
+        html += `
+          <div class="menu-item" data-id="${p.id}" tabindex="0" role="button" aria-label="Detail ${p.name}">
+            <div class="item-img-wrap">
+              ${p.badge ? `<div class="item-badge ${p.badgeColor}">${p.badge}</div>` : ''}
+              <img src="${p.thumbnail}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; this.nextElementSibling.textContent='${imgFallback}'" />
+              <div class="fallback" style="display:none;">${imgFallback}</div>
+            </div>
+            <div class="item-body">
+              <div class="item-name">${p.name}</div>
+              <div class="item-flavor">${p.flavor}</div>
+              <div class="item-spice">${p.spiceOptions ? p.spiceOptions.join(' / ') : 'Level 1-5'}</div>
+              <p class="item-desc">${p.desc}</p>
+              <div class="item-buah-chips">
+                ${(p.buah || []).slice(0, 4).map(b => `<span class="item-buah-chip">${b}</span>`).join('')}
+                ${(p.buah || []).length > 4 ? `<span class="item-buah-chip">+${(p.buah || []).length - 4}</span>` : ''}
+              </div>
+              <div class="item-footer">
+                <div>
+                  <span class="item-price">${fmt(p.price)}</span>
+                  <span class="item-portion"> · ${p.portion}</span>
+                </div>
+                ${control}
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function renderAddons() {
+      const container = document.getElementById('addonList');
+      const filteredAddons = ADDONS.filter(a => 
+        a.name.toLowerCase().includes(state.searchQuery.toLowerCase()) || 
+        a.desc.toLowerCase().includes(state.searchQuery.toLowerCase())
+      );
+      let html = '';
+      filteredAddons.forEach(a => {
+        const entry = state.cart[a.id];
+        const qty = entry ? entry.qty : 0;
+        const control = qty === 0
+          ? `<button type="button" class="addon-add" data-action="add" data-id="${a.id}" aria-label="Tambah ${a.name}">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+             </button>`
+          : `<div class="qty-control">
+              <button type="button" class="qty-btn" data-action="decrease" data-id="${a.id}">−</button>
+              <span class="qty-num">${qty}</span>
+              <button type="button" class="qty-btn" data-action="increase" data-id="${a.id}">+</button>
+             </div>`;
+        html += `
+          <div class="addon-card">
+            <div class="addon-icon ${a.iconColor}"><i data-lucide="${a.icon}" class="w-6 h-6"></i></div>
+            <div class="addon-name">${a.name}</div>
+            <div class="addon-desc">${a.desc}</div>
+            <div class="addon-footer">
+              <span class="addon-price">${fmt(a.price)}</span>
+              ${control}
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function renderCart() {
+      const keys = Object.keys(state.cart);
+      let totalQty = 0, subtotal = 0;
+      keys.forEach(id => {
+        const entry = state.cart[id];
+        const item = getItemById(id);
+        if (item && entry) {
+          totalQty += entry.qty;
+          subtotal += (item.price * entry.qty);
+        } else {
+          delete state.cart[id];
+        }
+      });
+      const bar = document.getElementById('bottom-bar');
+      const preview = document.getElementById('cartPreview');
+      const totalEl = document.getElementById('cartTotalDisplay');
+      const discountLabel = document.getElementById('discountLabel');
+      if (totalQty > 0) {
+        bar.classList.add('visible');
+        preview.textContent = `${totalQty} item${totalQty > 1 ? 's' : ''}`;
+        if (subtotal >= SYSTEM.DISCOUNT_THRESHOLD) {
+          discountLabel.style.display = 'inline-block';
+          totalEl.innerHTML = `<span style="text-decoration: line-through; font-size: 11px; color: #9CA3AF; margin-right: 4px;">${fmt(subtotal)}</span>${fmt(subtotal - SYSTEM.DISCOUNT_AMOUNT)}`;
+        } else {
+          discountLabel.style.display = 'none';
+          totalEl.textContent = fmt(subtotal);
+        }
+      } else {
+        bar.classList.remove('visible');
+      }
+      saveCart();
+    }
+
+    function renderMiniCart() {
+      const container = document.getElementById('miniCartList');
+      const shippingEl = document.getElementById('miniCartShipping');
+      const shippingAmount = document.getElementById('miniCartShippingAmount');
+      const finalTotalEl = document.getElementById('miniCartFinalTotal');
+      
+      const keys = Object.keys(state.cart);
+      let subtotal = 0, html = '';
+      
+      if (keys.length === 0) {
+        html = '<p style="color:var(--gray-500); text-align:center; padding:20px 0;">Keranjang kosong</p>';
+        shippingEl.style.display = 'none';
+        finalTotalEl.textContent = 'Rp0';
+      } else {
+        keys.forEach(id => {
+          const entry = state.cart[id];
+          const item = getItemById(id);
+          if (!item || !entry) return;
+          subtotal += (item.price * entry.qty);
+          const spiceText = entry.spice ? ` (Level ${entry.spice})` : '';
+          html += `
+            <div class="mini-cart-item">
+              <div class="mini-cart-info">
+                <div class="mini-cart-name">${item.name}${spiceText}</div>
+                <div class="mini-cart-detail">${fmt(item.price)}</div>
+              </div>
+              <div class="mini-cart-qty">
+                <button data-action="decrease" data-id="${id}">−</button>
+                <span>${entry.qty}</span>
+                <button data-action="increase" data-id="${id}">+</button>
+                <button class="mini-cart-remove" data-action="remove" data-id="${id}" aria-label="Hapus ${item.name}">&times;</button>
+              </div>
+            </div>
+          `;
+        });
+        
+        let shippingCost = 0;
+        if (state.userDistance !== null && state.userDistance <= SYSTEM.MAX_DISTANCE) {
+          const result = calculateShipping(state.userDistance, state.isPriority);
+          shippingCost = result.cost;
+        }
+        
+        const discount = (subtotal >= SYSTEM.DISCOUNT_THRESHOLD) ? SYSTEM.DISCOUNT_AMOUNT : 0;
+        const total = subtotal - discount + shippingCost;
+        
+        shippingEl.style.display = 'flex';
+        shippingAmount.textContent = fmt(shippingCost);
+        finalTotalEl.textContent = fmt(total);
+      }
+      
+      container.innerHTML = html;
+      if (typeof lucide !== 'undefined' && lucide.createIcons) {
+        lucide.createIcons();
+      }
+    }
+
+    function renderAll() {
+      renderMenu();
+      renderAddons();
+      renderCart();
+      if (document.getElementById('miniCartModal').classList.contains('active')) {
+        renderMiniCart();
+      }
+      if (typeof lucide !== 'undefined' && lucide.createIcons) {
+        lucide.createIcons();
+      }
+      state.isLoaded = true;
+    }
+
+    /* ============================================================
+       MODAL PRODUK
+       ============================================================ */
+    const productModal = document.getElementById('productModal');
+    let currentProductId = null;
+
+    function openProductModal(productId) {
+      if (!productId) return;
+      const product = PRODUCTS.find(p => p.id === productId);
+      if (!product) return;
+      currentProductId = productId;
+
+      const imgContainer = document.getElementById('modalImg');
+      const fallbackText = product.name.substring(0, 20);
+      imgContainer.innerHTML = `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size:14px; font-weight:600; color:var(--gray-500);\'>${fallbackText}</span>';" />`;
+
+      const badgeEl = document.getElementById('modalBadge');
+      if (product.badge) {
+        badgeEl.style.display = 'inline-block';
+        badgeEl.textContent = product.badge;
+        badgeEl.className = `modal-badge ${product.badgeColor}`;
+      } else {
+        badgeEl.style.display = 'none';
+      }
+      document.getElementById('modalTitle').textContent = product.name;
+      document.getElementById('modalDesc').textContent = product.desc;
+      document.getElementById('modalContainer').textContent = product.container || '-';
+      document.getElementById('modalSize').textContent = product.size || '-';
+      document.getElementById('modalSambal').textContent = product.sambal || '-';
+
+      const buahText = (product.buah || []).join(', ');
+      document.getElementById('modalBuahText').textContent = buahText;
+
+      const tags = document.getElementById('modalTags');
+      tags.innerHTML = (product.tags || []).map(t => `<span class="modal-tag">${t}</span>`).join('');
+
+      document.getElementById('modalPrice').textContent = fmt(product.price);
+      document.getElementById('modalAdd').textContent = `Tambah ke Keranjang (${fmt(product.price)})`;
+      document.getElementById('modalAdd').dataset.id = product.id;
+
+      const spiceSelect = document.getElementById('spiceSelect');
+      const options = product.spiceOptions || ['1 - Mild', '2 - Sedang', '3 - Pedas', '4 - Extra Pedas', '5 - Very Hot'];
+      spiceSelect.innerHTML = '';
+      options.forEach(opt => {
+        const val = opt.match(/^\d+/);
+        const value = val ? parseInt(val[0], 10) : 3;
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = opt;
+        if (value === (product.defaultSpice || 3)) option.selected = true;
+        spiceSelect.appendChild(option);
+      });
+
+      const defaultVal = product.defaultSpice || 3;
+      updateSpiceHighlight(defaultVal);
+      spiceSelect.onchange = function() {
+        updateSpiceHighlight(parseInt(this.value, 10));
+      };
+
+      productModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) {
+        lucide.createIcons();
+      }
+    }
+
+    function updateSpiceHighlight(level) {
+      const label = document.getElementById('modalSpiceLabel');
+      const names = ['Mild', 'Sedang', 'Pedas', 'Extra Pedas', 'Very Hot'];
+      const name = names[level-1] || 'Pedas';
+      label.textContent = `${level} - ${name}`;
+    }
+
+    function closeProductModal() {
+      productModal.classList.remove('active');
+      document.body.style.overflow = '';
+      currentProductId = null;
+    }
+
+    /* ============================================================
+       MINI CART MODAL
+       ============================================================ */
+    const miniCartModal = document.getElementById('miniCartModal');
+    function openMiniCart() {
+      renderMiniCart();
+      miniCartModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMiniCart() {
+      miniCartModal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    /* ============================================================
+       EVENT HANDLING
+       ============================================================ */
+    document.addEventListener('click', function(e) {
+      const actionBtn = e.target.closest('[data-action]');
+      if (actionBtn) {
+        const action = actionBtn.dataset.action;
+        const id = actionBtn.dataset.id;
+        if (action === 'open-modal') {
+          if (id) openProductModal(id);
+          return;
+        }
+        if (action === 'add' || action === 'increase') {
+          if (id) {
+            const isProduct = PRODUCTS.some(p => p.id === id);
+            if (isProduct) {
+              openProductModal(id);
+              return;
+            }
+            const entry = state.cart[id] || { qty: 0 };
+            entry.qty += 1;
+            state.cart[id] = entry;
+            renderAll();
+            if (action === 'add') showToast('Berhasil ditambahkan ke keranjang ✓');
+          }
+          return;
+        }
+        if (action === 'decrease') {
+          if (id && state.cart[id]) {
+            const entry = state.cart[id];
+            entry.qty -= 1;
+            if (entry.qty <= 0) delete state.cart[id];
+            renderAll();
+            if (miniCartModal.classList.contains('active')) renderMiniCart();
+          }
+          return;
+        }
+        if (action === 'remove') {
+          if (id && state.cart[id]) {
+            delete state.cart[id];
+            renderAll();
+            if (miniCartModal.classList.contains('active')) renderMiniCart();
+            showToast('Item dihapus');
+          }
+          return;
+        }
+        if (action === 'checkout') {
+          handleCheckout();
+          return;
+        }
+        if (action === 'toast') {
+          showToast(actionBtn.dataset.msg);
+          return;
+        }
+      }
+
+      const menuItem = e.target.closest('.menu-item');
+      if (menuItem) {
+        const id = menuItem.dataset.id;
+        if (id && !e.target.closest('.add-btn')) {
+          e.preventDefault();
+          openProductModal(id);
+          return;
+        }
+      }
+
+      const catBtn = e.target.closest('.cat-pill');
+      if (catBtn) {
+        const cat = catBtn.dataset.cat;
+        if (cat) {
+          document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+          catBtn.classList.add('active');
+          state.activeFilter = cat;
+          renderAll();
+          return;
+        }
+      }
+
+      const faqToggle = e.target.closest('[data-toggle="faq"]');
+      if (faqToggle) {
+        const item = faqToggle.closest('.faq-item');
+        if (item) item.classList.toggle('open');
+        return;
+      }
+
+      if (e.target.closest('#modalClose') || e.target === productModal) {
+        closeProductModal();
+        return;
+      }
+      if (e.target.closest('#miniCartClose') || e.target === miniCartModal) {
+        closeMiniCart();
+        return;
+      }
+      if (e.target.closest('.cart-summary')) {
+        openMiniCart();
+        return;
+      }
+    });
+
+    document.getElementById('modalAdd').addEventListener('click', function() {
+      const id = this.dataset.id;
+      if (id) {
+        const spice = parseInt(document.getElementById('spiceSelect').value, 10) || 3;
+        const entry = state.cart[id] || { qty: 0, spice: spice };
+        entry.qty += 1;
+        entry.spice = spice;
+        state.cart[id] = entry;
+        renderAll();
+        showToast('Berhasil ditambahkan ke keranjang ✓');
+        closeProductModal();
+      }
+    });
+
+    document.getElementById('priorityToggle').addEventListener('change', function() {
+      state.isPriority = this.checked;
+      if (state.userDistance !== null) {
+        const result = calculateShipping(state.userDistance, state.isPriority);
+        const shippingCost = document.getElementById('shippingCost');
+        const shippingDistance = document.getElementById('shippingDistance');
+        const outOfRange = document.getElementById('outOfRange');
+        
+        shippingDistance.textContent = `~${Math.ceil(state.userDistance)} km`;
+        
+        if (state.userDistance > SYSTEM.MAX_DISTANCE) {
+          shippingCost.textContent = '❌';
+          shippingCost.style.color = 'var(--red)';
+          outOfRange.style.display = 'block';
+        } else {
+          shippingCost.textContent = 'Rp' + result.cost.toLocaleString('id-ID');
+          shippingCost.style.color = result.cost === 0 ? 'var(--green)' : 'var(--red)';
+          outOfRange.style.display = 'none';
+        }
+        
+        if (document.getElementById('miniCartModal').classList.contains('active')) {
+          renderMiniCart();
+        }
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        if (productModal.classList.contains('active')) closeProductModal();
+        if (miniCartModal.classList.contains('active')) closeMiniCart();
+      }
+    });
+
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+      const debouncedSearch = debounce(function() {
+        state.searchQuery = searchInput.value;
+        renderAll();
+      }, 300);
+      searchInput.addEventListener('input', debouncedSearch);
+    }
+
+    /* ============================================================
+       CHECKOUT (handleCheckout)
+       ============================================================ */
+    function handleCheckout() {
+      const keys = Object.keys(state.cart);
+      if (keys.length === 0) {
+        window.open(`https://wa.me/${SYSTEM.WA_NUMBER}?text=Halo%20Rujak.co!%20Saya%20tertarik%20memesan%20rujak.`, '_blank');
+        return;
+      }
+      
+      if (state.userDistance !== null && state.userDistance > SYSTEM.MAX_DISTANCE) {
+        showToast('Maaf, pengiriman hanya tersedia untuk wilayah Jabodetabek (maks. 50 km)');
+        return;
+      }
+      
+      let msg = 'Halo Rujak.co! Saya ingin memesan:\n\n';
+      let subtotal = 0;
+      keys.forEach(id => {
+        const entry = state.cart[id];
+        const item = getItemById(id);
+        if (item && entry) {
+          const spiceText = entry.spice ? ` (Level ${entry.spice})` : '';
+          msg += `• ${item.name}${spiceText} (x${entry.qty}) — ${fmt(item.price * entry.qty)}\n`;
+          subtotal += (item.price * entry.qty);
+        }
+      });
+      
+      let shippingCost = 0;
+      let shippingLabel = 'Tidak diketahui';
+      if (state.userDistance !== null) {
+        const result = calculateShipping(state.userDistance, state.isPriority);
+        shippingCost = result.cost;
+        shippingLabel = result.label;
+      }
+      
+      const discount = (subtotal >= SYSTEM.DISCOUNT_THRESHOLD) ? SYSTEM.DISCOUNT_AMOUNT : 0;
+      const total = subtotal - discount + shippingCost;
+      
+      msg += `\nOngkir: ${fmt(shippingCost)} (${shippingLabel})`;
+      msg += `\nSubtotal: ${fmt(subtotal)}`;
+      if (discount > 0) {
+        msg += `\nPotongan Khusus: -${fmt(discount)}`;
+      }
+      msg += `\n*Total Akhir: ${fmt(total)}*\n\n`;
+      msg += `*Saya sudah transfer via QRIS, ini buktinya:*`;
+      msg += `\n*(sertakan foto bukti transfer)*`;
+
+      const url = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+      const newWindow = window.open(url, '_blank');
+      if (!newWindow || newWindow.closed) {
+        alert('Mohon izinkan popup untuk membuka WhatsApp, atau klik link berikut:\n' + url);
+      }
+    }
+
+    /* ============================================================
+       TOAST
+       ============================================================ */
+    let toastTimer = null;
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.remove('show');
+      void el.offsetWidth;
+      el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        el.classList.remove('show');
+      }, SYSTEM.TOAST_DURATION);
+    }
+
+    /* ============================================================
+       SCROLL SHADOW
+       ============================================================ */
+    window.addEventListener('scroll', function() {
+      document.getElementById('header').classList.toggle('shadowed', window.scrollY > 4);
+    });
+
+    /* ============================================================
+       INIT
+       ============================================================ */
+    function init() {
+      loadCart();
+      renderAll();
+      detectLocation();
+      if (typeof lucide !== 'undefined' && lucide.createIcons) {
+        lucide.createIcons();
+      } else {
+        const checkInterval = setInterval(() => {
+          if (typeof lucide !== 'undefined' && lucide.createIcons) {
+            lucide.createIcons();
+            clearInterval(checkInterval);
+          }
+        }, 100);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+  })();
+</script>
+</body>
+</html>
