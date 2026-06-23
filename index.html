@@ -17,7 +17,6 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="style.css" />
-  
   <script defer src="https://unpkg.com/lucide@latest"></script>
   <script defer src="app.js"></script>
 </head>
@@ -149,7 +148,6 @@
   <div id="floatingCartBtn" aria-label="Buka keranjang"><i data-lucide="shopping-bag" style="width: 24px; height: 24px;"></i><span class="badge-cart" id="floatingBadge">0</span></div>
   <div id="toast" role="alert" aria-live="polite"></div>
 
-  <!-- Modals (product, mini cart, payment) – tetap sama seperti sebelumnya -->
   <div class="modal-overlay" id="productModal">
     <div class="modal-content"><div class="modal-header"><span class="modal-header-title">Detail Produk</span><button class="modal-close" id="modalClose" aria-label="Tutup">&times;</button></div>
       <div class="modal-body" id="modalBody"><div class="modal-img" id="modalImg"></div><div class="modal-title-wrap"><h2 class="modal-title" id="modalTitle">Nama Produk</h2><span class="modal-badge-eyebrow" id="modalBadge" style="display:none;">Badge</span></div><p class="modal-desc" id="modalDesc">Deskripsi produk</p><div class="modal-detail-grid"><div class="detail-row"><span class="label">Wadah</span><span class="value" id="modalContainer">-</span></div><div class="detail-row"><span class="label">Ukuran</span><span class="value" id="modalSize">-</span></div><div class="detail-row"><span class="label">Sambal</span><span class="value" id="modalSambal">-</span></div></div><div id="modalBuahContainer"><div style="font-size:12px; font-weight:600; color:var(--gray-500); text-transform:uppercase; letter-spacing:.03em; margin-bottom:2px;">Buah-buahan</div><div class="modal-buah-text" id="modalBuahText"></div></div><div class="modal-tags" id="modalTags"></div><div class="spice-row"><span class="spice-icon"><i data-lucide="flame"></i></span><span class="spice-label">Level Pedas</span><span class="spice-value" id="modalSpiceLabel">3 - Pedas</span><select id="spiceSelect"><option value="1">1 - Mild</option><option value="2">2 - Sedang</option><option value="3" selected>3 - Pedas</option><option value="4">4 - Extra Pedas</option><option value="5">5 - Very Hot</option></select></div></div>
