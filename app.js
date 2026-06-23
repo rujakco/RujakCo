@@ -267,36 +267,11 @@
     try { const savedMinimize = localStorage.getItem('rujak_cart_minimized'); if (savedMinimize !== null) state.isCartMinimized = savedMinimize === 'true'; } catch (_) {}
     renderAll(); detectLocation(); updateClearButton(); updateFloatingButton();
 
-    // === HEADER SCROLL BEHAVIOR ===
-    let lastScrollY = window.scrollY;
-    const header = document.getElementById('header');
-    const SHOW_HEADER_OFFSET = 100;
-
+    // Header shadow on scroll (no hide)
     window.addEventListener('scroll', () => {
-      const currentScrollY = window.scrollY;
-      header.classList.toggle('shadowed', currentScrollY > 4);
-
-      if (currentScrollY <= 0) {
-        header.classList.remove('header-hidden');
-        lastScrollY = currentScrollY;
-        return;
-      }
-
-      if (currentScrollY < SHOW_HEADER_OFFSET) {
-        header.classList.remove('header-hidden');
-        lastScrollY = currentScrollY;
-        return;
-      }
-
-      if (currentScrollY > lastScrollY) {
-        header.classList.add('header-hidden');
-      } else if (currentScrollY < lastScrollY) {
-        header.classList.remove('header-hidden');
-      }
-
-      lastScrollY = currentScrollY;
+      const header = document.getElementById('header');
+      if (header) header.classList.toggle('shadowed', window.scrollY > 4);
     });
-    // === AKHIR HEADER SCROLL BEHAVIOR ===
 
     if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
     else { const int = setInterval(() => { if (typeof lucide !== 'undefined' && lucide.createIcons) { lucide.createIcons(); clearInterval(int); } }, 100); }
