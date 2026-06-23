@@ -270,34 +270,29 @@
     // === HEADER SCROLL BEHAVIOR (DIPERBAIKI) ===
     let lastScrollY = window.scrollY;
     const header = document.getElementById('header');
-    const SHOW_HEADER_OFFSET = 100; // jarak minimum sebelum header bisa sembunyi
+    const SHOW_HEADER_OFFSET = 100;
 
     window.addEventListener('scroll', () => {
       const currentScrollY = window.scrollY;
-
-      // Bayangan hanya muncul saat digulir
       header.classList.toggle('shadowed', currentScrollY > 4);
 
-      // Selalu tampilkan header jika di bagian paling atas halaman
+      // Jangan sembunyikan jika di paling atas
       if (currentScrollY <= 0) {
         header.classList.remove('header-hidden');
         lastScrollY = currentScrollY;
         return;
       }
 
-      // Jangan sembunyikan header jika scroll belum melewati SHOW_HEADER_OFFSET
+      // Jangan sembunyikan jika scroll belum melewati offset
       if (currentScrollY < SHOW_HEADER_OFFSET) {
         header.classList.remove('header-hidden');
         lastScrollY = currentScrollY;
         return;
       }
 
-      // Scroll ke bawah → sembunyikan header
       if (currentScrollY > lastScrollY) {
         header.classList.add('header-hidden');
-      }
-      // Scroll ke atas → tampilkan header
-      else if (currentScrollY < lastScrollY) {
+      } else if (currentScrollY < lastScrollY) {
         header.classList.remove('header-hidden');
       }
 
