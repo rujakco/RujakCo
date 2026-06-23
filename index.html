@@ -157,7 +157,40 @@
 
   <div class="modal-overlay" id="miniCartModal">
     <div class="modal-content"><div class="modal-header"><span class="modal-header-title">🛒 Keranjang</span><div class="modal-header-actions"><button class="clear-cart-btn" id="clearCartBtn" aria-label="Kosongkan keranjang"><i data-lucide="trash" class="w-4 h-4"></i> Kosongkan</button><button class="modal-close" id="miniCartClose" aria-label="Tutup">&times;</button></div></div>
-      <div class="modal-body"><div id="miniCartList"></div><div style="margin-top: 12px; margin-bottom: 12px;"><label style="font-size:12px; font-weight:700; color:var(--gray-700);">Catatan Pesanan (Opsional)</label><textarea id="orderNotes" placeholder="Contoh: Sambal dipisah, untuk kado..." style="width:100%; border:1px solid var(--gray-200); border-radius:10px; padding:10px; font-size:13px; font-family:inherit; margin-top:4px; outline:none; resize:none;" rows="2"></textarea></div><div id="miniCartShipping" class="mini-cart-shipping" style="display:none;"><span class="shipping-amount" id="miniCartShippingAmount">Rp0</span><div class="shipping-toggle"><input type="checkbox" id="priorityToggleMini" /><label for="priorityToggleMini" class="toggle-label"><i data-lucide="rocket"></i><span class="badge-priority">Prioritas</span></label></div></div><div class="mini-cart-total-final"><span>Total</span><span id="miniCartFinalTotal">Rp0</span></div><button type="button" class="wa-btn" id="btnOpenPayment" style="margin-top: 16px;">Bayar Via QRIS</button></div>
+      <div class="modal-body">
+        <div id="miniCartList"></div>
+
+        <!-- Form Pengiriman -->
+        <div class="shipping-form">
+          <label>Nama Penerima</label>
+          <input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name" />
+          <label>Nomor HP</label>
+          <input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" autocomplete="tel" />
+          <label>Alamat Pengiriman</label>
+          <textarea id="customerAddress" placeholder="Alamat lengkap (jalan, kecamatan, kota)" rows="2" autocomplete="street-address"></textarea>
+        </div>
+
+        <div style="margin-top: 12px; margin-bottom: 12px;">
+          <label style="font-size:12px; font-weight:700; color:var(--gray-700);">Catatan Pesanan (Opsional)</label>
+          <textarea id="orderNotes" placeholder="Contoh: Sambal dipisah, untuk kado..." style="width:100%; border:1px solid var(--gray-200); border-radius:10px; padding:10px; font-size:13px; font-family:inherit; margin-top:4px; outline:none; resize:none;" rows="2"></textarea>
+        </div>
+
+        <div id="miniCartShipping" class="mini-cart-shipping" style="display:none;">
+          <span class="shipping-amount" id="miniCartShippingAmount">Rp0</span>
+          <div class="shipping-toggle">
+            <input type="checkbox" id="priorityToggleMini" />
+            <label for="priorityToggleMini" class="toggle-label">
+              <i data-lucide="rocket"></i>
+              <span class="badge-priority">Prioritas</span>
+            </label>
+          </div>
+        </div>
+        <div class="mini-cart-total-final">
+          <span>Total</span>
+          <span id="miniCartFinalTotal">Rp0</span>
+        </div>
+        <button type="button" class="wa-btn" id="btnOpenPayment" style="margin-top: 16px;">Bayar Via QRIS</button>
+      </div>
     </div>
   </div>
 
