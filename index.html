@@ -2,14 +2,15 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rujak.Co – Premium Indonesian Rujak Delivery</title>
   <meta name="description" content="Rujak premium dengan buah segar pilihan, sambal kacang original & mete, dikirim ke Jabodetabek. Pesan via WhatsApp." />
   <meta name="keywords" content="rujak, rujak premium, rujak delivery, rujak jabodetabek, rujak bekasi, rujak.co" />
+  <meta name="author" content="Ngoedi" />
   <meta name="theme-color" content="#0F4D37" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/rujakco/RujakCo/cfee42c6f54943cdec305b8934f9bec4e3a6e0cf/assets/images/brand/logo.webp" />
+  <link rel="apple-touch-icon" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -39,10 +40,7 @@
     });
   </script>
 
-  <script src="https://cdn.tailwindcss.com"></script>
-
   <style>
-    /* ========== ROOT & RESET ========== */
     :root {
       --green: #0F4D37; --green-dark: #0a3a2a; --green-light: #1a6b4e; --green-pale: #EAF2EE;
       --red: #D62828; --gold: #F4C430; --ivory: #FDFDF8; --gray-100: #F5F5F5;
@@ -52,20 +50,12 @@
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; background: #EFEFE9; font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
     body { display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-    .no-sb::-webkit-scrollbar { display: none; }
-    .no-sb { -ms-overflow-style: none; scrollbar-width: none; }
+    .no-sb::-webkit-scrollbar { display: none; } .no-sb { -ms-overflow-style: none; scrollbar-width: none; }
 
-    #app {
-      width: 100%; max-width: 480px; min-height: 100vh; background: var(--ivory);
-      position: relative; overflow-x: hidden; display: flex; flex-direction: column;
-    }
+    #app { width: 100%; max-width: 480px; min-height: 100vh; background: var(--ivory); position: relative; overflow-x: hidden; display: flex; flex-direction: column; }
     .content-wrapper { background: transparent; flex: 1; }
 
-    /* ── HEADER ── */
-    #header {
-      position: sticky; top: 0; background: var(--ivory); z-index: 100;
-      padding: 12px 20px 10px; border-bottom: 1px solid rgba(15, 77, 55, 0.06); transition: box-shadow .2s;
-    }
+    #header { position: sticky; top: 0; background: var(--ivory); z-index: 100; padding: 12px 20px 10px; border-bottom: 1px solid rgba(15, 77, 55, 0.06); transition: box-shadow .2s; }
     #header.shadowed { box-shadow: 0 4px 20px rgba(15, 77, 55, 0.05); }
     .header-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
     .header-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
@@ -74,20 +64,13 @@
     .brand-name { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 800; color: var(--green); letter-spacing: -0.5px; white-space: nowrap; }
     .brand-name span { color: var(--red); }
     .header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-    .location-pill {
-      display: flex; align-items: center; gap: 4px; background: var(--green-pale); border-radius: var(--radius-pill);
-      padding: 4px 10px 4px 6px; cursor: pointer; transition: background .15s; flex-shrink: 0;
-    }
+    .location-pill { display: flex; align-items: center; gap: 4px; background: var(--green-pale); border-radius: var(--radius-pill); padding: 4px 10px 4px 6px; cursor: pointer; transition: background .15s; flex-shrink: 0; }
     .location-pill:active { background: #d4e8de; }
     .location-text { display: flex; flex-direction: column; }
     .location-label { font-size: 12px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: .05em; line-height: 1; }
     .location-value { font-size: 13px; font-weight: 700; color: var(--green); line-height: 1.2; }
 
-    /* ── SHIPPING ESTIMATE ── */
-    .shipping-estimate {
-      display: flex; align-items: center; justify-content: space-between; gap: 8px;
-      background: var(--green-pale); border-radius: var(--radius-pill); padding: 8px 14px; flex-wrap: wrap;
-    }
+    .shipping-estimate { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: var(--green-pale); border-radius: var(--radius-pill); padding: 8px 14px; flex-wrap: wrap; }
     .shipping-left { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--gray-700); }
     .shipping-left svg { width: 16px; height: 16px; color: var(--green); }
     .shipping-cost { font-weight: 800; color: var(--red); font-size: 14px; }
@@ -102,18 +85,13 @@
     .badge-priority { background: var(--red); color: white; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; text-transform: uppercase; }
     .shipping-out-of-range { background: #fee2e2; border: 1px solid #fecaca; color: var(--red); padding: 6px 12px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 600; display: none; text-align: center; }
 
-    /* ── SEARCH ── */
     .search-wrap { padding: 0 20px 16px; }
     .search-box { display: flex; align-items: center; background: white; border: 1px solid rgba(15, 77, 55, 0.1); box-shadow: 0 2px 10px rgba(15, 77, 55, 0.03); border-radius: 12px; padding: 10px 14px; gap: 8px; }
     .search-box input { border: none; outline: none; width: 100%; font-family: inherit; font-size: 14px; color: var(--gray-900); }
     .search-box input::placeholder { color: var(--gray-400); }
-    .search-box .clear-search {
-      background: none; border: none; color: var(--gray-400); cursor: pointer; font-size: 18px; line-height: 1;
-      display: none; align-items: center; justify-content: center; padding: 0; width: 20px; height: 20px;
-    }
+    .search-box .clear-search { background: none; border: none; color: var(--gray-400); cursor: pointer; font-size: 18px; line-height: 1; display: none; align-items: center; justify-content: center; padding: 0; width: 20px; height: 20px; }
     .search-box .clear-search.visible { display: flex; }
 
-    /* ── HERO ── */
     .hero-wrap { padding: 16px 20px; }
     .hero { width: 100%; aspect-ratio: 21/9; background: var(--green); border-radius: 20px; overflow: hidden; position: relative; }
     .hero-img { position: absolute; top:0; left:0; right:0; bottom:0; width: 100%; height: 100%; object-fit: cover; }
@@ -125,19 +103,12 @@
 
     .promo-strip { margin: 0 20px 20px; background: #fff3cd; border: 1px solid #e6c87a; border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
     .promo-icon { width: 40px; height: 40px; background: var(--gold); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .promo-text { flex: 1; }
-    .promo-title { font-size: 14px; font-weight: 800; color: #3d2b00; }
+    .promo-text { flex: 1; } .promo-title { font-size: 14px; font-weight: 800; color: #3d2b00; }
     .promo-sub { font-size: 12px; color: #5a3e00; margin-top: 1px; font-weight: 500; }
     .promo-terms { font-size: 10px; color: #3d2b00; opacity: 0.8; margin-top: 4px; font-weight: 600; }
 
-    /* ── MARQUEE LEGEND ── */
-    .legend-marquee {
-      margin: 0 20px 12px; overflow: hidden; white-space: nowrap; background: var(--green-pale);
-      border-radius: 100px; padding: 6px 0; position: relative; height: 28px; display: flex; align-items: center;
-    }
-    .legend-track {
-      display: inline-block; animation: marquee 18s linear infinite; white-space: nowrap; will-change: transform;
-    }
+    .legend-marquee { margin: 0 20px 12px; overflow: hidden; white-space: nowrap; background: var(--green-pale); border-radius: 100px; padding: 6px 0; position: relative; height: 28px; display: flex; align-items: center; }
+    .legend-track { display: inline-block; animation: marquee 18s linear infinite; white-space: nowrap; will-change: transform; }
     .legend-track span { display: inline-flex; align-items: center; gap: 5px; margin-right: 20px; font-size: 11px; font-weight: 600; }
     .legend-track span::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .legend-track .classic { color: #5d8a3c; } .legend-track .classic::before { background: #8BC34A; }
@@ -196,8 +167,7 @@
     .edu-container { padding: 0 20px 24px; display: flex; flex-direction: column; gap: 12px; }
     .edu-card { background: white; border: 1px solid rgba(15, 77, 55, 0.08); box-shadow: 0 4px 14px rgba(15, 77, 55, 0.02); border-radius: 14px; padding: 16px; display: flex; gap: 14px; align-items: flex-start; }
     .edu-icon-wrap { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .edu-title { font-size: 15px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
-    .edu-desc { font-size: 13px; color: var(--gray-500); line-height: 1.5; }
+    .edu-title { font-size: 15px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; } .edu-desc { font-size: 13px; color: var(--gray-500); line-height: 1.5; }
 
     .faq-container { padding: 0 20px 24px; display: flex; flex-direction: column; gap: 8px; }
     .faq-item { background: white; border: 1px solid rgba(15, 77, 55, 0.08); box-shadow: 0 4px 14px rgba(15, 77, 55, 0.02); border-radius: 14px; padding: 14px 16px; cursor: pointer; transition: border-color .2s; }
@@ -208,7 +178,6 @@
     .faq-item.open .faq-answer { max-height: 200px; margin-top: 8px; } .faq-item.open .faq-question svg { transform: rotate(180deg); }
     .divider { height: 8px; background: rgba(244, 196, 48, 0.08); margin: 12px 0; }
 
-    /* ── FOOTER ── */
     .footer-brand { background: var(--green); color: white; width: 100%; transition: padding-bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     .footer-brand-inner { max-width: 480px; margin: 0 auto; padding: 28px 20px 20px; display: flex; flex-direction: column; gap: 16px; }
     .footer-brand-row { display: flex; align-items: center; gap: 12px; }
@@ -225,14 +194,10 @@
     .footer-social a { color: white; background: rgba(255,255,255,.12); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background .2s, transform .2s; text-decoration: none; }
     .footer-social a svg { width: 20px; height: 20px; }
     .footer-social a:hover { background: var(--gold); color: var(--green); transform: translateY(-2px); }
-    .footer-delivery { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
-    .footer-delivery a { background: rgba(255,255,255,.08); padding: 6px 12px; border-radius: 8px; color: white; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; text-decoration: none; transition: background .2s; }
-    .footer-delivery a svg { width: 14px; height: 14px; } .footer-delivery a:hover { background: rgba(255,255,255,.2); }
     .footer-wa { display: inline-flex; align-items: center; gap: 8px; background: var(--gold); color: var(--green); padding: 10px 18px; border-radius: 50px; font-weight: 700; font-size: 14px; text-decoration: none; transition: background .2s, color .2s; width: fit-content; border: none; margin-top: 8px; }
     .footer-wa svg { width: 16px; height: 16px; } .footer-wa:hover { background: #dbaa1a; color: var(--green-dark); }
     .footer-bottom { border-top: 1px solid rgba(255,255,255,.12); padding-top: 16px; text-align: center; font-size: 11px; opacity: .5; margin-top: 12px; }
 
-    /* ── BOTTOM BAR ── */
     #bottom-bar { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: var(--ivory); border-top: 1px solid rgba(15, 77, 55, 0.1); padding: 12px 20px 20px; z-index: 200; box-shadow: 0 -10px 30px rgba(15, 77, 55, 0.05); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform: translateY(100%); }
     #bottom-bar.visible { transform: translateY(0); }
     .cart-summary { display: flex; align-items: center; background: white; border: 1px solid rgba(15, 77, 55, 0.1); box-shadow: 0 2px 10px rgba(15, 77, 55, 0.03); border-radius: 14px; padding: 10px 14px; margin-bottom: 10px; gap: 10px; cursor: pointer; }
@@ -257,7 +222,6 @@
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     .empty-state { padding: 40px 20px; text-align: center; color: var(--gray-500); font-size: 15px; display: none; }
 
-    /* ── MODAL ── */
     .modal-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.5); z-index: 300; display: flex; align-items: center; justify-content: center; opacity:0; pointer-events: none; transition: opacity .3s ease; padding: 20px; }
     .modal-overlay.active { opacity:1; pointer-events: auto; }
     .modal-content { background: white; border-radius: 24px; max-width: 400px; width:100%; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3); transform: scale(0.95); transition: transform .3s ease; }
@@ -327,7 +291,7 @@
     <div class="header-top">
       <div class="header-left">
         <a href="#" class="brand-logo" onclick="return false;">
-          <img src="https://raw.githubusercontent.com/rujakco/RujakCo/cfee42c6f54943cdec305b8934f9bec4e3a6e0cf/assets/images/brand/logo.webp" alt="Rujak.Co" />
+          <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" />
           <span class="brand-name">Rujak<span>.Co</span></span>
         </a>
       </div>
@@ -346,7 +310,7 @@
   <div class="content-wrapper">
     <div class="hero-wrap">
       <div class="hero">
-        <img class="hero-img" src="https://raw.githubusercontent.com/rujakco/RujakCo/7ff86d93fd2428de16c51b25f84ac462befbeaee/assets/images/hero/Banner.webp" alt="Rujak Premium" fetchpriority="high" onerror="this.style.display='none'" />
+        <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Rujak Premium" fetchpriority="high" onerror="this.style.display='none'" />
         <div class="hero-grad"></div>
         <div class="hero-content">
           <div class="hero-eyebrow"><i data-lucide="zap" class="w-3 h-3"></i> Rujak.Co</div>
@@ -405,13 +369,37 @@
 
 <footer class="footer-brand">
   <div class="footer-brand-inner">
-    <div class="footer-brand-row"><img src="https://raw.githubusercontent.com/rujakco/RujakCo/cfee42c6f54943cdec305b8934f9bec4e3a6e0cf/assets/images/brand/logo.webp" alt="Rujak.Co" /><span class="footer-brand-name">Rujak<span>.Co</span></span></div>
+    <div class="footer-brand-row">
+      <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" />
+      <span class="footer-brand-name">Rujak<span>.Co</span></span>
+    </div>
     <p class="footer-brand-desc">Menghadirkan keberagaman rasa rujak Indonesia dalam satu pengalaman yang segar, modern, dan berkualitas.</p>
     <div class="footer-grid">
-      <div class="footer-col"><h4>Jam Operasional</h4><ul><li><i data-lucide="clock"></i> Sen–Jum: 10.00–20.00</li><li><i data-lucide="clock"></i> Sab–Min: 09.00–18.00</li><li><i data-lucide="map-pin"></i> Bekasi, Jawa Barat</li></ul><a href="https://wa.me/6289677161680" target="_blank" class="footer-wa"><i data-lucide="message-circle"></i> Chat WhatsApp</a></div>
-      <div class="footer-col"><h4>Ikuti Kami</h4><div class="footer-social"><a href="https://www.tiktok.com/@rujakco" target="_blank" aria-label="TikTok"><i data-lucide="music"></i></a><a href="https://www.instagram.com/rujakco.id" target="_blank" aria-label="Instagram"><i data-lucide="instagram"></i></a><a href="https://www.threads.net/@rujakco.id" target="_blank" aria-label="Threads"><i data-lucide="message-circle"></i></a></div><h4 style="margin-top: 14px;">Pesan di Aplikasi</h4><div class="footer-delivery"><a href="#" onclick="return false;"><i data-lucide="utensils"></i> GrabFood</a><a href="#" onclick="return false;"><i data-lucide="utensils"></i> GoFood</a><a href="#" onclick="return false;"><i data-lucide="shopping-bag"></i> ShopeeFood</a></div></div>
+      <div class="footer-col">
+        <h4>Jam Operasional</h4>
+        <ul>
+          <li><i data-lucide="clock"></i> Sen–Jum: 10.00–20.00</li>
+          <li><i data-lucide="clock"></i> Sab–Min: 09.00–18.00</li>
+          <li><i data-lucide="map-pin"></i> Bekasi, Jawa Barat</li>
+        </ul>
+        <a href="https://wa.me/6289677161680" target="_blank" class="footer-wa">
+          <i data-lucide="message-circle"></i> Chat WhatsApp
+        </a>
+      </div>
+      <div class="footer-col">
+        <h4>Ikuti Kami</h4>
+        <div class="footer-social">
+          <a href="https://www.tiktok.com/@rujakco" target="_blank" aria-label="TikTok"><i data-lucide="music"></i></a>
+          <a href="https://www.instagram.com/rujakco.id" target="_blank" aria-label="Instagram"><i data-lucide="instagram"></i></a>
+          <a href="https://www.threads.net/@rujakco.id" target="_blank" aria-label="Threads"><i data-lucide="message-circle"></i></a>
+        </div>
+      </div>
     </div>
-    <div class="footer-bottom">&copy; 2026 Rujak.Co — Premium Rujak Experience. All rights reserved.</div>
+    <div class="footer-bottom">
+      &copy; 2026 Rujak.Co — Premium Rujak Experience. All rights reserved.
+      <br>
+      <span style="font-size: 12px; opacity: 0.7;">Dibuat oleh <strong>Ngoedi</strong></span>
+    </div>
   </div>
 </footer>
 
@@ -426,7 +414,6 @@
 <div id="floatingCartBtn" aria-label="Buka keranjang"><i data-lucide="shopping-bag" style="width: 24px; height: 24px;"></i><span class="badge-cart" id="floatingBadge">0</span></div>
 <div id="toast" role="alert" aria-live="polite"></div>
 
-<!-- MODALS -->
 <div class="modal-overlay" id="productModal">
   <div class="modal-content"><div class="modal-header"><span class="modal-header-title">Detail Produk</span><button class="modal-close" id="modalClose" aria-label="Tutup">&times;</button></div>
     <div class="modal-body" id="modalBody"><div class="modal-img" id="modalImg"></div><div class="modal-title-wrap"><h2 class="modal-title" id="modalTitle">Nama Produk</h2><span class="modal-badge-eyebrow" id="modalBadge" style="display:none;">Badge</span></div><p class="modal-desc" id="modalDesc">Deskripsi produk</p><div class="modal-detail-grid"><div class="detail-row"><span class="label">Wadah</span><span class="value" id="modalContainer">-</span></div><div class="detail-row"><span class="label">Ukuran</span><span class="value" id="modalSize">-</span></div><div class="detail-row"><span class="label">Sambal</span><span class="value" id="modalSambal">-</span></div></div><div id="modalBuahContainer"><div style="font-size:12px; font-weight:600; color:var(--gray-500); text-transform:uppercase; letter-spacing:.03em; margin-bottom:2px;">Buah-buahan</div><div class="modal-buah-text" id="modalBuahText"></div></div><div class="modal-tags" id="modalTags"></div><div class="spice-row"><span class="spice-icon"><i data-lucide="flame"></i></span><span class="spice-label">Level Pedas</span><span class="spice-value" id="modalSpiceLabel">3 - Pedas</span><select id="spiceSelect"><option value="1">1 - Mild</option><option value="2">2 - Sedang</option><option value="3" selected>3 - Pedas</option><option value="4">4 - Extra Pedas</option><option value="5">5 - Very Hot</option></select></div></div>
@@ -443,7 +430,7 @@
 <div class="modal-overlay" id="paymentModal">
   <div class="modal-content"><div class="modal-header"><span class="modal-header-title">Pembayaran QRIS</span><button class="modal-close" id="paymentClose" aria-label="Tutup">&times;</button></div>
     <div class="modal-body" style="text-align:center;">
-      <div style="position: relative; display: block; width: 100%;"><img src="https://raw.githubusercontent.com/rujakco/RujakCo/73d9102e2ba6df4d73ec15451df57f4e73d14e3b/assets/images/qris-rujakco.jpeg" alt="QRIS Rujak.Co" id="qrisImagePayment" style="width:100%; height:auto; aspect-ratio: 1/1; object-fit:contain; border-radius:10px; background:white; display: block;" /><span style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.5); color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 14px; pointer-events: none; z-index: 1;"><i data-lucide="zoom-in" style="width: 16px; height: 16px;"></i></span></div>
+      <div style="position: relative; display: block; width: 100%;"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" id="qrisImagePayment" style="width:100%; height:auto; aspect-ratio: 1/1; object-fit:contain; border-radius:10px; background:white; display: block;" /><span style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.5); color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 14px; pointer-events: none; z-index: 1;"><i data-lucide="zoom-in" style="width: 16px; height: 16px;"></i></span></div>
       <p style="font-size: 11px; color: var(--green); margin-top: 8px; font-weight: 700; font-style: italic;">Ketuk / Klik 2x untuk memperbesar QRIS</p>
       <div style="margin-top: 12px;"><button type="button" class="download-btn" id="downloadQrisBtnPayment" style="display:inline-flex; align-items:center; gap:6px; background:white; color:var(--green); padding:8px 16px; border-radius:10px; font-size:13px; font-weight:700; text-decoration:none; border:1px solid var(--green); cursor:pointer; transition:transform .2s;"><i data-lucide="download" class="w-4 h-4"></i> Scan / Unduh QRIS</button></div>
     </div>
@@ -459,12 +446,12 @@
     'use strict';
 
     const PRODUCTS = [
-      { id: 'p_m1', name: 'Rujak Segar', desc: 'Kombinasi buah pilihan dengan sambal original Rujak.Co. Ringan, segar, dan cocok untuk semua penikmat rujak.', price: 28000, cat: 'classic', tags: ['Pilihan Klasik', '5 Buah'], badge: null, badgeColor: null, container: 'Thinwall 750ml (PP Food Grade)', size: '150g Buah', sambal: 'Sambal Original (80g / 1 Cup)', buah: ['Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'], flavor: 'Segar & Autentik', flavorTag: null, defaultSpice: 3, portion: '1 Orang', thumbnail: 'https://raw.githubusercontent.com/rujakco/RujakCo/05bc3b89f5847c8184012f9d682ea7dca44503e6/assets/images/products/rujak-segar-thumb.webp', image: 'https://raw.githubusercontent.com/rujakco/RujakCo/05bc3b89f5847c8184012f9d682ea7dca44503e6/assets/images/products/rujak-segar-hd.webp' },
-      { id: 'p_m2', name: 'Rujak Serut', desc: 'Buah diserut halus untuk pengalaman rasa yang lebih menyatu di setiap suapan.', price: 26000, cat: 'classic', tags: ['Renyah', 'Serut'], badge: null, badgeColor: null, container: 'Thinwall 750ml (PP Food Grade)', size: '150g Buah', sambal: 'Sambal Original (80g / 1 Cup)', buah: ['Mangga Muda', 'Bengkoang', 'Nanas', 'Ubi Merah'], flavor: 'Renyah Segar', flavorTag: 'Renyah', defaultSpice: 3, portion: '1 Orang', thumbnail: 'https://raw.githubusercontent.com/rujakco/RujakCo/1aba277cfcdafe2c53fd2667d6e72252f04dd397/assets/images/products/rujak-serut-thumb.webp', image: 'https://raw.githubusercontent.com/rujakco/RujakCo/1aba277cfcdafe2c53fd2667d6e72252f04dd397/assets/images/products/rujak-serut-hd.webp' },
-      { id: 'p_m3', name: 'Rujak Gaco', desc: 'Enam buah pilihan dengan sambal mete premium yang kaya rasa dan menjadi favorit pelanggan.', price: 40000, cat: 'signature', tags: ['Mete Premium', 'Bestseller'], badge: 'Koleksi Favorit', badgeColor: 'red', container: 'Thinwall 750ml (PP Food Grade)', size: '150g Buah', sambal: 'Sambal Mete Premium (80g / 1 Cup)', buah: ['Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'], flavor: 'Gurih Mete Premium', flavorTag: null, defaultSpice: 3, portion: '1 Orang', thumbnail: 'https://raw.githubusercontent.com/rujakco/RujakCo/061bdf3fc4fb2188ea7e22fd8e36e3450b07cbbf/assets/images/products/rujak-gaco-thumb.webp', image: 'https://raw.githubusercontent.com/rujakco/RujakCo/061bdf3fc4fb2188ea7e22fd8e36e3450b07cbbf/assets/images/products/rujak-gaco-hd.webp' },
-      { id: 'p_m4', name: 'Rujak Rama', desc: 'Porsi melimpah untuk dua hingga tiga orang dengan cita rasa khas Rujak.Co.', price: 48000, cat: 'signature', tags: ['Porsi Besar', 'Sharing'], badge: 'Untuk Dibagi Bersama', badgeColor: 'red', container: 'Thinwall Jumbo 1000ml (PP Food Grade)', size: '250g Buah', sambal: 'Sambal Mete Premium (130g / 2 Cup)', buah: ['Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'], flavor: 'Gurih Mete Extra Pedas', flavorTag: null, defaultSpice: 4, portion: '2-3 Orang', thumbnail: 'https://raw.githubusercontent.com/rujakco/RujakCo/34c9272edc1389f04f9785dc69a6d79c88ae0003/assets/images/products/rujak-rama-thumb.webp', image: 'https://raw.githubusercontent.com/rujakco/RujakCo/31c2daed2fcb35d4e8ab7067a60cf799deeb9e71/assets/images/products/rujak-rama-hd.webp' },
-      { id: 'p_m5', name: 'Rujak Mahkota', desc: 'Koleksi premium dengan Shine Muscat dan buah pilihan terbaik untuk momen istimewa.', price: 85000, cat: 'reserve', tags: ['Eksklusif', 'Shine Muscat'], badge: 'Reserve Collection', badgeColor: 'gold', container: 'Thinwall Jumbo 1000ml + Paper Bag', size: '165g Buah', sambal: 'Sambal Mete Premium (85g / 2 Cup)', buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'], flavor: 'Eksklusif & Premium', flavorTag: null, defaultSpice: 3, portion: '1-2 Orang', thumbnail: 'https://raw.githubusercontent.com/rujakco/RujakCo/34c9272edc1389f04f9785dc69a6d79c88ae0003/assets/images/products/rujak-mahkota-thumb.webp', image: 'https://raw.githubusercontent.com/rujakco/RujakCo/34c9272edc1389f04f9785dc69a6d79c88ae0003/assets/images/products/rujak-mahkota-hd.webp' },
-      { id: 'p_m6', name: 'Tampah Nusantara', desc: 'Sajian kebersamaan dalam tampah bambu dengan koleksi buah pilihan dan sambal khas Rujak.Co.', price: 200000, cat: 'reserve', tags: ['Tampah', 'Pre-Order'], badge: 'Untuk 8-10 Orang', badgeColor: 'gold', container: 'Tampah Bambu Ø40cm + Kardus + Wrap', size: '400g Buah', sambal: 'Varian Original & Mete (200g / 4 Cup)', buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong', 'Ubi Merah'], flavor: 'Kemegahan Berbagai Rasa', flavorTag: null, defaultSpice: 3, portion: '8-10 Orang', thumbnail: 'https://raw.githubusercontent.com/rujakco/RujakCo/34c9272edc1389f04f9785dc69a6d79c88ae0003/assets/images/products/tampah-nusantara-thumb.webp', image: 'https://raw.githubusercontent.com/rujakco/RujakCo/34c9272edc1389f04f9785dc69a6d79c88ae0003/assets/images/products/tampah-nusantara-hd.webp' }
+      { id: 'p_m1', name: 'Rujak Segar', desc: 'Kombinasi buah pilihan dengan sambal original Rujak.Co. Ringan, segar, dan cocok untuk semua penikmat rujak.', price: 28000, cat: 'classic', tags: ['Pilihan Klasik', '5 Buah'], badge: null, badgeColor: null, container: 'Thinwall 750ml (PP Food Grade)', size: '150g Buah', sambal: 'Sambal Original (80g / 1 Cup)', buah: ['Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'], flavor: 'Segar & Autentik', flavorTag: null, defaultSpice: 3, portion: '1 Orang', thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp', image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp' },
+      { id: 'p_m2', name: 'Rujak Serut', desc: 'Buah diserut halus untuk pengalaman rasa yang lebih menyatu di setiap suapan.', price: 26000, cat: 'classic', tags: ['Renyah', 'Serut'], badge: null, badgeColor: null, container: 'Thinwall 750ml (PP Food Grade)', size: '150g Buah', sambal: 'Sambal Original (80g / 1 Cup)', buah: ['Mangga Muda', 'Bengkoang', 'Nanas', 'Ubi Merah'], flavor: 'Renyah Segar', flavorTag: 'Renyah', defaultSpice: 3, portion: '1 Orang', thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp', image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp' },
+      { id: 'p_m3', name: 'Rujak Gaco', desc: 'Enam buah pilihan dengan sambal mete premium yang kaya rasa dan menjadi favorit pelanggan.', price: 40000, cat: 'signature', tags: ['Mete Premium', 'Bestseller'], badge: 'Koleksi Favorit', badgeColor: 'red', container: 'Thinwall 750ml (PP Food Grade)', size: '150g Buah', sambal: 'Sambal Mete Premium (80g / 1 Cup)', buah: ['Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'], flavor: 'Gurih Mete Premium', flavorTag: null, defaultSpice: 3, portion: '1 Orang', thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-thumb.webp', image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-hd.webp' },
+      { id: 'p_m4', name: 'Rujak Rama', desc: 'Porsi melimpah untuk dua hingga tiga orang dengan cita rasa khas Rujak.Co.', price: 48000, cat: 'signature', tags: ['Porsi Besar', 'Sharing'], badge: 'Untuk Dibagi Bersama', badgeColor: 'red', container: 'Thinwall Jumbo 1000ml (PP Food Grade)', size: '250g Buah', sambal: 'Sambal Mete Premium (130g / 2 Cup)', buah: ['Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'], flavor: 'Gurih Mete Extra Pedas', flavorTag: null, defaultSpice: 4, portion: '2-3 Orang', thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-thumb.webp', image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-hd.webp' },
+      { id: 'p_m5', name: 'Rujak Mahkota', desc: 'Koleksi premium dengan Shine Muscat dan buah pilihan terbaik untuk momen istimewa.', price: 85000, cat: 'reserve', tags: ['Eksklusif', 'Shine Muscat'], badge: 'Reserve Collection', badgeColor: 'gold', container: 'Thinwall Jumbo 1000ml + Paper Bag', size: '165g Buah', sambal: 'Sambal Mete Premium (85g / 2 Cup)', buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'], flavor: 'Eksklusif & Premium', flavorTag: null, defaultSpice: 3, portion: '1-2 Orang', thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp', image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp' },
+      { id: 'p_m6', name: 'Tampah Nusantara', desc: 'Sajian kebersamaan dalam tampah bambu dengan koleksi buah pilihan dan sambal khas Rujak.Co.', price: 200000, cat: 'reserve', tags: ['Tampah', 'Pre-Order'], badge: 'Untuk 8-10 Orang', badgeColor: 'gold', container: 'Tampah Bambu Ø40cm + Kardus + Wrap', size: '400g Buah', sambal: 'Varian Original & Mete (200g / 4 Cup)', buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong', 'Ubi Merah'], flavor: 'Kemegahan Berbagai Rasa', flavorTag: null, defaultSpice: 3, portion: '8-10 Orang', thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-thumb.webp', image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp' }
     ];
 
     const ADDONS = [
@@ -475,7 +462,6 @@
     ];
 
     const SYSTEM = { DISCOUNT_THRESHOLD: 100000, DISCOUNT_AMOUNT: 10000, WA_NUMBER: '6289677161680', TOAST_DURATION: 3000, MAX_DISTANCE: 50, DEFAULT_DISTANCE: 2 };
-
     const state = { cart: {}, activeFilter: 'all', searchQuery: '', userDistance: null, isPriority: false, orderNotes: '', isCartMinimized: false };
 
     function calculateShipping(d, priority) {
@@ -642,7 +628,10 @@
       document.getElementById('cancelClear').addEventListener('click', () => modal.remove());
     }
 
-    function downloadQRIS() { /* ... sama ... */ }
+    function downloadQRIS() {
+      const img = document.getElementById('qrisImagePayment'), url = img.src;
+      fetch(url).then(r => r.blob()).then(blob => { const blobUrl = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = blobUrl; a.download = 'QRIS-RujakCo.jpg'; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(blobUrl); showToast('Gambar QRIS sedang diunduh...'); }).catch(() => { window.open(url, '_blank'); showToast('Klik kanan pada gambar untuk menyimpan'); });
+    }
 
     function handleCheckout() {
       if (state.userDistance !== null && state.userDistance > SYSTEM.MAX_DISTANCE) { showToast('Maaf, pengiriman hanya tersedia untuk wilayah Jabodetabek (maks. 50 km)'); return; }
@@ -657,7 +646,6 @@
       window.open(`https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
-    // Event delegation (tetap sama)
     document.addEventListener('click', function(e) {
       const actionBtn = e.target.closest('[data-action]');
       if (actionBtn) {
@@ -701,7 +689,6 @@
     let toastTimer;
     function showToast(msg) { const el = document.getElementById('toast'); el.textContent = msg; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), SYSTEM.TOAST_DURATION); }
 
-    // QRIS zoom: dblclick + click untuk mobile
     const qrisImg = document.getElementById('qrisImagePayment');
     qrisImg.addEventListener('click', function(e) { this.classList.toggle('qr-zoomed'); });
     qrisImg.addEventListener('dblclick', function(e) { this.classList.toggle('qr-zoomed'); });
