@@ -267,17 +267,40 @@
     try { const savedMinimize = localStorage.getItem('rujak_cart_minimized'); if (savedMinimize !== null) state.isCartMinimized = savedMinimize === 'true'; } catch (_) {}
     renderAll(); detectLocation(); updateClearButton(); updateFloatingButton();
 
-    // === HEADER SCROLL BEHAVIOR ===
+    // === HEADER SCROLL BEHAVIOR (DIPERBAIKI) ===
     let lastScrollY = window.scrollY;
     const header = document.getElementById('header');
-    const SCROLL_THRESHOLD = 50;
+    const SHOW_HEADER_OFFSET = 100; // jarak minimum sebelum header bisa sembunyi
+
     window.addEventListener('scroll', () => {
       const currentScrollY = window.scrollY;
+
+      // Bayangan hanya muncul saat digulir
       header.classList.toggle('shadowed', currentScrollY > 4);
-      if (currentScrollY <= 0) { header.classList.remove('header-hidden'); lastScrollY = currentScrollY; return; }
-      if (Math.abs(currentScrollY - lastScrollY) < SCROLL_THRESHOLD) return;
-      if (currentScrollY > lastScrollY) header.classList.add('header-hidden');
-      else header.classList.remove('header-hidden');
+
+      // Selalu tampilkan header jika di bagian paling atas halaman
+      if (currentScrollY <= 0) {
+        header.classList.remove('header-hidden');
+        lastScrollY = currentScrollY;
+        return;
+      }
+
+      // Jangan sembunyikan header jika scroll belum melewati SHOW_HEADER_OFFSET
+      if (currentScrollY < SHOW_HEADER_OFFSET) {
+        header.classList.remove('header-hidden');
+        lastScrollY = currentScrollY;
+        return;
+      }
+
+      // Scroll ke bawah → sembunyikan header
+      if (currentScrollY > lastScrollY) {
+        header.classList.add('header-hidden');
+      }
+      // Scroll ke atas → tampilkan header
+      else if (currentScrollY < lastScrollY) {
+        header.classList.remove('header-hidden');
+      }
+
       lastScrollY = currentScrollY;
     });
     // === AKHIR HEADER SCROLL BEHAVIOR ===
