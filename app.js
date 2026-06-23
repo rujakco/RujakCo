@@ -217,11 +217,9 @@
     } catch (_) {}
   }
 
-  // BUG 2 FIX: Menangani pencarian produk berdasarkan ID bervarian pedas (misal: p_m3_5)
   function getItemById(id) {
     let item = PRODUCTS.find(p => p.id === id) || ADDONS.find(a => a.id === id);
     if (item) return item;
-    // Jika tidak ditemukan secara eksak, cari berdasarkan awalan ID (untuk produk ber-level pedas)
     return PRODUCTS.find(p => id.startsWith(p.id + '_'));
   }
 
@@ -264,7 +262,6 @@
     };
   }
 
-  // BUG 3 FIX: Mengunci jarak otomatis menjadi 999 jika di luar area jangkauan yang diizinkan
   function getLocationFallback() {
     return new Promise(resolve => {
       fetch('https://ipapi.co/json/')
@@ -376,13 +373,12 @@
 
     let html = '';
     filtered.forEach(p => {
-      // BUG 2 FIX: Hitung total kuantitas dari semua varian produk ini di keranjang
       let qty = 0;
       let firstCartKey = p.id;
       Object.keys(state.cart).forEach(k => {
         if (k === p.id || k.startsWith(p.id + '_')) {
           qty += state.cart[k].qty;
-          if (qty === state.cart[k].qty) firstCartKey = k; // Ambil key pertama sebagai referensi
+          if (qty === state.cart[k].qty) firstCartKey = k;
         }
       });
 
@@ -545,7 +541,12 @@
     list.innerHTML = html;
 
     const btnPay = document.getElementById('btnOpenPayment');
-    if (state.userDistance !== null && state.userDistance > SYSTEM.MAX_DISTANCE) {
+    if (state.userDistance === null) {
+      btnPay.disabled = true;
+      btnPay.style.opacity = '0.5';
+      btnPay.style.pointerEvents = 'none';
+      btnPay.textContent = '⏳ Menghitung Jarak...';
+    } else if (state.userDistance > SYSTEM.MAX_DISTANCE) {
       btnPay.disabled = true;
       btnPay.style.opacity = '0.5';
       btnPay.style.pointerEvents = 'none';
@@ -624,16 +625,15 @@
     currentProductId = null;
   }
 
-  // BUG 2 FIX: Memisahkan pesanan berdasarkan level pedas dengan suffix di Key Object-nya
   document.getElementById('modalAdd').addEventListener('click', function() {
     const baseId = this.dataset.id;
     if (baseId) {
       const spice = parseInt(document.getElementById('spiceSelect').value, 10) || 3;
-      const cartKey = baseId + '_' + spice; // Key unik baru: p_m1_3, p_m2_5, dll.
+      const cartKey = baseId + '_' + spice;
       
       const entry = state.cart[cartKey] || { qty: 0, spice: spice };
       entry.qty += 1;
-      entry.spice = spice; // Memastikan spice tersimpan
+      entry.spice = spice;
       state.cart[cartKey] = entry;
       
       renderAll();
@@ -987,7 +987,6 @@
         showToast('Berhasil ditambahkan ✓');
         return;
       }
-      // BUG 1 FIX: Menghapus logika "add" ganda dan hanya menggunakan increase yang dipisahkan agar modal tidak muncul berulang
       if (action === 'increase' && id) {
         if (state.cart[id]) {
           state.cart[id].qty += 1;
@@ -1025,9 +1024,14 @@
     if (e.target.closest('#btnOpenPayment')) {
       const keys = Object.keys(state.cart);
       if (keys.length === 0) return showToast('Keranjang kosong');
-      if (state.userDistance !== null && state.userDistance > SYSTEM.MAX_DISTANCE) {
+      
+      if (state.userDistance === null) {
+        return showToast('Mohon tunggu, sedang menghitung jarak pengiriman...');
+      }
+      if (state.userDistance > SYSTEM.MAX_DISTANCE) {
         return showToast('Maaf, pengiriman di luar jangkauan');
       }
+
       document.getElementById('paymentTotalDisplay').textContent = document.getElementById('miniCartFinalTotal').textContent;
       state.orderNotes = document.getElementById('orderNotes').value;
       state.customerName = document.getElementById('customerName').value.trim();
