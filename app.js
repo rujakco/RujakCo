@@ -4,6 +4,11 @@
   // === SUPABASE CONFIG ===
   const SUPABASE_URL = "https://xkyduxhjlmvhzdavbbwk.supabase.co";
   const SUPABASE_KEY = "sb_publishable_gBF7LJeRnFwLfmcH9M_DiA_FPLaYgvj";
+  // Inisialisasi Supabase client (jika diperlukan)
+  let supabase = null;
+  if (window.supabase && window.supabase.createClient) {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  }
 
   const PRODUCTS = [
     { id: 'p_m1', name: 'Rujak Segar', desc: 'Kombinasi buah pilihan dengan sambal original Rujak.Co. Ringan, segar, dan cocok untuk semua penikmat rujak.', price: 28000, cat: 'classic', tags: ['Pilihan Klasik', '5 Buah'], badge: null, badgeColor: null, container: 'Thinwall 750ml (PP Food Grade)', size: '150g Buah', sambal: 'Sambal Original (80g / 1 Cup)', buah: ['Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'], flavor: 'Segar & Autentik', flavorTag: null, defaultSpice: 3, portion: '1 Orang', thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp', image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp' },
