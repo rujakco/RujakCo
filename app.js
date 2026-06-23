@@ -217,8 +217,12 @@
     } catch (_) {}
   }
 
+  // BUG 2 FIX: Menangani pencarian produk berdasarkan ID bervarian pedas (misal: p_m3_5)
   function getItemById(id) {
-    return PRODUCTS.find(p => p.id === id) || ADDONS.find(a => a.id === id);
+    let item = PRODUCTS.find(p => p.id === id) || ADDONS.find(a => a.id === id);
+    if (item) return item;
+    // Jika tidak ditemukan secara eksak, cari berdasarkan awalan ID (untuk produk ber-level pedas)
+    return PRODUCTS.find(p => id.startsWith(p.id + '_'));
   }
 
   function debounce(fn, delay) {
@@ -260,22 +264,25 @@
     };
   }
 
+  // BUG 3 FIX: Mengunci jarak otomatis menjadi 999 jika di luar area jangkauan yang diizinkan
   function getLocationFallback() {
     return new Promise(resolve => {
       fetch('https://ipapi.co/json/')
         .then(r => r.json())
         .then(data => {
           const city = data.city || data.region || 'Lokasi';
-          let distance = SYSTEM.DEFAULT_DISTANCE;
+          let distance = 999; 
           const c = city.toLowerCase();
+          
           if (c.includes('bekasi')) distance = 2;
           else if (c.includes('jakarta')) distance = 15;
           else if (c.includes('depok')) distance = 20;
           else if (c.includes('tangerang')) distance = 25;
           else if (c.includes('bogor')) distance = 30;
+          
           resolve({ city, distance });
         })
-        .catch(() => resolve({ city: 'Bekasi', distance: 2 }));
+        .catch(() => resolve({ city: 'Lokasi Tidak Diketahui', distance: 999 }));
     });
   }
 
@@ -369,11 +376,20 @@
 
     let html = '';
     filtered.forEach(p => {
-      const entry = state.cart[p.id];
-      const qty = entry ? entry.qty : 0;
+      // BUG 2 FIX: Hitung total kuantitas dari semua varian produk ini di keranjang
+      let qty = 0;
+      let firstCartKey = p.id;
+      Object.keys(state.cart).forEach(k => {
+        if (k === p.id || k.startsWith(p.id + '_')) {
+          qty += state.cart[k].qty;
+          if (qty === state.cart[k].qty) firstCartKey = k; // Ambil key pertama sebagai referensi
+        }
+      });
+
       const control = qty === 0
         ? `<button type="button" class="add-btn" data-action="open-modal" data-id="${p.id}"><i data-lucide="plus" class="w-4 h-4"></i></button>`
-        : `<div class="qty-control"><button type="button" class="qty-btn" data-action="decrease" data-id="${p.id}">−</button><span class="qty-num">${qty}</span><button type="button" class="qty-btn" data-action="increase" data-id="${p.id}">+</button></div>`;
+        : `<div class="qty-control"><button type="button" class="qty-btn" data-action="decrease" data-id="${firstCartKey}">−</button><span class="qty-num">${qty}</span><button type="button" class="qty-btn" data-action="increase" data-id="${firstCartKey}">+</button></div>`;
+      
       const badgeRight = p.badge ? `<span class="item-badge-right ${p.badgeColor}">${p.badge}</span>` : '';
       const flavorTag = p.flavorTag ? `<span class="item-flavor-tag">${p.flavorTag}</span>` : '';
       const buahChips = (p.buah || []).slice(0,4).map(b => `<span class="item-buah-chip">${b}</span>`).join('');
@@ -608,6 +624,24 @@
     currentProductId = null;
   }
 
+  // BUG 2 FIX: Memisahkan pesanan berdasarkan level pedas dengan suffix di Key Object-nya
+  document.getElementById('modalAdd').addEventListener('click', function() {
+    const baseId = this.dataset.id;
+    if (baseId) {
+      const spice = parseInt(document.getElementById('spiceSelect').value, 10) || 3;
+      const cartKey = baseId + '_' + spice; // Key unik baru: p_m1_3, p_m2_5, dll.
+      
+      const entry = state.cart[cartKey] || { qty: 0, spice: spice };
+      entry.qty += 1;
+      entry.spice = spice; // Memastikan spice tersimpan
+      state.cart[cartKey] = entry;
+      
+      renderAll();
+      showToast('Berhasil ditambahkan ✓');
+      closeProductModal();
+    }
+  });
+
   // ===== MINI CART =====
   const miniCartModal = document.getElementById('miniCartModal');
 
@@ -764,7 +798,6 @@
     const discount = subtotal >= SYSTEM.DISCOUNT_THRESHOLD ? SYSTEM.DISCOUNT_AMOUNT : 0;
     const total = subtotal - discount + shippingCost;
 
-    // Tampilkan loading
     const payBtn = document.querySelector('#btnOpenPayment');
     const originalText = payBtn ? payBtn.textContent : '';
     if (payBtn) {
@@ -780,7 +813,6 @@
         }
       });
 
-    // Buat pesan WhatsApp
     let msg = 'Halo Rujak.Co! Saya ingin memesan:\n\n';
     keys.forEach(id => {
       const entry = state.cart[id];
@@ -800,11 +832,6 @@
     msg += '*Saya sudah transfer via QRIS, ini bukti transfernya:*\n*(sertakan foto)*';
 
     window.open('https://wa.me/' + SYSTEM.WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
-
-    // Kosongkan keranjang setelah checkout (opsional)
-    // state.cart = {};
-    // renderAll();
-    // closeMiniCart();
   }
 
   // ===== SIMPAN DATA PELANGGAN =====
@@ -878,7 +905,6 @@
     renderCart();
   }
 
-  // ===== PRIORITY TOGGLE =====
   function handlePriorityToggle(checked) {
     state.isPriority = checked;
     document.getElementById('priorityToggle').checked = checked;
@@ -901,7 +927,6 @@
     updateClearButton();
     updateFloatingButton();
 
-    // Event listener untuk input pelanggan
     const nameInput = document.getElementById('customerName');
     const phoneInput = document.getElementById('customerPhone');
     const addressInput = document.getElementById('customerAddress');
@@ -941,7 +966,6 @@
 
   // ===== EVENT LISTENER (DELEGASI) =====
   document.addEventListener('click', function(e) {
-    // Action buttons
     const actionBtn = e.target.closest('[data-action]');
     if (actionBtn) {
       const action = actionBtn.dataset.action;
@@ -963,24 +987,22 @@
         showToast('Berhasil ditambahkan ✓');
         return;
       }
-      if ((action === 'add' || action === 'increase') && id) {
-        if (PRODUCTS.some(p => p.id === id)) {
-          openProductModal(id);
-          return;
+      // BUG 1 FIX: Menghapus logika "add" ganda dan hanya menggunakan increase yang dipisahkan agar modal tidak muncul berulang
+      if (action === 'increase' && id) {
+        if (state.cart[id]) {
+          state.cart[id].qty += 1;
+          renderAll();
+          if (miniCartModal.classList.contains('active')) renderMiniCart();
         }
-        const entry = state.cart[id] || { qty: 0 };
-        entry.qty += 1;
-        state.cart[id] = entry;
-        renderAll();
-        if (action === 'add') showToast('Berhasil ditambahkan ✓');
         return;
       }
-      if (action === 'decrease' && id && state.cart[id]) {
-        const entry = state.cart[id];
-        entry.qty -= 1;
-        if (entry.qty <= 0) delete state.cart[id];
-        renderAll();
-        if (miniCartModal.classList.contains('active')) renderMiniCart();
+      if (action === 'decrease' && id) {
+        if (state.cart[id]) {
+          state.cart[id].qty -= 1;
+          if (state.cart[id].qty <= 0) delete state.cart[id];
+          renderAll();
+          if (miniCartModal.classList.contains('active')) renderMiniCart();
+        }
         return;
       }
       if (action === 'remove' && id && state.cart[id]) {
@@ -1000,7 +1022,6 @@
       }
     }
 
-    // Tombol buka payment
     if (e.target.closest('#btnOpenPayment')) {
       const keys = Object.keys(state.cart);
       if (keys.length === 0) return showToast('Keranjang kosong');
@@ -1018,14 +1039,12 @@
       return;
     }
 
-    // Menu item click
     const menuItem = e.target.closest('.menu-item');
     if (menuItem && !e.target.closest('.add-btn') && !e.target.closest('.qty-btn')) {
       openProductModal(menuItem.dataset.id);
       return;
     }
 
-    // Category pills
     const catBtn = e.target.closest('.cat-pill');
     if (catBtn && catBtn.dataset.cat) {
       document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
@@ -1035,14 +1054,12 @@
       return;
     }
 
-    // FAQ toggle
     const faqToggle = e.target.closest('[data-toggle="faq"]');
     if (faqToggle) {
       faqToggle.closest('.faq-item')?.classList.toggle('open');
       return;
     }
 
-    // Modal close
     if (e.target.closest('#modalClose') || e.target === productModal) {
       closeProductModal();
       return;
@@ -1057,25 +1074,18 @@
       return;
     }
 
-    // Clear cart
     if (e.target.closest('#clearCartBtn')) {
       clearCart();
       return;
     }
-
-    // Cart summary
     if (e.target.closest('.cart-summary')) {
       openMiniCart();
       return;
     }
-
-    // Download QRIS
     if (e.target.closest('#downloadQrisBtnPayment')) {
       downloadQRIS();
       return;
     }
-
-    // Clear search
     if (e.target.closest('#clearSearchBtn')) {
       const input = document.getElementById('searchInput');
       input.value = '';
@@ -1083,21 +1093,6 @@
       renderAll();
       updateClearButton();
       return;
-    }
-  });
-
-  // === MODAL ADD ===
-  document.getElementById('modalAdd').addEventListener('click', function() {
-    const id = this.dataset.id;
-    if (id) {
-      const spice = parseInt(document.getElementById('spiceSelect').value, 10) || 3;
-      const entry = state.cart[id] || { qty: 0, spice: spice };
-      entry.qty += 1;
-      entry.spice = spice;
-      state.cart[id] = entry;
-      renderAll();
-      showToast('Berhasil ditambahkan ✓');
-      closeProductModal();
     }
   });
 
@@ -1158,7 +1153,6 @@
     minimizeCart();
   });
 
-  // === FLOATING BUTTON ===
   document.getElementById('floatingCartBtn').addEventListener('click', expandCart);
 
   // === START ===
