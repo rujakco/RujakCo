@@ -9,166 +9,78 @@
   if (window.supabase && window.supabase.createClient) {
     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   } else {
-    console.warn('Supabase client tidak tersedia. Pastikan library @supabase/supabase-js sudah dimuat.');
+    console.warn('Supabase client tidak tersedia.');
   }
 
-  // ===== DATA PRODUK =====
+  // ===== DATA PRODUK (TANPA GRAM) =====
   const PRODUCTS = [
     {
-      id: 'p_m1',
-      name: 'Rujak Segar',
+      id: 'p_m1', name: 'Rujak Segar',
       desc: 'Kombinasi buah pilihan dengan sambal original Rujak.Co. Ringan, segar, dan cocok untuk semua penikmat rujak.',
-      price: 28000,
-      cat: 'classic',
-      tags: ['Pilihan Klasik', '5 Buah'],
-      badge: null,
-      badgeColor: null,
-      container: 'Thinwall 750ml (PP Food Grade)',
-      size: '150g Buah',
-      sambal: 'Sambal Original (80g / 1 Cup)',
+      price: 28000, cat: 'classic', tags: ['Pilihan Klasik', '5 Buah'], badge: null, badgeColor: null,
+      container: 'Thinwall 750ml (PP Food Grade)', size: 'Porsi Reguler', sambal: 'Sambal Original (1 Cup)',
       buah: ['Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'],
-      flavor: 'Segar & Autentik',
-      flavorTag: null,
-      defaultSpice: 3,
-      portion: '1 Orang',
+      flavor: 'Segar & Autentik', flavorTag: null, defaultSpice: 3, portion: '1 Orang',
       thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp',
       image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp'
     },
     {
-      id: 'p_m2',
-      name: 'Rujak Serut',
+      id: 'p_m2', name: 'Rujak Serut',
       desc: 'Buah diserut halus untuk pengalaman rasa yang lebih menyatu di setiap suapan.',
-      price: 26000,
-      cat: 'classic',
-      tags: ['Renyah', 'Serut'],
-      badge: null,
-      badgeColor: null,
-      container: 'Thinwall 750ml (PP Food Grade)',
-      size: '150g Buah',
-      sambal: 'Sambal Original (80g / 1 Cup)',
+      price: 26000, cat: 'classic', tags: ['Renyah', 'Serut'], badge: null, badgeColor: null,
+      container: 'Thinwall 750ml (PP Food Grade)', size: 'Porsi Reguler', sambal: 'Sambal Original (1 Cup)',
       buah: ['Mangga Muda', 'Bengkoang', 'Nanas', 'Ubi Merah'],
-      flavor: 'Renyah Segar',
-      flavorTag: 'Renyah',
-      defaultSpice: 3,
-      portion: '1 Orang',
+      flavor: 'Renyah Segar', flavorTag: 'Renyah', defaultSpice: 3, portion: '1 Orang',
       thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp',
       image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp'
     },
     {
-      id: 'p_m3',
-      name: 'Rujak Gaco',
+      id: 'p_m3', name: 'Rujak Gaco',
       desc: 'Enam buah pilihan dengan sambal mete premium yang kaya rasa dan menjadi favorit pelanggan.',
-      price: 40000,
-      cat: 'signature',
-      tags: ['Mete Premium', 'Bestseller'],
-      badge: 'Koleksi Favorit',
-      badgeColor: 'red',
-      container: 'Thinwall 750ml (PP Food Grade)',
-      size: '150g Buah',
-      sambal: 'Sambal Mete Premium (80g / 1 Cup)',
+      price: 40000, cat: 'signature', tags: ['Mete Premium', 'Bestseller'], badge: 'Koleksi Favorit', badgeColor: 'red',
+      container: 'Thinwall 750ml (PP Food Grade)', size: 'Porsi Reguler', sambal: 'Sambal Mete Premium (1 Cup)',
       buah: ['Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'],
-      flavor: 'Gurih Mete Premium',
-      flavorTag: null,
-      defaultSpice: 3,
-      portion: '1 Orang',
+      flavor: 'Gurih Mete Premium', flavorTag: null, defaultSpice: 3, portion: '1 Orang',
       thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-thumb.webp',
       image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-hd.webp'
     },
     {
-      id: 'p_m4',
-      name: 'Rujak Rama',
+      id: 'p_m4', name: 'Rujak Rama',
       desc: 'Porsi melimpah untuk dua hingga tiga orang dengan cita rasa khas Rujak.Co.',
-      price: 48000,
-      cat: 'signature',
-      tags: ['Porsi Besar', 'Sharing'],
-      badge: 'Untuk Dibagi Bersama',
-      badgeColor: 'red',
-      container: 'Thinwall Jumbo 1000ml (PP Food Grade)',
-      size: '250g Buah',
-      sambal: 'Sambal Mete Premium (130g / 2 Cup)',
+      price: 48000, cat: 'signature', tags: ['Porsi Besar', 'Sharing'], badge: 'Untuk Dibagi Bersama', badgeColor: 'red',
+      container: 'Thinwall Jumbo 1000ml (PP Food Grade)', size: 'Porsi Sharing', sambal: 'Sambal Mete Premium (2 Cup)',
       buah: ['Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'],
-      flavor: 'Gurih Mete Extra Pedas',
-      flavorTag: null,
-      defaultSpice: 4,
-      portion: '2-3 Orang',
+      flavor: 'Gurih Mete Extra Pedas', flavorTag: null, defaultSpice: 4, portion: '2-3 Orang',
       thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-thumb.webp',
       image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-hd.webp'
     },
     {
-      id: 'p_m5',
-      name: 'Rujak Mahkota',
+      id: 'p_m5', name: 'Rujak Mahkota',
       desc: 'Koleksi premium dengan Shine Muscat dan buah pilihan terbaik untuk momen istimewa.',
-      price: 85000,
-      cat: 'reserve',
-      tags: ['Eksklusif', 'Shine Muscat'],
-      badge: 'Reserve Collection',
-      badgeColor: 'gold',
-      container: 'Thinwall Jumbo 1000ml + Paper Bag',
-      size: '165g Buah',
-      sambal: 'Sambal Mete Premium (85g / 2 Cup)',
+      price: 85000, cat: 'reserve', tags: ['Eksklusif', 'Shine Muscat'], badge: 'Reserve Collection', badgeColor: 'gold',
+      container: 'Thinwall Jumbo 1000ml + Paper Bag', size: 'Porsi Premium', sambal: 'Sambal Mete Premium (2 Cup)',
       buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'],
-      flavor: 'Eksklusif & Premium',
-      flavorTag: null,
-      defaultSpice: 3,
-      portion: '1-2 Orang',
+      flavor: 'Eksklusif & Premium', flavorTag: null, defaultSpice: 3, portion: '1-2 Orang',
       thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp',
       image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp'
     },
     {
-      id: 'p_m6',
-      name: 'Tampah Nusantara',
+      id: 'p_m6', name: 'Tampah Nusantara',
       desc: 'Sajian kebersamaan dalam tampah bambu dengan koleksi buah pilihan dan sambal khas Rujak.Co.',
-      price: 200000,
-      cat: 'reserve',
-      tags: ['Tampah', 'Pre-Order'],
-      badge: 'Untuk 8-10 Orang',
-      badgeColor: 'gold',
-      container: 'Tampah Bambu Ø40cm + Kardus + Wrap',
-      size: '400g Buah',
-      sambal: 'Varian Original & Mete (200g / 4 Cup)',
+      price: 200000, cat: 'reserve', tags: ['Tampah', 'Pre-Order'], badge: 'Untuk 8-10 Orang', badgeColor: 'gold',
+      container: 'Tampah Bambu Ø40cm + Kardus + Wrap', size: 'Porsi Besar', sambal: 'Varian Original & Mete (4 Cup)',
       buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong', 'Ubi Merah'],
-      flavor: 'Kemegahan Berbagai Rasa',
-      flavorTag: null,
-      defaultSpice: 3,
-      portion: '8-10 Orang',
+      flavor: 'Kemegahan Berbagai Rasa', flavorTag: null, defaultSpice: 3, portion: '8-10 Orang',
       thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-thumb.webp',
       image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp'
     }
   ];
 
   const ADDONS = [
-    {
-      id: 'a_sambal1',
-      name: 'Sambal Original',
-      price: 8000,
-      icon: 'flame',
-      iconColor: 'text-red-500',
-      desc: 'Warisan rasa klasik.'
-    },
-    {
-      id: 'a_sambal2',
-      name: 'Sambal Mete Premium',
-      price: 12000,
-      icon: 'flame',
-      iconColor: 'text-red-600',
-      desc: 'Lebih gurih dan kaya rasa.'
-    },
-    {
-      id: 'a_extra_jambu',
-      name: 'Extra Jambu Kristal',
-      price: 10000,
-      icon: 'apple',
-      iconColor: 'text-green-500',
-      desc: 'Tambahan jambu kristal segar'
-    },
-    {
-      id: 'a_extra_muscat',
-      name: 'Extra Shine Muscat',
-      price: 15000,
-      icon: 'grape',
-      iconColor: 'text-purple-500',
-      desc: 'Tambahan anggur Shine Muscat impor'
-    }
+    { id: 'a_sambal1', name: 'Sambal Original', price: 8000, icon: 'flame', iconColor: 'text-red-500', desc: 'Warisan rasa klasik.' },
+    { id: 'a_sambal2', name: 'Sambal Mete Premium', price: 12000, icon: 'flame', iconColor: 'text-red-600', desc: 'Lebih gurih dan kaya rasa.' },
+    { id: 'a_extra_jambu', name: 'Extra Jambu Kristal', price: 10000, icon: 'apple', iconColor: 'text-green-500', desc: 'Tambahan jambu kristal segar' },
+    { id: 'a_extra_muscat', name: 'Extra Shine Muscat', price: 15000, icon: 'grape', iconColor: 'text-purple-500', desc: 'Tambahan anggur Shine Muscat impor' }
   ];
 
   const SYSTEM = {
@@ -178,6 +90,14 @@
     TOAST_DURATION: 3000,
     MAX_DISTANCE: 50,
     DEFAULT_DISTANCE: 2
+  };
+
+  // ===== DISTRICT MAPPING (MANUAL) =====
+  const DISTRICT_MAP = {
+    'bekasi barat': 3, 'bekasi timur': 5, 'bekasi selatan': 7, 'bekasi utara': 8,
+    'rawalumbu': 6, 'jatiasih': 9, 'pondokgede': 12, 'cikarang': 18,
+    'jakarta pusat': 18, 'jakarta selatan': 20, 'jakarta timur': 15, 'jakarta barat': 22, 'jakarta utara': 25,
+    'depok': 28, 'bogor': 35, 'tangerang': 30, 'tangerang selatan': 27
   };
 
   // ===== STATE =====
@@ -191,95 +111,53 @@
     isCartMinimized: false,
     customerName: '',
     customerPhone: '',
-    customerAddress: ''
+    customerAddress: '',
+    isGift: false,
+    giftSender: '',
+    giftMessage: '',
+    useManualDistrict: false,
+    selectedDistrict: ''
   };
 
   // ===== FUNGSI UTILITY =====
-  function fmt(num) {
-    return 'Rp' + num.toLocaleString('id-ID');
-  }
-
+  function fmt(num) { return 'Rp' + num.toLocaleString('id-ID'); }
   function loadCart() {
-    try {
-      const s = localStorage.getItem('rujak_cart');
-      if (s) {
-        const p = JSON.parse(s);
-        if (typeof p === 'object' && p !== null) state.cart = p;
-      }
-    } catch (_) {
-      state.cart = {};
-    }
+    try { const s = localStorage.getItem('rujak_cart'); if (s) { const p = JSON.parse(s); if (typeof p === 'object' && p !== null) state.cart = p; } } catch (_) { state.cart = {}; }
   }
-
-  function saveCart() {
-    try {
-      localStorage.setItem('rujak_cart', JSON.stringify(state.cart));
-    } catch (_) {}
-  }
-
+  function saveCart() { try { localStorage.setItem('rujak_cart', JSON.stringify(state.cart)); } catch (_) {} }
   function getItemById(id) {
     let item = PRODUCTS.find(p => p.id === id) || ADDONS.find(a => a.id === id);
     if (item) return item;
     return PRODUCTS.find(p => id.startsWith(p.id + '_'));
   }
-
-  function debounce(fn, delay) {
-    let t;
-    return function(...args) {
-      clearTimeout(t);
-      t = setTimeout(() => fn.apply(this, args), delay);
-    };
-  }
+  function debounce(fn, delay) { let t; return function(...args) { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), delay); }; }
 
   // ===== FUNGSI ONGKIR & LOKASI =====
   function calculateShipping(d, priority) {
     const dist = (d === null || d === undefined || isNaN(d)) ? SYSTEM.DEFAULT_DISTANCE : d;
     const rounded = Math.ceil(dist);
-    if (rounded > SYSTEM.MAX_DISTANCE) {
-      return { cost: Infinity, label: 'Luar jangkauan', distance: rounded };
-    }
-    if (rounded <= 3) {
-      return { cost: 10000, label: 'Reguler (0-3 km)', distance: rounded };
-    }
+    if (rounded > SYSTEM.MAX_DISTANCE) return { cost: Infinity, label: 'Luar jangkauan', distance: rounded };
+    if (rounded <= 3) return { cost: 10000, label: 'Reguler (0-3 km)', distance: rounded };
     let base, perKm, label;
-    if (priority) {
-      base = 25000;
-      perKm = 2500;
-      label = 'Prioritas';
-    } else {
-      base = 15000;
-      perKm = 1500;
-      label = 'Reguler';
-    }
-    if (rounded < 10) {
-      return { cost: base, label: label + ' (' + rounded + ' km)', distance: rounded };
-    }
+    if (priority) { base = 25000; perKm = 2500; label = 'Prioritas'; }
+    else { base = 15000; perKm = 1500; label = 'Reguler'; }
+    if (rounded < 10) return { cost: base, label: label + ' (' + rounded + ' km)', distance: rounded };
     const extra = rounded - 10;
-    return {
-      cost: base + (extra * perKm),
-      label: label + ' (' + rounded + ' km)',
-      distance: rounded
-    };
+    return { cost: base + (extra * perKm), label: label + ' (' + rounded + ' km)', distance: rounded };
   }
 
   function getLocationFallback() {
     return new Promise(resolve => {
-      fetch('https://ipapi.co/json/')
-        .then(r => r.json())
-        .then(data => {
-          const city = data.city || data.region || 'Lokasi';
-          let distance = 999; 
-          const c = city.toLowerCase();
-          
-          if (c.includes('bekasi')) distance = 2;
-          else if (c.includes('jakarta')) distance = 15;
-          else if (c.includes('depok')) distance = 20;
-          else if (c.includes('tangerang')) distance = 25;
-          else if (c.includes('bogor')) distance = 30;
-          
-          resolve({ city, distance });
-        })
-        .catch(() => resolve({ city: 'Lokasi Tidak Diketahui', distance: 999 }));
+      fetch('https://ipapi.co/json/').then(r => r.json()).then(data => {
+        const city = data.city || data.region || 'Lokasi'; let distance = 999;
+        const c = city.toLowerCase();
+        if (c.includes('bekasi')) distance = 2;
+        else if (c.includes('jakarta')) distance = 15;
+        else if (c.includes('depok')) distance = 20;
+        else if (c.includes('tangerang')) distance = 25;
+        else if (c.includes('bogor')) distance = 30;
+        resolve({ city, distance });
+      }).catch(() => resolve({ city: 'Lokasi Tidak Diketahui', distance: 999 }));
     });
   }
 
@@ -288,291 +166,330 @@
     const out = distance > SYSTEM.MAX_DISTANCE;
     document.getElementById('shippingDistance').textContent = '~' + Math.ceil(distance) + ' km';
     const costEl = document.getElementById('shippingCost');
-    if (out) {
-      costEl.textContent = '❌';
-      costEl.style.color = 'var(--red)';
-      document.getElementById('outOfRange').style.display = 'block';
-    } else {
-      costEl.textContent = 'Rp' + r.cost.toLocaleString('id-ID');
-      costEl.style.color = 'var(--red)';
-      document.getElementById('outOfRange').style.display = 'none';
-    }
+    if (out) { costEl.textContent = '❌'; costEl.style.color = 'var(--red)'; document.getElementById('outOfRange').style.display = 'block'; }
+    else { costEl.textContent = 'Rp' + r.cost.toLocaleString('id-ID'); costEl.style.color = 'var(--red)'; document.getElementById('outOfRange').style.display = 'none'; }
     if (document.getElementById('miniCartModal').classList.contains('active')) renderMiniCart();
   }
 
   function detectLocation() {
     const STORE_LAT = -6.2333, STORE_LNG = 107.0;
     document.getElementById('shippingCost').textContent = '⏳';
+    if (state.useManualDistrict && state.selectedDistrict) {
+      const dist = DISTRICT_MAP[state.selectedDistrict] || SYSTEM.DEFAULT_DISTANCE;
+      state.userDistance = dist;
+      const distName = state.selectedDistrict.replace(/\b\w/g, l => l.toUpperCase());
+      document.getElementById('locationDisplay').textContent = distName + ' ▾';
+      updateShippingUI(dist, state.isPriority);
+      return;
+    }
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        pos => {
-          const lat = pos.coords.latitude, lng = pos.coords.longitude;
-          const R = 6371;
-          const dLat = (lat - STORE_LAT) * Math.PI / 180;
-          const dLon = (lng - STORE_LNG) * Math.PI / 180;
-          const a = Math.sin(dLat/2)**2 + Math.cos(STORE_LAT * Math.PI/180) * Math.cos(lat * Math.PI/180) * Math.sin(dLon/2)**2;
-          const distance = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-          fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=10&accept-language=id`)
-            .then(r => r.json())
-            .then(data => {
-              const city = data.address?.city || data.address?.town || data.address?.village || 'Lokasi Anda';
-              state.userDistance = distance;
-              document.getElementById('locationDisplay').textContent = city + ' ▾';
-              updateShippingUI(distance, state.isPriority);
-            })
-            .catch(() => {
-              state.userDistance = distance;
-              document.getElementById('locationDisplay').textContent = 'Lokasi Anda ▾';
-              updateShippingUI(distance, state.isPriority);
-            });
-        },
-        () => {
-          getLocationFallback().then(({ city, distance }) => {
-            state.userDistance = distance;
-            document.getElementById('locationDisplay').textContent = city + ' ▾';
-            updateShippingUI(distance, state.isPriority);
-          });
-        },
-        { enableHighAccuracy: true, timeout: 10000 }
-      );
+      navigator.geolocation.getCurrentPosition(pos => {
+        const lat = pos.coords.latitude, lng = pos.coords.longitude;
+        const R = 6371; const dLat = (lat - STORE_LAT) * Math.PI / 180; const dLon = (lng - STORE_LNG) * Math.PI / 180;
+        const a = Math.sin(dLat/2)**2 + Math.cos(STORE_LAT * Math.PI/180) * Math.cos(lat * Math.PI/180) * Math.sin(dLon/2)**2;
+        const distance = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=10&accept-language=id`).then(r => r.json()).then(data => {
+          const city = data.address?.city || data.address?.town || 'Lokasi Anda';
+          state.userDistance = distance; document.getElementById('locationDisplay').textContent = city + ' ▾'; updateShippingUI(distance, state.isPriority);
+        }).catch(() => { state.userDistance = distance; document.getElementById('locationDisplay').textContent = 'Lokasi Anda ▾'; updateShippingUI(distance, state.isPriority); });
+      }, () => {
+        getLocationFallback().then(({ city, distance }) => { state.userDistance = distance; document.getElementById('locationDisplay').textContent = city + ' ▾'; updateShippingUI(distance, state.isPriority); });
+      }, { enableHighAccuracy: true, timeout: 10000 });
     } else {
-      getLocationFallback().then(({ city, distance }) => {
-        state.userDistance = distance;
-        document.getElementById('locationDisplay').textContent = city + ' ▾';
-        updateShippingUI(distance, state.isPriority);
-      });
+      getLocationFallback().then(({ city, distance }) => { state.userDistance = distance; document.getElementById('locationDisplay').textContent = city + ' ▾'; updateShippingUI(distance, state.isPriority); });
     }
   }
-
   // ===== RENDER FUNCTIONS =====
-  function renderMenu() {
-    const container = document.getElementById('menuList');
-    const empty = document.getElementById('emptyState');
-    const skeleton = document.getElementById('skeletonContainer');
-    skeleton.style.display = 'none';
-    container.style.display = 'block';
+function renderMenu() {
+  const container = document.getElementById('menuList');
+  const empty = document.getElementById('emptyState');
+  const skeleton = document.getElementById('skeletonContainer');
+  skeleton.style.display = 'none';
+  container.style.display = 'block';
 
-    if (state.activeFilter === 'addon') {
-      container.innerHTML = '';
-      empty.style.display = 'none';
-      return;
-    }
-
-    const filtered = PRODUCTS.filter(p => {
-      const matchCat = (state.activeFilter === 'all' || p.cat === state.activeFilter);
-      const q = state.searchQuery.toLowerCase();
-      return matchCat && (p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
-    });
-
-    if (!filtered.length) {
-      empty.style.display = 'block';
-      container.innerHTML = '';
-      return;
-    }
+  if (state.activeFilter === 'addon') {
+    container.innerHTML = '';
     empty.style.display = 'none';
-
-    let html = '';
-    filtered.forEach(p => {
-      let qty = 0;
-      let firstCartKey = p.id;
-      Object.keys(state.cart).forEach(k => {
-        if (k === p.id || k.startsWith(p.id + '_')) {
-          qty += state.cart[k].qty;
-          if (qty === state.cart[k].qty) firstCartKey = k;
-        }
-      });
-
-      const control = qty === 0
-        ? `<button type="button" class="add-btn" data-action="open-modal" data-id="${p.id}"><i data-lucide="plus" class="w-4 h-4"></i></button>`
-        : `<div class="qty-control"><button type="button" class="qty-btn" data-action="decrease" data-id="${firstCartKey}">−</button><span class="qty-num">${qty}</span><button type="button" class="qty-btn" data-action="increase" data-id="${firstCartKey}">+</button></div>`;
-      
-      const badgeRight = p.badge ? `<span class="item-badge-right ${p.badgeColor}">${p.badge}</span>` : '';
-      const flavorTag = p.flavorTag ? `<span class="item-flavor-tag">${p.flavorTag}</span>` : '';
-      const buahChips = (p.buah || []).slice(0,4).map(b => `<span class="item-buah-chip">${b}</span>`).join('');
-      const moreChips = (p.buah || []).length > 4 ? `<span class="item-buah-chip">+${p.buah.length - 4}</span>` : '';
-
-      html += `
-        <div class="menu-item" data-id="${p.id}" tabindex="0" role="button" aria-label="Detail ${p.name}">
-          <div class="item-img-wrap">
-            <img src="${p.thumbnail}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; this.nextElementSibling.textContent='${p.name.substring(0,20)}'">
-            <div class="fallback" style="display:none;">${p.name.substring(0,20)}</div>
-          </div>
-          <div class="item-body">
-            <div class="item-name-row">
-              <span class="item-name">${p.name}</span>
-              ${badgeRight}
-            </div>
-            <div class="item-flavor-row">
-              <span class="item-flavor">${p.flavor}</span>
-              ${flavorTag}
-            </div>
-            <div class="item-spice">🌶️ Level 1–5</div>
-            <p class="item-desc">${p.desc}</p>
-            <div class="item-buah-chips">${buahChips}${moreChips}</div>
-            <div class="item-footer">
-              <div>
-                <span class="item-price">${fmt(p.price)}</span>
-                <span class="item-portion"> · ${p.portion}</span>
-              </div>
-              ${control}
-            </div>
-          </div>
-        </div>
-      `;
-    });
-    container.innerHTML = html;
+    return;
   }
 
-  function renderAddons() {
-    const container = document.getElementById('addonList');
+  // Cek menu VIP
+  const vipKeyword = 'vip';
+  let filtered = PRODUCTS.filter(p => {
+    const matchCat = (state.activeFilter === 'all' || p.cat === state.activeFilter);
     const q = state.searchQuery.toLowerCase();
-    const filtered = ADDONS.filter(a => a.name.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q));
-    let html = '';
-    filtered.forEach(a => {
-      const entry = state.cart[a.id];
-      const qty = entry ? entry.qty : 0;
-      const control = qty === 0
-        ? `<button type="button" class="addon-add" data-action="add-addon" data-id="${a.id}"><i data-lucide="plus" class="w-4 h-4"></i></button>`
-        : `<div class="qty-control"><button type="button" class="qty-btn" data-action="decrease" data-id="${a.id}">−</button><span class="qty-num">${qty}</span><button type="button" class="qty-btn" data-action="increase" data-id="${a.id}">+</button></div>`;
-      html += `
-        <div class="addon-card">
-          <div class="addon-icon ${a.iconColor}"><i data-lucide="${a.icon}" class="w-6 h-6"></i></div>
-          <div class="addon-name">${a.name}</div>
-          <div class="addon-desc">${a.desc}</div>
-          <div class="addon-footer">
-            <span class="addon-price">${fmt(a.price)}</span>
+    return matchCat && (p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
+  });
+
+  // Menu rahasia VIP
+  if (state.searchQuery.toLowerCase().includes(vipKeyword)) {
+    const vipProduct = {
+      id: 'p_vip',
+      name: 'Mahkota VIP',
+      desc: 'Menu rahasia eksklusif dengan komposisi premium dan sambal spesial. Hanya untuk yang tahu.',
+      price: 125000,
+      cat: 'reserve',
+      tags: ['Eksklusif', 'VIP Only'],
+      badge: 'Menu Rahasia',
+      badgeColor: 'gold',
+      container: 'Box Premium + Paper Bag',
+      size: 'Porsi Eksklusif',
+      sambal: 'Sambal Mete Premium Spesial (2 Cup)',
+      buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga Harum Manis', 'Nanas Madu', 'Bengkoang', 'Strawberry'],
+      flavor: 'Premium & Misterius',
+      flavorTag: 'Limited',
+      defaultSpice: 2,
+      portion: '1-2 Orang',
+      thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp',
+      image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp'
+    };
+    // Cek apakah produk VIP sudah ada di daftar (berdasarkan ID)
+    if (!filtered.some(p => p.id === 'p_vip')) {
+      filtered = [vipProduct, ...filtered];
+    }
+  }
+
+  if (!filtered.length) {
+    empty.style.display = 'block';
+    container.innerHTML = '';
+    return;
+  }
+  empty.style.display = 'none';
+
+  let html = '';
+  filtered.forEach(p => {
+    let qty = 0;
+    let firstCartKey = p.id;
+    Object.keys(state.cart).forEach(k => {
+      if (k === p.id || k.startsWith(p.id + '_')) {
+        qty += state.cart[k].qty;
+        if (qty === state.cart[k].qty) firstCartKey = k;
+      }
+    });
+
+    const control = qty === 0
+      ? `<button type="button" class="add-btn" data-action="open-modal" data-id="${p.id}"><i data-lucide="plus" class="w-4 h-4"></i></button>`
+      : `<div class="qty-control"><button type="button" class="qty-btn" data-action="decrease" data-id="${firstCartKey}">−</button><span class="qty-num">${qty}</span><button type="button" class="qty-btn" data-action="increase" data-id="${firstCartKey}">+</button></div>`;
+    
+    const badgeRight = p.badge ? `<span class="item-badge-right ${p.badgeColor}">${p.badge}</span>` : '';
+    const flavorTag = p.flavorTag ? `<span class="item-flavor-tag">${p.flavorTag}</span>` : '';
+    const buahChips = (p.buah || []).slice(0,4).map(b => `<span class="item-buah-chip">${b}</span>`).join('');
+    const moreChips = (p.buah || []).length > 4 ? `<span class="item-buah-chip">+${p.buah.length - 4}</span>` : '';
+
+    html += `
+      <div class="menu-item" data-id="${p.id}" tabindex="0" role="button" aria-label="Detail ${p.name}">
+        <div class="item-img-wrap">
+          <img src="${p.thumbnail}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; this.nextElementSibling.textContent='${p.name.substring(0,20)}'">
+          <div class="fallback" style="display:none;">${p.name.substring(0,20)}</div>
+        </div>
+        <div class="item-body">
+          <div class="item-name-row">
+            <span class="item-name">${p.name}</span>
+            ${badgeRight}
+          </div>
+          <div class="item-flavor-row">
+            <span class="item-flavor">${p.flavor}</span>
+            ${flavorTag}
+          </div>
+          <div class="item-spice">🌶️ Level 1–5</div>
+          <p class="item-desc">${p.desc}</p>
+          <div class="item-buah-chips">${buahChips}${moreChips}</div>
+          <div class="item-footer">
+            <div>
+              <span class="item-price">${fmt(p.price)}</span>
+              <span class="item-portion"> · ${p.portion}</span>
+            </div>
             ${control}
           </div>
         </div>
-      `;
-    });
-    container.innerHTML = html;
-    const header = document.getElementById('addonHeader');
-    const divider = document.getElementById('addonDivider');
-    const show = filtered.length > 0;
-    header.style.display = show ? 'flex' : 'none';
-    divider.style.display = show ? 'block' : 'none';
-  }
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+}
 
-  function renderCart() {
-    const keys = Object.keys(state.cart);
-    let totalQty = 0, subtotal = 0;
+function renderAddons() {
+  const container = document.getElementById('addonList');
+  const q = state.searchQuery.toLowerCase();
+  const filtered = ADDONS.filter(a => a.name.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q));
+  let html = '';
+  filtered.forEach(a => {
+    const entry = state.cart[a.id];
+    const qty = entry ? entry.qty : 0;
+    const control = qty === 0
+      ? `<button type="button" class="addon-add" data-action="add-addon" data-id="${a.id}"><i data-lucide="plus" class="w-4 h-4"></i></button>`
+      : `<div class="qty-control"><button type="button" class="qty-btn" data-action="decrease" data-id="${a.id}">−</button><span class="qty-num">${qty}</span><button type="button" class="qty-btn" data-action="increase" data-id="${a.id}">+</button></div>`;
+    html += `
+      <div class="addon-card">
+        <div class="addon-icon ${a.iconColor}"><i data-lucide="${a.icon}" class="w-6 h-6"></i></div>
+        <div class="addon-name">${a.name}</div>
+        <div class="addon-desc">${a.desc}</div>
+        <div class="addon-footer">
+          <span class="addon-price">${fmt(a.price)}</span>
+          ${control}
+        </div>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+  const header = document.getElementById('addonHeader');
+  const divider = document.getElementById('addonDivider');
+  const show = filtered.length > 0;
+  header.style.display = show ? 'flex' : 'none';
+  divider.style.display = show ? 'block' : 'none';
+}
+
+function updateProgressBar(subtotal) {
+  const container = document.getElementById('progressContainer');
+  const label = document.getElementById('progressLabel');
+  const percent = document.getElementById('progressPercent');
+  const fill = document.getElementById('progressFill');
+  
+  if (subtotal >= SYSTEM.DISCOUNT_THRESHOLD) {
+    container.style.display = 'none';
+    return;
+  }
+  
+  const remaining = SYSTEM.DISCOUNT_THRESHOLD - subtotal;
+  const progressPercent = Math.min(100, Math.round((subtotal / SYSTEM.DISCOUNT_THRESHOLD) * 100));
+  
+  container.style.display = 'block';
+  label.textContent = `Tambah ${fmt(remaining)} lagi untuk diskon Rp10.000`;
+  percent.textContent = progressPercent + '%';
+  fill.style.width = progressPercent + '%';
+  
+  if (progressPercent >= 80) {
+    fill.style.background = 'var(--green)';
+  } else {
+    fill.style.background = 'var(--red)';
+  }
+}
+
+function renderCart() {
+  const keys = Object.keys(state.cart);
+  let totalQty = 0, subtotal = 0;
+  keys.forEach(id => {
+    const entry = state.cart[id];
+    const item = getItemById(id);
+    if (item && entry) {
+      totalQty += entry.qty;
+      subtotal += item.price * entry.qty;
+    } else {
+      delete state.cart[id];
+    }
+  });
+  
+  updateProgressBar(subtotal);
+  
+  const bar = document.getElementById('bottom-bar');
+  const discountLabel = document.getElementById('discountLabel');
+  const totalEl = document.getElementById('cartTotalDisplay');
+  const footer = document.querySelector('.footer-brand');
+
+  if (totalQty > 0 && !state.isCartMinimized) {
+    bar.classList.add('visible');
+    if (footer) footer.style.paddingBottom = '180px';
+    document.getElementById('cartPreview').textContent = totalQty + ' item' + (totalQty > 1 ? 's' : '');
+    if (subtotal >= SYSTEM.DISCOUNT_THRESHOLD) {
+      discountLabel.style.display = 'inline-block';
+      totalEl.innerHTML = `<span style="text-decoration:line-through;font-size:11px;color:#9CA3AF;margin-right:4px;">${fmt(subtotal)}</span>${fmt(subtotal - SYSTEM.DISCOUNT_AMOUNT)}`;
+    } else {
+      discountLabel.style.display = 'none';
+      totalEl.textContent = fmt(subtotal);
+    }
+  } else {
+    bar.classList.remove('visible');
+    if (footer) footer.style.paddingBottom = '0';
+  }
+  saveCart();
+  updateFloatingButton();
+}
+
+function renderMiniCart() {
+  const list = document.getElementById('miniCartList');
+  const shippingRow = document.getElementById('miniCartShipping');
+  const shippingAmt = document.getElementById('miniCartShippingAmount');
+  const finalTotal = document.getElementById('miniCartFinalTotal');
+  const keys = Object.keys(state.cart);
+  let subtotal = 0, html = '';
+
+  document.getElementById('orderNotes').value = state.orderNotes;
+  document.getElementById('customerName').value = state.customerName;
+  document.getElementById('customerPhone').value = state.customerPhone;
+  document.getElementById('customerAddress').value = state.customerAddress;
+  document.getElementById('giftToggle').checked = state.isGift;
+  document.getElementById('giftSender').value = state.giftSender;
+  document.getElementById('giftMessage').value = state.giftMessage;
+  document.getElementById('giftFields').style.display = state.isGift ? 'block' : 'none';
+
+  if (keys.length === 0) {
+    html = '<p style="color:var(--gray-500);text-align:center;padding:20px 0;">Keranjang kosong</p>';
+    shippingRow.style.display = 'none';
+    finalTotal.textContent = 'Rp0';
+  } else {
     keys.forEach(id => {
       const entry = state.cart[id];
       const item = getItemById(id);
-      if (item && entry) {
-        totalQty += entry.qty;
-        subtotal += item.price * entry.qty;
-      } else {
-        delete state.cart[id];
-      }
-    });
-    const bar = document.getElementById('bottom-bar');
-    const discountLabel = document.getElementById('discountLabel');
-    const totalEl = document.getElementById('cartTotalDisplay');
-    const footer = document.querySelector('.footer-brand');
-
-    if (totalQty > 0 && !state.isCartMinimized) {
-      bar.classList.add('visible');
-      if (footer) footer.style.paddingBottom = '180px';
-      document.getElementById('cartPreview').textContent = totalQty + ' item' + (totalQty > 1 ? 's' : '');
-      if (subtotal >= SYSTEM.DISCOUNT_THRESHOLD) {
-        discountLabel.style.display = 'inline-block';
-        totalEl.innerHTML = `<span style="text-decoration:line-through;font-size:11px;color:#9CA3AF;margin-right:4px;">${fmt(subtotal)}</span>${fmt(subtotal - SYSTEM.DISCOUNT_AMOUNT)}`;
-      } else {
-        discountLabel.style.display = 'none';
-        totalEl.textContent = fmt(subtotal);
-      }
-    } else {
-      bar.classList.remove('visible');
-      if (footer) footer.style.paddingBottom = '0';
-    }
-    saveCart();
-    updateFloatingButton();
-  }
-
-  function renderMiniCart() {
-    const list = document.getElementById('miniCartList');
-    const shippingRow = document.getElementById('miniCartShipping');
-    const shippingAmt = document.getElementById('miniCartShippingAmount');
-    const finalTotal = document.getElementById('miniCartFinalTotal');
-    const keys = Object.keys(state.cart);
-    let subtotal = 0, html = '';
-
-    document.getElementById('orderNotes').value = state.orderNotes;
-    document.getElementById('customerName').value = state.customerName;
-    document.getElementById('customerPhone').value = state.customerPhone;
-    document.getElementById('customerAddress').value = state.customerAddress;
-
-    if (keys.length === 0) {
-      html = '<p style="color:var(--gray-500);text-align:center;padding:20px 0;">Keranjang kosong</p>';
-      shippingRow.style.display = 'none';
-      finalTotal.textContent = 'Rp0';
-    } else {
-      keys.forEach(id => {
-        const entry = state.cart[id];
-        const item = getItemById(id);
-        if (!item || !entry) return;
-        subtotal += item.price * entry.qty;
-        const spiceText = entry.spice ? ' (Level ' + entry.spice + ')' : '';
-        html += `
-          <div class="mini-cart-item">
-            <div class="mini-cart-info">
-              <div class="mini-cart-name">${item.name}${spiceText}</div>
-              <div class="mini-cart-detail">${fmt(item.price)}</div>
-            </div>
-            <div class="mini-cart-qty">
-              <button data-action="decrease" data-id="${id}">−</button>
-              <span>${entry.qty}</span>
-              <button data-action="increase" data-id="${id}">+</button>
-              <button class="mini-cart-remove" data-action="remove" data-id="${id}">🗑️</button>
-            </div>
+      if (!item || !entry) return;
+      subtotal += item.price * entry.qty;
+      const spiceText = entry.spice ? ' (Level ' + entry.spice + ')' : '';
+      html += `
+        <div class="mini-cart-item">
+          <div class="mini-cart-info">
+            <div class="mini-cart-name">${item.name}${spiceText}</div>
+            <div class="mini-cart-detail">${fmt(item.price)}</div>
           </div>
-        `;
-      });
-      const dist = state.userDistance !== null ? state.userDistance : SYSTEM.DEFAULT_DISTANCE;
-      const ship = calculateShipping(dist, state.isPriority);
-      const shippingCost = ship.cost === Infinity ? 0 : ship.cost;
-      const discount = subtotal >= SYSTEM.DISCOUNT_THRESHOLD ? SYSTEM.DISCOUNT_AMOUNT : 0;
-      shippingRow.style.display = 'flex';
-      shippingAmt.textContent = 'Ongkir: ' + fmt(shippingCost);
-      finalTotal.textContent = fmt(subtotal - discount + shippingCost);
-    }
-    list.innerHTML = html;
-
-    const btnPay = document.getElementById('btnOpenPayment');
-    if (state.userDistance === null) {
-      btnPay.disabled = true;
-      btnPay.style.opacity = '0.5';
-      btnPay.style.pointerEvents = 'none';
-      btnPay.textContent = '⏳ Menghitung Jarak...';
-    } else if (state.userDistance > SYSTEM.MAX_DISTANCE) {
-      btnPay.disabled = true;
-      btnPay.style.opacity = '0.5';
-      btnPay.style.pointerEvents = 'none';
-      btnPay.textContent = 'Di luar jangkauan';
-    } else if (keys.length === 0) {
-      btnPay.disabled = true;
-      btnPay.style.opacity = '0.5';
-      btnPay.style.pointerEvents = 'none';
-      btnPay.textContent = 'Keranjang kosong';
-    } else {
-      btnPay.disabled = false;
-      btnPay.style.opacity = '1';
-      btnPay.style.pointerEvents = 'auto';
-      btnPay.textContent = 'Bayar Via QRIS';
-    }
-    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+          <div class="mini-cart-qty">
+            <button data-action="decrease" data-id="${id}">−</button>
+            <span>${entry.qty}</span>
+            <button data-action="increase" data-id="${id}">+</button>
+            <button class="mini-cart-remove" data-action="remove" data-id="${id}">🗑️</button>
+          </div>
+        </div>
+      `;
+    });
+    const dist = state.userDistance !== null ? state.userDistance : SYSTEM.DEFAULT_DISTANCE;
+    const ship = calculateShipping(dist, state.isPriority);
+    const shippingCost = ship.cost === Infinity ? 0 : ship.cost;
+    const discount = subtotal >= SYSTEM.DISCOUNT_THRESHOLD ? SYSTEM.DISCOUNT_AMOUNT : 0;
+    shippingRow.style.display = 'flex';
+    shippingAmt.textContent = 'Ongkir: ' + fmt(shippingCost);
+    finalTotal.textContent = fmt(subtotal - discount + shippingCost);
   }
+  list.innerHTML = html;
 
-  function renderAll() {
-    renderMenu();
-    renderAddons();
-    renderCart();
-    if (document.getElementById('miniCartModal').classList.contains('active')) renderMiniCart();
-    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+  const btnPay = document.getElementById('btnOpenPayment');
+  if (state.userDistance === null) {
+    btnPay.disabled = true;
+    btnPay.style.opacity = '0.5';
+    btnPay.style.pointerEvents = 'none';
+    btnPay.textContent = '⏳ Menghitung Jarak...';
+  } else if (state.userDistance > SYSTEM.MAX_DISTANCE) {
+    btnPay.disabled = true;
+    btnPay.style.opacity = '0.5';
+    btnPay.style.pointerEvents = 'none';
+    btnPay.textContent = 'Di luar jangkauan';
+  } else if (keys.length === 0) {
+    btnPay.disabled = true;
+    btnPay.style.opacity = '0.5';
+    btnPay.style.pointerEvents = 'none';
+    btnPay.textContent = 'Keranjang kosong';
+  } else {
+    btnPay.disabled = false;
+    btnPay.style.opacity = '1';
+    btnPay.style.pointerEvents = 'auto';
+    btnPay.textContent = 'Bayar Via QRIS';
   }
+  if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+}
 
+function renderAll() {
+  renderMenu();
+  renderAddons();
+  renderCart();
+  if (document.getElementById('miniCartModal').classList.contains('active')) renderMiniCart();
+  if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+}
   // ===== MODAL PRODUK =====
   const productModal = document.getElementById('productModal');
   let currentProductId = null;
@@ -656,6 +573,9 @@
     state.customerName = document.getElementById('customerName').value.trim();
     state.customerPhone = document.getElementById('customerPhone').value.trim();
     state.customerAddress = document.getElementById('customerAddress').value.trim();
+    state.isGift = document.getElementById('giftToggle').checked;
+    state.giftSender = document.getElementById('giftSender').value.trim();
+    state.giftMessage = document.getElementById('giftMessage').value.trim();
     miniCartModal.classList.remove('active');
     document.body.style.overflow = '';
     saveCustomerData();
@@ -689,28 +609,6 @@
     document.getElementById('cancelClear').addEventListener('click', () => modal.remove());
   }
 
-  function downloadQRIS() {
-    const img = document.getElementById('qrisImagePayment');
-    const url = img.src;
-    fetch(url)
-      .then(r => r.blob())
-      .then(blob => {
-        const blobUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = 'QRIS-RujakCo.jpg';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(blobUrl);
-        showToast('Gambar QRIS sedang diunduh...');
-      })
-      .catch(() => {
-        window.open(url, '_blank');
-        showToast('Klik kanan pada gambar untuk menyimpan');
-      });
-  }
-
   // ===== SAVE TO SUPABASE =====
   async function saveOrderToDatabase(orderItems, total, subtotal, shippingCost, discount) {
     if (!supabase) {
@@ -727,7 +625,10 @@
         shipping_cost: shippingCost,
         discount: discount,
         total: total,
-        status: 'pending'
+        status: 'pending',
+        is_gift: state.isGift,
+        gift_sender: state.giftSender || null,
+        gift_message: state.giftMessage || null
       };
       const { data, error } = await supabase.from('orders').insert([payload]);
       if (error) throw error;
@@ -740,7 +641,7 @@
     }
   }
 
-  // ===== HANDLE CHECKOUT =====
+  // ===== HANDLE CHECKOUT (DENGAN ANTI-POPUP BLOCKER) =====
   function handleCheckout() {
     if (state.userDistance !== null && state.userDistance > SYSTEM.MAX_DISTANCE) {
       showToast('Maaf, pengiriman hanya tersedia untuk wilayah Jabodetabek (maks. 50 km)');
@@ -798,6 +699,7 @@
     const discount = subtotal >= SYSTEM.DISCOUNT_THRESHOLD ? SYSTEM.DISCOUNT_AMOUNT : 0;
     const total = subtotal - discount + shippingCost;
 
+    // Simpan ke database dulu, baru buka WhatsApp setelahnya
     const payBtn = document.querySelector('#btnOpenPayment');
     const originalText = payBtn ? payBtn.textContent : '';
     if (payBtn) {
@@ -811,27 +713,36 @@
           payBtn.disabled = false;
           payBtn.textContent = originalText || 'Bayar Via QRIS';
         }
+        // Buka WhatsApp setelah database selesai (mencegah popup blocker)
+        setTimeout(() => {
+          let msg = 'Halo Rujak.Co! Saya ingin memesan:\n\n';
+          keys.forEach(id => {
+            const entry = state.cart[id];
+            const item = getItemById(id);
+            if (item && entry) {
+              const spiceText = entry.spice ? ' (Level ' + entry.spice + ')' : '';
+              msg += '• ' + item.name + spiceText + ' (x' + entry.qty + ') — ' + fmt(item.price * entry.qty) + '\n';
+            }
+          });
+
+          if (state.orderNotes) msg += '\n*Catatan Pesanan:*\n' + state.orderNotes + '\n';
+          
+          if (state.isGift) {
+            msg += '\n🎁 *PESANAN KADO*\n';
+            if (state.giftSender) msg += 'Dari: ' + state.giftSender + '\n';
+            if (state.giftMessage) msg += 'Ucapan: ' + state.giftMessage + '\n';
+          }
+
+          msg += '\n*Data Pengiriman:*\nNama : ' + name + '\nNo. HP : ' + phone + '\nAlamat : ' + address + '\n';
+          msg += '\nOngkir: ' + fmt(shippingCost) + ' (' + ship.label + ')';
+          msg += '\nSubtotal: ' + fmt(subtotal);
+          if (discount > 0) msg += '\nPotongan Khusus: -' + fmt(discount);
+          msg += '\n*Total Akhir: ' + fmt(total) + '*\n\n';
+          msg += '*Saya sudah transfer via QRIS, ini bukti transfernya:*\n*(sertakan foto)*';
+
+          window.open('https://wa.me/' + SYSTEM.WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
+        }, 800);
       });
-
-    let msg = 'Halo Rujak.Co! Saya ingin memesan:\n\n';
-    keys.forEach(id => {
-      const entry = state.cart[id];
-      const item = getItemById(id);
-      if (item && entry) {
-        const spiceText = entry.spice ? ' (Level ' + entry.spice + ')' : '';
-        msg += '• ' + item.name + spiceText + ' (x' + entry.qty + ') — ' + fmt(item.price * entry.qty) + '\n';
-      }
-    });
-
-    if (state.orderNotes) msg += '\n*Catatan Pesanan:*\n' + state.orderNotes + '\n';
-    msg += '\n*Data Pengiriman:*\nNama : ' + name + '\nNo. HP : ' + phone + '\nAlamat : ' + address + '\n';
-    msg += '\nOngkir: ' + fmt(shippingCost) + ' (' + ship.label + ')';
-    msg += '\nSubtotal: ' + fmt(subtotal);
-    if (discount > 0) msg += '\nPotongan Khusus: -' + fmt(discount);
-    msg += '\n*Total Akhir: ' + fmt(total) + '*\n\n';
-    msg += '*Saya sudah transfer via QRIS, ini bukti transfernya:*\n*(sertakan foto)*';
-
-    window.open('https://wa.me/' + SYSTEM.WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
   }
 
   // ===== SIMPAN DATA PELANGGAN =====
@@ -840,7 +751,10 @@
       localStorage.setItem('rujak_customer', JSON.stringify({
         name: state.customerName,
         phone: state.customerPhone,
-        address: state.customerAddress
+        address: state.customerAddress,
+        isGift: state.isGift,
+        giftSender: state.giftSender,
+        giftMessage: state.giftMessage
       }));
     } catch (_) {}
   }
@@ -853,9 +767,9 @@
         state.customerName = data.name || '';
         state.customerPhone = data.phone || '';
         state.customerAddress = data.address || '';
-        document.getElementById('customerName').value = state.customerName;
-        document.getElementById('customerPhone').value = state.customerPhone;
-        document.getElementById('customerAddress').value = state.customerAddress;
+        state.isGift = data.isGift || false;
+        state.giftSender = data.giftSender || '';
+        state.giftMessage = data.giftMessage || '';
       }
     } catch (_) {}
   }
@@ -912,25 +826,80 @@
     if (state.userDistance !== null) updateShippingUI(state.userDistance, checked);
   }
 
+  // ===== STORE STATUS (BUKA/TUTUP) =====
+  function updateStoreStatus() {
+    const now = new Date();
+    const day = now.getDay(); // 0 = Minggu, 1 = Senin, ..., 6 = Sabtu
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+    const currentTime = hour * 60 + minute;
+
+    let isOpen = false;
+    // Senin-Jumat (1-5): 10:00-20:00
+    if (day >= 1 && day <= 5) {
+      if (currentTime >= 600 && currentTime < 1200) isOpen = true; // 10:00-20:00
+    }
+    // Sabtu (6): 09:00-18:00
+    else if (day === 6) {
+      if (currentTime >= 540 && currentTime < 1080) isOpen = true;
+    }
+    // Minggu (0): 09:00-18:00
+    else if (day === 0) {
+      if (currentTime >= 540 && currentTime < 1080) isOpen = true;
+    }
+
+    const statusEl = document.getElementById('storeStatus');
+    const statusText = document.getElementById('storeStatusText');
+    if (isOpen) {
+      statusEl.classList.remove('closed');
+      statusText.textContent = 'Buka';
+    } else {
+      statusEl.classList.add('closed');
+      statusText.textContent = 'Tutup (Pre-Order)';
+    }
+  }
+
+  // ===== SHARE BUTTON (AJAK TEMAN JAJAN) =====
+  function shareToWhatsApp() {
+    const text = 'Hai! Cobain Rujak.Co yuk — rujak premium dengan buah segar pilihan dan sambal khas Indonesia. Lihat menu dan pesan langsung di sini:';
+    const url = window.location.href;
+    const fullText = text + '\n' + url;
+    window.open('https://wa.me/?text=' + encodeURIComponent(fullText), '_blank');
+  }
+
   // ===== INIT =====
   function init() {
     loadCart();
     loadCustomerData();
+    updateStoreStatus();
 
     try {
       const savedMinimize = localStorage.getItem('rujak_cart_minimized');
       if (savedMinimize !== null) state.isCartMinimized = savedMinimize === 'true';
     } catch (_) {}
 
+    // Set form dari state yang sudah diload
+    document.getElementById('customerName').value = state.customerName;
+    document.getElementById('customerPhone').value = state.customerPhone;
+    document.getElementById('customerAddress').value = state.customerAddress;
+    document.getElementById('giftToggle').checked = state.isGift;
+    document.getElementById('giftSender').value = state.giftSender;
+    document.getElementById('giftMessage').value = state.giftMessage;
+    document.getElementById('giftFields').style.display = state.isGift ? 'block' : 'none';
+
     renderAll();
     detectLocation();
     updateClearButton();
     updateFloatingButton();
 
+    // Listener untuk form input
     const nameInput = document.getElementById('customerName');
     const phoneInput = document.getElementById('customerPhone');
     const addressInput = document.getElementById('customerAddress');
     const notesInput = document.getElementById('orderNotes');
+    const giftToggle = document.getElementById('giftToggle');
+    const giftSender = document.getElementById('giftSender');
+    const giftMessage = document.getElementById('giftMessage');
 
     nameInput.addEventListener('input', function() {
       state.customerName = this.value.trim();
@@ -947,6 +916,44 @@
     notesInput.addEventListener('input', function() {
       state.orderNotes = this.value;
     });
+    giftToggle.addEventListener('change', function() {
+      state.isGift = this.checked;
+      document.getElementById('giftFields').style.display = this.checked ? 'block' : 'none';
+      saveCustomerData();
+    });
+    giftSender.addEventListener('input', function() {
+      state.giftSender = this.value.trim();
+      saveCustomerData();
+    });
+    giftMessage.addEventListener('input', function() {
+      state.giftMessage = this.value.trim();
+      saveCustomerData();
+    });
+
+    // Shipping method toggle
+    document.getElementById('btnAutoDetect').addEventListener('click', function() {
+      state.useManualDistrict = false;
+      state.selectedDistrict = '';
+      this.classList.add('active');
+      document.getElementById('btnManualDistrict').classList.remove('active');
+      document.getElementById('districtSelectWrap').style.display = 'none';
+      detectLocation();
+    });
+    document.getElementById('btnManualDistrict').addEventListener('click', function() {
+      state.useManualDistrict = true;
+      this.classList.add('active');
+      document.getElementById('btnAutoDetect').classList.remove('active');
+      document.getElementById('districtSelectWrap').style.display = 'block';
+    });
+    document.getElementById('districtSelect').addEventListener('change', function() {
+      state.selectedDistrict = this.value;
+      if (state.selectedDistrict) {
+        detectLocation();
+      }
+    });
+
+    // Share button
+    document.getElementById('shareBtn').addEventListener('click', shareToWhatsApp);
 
     window.addEventListener('scroll', () => {
       const header = document.getElementById('header');
@@ -1019,6 +1026,10 @@
         showToast(actionBtn.dataset.msg);
         return;
       }
+      if (action === 'share') {
+        shareToWhatsApp();
+        return;
+      }
     }
 
     if (e.target.closest('#btnOpenPayment')) {
@@ -1037,6 +1048,9 @@
       state.customerName = document.getElementById('customerName').value.trim();
       state.customerPhone = document.getElementById('customerPhone').value.trim();
       state.customerAddress = document.getElementById('customerAddress').value.trim();
+      state.isGift = document.getElementById('giftToggle').checked;
+      state.giftSender = document.getElementById('giftSender').value.trim();
+      state.giftMessage = document.getElementById('giftMessage').value.trim();
       closeMiniCart();
       document.getElementById('paymentModal').classList.add('active');
       document.body.style.overflow = 'hidden';
@@ -1087,7 +1101,22 @@
       return;
     }
     if (e.target.closest('#downloadQrisBtnPayment')) {
-      downloadQRIS();
+      const img = document.getElementById('qrisImagePayment');
+      const url = img.src;
+      fetch(url).then(r => r.blob()).then(blob => {
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = 'QRIS-RujakCo.jpg';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl);
+        showToast('Gambar QRIS sedang diunduh...');
+      }).catch(() => {
+        window.open(url, '_blank');
+        showToast('Klik kanan pada gambar untuk menyimpan');
+      });
       return;
     }
     if (e.target.closest('#clearSearchBtn')) {
