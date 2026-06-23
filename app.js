@@ -18,7 +18,7 @@
   ];
 
   const SYSTEM = { DISCOUNT_THRESHOLD: 100000, DISCOUNT_AMOUNT: 10000, WA_NUMBER: '6289677161680', TOAST_DURATION: 3000, MAX_DISTANCE: 50, DEFAULT_DISTANCE: 2 };
-  const state = { cart: {}, activeFilter: 'all', searchQuery: '', userDistance: null, isPriority: false, orderNotes: '', isCartMinimized: false };
+  const state = { cart: {}, activeFilter: 'all', searchQuery: '', userDistance: null, isPriority: false, orderNotes: '', isCartMinimized: false, customerName: '', customerPhone: '', customerAddress: '' };
 
   function calculateShipping(d, priority) {
     const dist = (d === null || d === undefined || isNaN(d)) ? SYSTEM.DEFAULT_DISTANCE : d;
@@ -131,6 +131,9 @@
     const list = document.getElementById('miniCartList'), shippingRow = document.getElementById('miniCartShipping'), shippingAmt = document.getElementById('miniCartShippingAmount'), finalTotal = document.getElementById('miniCartFinalTotal');
     const keys = Object.keys(state.cart); let subtotal = 0, html = '';
     document.getElementById('orderNotes').value = state.orderNotes;
+    document.getElementById('customerName').value = state.customerName;
+    document.getElementById('customerPhone').value = state.customerPhone;
+    document.getElementById('customerAddress').value = state.customerAddress;
     if (keys.length === 0) { html = '<p style="color:var(--gray-500);text-align:center;padding:20px 0;">Keranjang kosong</p>'; shippingRow.style.display = 'none'; finalTotal.textContent = 'Rp0'; }
     else {
       keys.forEach(id => { const entry = state.cart[id]; const item = getItemById(id); if (!item || !entry) return; subtotal += item.price * entry.qty; const spiceText = entry.spice ? ` (Level ${entry.spice})` : ''; html += `<div class="mini-cart-item"><div class="mini-cart-info"><div class="mini-cart-name">${item.name}${spiceText}</div><div class="mini-cart-detail">${fmt(item.price)}</div></div><div class="mini-cart-qty"><button data-action="decrease" data-id="${id}">−</button><span>${entry.qty}</span><button data-action="increase" data-id="${id}">+</button><button class="mini-cart-remove" data-action="remove" data-id="${id}">🗑️</button></div></div>`; });
@@ -172,7 +175,13 @@
 
   const miniCartModal = document.getElementById('miniCartModal');
   function openMiniCart() { renderMiniCart(); miniCartModal.classList.add('active'); document.body.style.overflow = 'hidden'; }
-  function closeMiniCart() { state.orderNotes = document.getElementById('orderNotes').value; miniCartModal.classList.remove('active'); document.body.style.overflow = ''; }
+  function closeMiniCart() {
+    state.orderNotes = document.getElementById('orderNotes').value;
+    state.customerName = document.getElementById('customerName').value.trim();
+    state.customerPhone = document.getElementById('customerPhone').value.trim();
+    state.customerAddress = document.getElementById('customerAddress').value.trim();
+    miniCartModal.classList.remove('active'); document.body.style.overflow = '';
+  }
 
   function clearCart() {
     if (Object.keys(state.cart).length === 0) { showToast('Keranjang sudah kosong'); return; }
@@ -197,6 +206,13 @@
     const dist = state.userDistance !== null ? state.userDistance : SYSTEM.DEFAULT_DISTANCE; const ship = calculateShipping(dist, state.isPriority); const shippingCost = ship.cost === Infinity ? 0 : ship.cost;
     const discount = subtotal >= SYSTEM.DISCOUNT_THRESHOLD ? SYSTEM.DISCOUNT_AMOUNT : 0;
     if (notes) msg += `\n*Catatan Pesanan:*\n${notes}\n`;
+    // Data pengiriman
+    if (state.customerName || state.customerPhone || state.customerAddress) {
+      msg += `\n*Data Pengiriman:*\n`;
+      if (state.customerName) msg += `Nama : ${state.customerName}\n`;
+      if (state.customerPhone) msg += `No. HP : ${state.customerPhone}\n`;
+      if (state.customerAddress) msg += `Alamat : ${state.customerAddress}\n`;
+    }
     msg += `\nOngkir: ${fmt(shippingCost)} (${ship.label})`; msg += `\nSubtotal: ${fmt(subtotal)}`; if (discount > 0) msg += `\nPotongan Khusus: -${fmt(discount)}`;
     msg += `\n*Total Akhir: ${fmt(subtotal - discount + shippingCost)}*\n\n`; msg += `*Saya sudah transfer via QRIS, ini bukti transfernya:*\n*(sertakan foto)*`;
     window.open(`https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
@@ -215,7 +231,7 @@
       if (action === 'confirm-wa') { handleCheckout(); return; }
       if (action === 'toast') { showToast(actionBtn.dataset.msg); return; }
     }
-    if (e.target.closest('#btnOpenPayment')) { const keys = Object.keys(state.cart); if (keys.length === 0) return showToast('Keranjang kosong'); if (state.userDistance !== null && state.userDistance > SYSTEM.MAX_DISTANCE) return showToast('Maaf, pengiriman di luar jangkauan'); document.getElementById('paymentTotalDisplay').textContent = document.getElementById('miniCartFinalTotal').textContent; state.orderNotes = document.getElementById('orderNotes').value; closeMiniCart(); document.getElementById('paymentModal').classList.add('active'); document.body.style.overflow = 'hidden'; return; }
+    if (e.target.closest('#btnOpenPayment')) { const keys = Object.keys(state.cart); if (keys.length === 0) return showToast('Keranjang kosong'); if (state.userDistance !== null && state.userDistance > SYSTEM.MAX_DISTANCE) return showToast('Maaf, pengiriman di luar jangkauan'); document.getElementById('paymentTotalDisplay').textContent = document.getElementById('miniCartFinalTotal').textContent; state.orderNotes = document.getElementById('orderNotes').value; state.customerName = document.getElementById('customerName').value.trim(); state.customerPhone = document.getElementById('customerPhone').value.trim(); state.customerAddress = document.getElementById('customerAddress').value.trim(); closeMiniCart(); document.getElementById('paymentModal').classList.add('active'); document.body.style.overflow = 'hidden'; return; }
     const menuItem = e.target.closest('.menu-item'); if (menuItem && !e.target.closest('.add-btn') && !e.target.closest('.qty-btn')) { openProductModal(menuItem.dataset.id); return; }
     const catBtn = e.target.closest('.cat-pill'); if (catBtn && catBtn.dataset.cat) { document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active')); catBtn.classList.add('active'); state.activeFilter = catBtn.dataset.cat; renderAll(); return; }
     const faqToggle = e.target.closest('[data-toggle="faq"]'); if (faqToggle) { faqToggle.closest('.faq-item')?.classList.toggle('open'); return; }
