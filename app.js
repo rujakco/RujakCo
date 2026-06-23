@@ -1,6 +1,10 @@
 (function() {
   'use strict';
 
+  // === SUPABASE CONFIG ===
+  const SUPABASE_URL = "https://xkyduxhjlmvhzdavbbwk.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_gBF7LJeRnFwLfmcH9M_DiA_FPLaYgvj";
+
   const PRODUCTS = [
     { id: 'p_m1', name: 'Rujak Segar', desc: 'Kombinasi buah pilihan dengan sambal original Rujak.Co. Ringan, segar, dan cocok untuk semua penikmat rujak.', price: 28000, cat: 'classic', tags: ['Pilihan Klasik', '5 Buah'], badge: null, badgeColor: null, container: 'Thinwall 750ml (PP Food Grade)', size: '150g Buah', sambal: 'Sambal Original (80g / 1 Cup)', buah: ['Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'], flavor: 'Segar & Autentik', flavorTag: null, defaultSpice: 3, portion: '1 Orang', thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp', image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp' },
     { id: 'p_m2', name: 'Rujak Serut', desc: 'Buah diserut halus untuk pengalaman rasa yang lebih menyatu di setiap suapan.', price: 26000, cat: 'classic', tags: ['Renyah', 'Serut'], badge: null, badgeColor: null, container: 'Thinwall 750ml (PP Food Grade)', size: '150g Buah', sambal: 'Sambal Original (80g / 1 Cup)', buah: ['Mangga Muda', 'Bengkoang', 'Nanas', 'Ubi Merah'], flavor: 'Renyah Segar', flavorTag: 'Renyah', defaultSpice: 3, portion: '1 Orang', thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp', image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp' },
@@ -206,7 +210,6 @@
     const dist = state.userDistance !== null ? state.userDistance : SYSTEM.DEFAULT_DISTANCE; const ship = calculateShipping(dist, state.isPriority); const shippingCost = ship.cost === Infinity ? 0 : ship.cost;
     const discount = subtotal >= SYSTEM.DISCOUNT_THRESHOLD ? SYSTEM.DISCOUNT_AMOUNT : 0;
     if (notes) msg += `\n*Catatan Pesanan:*\n${notes}\n`;
-    // Data pengiriman
     if (state.customerName || state.customerPhone || state.customerAddress) {
       msg += `\n*Data Pengiriman:*\n`;
       if (state.customerName) msg += `Nama : ${state.customerName}\n`;
@@ -283,7 +286,6 @@
     try { const savedMinimize = localStorage.getItem('rujak_cart_minimized'); if (savedMinimize !== null) state.isCartMinimized = savedMinimize === 'true'; } catch (_) {}
     renderAll(); detectLocation(); updateClearButton(); updateFloatingButton();
 
-    // Header shadow on scroll (no hide)
     window.addEventListener('scroll', () => {
       const header = document.getElementById('header');
       if (header) header.classList.toggle('shadowed', window.scrollY > 4);
