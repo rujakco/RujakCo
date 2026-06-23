@@ -733,3 +733,480 @@ function renderAll() {
   if (document.getElementById('miniCartModal').classList.contains('active')) renderMiniCart();
   if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 }
+  // ===== MODAL PRODUK =====
+  const productModal = document.getElementById('productModal');
+  let currentProductId = null;
+  const SPICE_NAMES = ['Mild', 'Sedang', 'Pedas', 'Extra Pedas', 'Very Hot'];
+
+  function openProductModal(id) {
+    const product = id === 'p_vip' ? VIP_PRODUCT : PRODUCTS.find(p => p.id === id);
+    if (!product) return;
+    currentProductId = id;
+
+    document.getElementById('modalImg').innerHTML = `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'; this.parentElement.textContent='${product.name.substring(0,20)}';">`;
+    const badgeEl = document.getElementById('modalBadge');
+    if (product.badge) {
+      badgeEl.style.display = 'inline-block';
+      badgeEl.textContent = product.badge;
+      badgeEl.className = 'modal-badge-eyebrow ' + (product.badgeColor || '');
+    } else {
+      badgeEl.style.display = 'none';
+    }
+    document.getElementById('modalTitle').textContent = product.name;
+    document.getElementById('modalDesc').textContent = product.desc;
+    document.getElementById('modalContainer').textContent = product.container || '-';
+    document.getElementById('modalSize').textContent = product.size || '-';
+    document.getElementById('modalSambal').textContent = product.sambal || '-';
+    document.getElementById('modalBuahText').textContent = (product.buah || []).join(', ');
+    document.getElementById('modalTags').innerHTML = (product.tags || []).map(t => `<span class="modal-tag">${t}</span>`).join('');
+    document.getElementById('btnPrice').textContent = fmt(product.price);
+    document.getElementById('modalAdd').dataset.id = product.id;
+
+    const select = document.getElementById('spiceSelect');
+    const defaultVal = product.defaultSpice || 3;
+    select.value = defaultVal;
+    updateSpiceHighlight(defaultVal);
+    select.onchange = function() {
+      updateSpiceHighlight(parseInt(this.value, 10));
+    };
+
+    productModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+  }
+
+  function updateSpiceHighlight(level) {
+    document.getElementById('modalSpiceLabel').textContent = level + ' - ' + (SPICE_NAMES[level-1] || 'Pedas');
+  }
+
+  function closeProductModal() {
+    productModal.classList.remove('active');
+    document.body.style.overflow = '';
+    currentProductId = null;
+  }
+
+  document.getElementById('modalAdd').addEventListener('click', function() {
+    const baseId = this.dataset.id;
+    if (baseId) {
+      const spice = parseInt(document.getElementById('spiceSelect').value, 10) || 3;
+      const cartKey = baseId + '_' + spice;
+      
+      const entry = state.cart[cartKey] || { qty: 0, spice: spice };
+      entry.qty += 1;
+      entry.spice = spice;
+      state.cart[cartKey] = entry;
+      
+      renderAll();
+      showToast('Berhasil ditambahkan ✓');
+      closeProductModal();
+    }
+  });
+
+  // ===== MINI CART =====
+  const miniCartModal = document.getElementById('miniCartModal');
+
+  function openMiniCart() {
+    renderMiniCart();
+    miniCartModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMiniCart() {
+    state.orderNotes = document.getElementById('orderNotes').value;
+    state.customerName = document.getElementById('customerName').value.trim();
+    state.customerPhone = document.getElementById('customerPhone').value.trim();
+    state.customerAddress = document.getElementById('customerAddress').value.trim();
+    state.isGift = document.getElementById('giftToggle').checked;
+    state.giftSender = document.getElementById('giftSender').value.trim();
+    state.giftMessage = document.getElementById('giftMessage').value.trim();
+    miniCartModal.classList.remove('active');
+    document.body.style.overflow = '';
+    saveCustomerData();
+  }
+
+  function clearCart() {
+    if (Object.keys(state.cart).length === 0) return showToast('Keranjang sudah kosong');
+    if (confirm('Yakin ingin mengosongkan keranjang?')) {
+        state.cart = {};
+        renderAll();
+        if (miniCartModal.classList.contains('active')) renderMiniCart();
+        showToast('Keranjang dikosongkan');
+    }
+  }
+
+  // ===== SAVE TO SUPABASE =====
+  async function saveOrderToDatabase(orderItems, total, subtotal, shippingCost, discount) {
+    if (!supabase) return false;
+    try {
+      const payload = {
+        customer_name: state.customerName || 'Guest',
+        customer_phone: state.customerPhone || '',
+        customer_address: state.customerAddress || '',
+        items: orderItems,
+        subtotal: subtotal,
+        shipping_cost: shippingCost,
+        discount: discount,
+        total: total,
+        status: 'pending',
+        is_gift: state.isGift,
+        gift_sender: state.giftSender || null,
+        gift_message: state.giftMessage || null,
+        mission_shared: state.hasShared
+      };
+      const { error } = await supabase.from('orders').insert([payload]);
+      if (error) throw error;
+      return true;
+    } catch (err) {
+      console.error('Supabase error:', err);
+      return false;
+    }
+  }
+
+  // ===== HANDLE CHECKOUT (DENGAN MISI JAJAN) =====
+  function handleCheckout() {
+    if (state.userDistance !== null && state.userDistance > SYSTEM.MAX_DISTANCE) {
+      showToast('Maaf, pengiriman hanya tersedia untuk Jabodetabek');
+      return;
+    }
+
+    const name = state.customerName.trim();
+    const phone = state.customerPhone.trim();
+    const address = state.customerAddress.trim();
+
+    if (!name || name.length < 2) return showToast('❌ Nama penerima tidak valid'), document.getElementById('customerName').focus();
+    if (!phone || phone.length < 8) return showToast('❌ Nomor HP tidak valid'), document.getElementById('customerPhone').focus();
+    if (!address || address.length < 5) return showToast('❌ Alamat pengiriman tidak valid'), document.getElementById('customerAddress').focus();
+
+    const keys = Object.keys(state.cart);
+    if (keys.length === 0) return showToast('Keranjang kosong');
+
+    let subtotal = 0;
+    const orderItems = [];
+    keys.forEach(id => {
+      const entry = state.cart[id];
+      const item = getItemById(id);
+      if (item && entry) {
+        subtotal += item.price * entry.qty;
+        orderItems.push({ product_id: id, name: item.name, price: item.price, qty: entry.qty, spice: entry.spice || null });
+      }
+    });
+
+    const dist = state.userDistance !== null ? state.userDistance : SYSTEM.DEFAULT_DISTANCE;
+    const ship = calculateShipping(dist, state.isPriority);
+    const shippingCost = ship.cost === Infinity ? 0 : ship.cost;
+    const discount = calculateDiscount(subtotal);
+    const total = subtotal - discount + shippingCost;
+
+    const payBtn = document.querySelector('[data-action="confirm-wa"]');
+    if (payBtn) payBtn.textContent = '⏳ Menyimpan...';
+
+    saveOrderToDatabase(orderItems, total, subtotal, shippingCost, discount)
+      .finally(() => {
+        let msg = 'Halo Rujak.Co! Saya ingin memesan:\n\n';
+        keys.forEach(id => {
+          const entry = state.cart[id];
+          const item = getItemById(id);
+          if (item && entry) {
+            const spiceText = entry.spice ? ' (Level ' + entry.spice + ')' : '';
+            msg += '• ' + item.name + spiceText + ' (x' + entry.qty + ') — ' + fmt(item.price * entry.qty) + '\n';
+          }
+        });
+
+        if (state.orderNotes) msg += '\n*Catatan Pesanan:*\n' + state.orderNotes + '\n';
+        if (state.isGift) {
+          msg += '\n🎁 *PESANAN KADO*\n';
+          if (state.giftSender) msg += 'Dari: ' + state.giftSender + '\n';
+          if (state.giftMessage) msg += 'Ucapan: ' + state.giftMessage + '\n';
+        }
+
+        msg += '\n*Data Pengiriman:*\nNama : ' + name + '\nNo. HP : ' + phone + '\nAlamat : ' + address + '\n';
+        msg += '\nOngkir: ' + fmt(shippingCost) + ' (' + ship.label + ')';
+        msg += '\nSubtotal: ' + fmt(subtotal);
+        if (discount > 0) msg += '\nDiskon Misi Jajan: -' + fmt(discount);
+        msg += '\n*Total Akhir: ' + fmt(total) + '*\n\n';
+        msg += '*Saya sudah transfer via QRIS, ini bukti transfernya:*\n*(sertakan foto)*';
+
+        window.location.href = 'https://wa.me/' + SYSTEM.WA_NUMBER + '?text=' + encodeURIComponent(msg);
+        
+        setTimeout(() => { if (payBtn) payBtn.innerHTML = '<i data-lucide="message-circle" class="w-5 h-5"></i> Kirim Bukti Transfer'; lucide.createIcons(); }, 2000);
+      });
+  }
+
+  // ===== SIMPAN DATA PELANGGAN =====
+  function saveCustomerData() {
+    try {
+      localStorage.setItem('rujak_customer', JSON.stringify({
+        name: state.customerName, phone: state.customerPhone, address: state.customerAddress,
+        isGift: state.isGift, giftSender: state.giftSender, giftMessage: state.giftMessage,
+        hasShared: state.hasShared
+      }));
+    } catch (_) {}
+  }
+
+  function loadCustomerData() {
+    try {
+      const raw = localStorage.getItem('rujak_customer');
+      if (raw) {
+        const data = JSON.parse(raw);
+        state.customerName = data.name || ''; state.customerPhone = data.phone || '';
+        state.customerAddress = data.address || ''; state.isGift = data.isGift || false;
+        state.giftSender = data.giftSender || ''; state.giftMessage = data.giftMessage || '';
+        state.hasShared = data.hasShared || false;
+      }
+    } catch (_) {}
+  }
+
+  // ===== TOAST =====
+  let toastTimer;
+  function showToast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.remove('show');
+    void el.offsetWidth;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), SYSTEM.TOAST_DURATION);
+  }
+
+  // ===== FLOATING BUTTON =====
+  function updateFloatingButton() {
+    const btn = document.getElementById('floatingCartBtn');
+    const badge = document.getElementById('floatingBadge');
+    let totalQty = 0;
+    Object.keys(state.cart).forEach(id => { if (state.cart[id]) totalQty += state.cart[id].qty; });
+    if (state.isCartMinimized && totalQty > 0) {
+      btn.classList.add('visible'); badge.textContent = totalQty;
+    } else {
+      btn.classList.remove('visible');
+    }
+  }
+
+  function minimizeCart() {
+    state.isCartMinimized = true;
+    localStorage.setItem('rujak_cart_minimized', 'true');
+    document.getElementById('bottom-bar').classList.remove('visible');
+    updateFloatingButton();
+    const footer = document.querySelector('.footer-brand');
+    if (footer) footer.style.paddingBottom = '0';
+  }
+
+  function expandCart() {
+    state.isCartMinimized = false;
+    localStorage.setItem('rujak_cart_minimized', 'false');
+    updateFloatingButton();
+    renderCart();
+  }
+
+  function handlePriorityToggle(checked) {
+    state.isPriority = checked;
+    document.getElementById('priorityToggle').checked = checked;
+    document.getElementById('priorityToggleMini').checked = checked;
+    if (state.userDistance !== null) updateShippingUI(state.userDistance, checked);
+  }
+
+  // ===== STORE STATUS (BUKA/TUTUP) =====
+  function updateStoreStatus() {
+    const now = new Date();
+    const day = now.getDay();
+    const currentTime = now.getHours() * 60 + now.getMinutes();
+
+    let isOpen = false;
+    if (day >= 1 && day <= 5) { if (currentTime >= 600 && currentTime < 1200) isOpen = true; }
+    else if (day === 6 || day === 0) { if (currentTime >= 540 && currentTime < 1080) isOpen = true; }
+
+    const statusEl = document.getElementById('storeStatus');
+    const statusText = document.getElementById('storeStatusText');
+    if (isOpen) {
+      statusEl.classList.remove('closed'); statusText.textContent = 'Buka';
+    } else {
+      statusEl.classList.add('closed'); statusText.textContent = 'Tutup (Pre-Order)';
+    }
+  }
+
+  function shareToWhatsApp() {
+    const text = 'Hai! Cobain Rujak.Co yuk — rujak premium dengan buah segar pilihan dan sambal khas Indonesia. Lihat menu dan pesan langsung di sini:\n' + window.location.href;
+    window.location.href = 'https://wa.me/?text=' + encodeURIComponent(text);
+  }
+
+  // ===== MODAL MISI JAJAN =====
+  const promoModal = document.getElementById('promoModal');
+  function openPromoModal() {
+    const subtotal = Object.values(state.cart).reduce((sum, entry) => {
+      const item = getItemById(Object.keys(state.cart).find(k => state.cart[k] === entry) || '');
+      return sum + (item ? item.price * entry.qty : 0);
+    }, 0);
+    updateMissionCheckboxes(subtotal);
+    promoModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closePromoModal() {
+    promoModal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  // ===== INIT =====
+  function init() {
+    loadCart(); loadCustomerData(); updateStoreStatus();
+
+    try { const saved = localStorage.getItem('rujak_cart_minimized'); if (saved !== null) state.isCartMinimized = saved === 'true'; } catch (_) {}
+
+    document.getElementById('customerName').value = state.customerName;
+    document.getElementById('customerPhone').value = state.customerPhone;
+    document.getElementById('customerAddress').value = state.customerAddress;
+    document.getElementById('giftToggle').checked = state.isGift;
+    document.getElementById('giftSender').value = state.giftSender;
+    document.getElementById('giftMessage').value = state.giftMessage;
+    document.getElementById('giftFields').style.display = state.isGift ? 'block' : 'none';
+
+    renderAll(); detectLocation(); updateClearButton(); updateFloatingButton();
+
+    ['customerName', 'customerPhone', 'customerAddress', 'giftSender', 'giftMessage'].forEach(id => {
+      document.getElementById(id).addEventListener('input', function() { state[id] = this.value.trim(); saveCustomerData(); });
+    });
+    document.getElementById('orderNotes').addEventListener('input', function() { state.orderNotes = this.value; });
+    document.getElementById('giftToggle').addEventListener('change', function() {
+      state.isGift = this.checked; document.getElementById('giftFields').style.display = this.checked ? 'block' : 'none'; saveCustomerData();
+    });
+
+    document.getElementById('btnAutoDetect').addEventListener('click', function() {
+      state.useManualDistrict = false; state.selectedDistrict = '';
+      this.classList.add('active'); document.getElementById('btnManualDistrict').classList.remove('active');
+      document.getElementById('districtSelectWrap').style.display = 'none'; detectLocation();
+    });
+    document.getElementById('btnManualDistrict').addEventListener('click', function() {
+      state.useManualDistrict = true;
+      this.classList.add('active'); document.getElementById('btnAutoDetect').classList.remove('active');
+      document.getElementById('districtSelectWrap').style.display = 'block';
+    });
+    document.getElementById('districtSelect').addEventListener('change', function() {
+      state.selectedDistrict = this.value; if (state.selectedDistrict) detectLocation();
+    });
+
+    document.getElementById('shareBtn').addEventListener('click', shareToWhatsApp);
+    document.getElementById('shareBtnModal').addEventListener('click', function() {
+      state.hasShared = true;
+      saveCustomerData();
+      renderAll();
+      showToast('Diskon Rp5.000 berhasil diaktifkan!');
+      shareToWhatsApp();
+    });
+
+    document.getElementById('promoTrigger').addEventListener('click', openPromoModal);
+    document.getElementById('promoClose').addEventListener('click', closePromoModal);
+    promoModal.addEventListener('click', function(e) { if (e.target === promoModal) closePromoModal(); });
+
+    window.addEventListener('scroll', () => { document.getElementById('header')?.classList.toggle('shadowed', window.scrollY > 4); });
+
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+    else { const int = setInterval(() => { if (typeof lucide !== 'undefined' && lucide.createIcons) { lucide.createIcons(); clearInterval(int); } }, 100); }
+  }
+
+  // ===== EVENT LISTENER (DELEGASI) =====
+  document.addEventListener('click', function(e) {
+    const actionBtn = e.target.closest('[data-action]');
+    if (actionBtn) {
+      const { action, id } = actionBtn.dataset;
+      if (action === 'open-modal' && id) return openProductModal(id);
+      if (action === 'open-cart') return openMiniCart();
+      if (action === 'add-addon' && id) {
+        state.cart[id] = state.cart[id] || { qty: 0 }; state.cart[id].qty += 1;
+        renderAll(); return showToast('Berhasil ditambahkan ✓');
+      }
+      if (action === 'increase' && id && state.cart[id]) {
+        state.cart[id].qty += 1; renderAll();
+        if (miniCartModal.classList.contains('active')) renderMiniCart(); return;
+      }
+      if (action === 'decrease' && id && state.cart[id]) {
+        state.cart[id].qty -= 1; if (state.cart[id].qty <= 0) delete state.cart[id];
+        renderAll(); if (miniCartModal.classList.contains('active')) renderMiniCart(); return;
+      }
+      if (action === 'remove' && id && state.cart[id]) {
+        delete state.cart[id]; renderAll();
+        if (miniCartModal.classList.contains('active')) renderMiniCart(); return showToast('Item dihapus');
+      }
+      if (action === 'confirm-wa') return handleCheckout();
+      if (action === 'toast') return showToast(actionBtn.dataset.msg);
+      if (action === 'share') return shareToWhatsApp();
+      if (action === 'open-promo') return openPromoModal();
+    }
+
+    if (e.target.closest('#btnOpenPayment')) {
+      if (Object.keys(state.cart).length === 0) return showToast('Keranjang kosong');
+      if (state.userDistance === null) return showToast('Mohon tunggu, menghitung jarak pengiriman...');
+      if (state.userDistance > SYSTEM.MAX_DISTANCE) return showToast('Maaf, pengiriman di luar jangkauan');
+      
+      document.getElementById('paymentTotalDisplay').textContent = document.getElementById('miniCartFinalTotal').textContent;
+      closeMiniCart();
+      document.getElementById('paymentModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+      return;
+    }
+
+    const menuItem = e.target.closest('.menu-item');
+    if (menuItem && !e.target.closest('.add-btn') && !e.target.closest('.qty-btn')) return openProductModal(menuItem.dataset.id);
+
+    const catBtn = e.target.closest('.cat-pill');
+    if (catBtn && catBtn.dataset.cat) {
+      document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+      catBtn.classList.add('active'); state.activeFilter = catBtn.dataset.cat; return renderAll();
+    }
+
+    const faqToggle = e.target.closest('[data-toggle="faq"]');
+    if (faqToggle) return faqToggle.closest('.faq-item')?.classList.toggle('open');
+
+    if (e.target.closest('#modalClose') || e.target === productModal) return closeProductModal();
+    if (e.target.closest('#miniCartClose') || e.target === miniCartModal) return closeMiniCart();
+    if (e.target.closest('#paymentClose') || e.target === document.getElementById('paymentModal')) {
+      document.getElementById('paymentModal').classList.remove('active'); document.body.style.overflow = ''; return;
+    }
+
+    if (e.target.closest('#clearCartBtn')) return clearCart();
+    if (e.target.closest('.cart-summary')) return openMiniCart();
+    
+    if (e.target.closest('#downloadQrisBtnPayment')) {
+      const url = document.getElementById('qrisImagePayment').src;
+      fetch(url).then(r => r.blob()).then(blob => {
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'QRIS-RujakCo.jpg';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
+      }).catch(() => { window.location.href = url; });
+      return showToast('Gambar QRIS sedang diunduh...');
+    }
+    
+    if (e.target.closest('#clearSearchBtn')) {
+      document.getElementById('searchInput').value = ''; state.searchQuery = '';
+      renderAll(); updateClearButton(); return;
+    }
+  });
+
+  // === PRIORITY & SEARCH ===
+  document.getElementById('priorityToggle').addEventListener('change', function() { handlePriorityToggle(this.checked); });
+  document.getElementById('priorityToggleMini').addEventListener('change', function() { handlePriorityToggle(this.checked); });
+
+  const searchInput = document.getElementById('searchInput');
+  const clearSearchBtn = document.getElementById('clearSearchBtn');
+  function updateClearButton() { clearSearchBtn.classList.toggle('visible', searchInput.value.length > 0); }
+
+  searchInput.addEventListener('input', debounce(function() { state.searchQuery = this.value; renderAll(); updateClearButton(); }, 300));
+  searchInput.addEventListener('keyup', updateClearButton);
+  
+  // === MISC ===
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      if (productModal.classList.contains('active')) closeProductModal();
+      if (miniCartModal.classList.contains('active')) closeMiniCart();
+      if (document.getElementById('paymentModal').classList.contains('active')) { document.getElementById('paymentModal').classList.remove('active'); document.body.style.overflow = ''; }
+      if (promoModal.classList.contains('active')) closePromoModal();
+    }
+  });
+
+  const qrisImg = document.getElementById('qrisImagePayment');
+  qrisImg.addEventListener('click', function() { this.classList.toggle('qr-zoomed'); });
+  qrisImg.addEventListener('dblclick', function() { this.classList.toggle('qr-zoomed'); });
+
+  document.getElementById('closeBottomBar').addEventListener('click', e => { e.stopPropagation(); minimizeCart(); });
+  document.getElementById('floatingCartBtn').addEventListener('click', expandCart);
+
+  // === START ===
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+
+})();
