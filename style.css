@@ -237,6 +237,12 @@ body { display: flex; flex-direction: column; align-items: center; min-height: 1
 #qrisImagePayment { transition: transform 0.3s ease; cursor: pointer; }
 #qrisImagePayment.qr-zoomed { transform: scale(2); }
 
+/* === FORM PENGIRIMAN === */
+.shipping-form { margin-top: 12px; margin-bottom: 12px; padding-top: 12px; border-top: 1px dashed var(--gray-200); }
+.shipping-form label { font-size: 12px; font-weight: 700; color: var(--gray-700); }
+.shipping-form input, .shipping-form textarea { width: 100%; border: 1px solid var(--gray-200); border-radius: 10px; padding: 10px; font-size: 13px; font-family: inherit; margin-top: 4px; margin-bottom: 10px; outline: none; resize: vertical; }
+.shipping-form input:focus, .shipping-form textarea:focus { border-color: var(--green); box-shadow: 0 0 0 2px rgba(15, 77, 55, 0.15); }
+
 @media (max-width: 420px) {
   .brand-name { font-size: 17px; } .location-value { font-size: 11px; }
   .footer-grid { grid-template-columns: 1fr; gap: 12px; }
