@@ -4,7 +4,6 @@
   // === SUPABASE CONFIG ===
   const SUPABASE_URL = "https://xkyduxhjlmvhzdavbbwk.supabase.co";
   const SUPABASE_KEY = "sb_publishable_gBF7LJeRnFwLfmcH9M_DiA_FPLaYgvj";
-  // Inisialisasi Supabase client (jika diperlukan)
   let supabase = null;
   if (window.supabase && window.supabase.createClient) {
     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -207,6 +206,30 @@
     fetch(url).then(r => r.blob()).then(blob => { const blobUrl = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = blobUrl; a.download = 'QRIS-RujakCo.jpg'; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(blobUrl); showToast('Gambar QRIS sedang diunduh...'); }).catch(() => { window.open(url, '_blank'); showToast('Klik kanan pada gambar untuk menyimpan'); });
   }
 
+  // ===== FUNGSI SIMPAN KE SUPABASE =====
+  async function saveOrderToDatabase(cart, total) {
+    if (!supabase) {
+      console.log('Supabase client not initialized');
+      return;
+    }
+    const { data, error } = await supabase
+      .from('orders')
+      .insert([
+        {
+          customer_name: state.customerName || "Guest",
+          items: cart,
+          total: total,
+          status: "pending"
+        }
+      ]);
+    if (error) {
+      alert("Gagal simpan order ❌");
+      console.log(error);
+    } else {
+      alert("Order masuk ke database ✅");
+    }
+  }
+
   function handleCheckout() {
     if (state.userDistance !== null && state.userDistance > SYSTEM.MAX_DISTANCE) { showToast('Maaf, pengiriman hanya tersedia untuk wilayah Jabodetabek (maks. 50 km)'); return; }
     const keys = Object.keys(state.cart); if (keys.length === 0) { showToast('Keranjang kosong'); return; }
@@ -214,6 +237,8 @@
     keys.forEach(id => { const entry = state.cart[id]; const item = getItemById(id); if (item && entry) { const spiceText = entry.spice ? ` (Level ${entry.spice})` : ''; msg += `• ${item.name}${spiceText} (x${entry.qty}) — ${fmt(item.price * entry.qty)}\n`; subtotal += item.price * entry.qty; } });
     const dist = state.userDistance !== null ? state.userDistance : SYSTEM.DEFAULT_DISTANCE; const ship = calculateShipping(dist, state.isPriority); const shippingCost = ship.cost === Infinity ? 0 : ship.cost;
     const discount = subtotal >= SYSTEM.DISCOUNT_THRESHOLD ? SYSTEM.DISCOUNT_AMOUNT : 0;
+    const total = subtotal - discount + shippingCost;
+
     if (notes) msg += `\n*Catatan Pesanan:*\n${notes}\n`;
     if (state.customerName || state.customerPhone || state.customerAddress) {
       msg += `\n*Data Pengiriman:*\n`;
@@ -222,7 +247,11 @@
       if (state.customerAddress) msg += `Alamat : ${state.customerAddress}\n`;
     }
     msg += `\nOngkir: ${fmt(shippingCost)} (${ship.label})`; msg += `\nSubtotal: ${fmt(subtotal)}`; if (discount > 0) msg += `\nPotongan Khusus: -${fmt(discount)}`;
-    msg += `\n*Total Akhir: ${fmt(subtotal - discount + shippingCost)}*\n\n`; msg += `*Saya sudah transfer via QRIS, ini bukti transfernya:*\n*(sertakan foto)*`;
+    msg += `\n*Total Akhir: ${fmt(total)}*\n\n`; msg += `*Saya sudah transfer via QRIS, ini bukti transfernya:*\n*(sertakan foto)*`;
+
+    // Simpan ke database sebelum buka WhatsApp
+    saveOrderToDatabase(state.cart, total);
+
     window.open(`https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
   }
 
