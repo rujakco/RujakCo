@@ -1,246 +1,290 @@
-:root {
-  --green: #0F4D37; --green-dark: #0a3a2a; --green-light: #1a6b4e; --green-pale: #EAF2EE;
-  --red: #D62828; --gold: #F4C430; --ivory: #FDFDF8; --gray-100: #F5F5F5;
-  --gray-200: #E5E7EB; --gray-300: #D1D5DB; --gray-400: #9CA3AF; --gray-500: #6B7280;
-  --gray-700: #374151; --gray-900: #111827; --radius-card: 16px; --radius-pill: 100px;
-}
-* { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; background: #EFEFE9; font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
-body { display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-.no-sb::-webkit-scrollbar { display: none; } .no-sb { -ms-overflow-style: none; scrollbar-width: none; }
+(function() {
+  'use strict';
 
-#app { width: 100%; max-width: 480px; min-height: 100vh; background: var(--ivory); position: relative; overflow-x: hidden; display: flex; flex-direction: column; }
-.content-wrapper { background: transparent; flex: 1; }
+  const PRODUCTS = [
+    { id: 'p_m1', name: 'Rujak Segar', desc: 'Kombinasi buah pilihan dengan sambal original Rujak.Co. Ringan, segar, dan cocok untuk semua penikmat rujak.', price: 28000, cat: 'classic', tags: ['Pilihan Klasik', '5 Buah'], badge: null, badgeColor: null, container: 'Thinwall 750ml (PP Food Grade)', size: '150g Buah', sambal: 'Sambal Original (80g / 1 Cup)', buah: ['Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'], flavor: 'Segar & Autentik', flavorTag: null, defaultSpice: 3, portion: '1 Orang', thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp', image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp' },
+    { id: 'p_m2', name: 'Rujak Serut', desc: 'Buah diserut halus untuk pengalaman rasa yang lebih menyatu di setiap suapan.', price: 26000, cat: 'classic', tags: ['Renyah', 'Serut'], badge: null, badgeColor: null, container: 'Thinwall 750ml (PP Food Grade)', size: '150g Buah', sambal: 'Sambal Original (80g / 1 Cup)', buah: ['Mangga Muda', 'Bengkoang', 'Nanas', 'Ubi Merah'], flavor: 'Renyah Segar', flavorTag: 'Renyah', defaultSpice: 3, portion: '1 Orang', thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp', image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp' },
+    { id: 'p_m3', name: 'Rujak Gaco', desc: 'Enam buah pilihan dengan sambal mete premium yang kaya rasa dan menjadi favorit pelanggan.', price: 40000, cat: 'signature', tags: ['Mete Premium', 'Bestseller'], badge: 'Koleksi Favorit', badgeColor: 'red', container: 'Thinwall 750ml (PP Food Grade)', size: '150g Buah', sambal: 'Sambal Mete Premium (80g / 1 Cup)', buah: ['Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'], flavor: 'Gurih Mete Premium', flavorTag: null, defaultSpice: 3, portion: '1 Orang', thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-thumb.webp', image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-hd.webp' },
+    { id: 'p_m4', name: 'Rujak Rama', desc: 'Porsi melimpah untuk dua hingga tiga orang dengan cita rasa khas Rujak.Co.', price: 48000, cat: 'signature', tags: ['Porsi Besar', 'Sharing'], badge: 'Untuk Dibagi Bersama', badgeColor: 'red', container: 'Thinwall Jumbo 1000ml (PP Food Grade)', size: '250g Buah', sambal: 'Sambal Mete Premium (130g / 2 Cup)', buah: ['Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'], flavor: 'Gurih Mete Extra Pedas', flavorTag: null, defaultSpice: 4, portion: '2-3 Orang', thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-thumb.webp', image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-hd.webp' },
+    { id: 'p_m5', name: 'Rujak Mahkota', desc: 'Koleksi premium dengan Shine Muscat dan buah pilihan terbaik untuk momen istimewa.', price: 85000, cat: 'reserve', tags: ['Eksklusif', 'Shine Muscat'], badge: 'Reserve Collection', badgeColor: 'gold', container: 'Thinwall Jumbo 1000ml + Paper Bag', size: '165g Buah', sambal: 'Sambal Mete Premium (85g / 2 Cup)', buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'], flavor: 'Eksklusif & Premium', flavorTag: null, defaultSpice: 3, portion: '1-2 Orang', thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp', image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp' },
+    { id: 'p_m6', name: 'Tampah Nusantara', desc: 'Sajian kebersamaan dalam tampah bambu dengan koleksi buah pilihan dan sambal khas Rujak.Co.', price: 200000, cat: 'reserve', tags: ['Tampah', 'Pre-Order'], badge: 'Untuk 8-10 Orang', badgeColor: 'gold', container: 'Tampah Bambu Ø40cm + Kardus + Wrap', size: '400g Buah', sambal: 'Varian Original & Mete (200g / 4 Cup)', buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong', 'Ubi Merah'], flavor: 'Kemegahan Berbagai Rasa', flavorTag: null, defaultSpice: 3, portion: '8-10 Orang', thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-thumb.webp', image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp' }
+  ];
 
-/* === HEADER (dengan efek hide/show) === */
-#header {
-  position: sticky; top: 0; background: var(--ivory); z-index: 100;
-  padding: 12px 20px 10px; border-bottom: 1px solid rgba(15, 77, 55, 0.06);
-  transition: transform 0.3s ease, box-shadow 0.2s ease; will-change: transform;
-}
-#header.header-hidden { transform: translateY(-100%); box-shadow: none; }
-#header.shadowed { box-shadow: 0 4px 20px rgba(15, 77, 55, 0.05); }
-.header-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.header-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
-.brand-logo { display: flex; align-items: center; gap: 6px; text-decoration: none; flex-shrink: 0; }
-.brand-logo img { height: 36px; width: 36px; border-radius: 50%; object-fit: cover; }
-.brand-name { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 800; color: var(--green); letter-spacing: -0.5px; white-space: nowrap; }
-.brand-name span { color: var(--red); }
-.header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.location-pill { display: flex; align-items: center; gap: 4px; background: var(--green-pale); border-radius: var(--radius-pill); padding: 4px 10px 4px 6px; cursor: pointer; transition: background .15s; flex-shrink: 0; }
-.location-pill:active { background: #d4e8de; }
-.location-text { display: flex; flex-direction: column; }
-.location-label { font-size: 12px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: .05em; line-height: 1; }
-.location-value { font-size: 13px; font-weight: 700; color: var(--green); line-height: 1.2; }
+  const ADDONS = [
+    { id: 'a_sambal1', name: 'Sambal Original', price: 8000, icon: 'flame', iconColor: 'text-red-500', desc: 'Warisan rasa klasik.' },
+    { id: 'a_sambal2', name: 'Sambal Mete Premium', price: 12000, icon: 'flame', iconColor: 'text-red-600', desc: 'Lebih gurih dan kaya rasa.' },
+    { id: 'a_extra_jambu', name: 'Extra Jambu Kristal', price: 10000, icon: 'apple', iconColor: 'text-green-500', desc: 'Tambahan jambu kristal segar' },
+    { id: 'a_extra_muscat', name: 'Extra Shine Muscat', price: 15000, icon: 'grape', iconColor: 'text-purple-500', desc: 'Tambahan anggur Shine Muscat impor' }
+  ];
 
-.shipping-estimate { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: var(--green-pale); border-radius: var(--radius-pill); padding: 8px 14px; flex-wrap: wrap; }
-.shipping-left { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--gray-700); }
-.shipping-left svg { width: 16px; height: 16px; color: var(--green); }
-.shipping-cost { font-weight: 800; color: var(--red); font-size: 14px; }
-.shipping-distance { font-size: 12px; color: var(--gray-500); font-weight: 500; margin-left: 2px; }
-.shipping-toggle { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--gray-700); }
-.shipping-toggle input[type="checkbox"] { width: 36px; height: 20px; appearance: none; background: var(--gray-300); border-radius: 20px; position: relative; cursor: pointer; transition: background .2s; flex-shrink: 0; }
-.shipping-toggle input[type="checkbox"]::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: white; border-radius: 50%; transition: transform .2s; }
-.shipping-toggle input[type="checkbox"]:checked { background: var(--red); }
-.shipping-toggle input[type="checkbox"]:checked::after { transform: translateX(16px); }
-.toggle-label { display: flex; align-items: center; gap: 4px; }
-.toggle-label svg { width: 14px; height: 14px; }
-.badge-priority { background: var(--red); color: white; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; text-transform: uppercase; }
-.shipping-out-of-range { background: #fee2e2; border: 1px solid #fecaca; color: var(--red); padding: 6px 12px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 600; display: none; text-align: center; }
+  const SYSTEM = { DISCOUNT_THRESHOLD: 100000, DISCOUNT_AMOUNT: 10000, WA_NUMBER: '6289677161680', TOAST_DURATION: 3000, MAX_DISTANCE: 50, DEFAULT_DISTANCE: 2 };
+  const state = { cart: {}, activeFilter: 'all', searchQuery: '', userDistance: null, isPriority: false, orderNotes: '', isCartMinimized: false };
 
-.search-wrap { padding: 0 20px 16px; }
-.search-box { display: flex; align-items: center; background: white; border: 1px solid rgba(15, 77, 55, 0.1); box-shadow: 0 2px 10px rgba(15, 77, 55, 0.03); border-radius: 12px; padding: 10px 14px; gap: 8px; }
-.search-box input { border: none; outline: none; width: 100%; font-family: inherit; font-size: 14px; color: var(--gray-900); }
-.search-box input::placeholder { color: var(--gray-400); }
-.search-box .clear-search { background: none; border: none; color: var(--gray-400); cursor: pointer; font-size: 18px; line-height: 1; display: none; align-items: center; justify-content: center; padding: 0; width: 20px; height: 20px; }
-.search-box .clear-search.visible { display: flex; }
+  function calculateShipping(d, priority) {
+    const dist = (d === null || d === undefined || isNaN(d)) ? SYSTEM.DEFAULT_DISTANCE : d;
+    const rounded = Math.ceil(dist);
+    if (rounded > SYSTEM.MAX_DISTANCE) return { cost: Infinity, label: 'Luar jangkauan', distance: rounded };
+    if (rounded <= 3) return { cost: 10000, label: 'Reguler (0-3 km)', distance: rounded };
+    let base, perKm, label;
+    if (priority) { base = 25000; perKm = 2500; label = 'Prioritas'; }
+    else { base = 15000; perKm = 1500; label = 'Reguler'; }
+    if (rounded < 10) return { cost: base, label: `${label} (${rounded} km)`, distance: rounded };
+    const extra = rounded - 10;
+    return { cost: base + (extra * perKm), label: `${label} (${rounded} km)`, distance: rounded };
+  }
 
-.hero-wrap { padding: 16px 20px; }
-.hero { width: 100%; aspect-ratio: 21/9; background: var(--green); border-radius: 20px; overflow: hidden; position: relative; }
-.hero-img { position: absolute; top:0; left:0; right:0; bottom:0; width: 100%; height: 100%; object-fit: cover; }
-.hero-grad { position: absolute; top:0; left:0; right:0; bottom:0; background: linear-gradient(to right, rgba(15,77,55,0.85) 0%, rgba(15,77,55,0) 70%); }
-.hero-content { position: absolute; top:0; left:0; right:0; bottom:0; padding: 20px; display: flex; flex-direction: column; justify-content: center; }
-.hero-title { font-size: 24px; font-weight: 800; color: white; line-height: 1.2; margin-bottom: 6px; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
-.hero-sub { font-size: 12px; color: rgba(255,255,255,.9); font-weight: 500; line-height: 1.4; text-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+  function getLocationFallback() {
+    return new Promise(resolve => {
+      fetch('https://ipapi.co/json/').then(r => r.json()).then(data => {
+        const city = data.city || data.region || 'Lokasi';
+        let distance = SYSTEM.DEFAULT_DISTANCE;
+        const c = city.toLowerCase();
+        if (c.includes('bekasi')) distance = 2; else if (c.includes('jakarta')) distance = 15;
+        else if (c.includes('depok')) distance = 20; else if (c.includes('tangerang')) distance = 25;
+        else if (c.includes('bogor')) distance = 30;
+        resolve({ city, distance });
+      }).catch(() => resolve({ city: 'Bekasi', distance: 2 }));
+    });
+  }
 
-.promo-strip { margin: 0 20px 20px; background: #fff3cd; border: 1px solid #e6c87a; border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
-.promo-icon { width: 40px; height: 40px; background: var(--gold); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.promo-text { flex: 1; } .promo-title { font-size: 14px; font-weight: 800; color: #3d2b00; }
-.promo-sub { font-size: 12px; color: #5a3e00; margin-top: 1px; font-weight: 500; }
-.promo-terms { font-size: 10px; color: #3d2b00; opacity: 0.8; margin-top: 4px; font-weight: 600; }
+  function updateShippingUI(distance, isPriority) {
+    const r = calculateShipping(distance, isPriority);
+    const out = distance > SYSTEM.MAX_DISTANCE;
+    document.getElementById('shippingDistance').textContent = `~${Math.ceil(distance)} km`;
+    const costEl = document.getElementById('shippingCost');
+    if (out) { costEl.textContent = '❌'; costEl.style.color = 'var(--red)'; document.getElementById('outOfRange').style.display = 'block'; }
+    else { costEl.textContent = 'Rp' + r.cost.toLocaleString('id-ID'); costEl.style.color = 'var(--red)'; document.getElementById('outOfRange').style.display = 'none'; }
+    if (document.getElementById('miniCartModal').classList.contains('active')) renderMiniCart();
+  }
 
-.legend-marquee { margin: 0 20px 12px; overflow: hidden; white-space: nowrap; background: var(--green-pale); border-radius: 100px; padding: 6px 0; position: relative; height: 28px; display: flex; align-items: center; }
-.legend-track { display: inline-block; animation: marquee 18s linear infinite; white-space: nowrap; will-change: transform; }
-.legend-track span { display: inline-flex; align-items: center; gap: 5px; margin-right: 20px; font-size: 11px; font-weight: 600; }
-.legend-track span::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.legend-track .classic { color: #5d8a3c; } .legend-track .classic::before { background: #8BC34A; }
-.legend-track .signature { color: #b71c1c; } .legend-track .signature::before { background: #D62828; }
-.legend-track .reserve { color: #4e342e; } .legend-track .reserve::before { background: #5D4037; }
-@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  function detectLocation() {
+    const STORE_LAT = -6.2333, STORE_LNG = 107.0;
+    document.getElementById('shippingCost').textContent = '⏳';
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        const lat = pos.coords.latitude, lng = pos.coords.longitude;
+        const R = 6371; const dLat = (lat - STORE_LAT) * Math.PI / 180; const dLon = (lng - STORE_LNG) * Math.PI / 180;
+        const a = Math.sin(dLat/2)**2 + Math.cos(STORE_LAT * Math.PI/180) * Math.cos(lat * Math.PI/180) * Math.sin(dLon/2)**2;
+        const distance = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=10&accept-language=id`).then(r => r.json()).then(data => {
+          const city = data.address?.city || data.address?.town || data.address?.village || 'Lokasi Anda';
+          state.userDistance = distance; document.getElementById('locationDisplay').textContent = city + ' ▾'; updateShippingUI(distance, state.isPriority);
+        }).catch(() => { state.userDistance = distance; document.getElementById('locationDisplay').textContent = 'Lokasi Anda ▾'; updateShippingUI(distance, state.isPriority); });
+      }, () => getLocationFallback().then(({ city, distance }) => { state.userDistance = distance; document.getElementById('locationDisplay').textContent = city + ' ▾'; updateShippingUI(distance, state.isPriority); }), { enableHighAccuracy: true, timeout: 10000 });
+    } else getLocationFallback().then(({ city, distance }) => { state.userDistance = distance; document.getElementById('locationDisplay').textContent = city + ' ▾'; updateShippingUI(distance, state.isPriority); });
+  }
 
-.cat-scroll { display: flex; overflow-x: auto; gap: 8px; padding: 0 20px 16px; }
-.cat-pill { flex-shrink: 0; border: 1px solid transparent; background: var(--green-pale); color: var(--green); font-family: inherit; font-size: 13px; font-weight: 600; padding: 8px 18px; border-radius: var(--radius-pill); cursor: pointer; transition: all .18s; white-space: nowrap; }
-.cat-pill:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; } .cat-pill:active { transform: scale(.96); }
-.cat-pill.active { background: var(--green); color: white; box-shadow: 0 4px 12px rgba(15,77,55,.25); }
+  function fmt(num) { return 'Rp' + num.toLocaleString('id-ID'); }
+  function loadCart() { try { const s = localStorage.getItem('rujak_cart'); if (s) { const p = JSON.parse(s); if (typeof p === 'object' && p !== null) state.cart = p; } } catch (_) { state.cart = {}; } }
+  function saveCart() { try { localStorage.setItem('rujak_cart', JSON.stringify(state.cart)); } catch (_) {} }
+  function getItemById(id) { return PRODUCTS.find(p => p.id === id) || ADDONS.find(a => a.id === id); }
+  function debounce(fn, delay) { let t; return function(...args) { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), delay); }; }
 
-.sec-header { display: flex; align-items: center; justify-content: space-between; padding: 4px 20px 16px; }
-.sec-title { font-size: 18px; font-weight: 800; color: var(--gray-900); }
+  function renderMenu() {
+    const container = document.getElementById('menuList'), empty = document.getElementById('emptyState'), skeleton = document.getElementById('skeletonContainer');
+    skeleton.style.display = 'none'; container.style.display = 'block';
+    if (state.activeFilter === 'addon') { container.innerHTML = ''; empty.style.display = 'none'; return; }
+    const filtered = PRODUCTS.filter(p => { const matchCat = (state.activeFilter === 'all' || p.cat === state.activeFilter); const q = state.searchQuery.toLowerCase(); return matchCat && (p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q)); });
+    if (!filtered.length) { empty.style.display = 'block'; container.innerHTML = ''; return; }
+    empty.style.display = 'none';
+    let html = '';
+    filtered.forEach(p => {
+      const entry = state.cart[p.id], qty = entry ? entry.qty : 0;
+      const control = qty === 0 ? `<button type="button" class="add-btn" data-action="open-modal" data-id="${p.id}"><i data-lucide="plus" class="w-4 h-4"></i></button>` : `<div class="qty-control"><button type="button" class="qty-btn" data-action="decrease" data-id="${p.id}">−</button><span class="qty-num">${qty}</span><button type="button" class="qty-btn" data-action="increase" data-id="${p.id}">+</button></div>`;
+      const badgeRight = p.badge ? `<span class="item-badge-right ${p.badgeColor}">${p.badge}</span>` : '';
+      const flavorTag = p.flavorTag ? `<span class="item-flavor-tag">${p.flavorTag}</span>` : '';
+      html += `<div class="menu-item" data-id="${p.id}" tabindex="0" role="button" aria-label="Detail ${p.name}"><div class="item-img-wrap"><img src="${p.thumbnail}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; this.nextElementSibling.textContent='${p.name.substring(0,20)}'"><div class="fallback" style="display:none;">${p.name.substring(0,20)}</div></div><div class="item-body"><div class="item-name-row"><span class="item-name">${p.name}</span>${badgeRight}</div><div class="item-flavor-row"><span class="item-flavor">${p.flavor}</span>${flavorTag}</div><div class="item-spice">🌶️ Level 1–5</div><p class="item-desc">${p.desc}</p><div class="item-buah-chips">${(p.buah || []).slice(0,4).map(b => `<span class="item-buah-chip">${b}</span>`).join('')}${(p.buah || []).length > 4 ? `<span class="item-buah-chip">+${p.buah.length - 4}</span>` : ''}</div><div class="item-footer"><div><span class="item-price">${fmt(p.price)}</span><span class="item-portion"> · ${p.portion}</span></div>${control}</div></div></div>`;
+    });
+    container.innerHTML = html;
+  }
 
-.menu-list { padding: 0 20px; display: block; }
-.menu-item { display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid rgba(15, 77, 55, 0.06); position: relative; cursor: pointer; }
-.menu-item:focus-visible { outline: 2px solid var(--green); outline-offset: -2px; } .menu-item:active { background: rgba(15, 77, 55, 0.02); }
-.menu-item:last-child { border-bottom: none; }
-.item-img-wrap { flex-shrink: 0; width: 110px; height: 110px; border-radius: 14px; background: var(--gray-100); overflow: hidden; position: relative; border: 1px solid rgba(15, 77, 55, 0.05); }
-.item-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-.item-img-wrap .fallback { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #e8efeb; color: var(--gray-500); font-size: 12px; font-weight: 600; text-align: center; padding: 4px; word-break: break-word; }
-.item-body { flex: 1; }
-.item-name-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
-.item-name { font-size: 15px; font-weight: 700; color: var(--gray-900); line-height: 1.3; margin: 0; }
-.item-badge-right { font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; padding: 2px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; background: var(--green-pale); color: var(--green); }
-.item-badge-right.red { background: var(--red); color: white; } .item-badge-right.gold { background: var(--gray-900); color: var(--gold); }
-.item-flavor-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; margin-bottom: 2px; }
-.item-flavor { font-size: 12px; color: var(--gray-500); font-weight: 500; margin: 0; }
-.item-flavor-tag { font-size: 12px; font-weight: 700; color: var(--green); white-space: nowrap; flex-shrink: 0; text-align: right; }
-.item-spice { font-size: 11px; color: var(--red); font-weight: 600; margin-bottom: 4px; }
-.item-desc { font-size: 13px; color: var(--gray-500); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.item-buah-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; margin-bottom: 4px; }
-.item-buah-chip { font-size: 11px; font-weight: 600; color: var(--green); background: var(--green-pale); padding: 2px 8px; border-radius: 12px; text-transform: uppercase; }
-.item-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
-.item-price { font-size: 16px; font-weight: 800; color: var(--gray-900); letter-spacing: -.02em; }
-.item-portion { font-size: 11px; color: var(--gray-400); font-weight: 500; }
+  function renderAddons() {
+    const container = document.getElementById('addonList');
+    const q = state.searchQuery.toLowerCase();
+    const filtered = ADDONS.filter(a => a.name.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q));
+    let html = '';
+    filtered.forEach(a => {
+      const entry = state.cart[a.id], qty = entry ? entry.qty : 0;
+      const control = qty === 0 ? `<button type="button" class="addon-add" data-action="add-addon" data-id="${a.id}"><i data-lucide="plus" class="w-4 h-4"></i></button>` : `<div class="qty-control"><button type="button" class="qty-btn" data-action="decrease" data-id="${a.id}">−</button><span class="qty-num">${qty}</span><button type="button" class="qty-btn" data-action="increase" data-id="${a.id}">+</button></div>`;
+      html += `<div class="addon-card"><div class="addon-icon ${a.iconColor}"><i data-lucide="${a.icon}" class="w-6 h-6"></i></div><div class="addon-name">${a.name}</div><div class="addon-desc">${a.desc}</div><div class="addon-footer"><span class="addon-price">${fmt(a.price)}</span>${control}</div></div>`;
+    });
+    container.innerHTML = html;
+    const header = document.getElementById('addonHeader'), divider = document.getElementById('addonDivider'), show = filtered.length > 0;
+    header.style.display = show ? 'flex' : 'none'; divider.style.display = show ? 'block' : 'none';
+  }
 
-.addon-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 20px 24px; }
-.addon-card { background: white; border: 1px solid rgba(15, 77, 55, 0.08); box-shadow: 0 4px 14px rgba(15, 77, 55, 0.02); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; transition: border-color .2s; }
-.addon-card:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
-.addon-icon { margin-bottom: 8px; } .addon-name { font-size: 14px; font-weight: 700; color: var(--gray-900); }
-.addon-desc { font-size: 11px; color: var(--gray-400); margin: 2px 0 6px; }
-.addon-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
-.addon-price { font-size: 13px; font-weight: 700; color: var(--gray-700); }
+  function renderCart() {
+    const keys = Object.keys(state.cart);
+    let totalQty = 0, subtotal = 0;
+    keys.forEach(id => { const entry = state.cart[id]; const item = getItemById(id); if (item && entry) { totalQty += entry.qty; subtotal += item.price * entry.qty; } else delete state.cart[id]; });
+    const bar = document.getElementById('bottom-bar'), discountLabel = document.getElementById('discountLabel'), totalEl = document.getElementById('cartTotalDisplay'), footer = document.querySelector('.footer-brand');
+    if (totalQty > 0 && !state.isCartMinimized) {
+      bar.classList.add('visible'); if (footer) footer.style.paddingBottom = '180px';
+      document.getElementById('cartPreview').textContent = `${totalQty} item${totalQty>1?'s':''}`;
+      if (subtotal >= SYSTEM.DISCOUNT_THRESHOLD) { discountLabel.style.display = 'inline-block'; totalEl.innerHTML = `<span style="text-decoration:line-through;font-size:11px;color:#9CA3AF;margin-right:4px;">${fmt(subtotal)}</span>${fmt(subtotal - SYSTEM.DISCOUNT_AMOUNT)}`; }
+      else { discountLabel.style.display = 'none'; totalEl.textContent = fmt(subtotal); }
+    } else { bar.classList.remove('visible'); if (footer) footer.style.paddingBottom = '0'; }
+    saveCart(); updateFloatingButton();
+  }
 
-.qty-control { display: flex; align-items: center; background: var(--green-pale); border-radius: var(--radius-pill); overflow: hidden; transition: all .2s; }
-.qty-btn { width: 30px; height: 30px; background: none; border: none; color: var(--green); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 300; flex-shrink: 0; }
-.qty-btn:focus-visible { outline: 2px solid var(--green); } .qty-btn:active { background: rgba(15,77,55,.12); }
-.qty-num { font-size: 14px; font-weight: 700; color: var(--green); min-width: 22px; text-align: center; }
-.add-btn { width: 30px; height: 30px; background: var(--green); border: none; border-radius: 50%; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 10px rgba(15,77,55,.35); flex-shrink: 0; }
-.add-btn:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; } .add-btn:active { transform: scale(.9); }
-.addon-add { width: 26px; height: 26px; background: var(--green-pale); border: none; border-radius: 50%; color: var(--green); cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.addon-add:focus-visible { outline: 2px solid var(--green); }
+  function renderMiniCart() {
+    const list = document.getElementById('miniCartList'), shippingRow = document.getElementById('miniCartShipping'), shippingAmt = document.getElementById('miniCartShippingAmount'), finalTotal = document.getElementById('miniCartFinalTotal');
+    const keys = Object.keys(state.cart); let subtotal = 0, html = '';
+    document.getElementById('orderNotes').value = state.orderNotes;
+    if (keys.length === 0) { html = '<p style="color:var(--gray-500);text-align:center;padding:20px 0;">Keranjang kosong</p>'; shippingRow.style.display = 'none'; finalTotal.textContent = 'Rp0'; }
+    else {
+      keys.forEach(id => { const entry = state.cart[id]; const item = getItemById(id); if (!item || !entry) return; subtotal += item.price * entry.qty; const spiceText = entry.spice ? ` (Level ${entry.spice})` : ''; html += `<div class="mini-cart-item"><div class="mini-cart-info"><div class="mini-cart-name">${item.name}${spiceText}</div><div class="mini-cart-detail">${fmt(item.price)}</div></div><div class="mini-cart-qty"><button data-action="decrease" data-id="${id}">−</button><span>${entry.qty}</span><button data-action="increase" data-id="${id}">+</button><button class="mini-cart-remove" data-action="remove" data-id="${id}">🗑️</button></div></div>`; });
+      const dist = state.userDistance !== null ? state.userDistance : SYSTEM.DEFAULT_DISTANCE;
+      const ship = calculateShipping(dist, state.isPriority); const shippingCost = ship.cost === Infinity ? 0 : ship.cost;
+      const discount = subtotal >= SYSTEM.DISCOUNT_THRESHOLD ? SYSTEM.DISCOUNT_AMOUNT : 0;
+      shippingRow.style.display = 'flex'; shippingAmt.textContent = `Ongkir: ${fmt(shippingCost)}`; finalTotal.textContent = fmt(subtotal - discount + shippingCost);
+    }
+    list.innerHTML = html;
+    const btnPay = document.getElementById('btnOpenPayment');
+    if (state.userDistance !== null && state.userDistance > SYSTEM.MAX_DISTANCE) { btnPay.disabled = true; btnPay.style.opacity = '0.5'; btnPay.style.pointerEvents = 'none'; btnPay.textContent = 'Di luar jangkauan'; }
+    else if (keys.length === 0) { btnPay.disabled = true; btnPay.style.opacity = '0.5'; btnPay.style.pointerEvents = 'none'; btnPay.textContent = 'Keranjang kosong'; }
+    else { btnPay.disabled = false; btnPay.style.opacity = '1'; btnPay.style.pointerEvents = 'auto'; btnPay.textContent = 'Bayar Via QRIS'; }
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+  }
 
-.edu-container { padding: 0 20px 24px; display: flex; flex-direction: column; gap: 12px; }
-.edu-card { background: white; border: 1px solid rgba(15, 77, 55, 0.08); box-shadow: 0 4px 14px rgba(15, 77, 55, 0.02); border-radius: 14px; padding: 16px; display: flex; gap: 14px; align-items: flex-start; }
-.edu-icon-wrap { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.edu-title { font-size: 15px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; } .edu-desc { font-size: 13px; color: var(--gray-500); line-height: 1.5; }
+  function renderAll() { renderMenu(); renderAddons(); renderCart(); if (document.getElementById('miniCartModal').classList.contains('active')) renderMiniCart(); if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons(); }
 
-.faq-container { padding: 0 20px 24px; display: flex; flex-direction: column; gap: 8px; }
-.faq-item { background: white; border: 1px solid rgba(15, 77, 55, 0.08); box-shadow: 0 4px 14px rgba(15, 77, 55, 0.02); border-radius: 14px; padding: 14px 16px; cursor: pointer; transition: border-color .2s; }
-.faq-item:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; } .faq-item:active { background: var(--gray-100); }
-.faq-question { display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 14px; color: var(--gray-900); }
-.faq-question svg { color: var(--green); transition: transform .3s; }
-.faq-answer { font-size: 13px; color: var(--gray-500); line-height: 1.6; margin-top: 0; max-height: 0; overflow: hidden; transition: max-height .3s ease, margin-top .3s ease; }
-.faq-item.open .faq-answer { max-height: 200px; margin-top: 8px; } .faq-item.open .faq-question svg { transform: rotate(180deg); }
-.divider { height: 8px; background: rgba(244, 196, 48, 0.08); margin: 12px 0; }
+  const productModal = document.getElementById('productModal'); let currentProductId = null;
+  const SPICE_NAMES = ['Mild', 'Sedang', 'Pedas', 'Extra Pedas', 'Very Hot'];
+  function openProductModal(id) {
+    const product = PRODUCTS.find(p => p.id === id); if (!product) return; currentProductId = id;
+    document.getElementById('modalImg').innerHTML = `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'; this.parentElement.textContent='${product.name.substring(0,20)}';">`;
+    const badgeEl = document.getElementById('modalBadge');
+    if (product.badge) { badgeEl.style.display = 'inline-block'; badgeEl.textContent = product.badge; badgeEl.className = `modal-badge-eyebrow ${product.badgeColor || ''}`; }
+    else badgeEl.style.display = 'none';
+    document.getElementById('modalTitle').textContent = product.name; document.getElementById('modalDesc').textContent = product.desc;
+    document.getElementById('modalContainer').textContent = product.container || '-'; document.getElementById('modalSize').textContent = product.size || '-';
+    document.getElementById('modalSambal').textContent = product.sambal || '-'; document.getElementById('modalBuahText').textContent = (product.buah || []).join(', ');
+    document.getElementById('modalTags').innerHTML = (product.tags || []).map(t => `<span class="modal-tag">${t}</span>`).join('');
+    document.getElementById('btnPrice').textContent = fmt(product.price); document.getElementById('modalAdd').dataset.id = product.id;
+    const select = document.getElementById('spiceSelect'); const defaultVal = product.defaultSpice || 3; select.value = defaultVal;
+    updateSpiceHighlight(defaultVal); select.onchange = function() { updateSpiceHighlight(parseInt(this.value, 10)); };
+    productModal.classList.add('active'); document.body.style.overflow = 'hidden';
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+  }
+  function updateSpiceHighlight(level) { document.getElementById('modalSpiceLabel').textContent = `${level} - ${SPICE_NAMES[level-1] || 'Pedas'}`; }
+  function closeProductModal() { productModal.classList.remove('active'); document.body.style.overflow = ''; currentProductId = null; }
 
-.footer-brand { background: var(--green); color: white; width: 100%; transition: padding-bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-.footer-brand-inner { max-width: 480px; margin: 0 auto; padding: 28px 20px 20px; display: flex; flex-direction: column; gap: 16px; }
-.footer-brand-row { display: flex; align-items: center; gap: 12px; }
-.footer-brand-row img { height: 44px; width: 44px; border-radius: 50%; object-fit: cover; }
-.footer-brand-name { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 800; color: white; letter-spacing: -0.5px; }
-.footer-brand-name span { color: var(--gold); }
-.footer-brand-desc { font-size: 13px; opacity: .85; line-height: 1.6; max-width: 300px; }
-.footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 8px; }
-.footer-col h4 { font-size: 14px; font-weight: 700; color: white; margin-bottom: 10px; letter-spacing: .03em; text-transform: uppercase; opacity: .7; }
-.footer-col ul { list-style: none; padding: 0; margin: 0; }
-.footer-col ul li { font-size: 13px; opacity: .8; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-.footer-col ul li svg { color: var(--gold); width: 16px; height: 16px; }
-.footer-social { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
-.footer-social a { color: white; background: rgba(255,255,255,.12); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background .2s, transform .2s; text-decoration: none; }
-.footer-social a svg { width: 20px; height: 20px; }
-.footer-social a:hover { background: var(--gold); color: var(--green); transform: translateY(-2px); }
-.footer-wa { display: inline-flex; align-items: center; gap: 8px; background: var(--gold); color: var(--green); padding: 10px 18px; border-radius: 50px; font-weight: 700; font-size: 14px; text-decoration: none; transition: background .2s, color .2s; width: fit-content; border: none; margin-top: 8px; }
-.footer-wa svg { width: 16px; height: 16px; } .footer-wa:hover { background: #dbaa1a; color: var(--green-dark); }
-.footer-bottom { border-top: 1px solid rgba(255,255,255,.12); padding-top: 16px; text-align: center; font-size: 11px; opacity: .5; margin-top: 12px; }
+  const miniCartModal = document.getElementById('miniCartModal');
+  function openMiniCart() { renderMiniCart(); miniCartModal.classList.add('active'); document.body.style.overflow = 'hidden'; }
+  function closeMiniCart() { state.orderNotes = document.getElementById('orderNotes').value; miniCartModal.classList.remove('active'); document.body.style.overflow = ''; }
 
-#bottom-bar { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: var(--ivory); border-top: 1px solid rgba(15, 77, 55, 0.1); padding: 12px 20px 20px; z-index: 200; box-shadow: 0 -10px 30px rgba(15, 77, 55, 0.05); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform: translateY(100%); }
-#bottom-bar.visible { transform: translateY(0); }
-.cart-summary { display: flex; align-items: center; background: white; border: 1px solid rgba(15, 77, 55, 0.1); box-shadow: 0 2px 10px rgba(15, 77, 55, 0.03); border-radius: 14px; padding: 10px 14px; margin-bottom: 10px; gap: 10px; cursor: pointer; }
-.cart-summary:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
-.cart-items-preview { flex: 1; font-size: 13px; font-weight: 600; color: var(--gray-700); }
-.cart-total-wrap { text-align: right; } .cart-total { font-size: 15px; font-weight: 800; color: var(--green); display: block; }
-.cart-discount-label { font-size: 11px; font-weight: 700; color: var(--red); background: #fef2f2; padding: 2px 6px; border-radius: 4px; margin-right: 6px; display: inline-block; }
-.wa-btn { width: 100%; background: var(--green); color: white; border: none; border-radius: 16px; padding: 16px 20px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: all .18s; }
-.wa-btn:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; } .wa-btn:active { transform: scale(.98); }
-.wa-btn-left { display: flex; flex-direction: column; text-align: left; gap: 1px; }
-.wa-btn-sub { font-size: 11px; font-weight: 500; opacity: .7; text-transform: uppercase; letter-spacing: .05em; }
-.wa-badge { background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); border-radius: 10px; padding: 6px 12px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
-.close-bottom-bar { position: absolute; top: 8px; right: 16px; background: none; border: none; color: var(--gray-500); font-size: 20px; cursor: pointer; padding: 4px; line-height: 1; z-index: 10; }
-.close-bottom-bar:active { color: var(--red); }
+  function clearCart() {
+    if (Object.keys(state.cart).length === 0) { showToast('Keranjang sudah kosong'); return; }
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay active'; modal.style.zIndex = '400';
+    modal.innerHTML = `<div class="modal-content" style="max-width:300px; text-align:center; padding:24px;"><p style="margin:0 0 16px; font-weight:600; color:var(--gray-900);">Yakin ingin mengosongkan keranjang?</p><div style="display:flex; gap:8px; justify-content:center;"><button id="confirmClear" style="background:var(--red); color:white; border:none; border-radius:12px; padding:10px 20px; font-weight:700; cursor:pointer;">Ya, Kosongkan</button><button id="cancelClear" style="background:var(--gray-200); color:var(--gray-700); border:none; border-radius:12px; padding:10px 20px; font-weight:700; cursor:pointer;">Batal</button></div></div>`;
+    document.body.appendChild(modal);
+    document.getElementById('confirmClear').addEventListener('click', () => { state.cart = {}; renderAll(); if (miniCartModal.classList.contains('active')) renderMiniCart(); showToast('Keranjang dikosongkan'); modal.remove(); });
+    document.getElementById('cancelClear').addEventListener('click', () => modal.remove());
+  }
 
-#floatingCartBtn { position: fixed; bottom: 100px; right: 20px; width: 56px; height: 56px; background: var(--green); color: white; border-radius: 50%; box-shadow: 0 6px 20px rgba(15, 77, 55, 0.4); display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 250; transition: transform 0.2s, box-shadow 0.2s; }
-#floatingCartBtn:active { transform: scale(0.95); box-shadow: 0 4px 12px rgba(15, 77, 55, 0.3); }
-#floatingCartBtn .badge-cart { position: absolute; top: -4px; right: -4px; background: var(--red); color: white; font-size: 12px; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; line-height: 1; }
-#floatingCartBtn.visible { display: flex; }
+  function downloadQRIS() {
+    const img = document.getElementById('qrisImagePayment'), url = img.src;
+    fetch(url).then(r => r.blob()).then(blob => { const blobUrl = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = blobUrl; a.download = 'QRIS-RujakCo.jpg'; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(blobUrl); showToast('Gambar QRIS sedang diunduh...'); }).catch(() => { window.open(url, '_blank'); showToast('Klik kanan pada gambar untuk menyimpan'); });
+  }
 
-#toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--green); color: white; font-size: 14px; font-weight: 600; padding: 10px 20px; border-radius: var(--radius-pill); z-index: 999; opacity: 0; pointer-events: none; transition: all .25s; max-width: 90%; word-wrap: break-word; box-shadow: 0 4px 16px rgba(15,77,55,.4); }
-#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-.empty-state { padding: 40px 20px; text-align: center; color: var(--gray-500); font-size: 15px; display: none; }
+  function handleCheckout() {
+    if (state.userDistance !== null && state.userDistance > SYSTEM.MAX_DISTANCE) { showToast('Maaf, pengiriman hanya tersedia untuk wilayah Jabodetabek (maks. 50 km)'); return; }
+    const keys = Object.keys(state.cart); if (keys.length === 0) { showToast('Keranjang kosong'); return; }
+    const notes = state.orderNotes.trim(); let msg = 'Halo Rujak.Co! Saya ingin memesan:\n\n'; let subtotal = 0;
+    keys.forEach(id => { const entry = state.cart[id]; const item = getItemById(id); if (item && entry) { const spiceText = entry.spice ? ` (Level ${entry.spice})` : ''; msg += `• ${item.name}${spiceText} (x${entry.qty}) — ${fmt(item.price * entry.qty)}\n`; subtotal += item.price * entry.qty; } });
+    const dist = state.userDistance !== null ? state.userDistance : SYSTEM.DEFAULT_DISTANCE; const ship = calculateShipping(dist, state.isPriority); const shippingCost = ship.cost === Infinity ? 0 : ship.cost;
+    const discount = subtotal >= SYSTEM.DISCOUNT_THRESHOLD ? SYSTEM.DISCOUNT_AMOUNT : 0;
+    if (notes) msg += `\n*Catatan Pesanan:*\n${notes}\n`;
+    msg += `\nOngkir: ${fmt(shippingCost)} (${ship.label})`; msg += `\nSubtotal: ${fmt(subtotal)}`; if (discount > 0) msg += `\nPotongan Khusus: -${fmt(discount)}`;
+    msg += `\n*Total Akhir: ${fmt(subtotal - discount + shippingCost)}*\n\n`; msg += `*Saya sudah transfer via QRIS, ini bukti transfernya:*\n*(sertakan foto)*`;
+    window.open(`https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+  }
 
-.modal-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.5); z-index: 300; display: flex; align-items: center; justify-content: center; opacity:0; pointer-events: none; transition: opacity .3s ease; padding: 20px; }
-.modal-overlay.active { opacity:1; pointer-events: auto; }
-.modal-content { background: white; border-radius: 24px; max-width: 400px; width:100%; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3); transform: scale(0.95); transition: transform .3s ease; }
-.modal-overlay.active .modal-content { transform: scale(1); }
-.modal-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px 8px; flex-shrink: 0; border-bottom: 1px solid var(--gray-200); }
-.modal-header-title { font-size: 18px; font-weight: 700; color: var(--gray-900); }
-.modal-header-actions { display: flex; align-items: center; gap: 8px; }
-.modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--gray-500); padding: 4px; line-height: 1; }
-.modal-close:focus-visible { outline: 2px solid var(--green); }
-.modal-body { flex: 1; overflow-y: auto; padding: 16px 20px 12px; }
-.modal-footer { flex-shrink: 0; padding: 16px 20px 20px; background: white; border-top: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-.modal-footer .modal-add { display: flex; justify-content: space-between; align-items: center; width: 100%; background: var(--green); color: white; border: none; border-radius: 12px; padding: 14px 20px; font-weight: 700; font-size: 15px; cursor: pointer; transition: background .2s, transform .2s; }
-.modal-footer .modal-add:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; } .modal-footer .modal-add:active { background: var(--green-light); transform: scale(.98); }
-.modal-img { width:100%; aspect-ratio: 1/1; background: var(--gray-100); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; font-size: 48px; color: var(--gray-400); overflow: hidden; }
-.modal-img img { width:100%; height:100%; object-fit:cover; }
-.modal-title-wrap { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 2px; }
-.modal-title { font-size: 20px; font-weight: 800; color: var(--gray-900); margin: 0; }
-.modal-badge-eyebrow { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 10px; border-radius: 20px; background: var(--green-pale); color: var(--green); letter-spacing: .03em; white-space: nowrap; flex-shrink: 0; }
-.modal-badge-eyebrow.red { background: var(--red); color: white; } .modal-badge-eyebrow.gold { background: var(--gray-900); color: var(--gold); }
-.modal-desc { font-size: 14px; color: var(--gray-500); line-height: 1.6; margin: 4px 0 12px; }
-.modal-detail-grid { display: flex; flex-direction: column; gap: 8px; background: var(--gray-100); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; }
-.modal-detail-grid .detail-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-.modal-detail-grid .label { font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: .03em; }
-.modal-detail-grid .value { font-size: 13px; font-weight: 600; color: var(--gray-900); text-align: right; max-width: 70%; word-break: break-word; }
-.modal-buah-text { font-size: 13px; color: var(--gray-700); line-height: 1.5; margin: 4px 0 10px; padding: 8px 12px; background: var(--gray-100); border-radius: 10px; }
-.modal-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-.modal-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; background: var(--green-pale); color: var(--green); padding: 2px 8px; border-radius: 4px; }
-.spice-row { display: flex; align-items: center; gap: 12px; margin: 8px 0 4px; flex-wrap: wrap; background: #fce4e4; border: 1px solid #f5c2c2; border-radius: 12px; padding: 10px 14px; }
-.spice-row .spice-label { font-size: 14px; font-weight: 700; color: var(--gray-700); white-space: nowrap; }
-.spice-row .spice-value { font-size: 16px; font-weight: 800; color: var(--red); margin-right: 8px; }
-.spice-row select { padding: 6px 32px 6px 12px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 14px; font-weight: 600; color: var(--gray-900); background: white; font-family: inherit; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; background-size: 14px; cursor: pointer; flex: 1; min-width: 100px; }
-.spice-row select:focus { outline: 2px solid var(--green); border-color: transparent; }
-.mini-cart-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--gray-200); }
-.mini-cart-item:last-child { border-bottom: none; } .mini-cart-info { flex:1; }
-.mini-cart-name { font-weight: 600; font-size: 14px; color: var(--gray-900); } .mini-cart-detail { font-size: 12px; color: var(--gray-500); }
-.mini-cart-qty { display: flex; align-items: center; gap: 6px; }
-.mini-cart-qty button { background: var(--green-pale); border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 16px; font-weight: 700; color: var(--green); cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.mini-cart-qty button:focus-visible { outline: 2px solid var(--green); } .mini-cart-qty span { font-weight: 700; font-size: 14px; min-width: 20px; text-align: center; }
-.mini-cart-remove { background: none; border: none; color: var(--red); font-size: 18px; cursor: pointer; padding: 4px; } .mini-cart-remove:focus-visible { outline: 2px solid var(--red); }
-.mini-cart-shipping { display: flex; justify-content: space-between; align-items: center; padding: 8px 0 4px; border-top: 1px dashed var(--gray-200); font-size: 13px; font-weight: 600; color: var(--gray-700); }
-.mini-cart-shipping .shipping-amount { font-weight: 800; color: var(--red); margin-right: 8px; } .mini-cart-shipping .shipping-toggle { margin-left: auto; }
-.mini-cart-total-final { display: flex; justify-content: space-between; padding: 8px 0 12px; font-size: 16px; font-weight: 800; color: var(--green); border-top: 2px solid var(--green); }
-.clear-cart-btn { background: none; border: none; color: var(--red); font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 6px; transition: background .2s; }
-.clear-cart-btn:focus-visible { outline: 2px solid var(--red); } .clear-cart-btn:active { background: rgba(214,40,40,0.08); }
-.skeleton { background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
-@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-.skeleton-item { display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid rgba(15, 77, 55, 0.06); }
-.skeleton-img { width: 110px; height: 110px; border-radius: 14px; flex-shrink: 0; }
-.skeleton-body { flex:1; display: flex; flex-direction: column; gap: 8px; }
-.skeleton-line { height: 14px; border-radius: 6px; width: 100%; } .skeleton-line.short { width: 60%; } .skeleton-line.medium { width: 80%; }
+  document.addEventListener('click', function(e) {
+    const actionBtn = e.target.closest('[data-action]');
+    if (actionBtn) {
+      const action = actionBtn.dataset.action, id = actionBtn.dataset.id;
+      if (action === 'open-modal' && id) { openProductModal(id); return; }
+      if (action === 'open-cart') { openMiniCart(); return; }
+      if (action === 'add-addon' && id) { const entry = state.cart[id] || { qty: 0 }; entry.qty += 1; state.cart[id] = entry; renderAll(); showToast('Berhasil ditambahkan ✓'); return; }
+      if ((action === 'add' || action === 'increase') && id) { if (PRODUCTS.some(p => p.id === id)) { openProductModal(id); return; } const entry = state.cart[id] || { qty: 0 }; entry.qty += 1; state.cart[id] = entry; renderAll(); if (action === 'add') showToast('Berhasil ditambahkan ✓'); return; }
+      if (action === 'decrease' && id && state.cart[id]) { const entry = state.cart[id]; entry.qty -= 1; if (entry.qty <= 0) delete state.cart[id]; renderAll(); if (miniCartModal.classList.contains('active')) renderMiniCart(); return; }
+      if (action === 'remove' && id && state.cart[id]) { delete state.cart[id]; renderAll(); if (miniCartModal.classList.contains('active')) renderMiniCart(); showToast('Item dihapus'); return; }
+      if (action === 'confirm-wa') { handleCheckout(); return; }
+      if (action === 'toast') { showToast(actionBtn.dataset.msg); return; }
+    }
+    if (e.target.closest('#btnOpenPayment')) { const keys = Object.keys(state.cart); if (keys.length === 0) return showToast('Keranjang kosong'); if (state.userDistance !== null && state.userDistance > SYSTEM.MAX_DISTANCE) return showToast('Maaf, pengiriman di luar jangkauan'); document.getElementById('paymentTotalDisplay').textContent = document.getElementById('miniCartFinalTotal').textContent; state.orderNotes = document.getElementById('orderNotes').value; closeMiniCart(); document.getElementById('paymentModal').classList.add('active'); document.body.style.overflow = 'hidden'; return; }
+    const menuItem = e.target.closest('.menu-item'); if (menuItem && !e.target.closest('.add-btn') && !e.target.closest('.qty-btn')) { openProductModal(menuItem.dataset.id); return; }
+    const catBtn = e.target.closest('.cat-pill'); if (catBtn && catBtn.dataset.cat) { document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active')); catBtn.classList.add('active'); state.activeFilter = catBtn.dataset.cat; renderAll(); return; }
+    const faqToggle = e.target.closest('[data-toggle="faq"]'); if (faqToggle) { faqToggle.closest('.faq-item')?.classList.toggle('open'); return; }
+    if (e.target.closest('#modalClose') || e.target === productModal) { closeProductModal(); return; }
+    if (e.target.closest('#miniCartClose') || e.target === miniCartModal) { closeMiniCart(); return; }
+    if (e.target.closest('#paymentClose') || e.target === document.getElementById('paymentModal')) { document.getElementById('paymentModal').classList.remove('active'); document.body.style.overflow = ''; return; }
+    if (e.target.closest('#clearCartBtn')) { clearCart(); return; }
+    if (e.target.closest('.cart-summary')) { openMiniCart(); return; }
+    if (e.target.closest('#downloadQrisBtnPayment')) { downloadQRIS(); return; }
+    if (e.target.closest('#clearSearchBtn')) { const input = document.getElementById('searchInput'); input.value = ''; state.searchQuery = ''; renderAll(); updateClearButton(); return; }
+  });
 
-#qrisImagePayment { transition: transform 0.3s ease; cursor: pointer; }
-#qrisImagePayment.qr-zoomed { transform: scale(2); }
+  document.getElementById('modalAdd').addEventListener('click', function() { const id = this.dataset.id; if (id) { const spice = parseInt(document.getElementById('spiceSelect').value, 10) || 3; const entry = state.cart[id] || { qty: 0, spice }; entry.qty += 1; entry.spice = spice; state.cart[id] = entry; renderAll(); showToast('Berhasil ditambahkan ✓'); closeProductModal(); } });
 
-@media (max-width: 420px) {
-  .brand-name { font-size: 17px; } .location-value { font-size: 11px; }
-  .footer-grid { grid-template-columns: 1fr; gap: 12px; }
-  .modal-footer { flex-direction: column; align-items: stretch; gap: 8px; } .modal-footer .modal-add { width: 100%; }
-  .spice-row { flex-wrap: wrap; }
-}
+  function handlePriorityToggle(checked) { state.isPriority = checked; document.getElementById('priorityToggle').checked = checked; document.getElementById('priorityToggleMini').checked = checked; if (state.userDistance !== null) updateShippingUI(state.userDistance, checked); }
+  document.getElementById('priorityToggle').addEventListener('change', function() { handlePriorityToggle(this.checked); });
+  document.getElementById('priorityToggleMini').addEventListener('change', function() { handlePriorityToggle(this.checked); });
+
+  const searchInput = document.getElementById('searchInput'), clearSearchBtn = document.getElementById('clearSearchBtn');
+  function updateClearButton() { if (searchInput.value.length > 0) clearSearchBtn.classList.add('visible'); else clearSearchBtn.classList.remove('visible'); }
+  searchInput.addEventListener('input', debounce(function() { state.searchQuery = this.value; renderAll(); updateClearButton(); }, 300));
+  searchInput.addEventListener('keyup', updateClearButton);
+  clearSearchBtn.addEventListener('click', function() { searchInput.value = ''; state.searchQuery = ''; renderAll(); updateClearButton(); });
+
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { if (productModal.classList.contains('active')) closeProductModal(); if (miniCartModal.classList.contains('active')) closeMiniCart(); if (document.getElementById('paymentModal').classList.contains('active')) { document.getElementById('paymentModal').classList.remove('active'); document.body.style.overflow = ''; } } });
+
+  let toastTimer;
+  function showToast(msg) { const el = document.getElementById('toast'); el.textContent = msg; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), SYSTEM.TOAST_DURATION); }
+
+  const qrisImg = document.getElementById('qrisImagePayment');
+  qrisImg.addEventListener('click', function(e) { this.classList.toggle('qr-zoomed'); });
+  qrisImg.addEventListener('dblclick', function(e) { this.classList.toggle('qr-zoomed'); });
+
+  function updateFloatingButton() {
+    const btn = document.getElementById('floatingCartBtn'), badge = document.getElementById('floatingBadge');
+    let totalQty = 0; Object.keys(state.cart).forEach(id => { const entry = state.cart[id]; if (entry) totalQty += entry.qty; });
+    if (state.isCartMinimized && totalQty > 0) { btn.classList.add('visible'); badge.textContent = totalQty; }
+    else { btn.classList.remove('visible'); }
+  }
+
+  function minimizeCart() { state.isCartMinimized = true; localStorage.setItem('rujak_cart_minimized', 'true'); document.getElementById('bottom-bar').classList.remove('visible'); updateFloatingButton(); const footer = document.querySelector('.footer-brand'); if (footer) footer.style.paddingBottom = '0'; }
+  function expandCart() { state.isCartMinimized = false; localStorage.setItem('rujak_cart_minimized', 'false'); updateFloatingButton(); renderCart(); }
+
+  document.getElementById('closeBottomBar').addEventListener('click', function(e) { e.stopPropagation(); minimizeCart(); });
+  document.getElementById('floatingCartBtn').addEventListener('click', expandCart);
+
+  function init() {
+    loadCart();
+    try { const savedMinimize = localStorage.getItem('rujak_cart_minimized'); if (savedMinimize !== null) state.isCartMinimized = savedMinimize === 'true'; } catch (_) {}
+    renderAll(); detectLocation(); updateClearButton(); updateFloatingButton();
+
+    // === HEADER SCROLL BEHAVIOR ===
+    let lastScrollY = window.scrollY;
+    const header = document.getElementById('header');
+    const SCROLL_THRESHOLD = 50;
+    window.addEventListener('scroll', () => {
+      const currentScrollY = window.scrollY;
+      header.classList.toggle('shadowed', currentScrollY > 4);
+      if (currentScrollY <= 0) { header.classList.remove('header-hidden'); lastScrollY = currentScrollY; return; }
+      if (Math.abs(currentScrollY - lastScrollY) < SCROLL_THRESHOLD) return;
+      if (currentScrollY > lastScrollY) header.classList.add('header-hidden');
+      else header.classList.remove('header-hidden');
+      lastScrollY = currentScrollY;
+    });
+    // === AKHIR HEADER SCROLL BEHAVIOR ===
+
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+    else { const int = setInterval(() => { if (typeof lucide !== 'undefined' && lucide.createIcons) { lucide.createIcons(); clearInterval(int); } }, 100); }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
