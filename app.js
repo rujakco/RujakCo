@@ -272,18 +272,17 @@
       const buahChips = (p.buah || []).slice(0,4).map(b => `<span class="item-buah-chip">${b}</span>`).join('');
       const moreChips = (p.buah || []).length > 4 ? `<span class="item-buah-chip">+${p.buah.length - 4}</span>` : '';
 
+      // Kembalikan level pedas ke dalam item-body, setelah flavor-row
       html += `
         <div class="menu-item" data-id="${p.id}" tabindex="0" role="button" aria-label="Detail ${p.name}">
-          <div class="item-left">
-            <div class="item-img-wrap">
-              <img src="${p.thumbnail}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; this.nextElementSibling.textContent='${p.name.substring(0,20)}'">
-              <div class="fallback" style="display:none;">${p.name.substring(0,20)}</div>
-            </div>
-            <div class="item-spice">🌶️ Level 1–5</div>
+          <div class="item-img-wrap">
+            <img src="${p.thumbnail}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; this.nextElementSibling.textContent='${p.name.substring(0,20)}'">
+            <div class="fallback" style="display:none;">${p.name.substring(0,20)}</div>
           </div>
           <div class="item-body">
             <div class="item-name-row"><span class="item-name">${p.name}</span>${badgeRight}</div>
             <div class="item-flavor-row"><span class="item-flavor">${p.flavor}</span>${flavorTag}</div>
+            <div class="item-spice">🌶️ Level 1–5</div>
             <p class="item-desc">${p.desc}</p>
             <div class="item-buah-chips">${buahChips}${moreChips}</div>
             <div class="item-footer">
@@ -798,7 +797,7 @@
 
     renderAll(); detectLocation(); updateClearButton(); updateFloatingButton();
 
-    // Search toggle logic
+    // Search toggle logic (sekarang di #menuHeader)
     const searchToggleWrap = document.getElementById('searchToggleWrap');
     const searchIconBtn = document.getElementById('searchIconBtn');
     const searchInputWrap = document.getElementById('searchInputWrap');
