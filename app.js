@@ -777,6 +777,11 @@
     document.getElementById('giftMessage').value = state.giftMessage;
     document.getElementById('giftFields').style.display = state.isGift ? 'block' : 'none';
     updateUI(); detectLocation(); bindEvents();
+    if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js')
+    .then(registration => console.log('Service Worker registered'))
+    .catch(err => console.log('Service Worker registration failed:', err));
+}
     if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
     else { const int = setInterval(() => { if (typeof lucide !== 'undefined' && lucide.createIcons) { lucide.createIcons(); clearInterval(int); } }, 100); }
   }
