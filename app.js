@@ -76,7 +76,6 @@
     }
   ];
 
-  // VIP Product global
   const VIP_PRODUCT = {
     id: 'p_vip',
     name: 'Mahkota VIP',
@@ -150,18 +149,32 @@
     return discount;
   }
 
-  // ===== FUNGSI ONGKIR & LOKASI =====
+  // ===== FUNGSI ONGKIR (LOGIKA BARU) =====
   function calculateShipping(d, priority) {
-    const dist = (d === null || d === undefined || isNaN(d)) ? SYSTEM.DEFAULT_DISTANCE : d;
+    const rawDistance = (d === null || d === undefined || isNaN(d)) ? SYSTEM.DEFAULT_DISTANCE : d;
+    const dist = rawDistance * 1.4; // koreksi rute darat
     const rounded = Math.ceil(dist);
-    if (rounded > SYSTEM.MAX_DISTANCE) return { cost: Infinity, label: 'Luar jangkauan', distance: rounded };
-    if (rounded <= 3) return { cost: 10000, label: 'Reguler (0-3 km)', distance: rounded };
+
+    if (rounded > SYSTEM.MAX_DISTANCE) {
+      return { cost: Infinity, label: 'Luar jangkauan', distance: rawDistance };
+    }
+
     let base, perKm, label;
-    if (priority) { base = 25000; perKm = 2500; label = 'Prioritas'; }
-    else { base = 15000; perKm = 1500; label = 'Reguler'; }
-    if (rounded < 10) return { cost: base, label: label + ' (' + rounded + ' km)', distance: rounded };
-    const extra = rounded - 10;
-    return { cost: base + (extra * perKm), label: label + ' (' + rounded + ' km)', distance: rounded };
+    if (priority) {
+      base = 15000; perKm = 3000; label = 'Prioritas';
+    } else {
+      base = 10000; perKm = 2000; label = 'Reguler';
+    }
+
+    // 3 km pertama sudah termasuk, sisanya dihitung per km
+    const extraKm = Math.max(0, rounded - 3);
+    const cost = base + extraKm * perKm;
+
+    return {
+      cost,
+      label: label + ' (' + Math.ceil(rawDistance) + ' km)',
+      distance: rawDistance   // tampilkan jarak asli di UI
+    };
   }
 
   function getLocationFallback() {
@@ -272,7 +285,6 @@
       const buahChips = (p.buah || []).slice(0,4).map(b => `<span class="item-buah-chip">${b}</span>`).join('');
       const moreChips = (p.buah || []).length > 4 ? `<span class="item-buah-chip">+${p.buah.length - 4}</span>` : '';
 
-      // Kembalikan level pedas ke dalam item-body, setelah flavor-row
       html += `
         <div class="menu-item" data-id="${p.id}" tabindex="0" role="button" aria-label="Detail ${p.name}">
           <div class="item-img-wrap">
@@ -797,7 +809,7 @@
 
     renderAll(); detectLocation(); updateClearButton(); updateFloatingButton();
 
-    // Search toggle logic (sekarang di #menuHeader)
+    // Search toggle logic (di samping "Koleksi Rasa")
     const searchToggleWrap = document.getElementById('searchToggleWrap');
     const searchIconBtn = document.getElementById('searchIconBtn');
     const searchInputWrap = document.getElementById('searchInputWrap');
