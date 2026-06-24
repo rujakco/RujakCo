@@ -16,7 +16,6 @@
 body{font-family:'DM Sans',sans-serif;background:#1a1a1a;min-height:100vh;color:var(--g9);}
 .app{max-width:520px;margin:0 auto;min-height:100vh;background:#EFEFE9;display:flex;flex-direction:column;}
 
-/* HEADER */
 .hdr{background:var(--g);padding:16px 20px 14px;position:sticky;top:0;z-index:50;}
 .hdr-brand{display:flex;align-items:center;gap:8px;}
 .hdr-brand img{width:30px;height:30px;border-radius:50%;object-fit:cover;}
@@ -24,19 +23,15 @@ body{font-family:'DM Sans',sans-serif;background:#1a1a1a;min-height:100vh;color:
 .hdr-title span{color:var(--gold);}
 .hdr-sub{font-size:11px;color:rgba(255,255,255,.6);font-weight:500;margin-top:2px;}
 
-/* TABS */
 .tabs{display:flex;background:white;border-bottom:1px solid var(--g2);}
 .tab{flex:1;padding:11px;font-size:12px;font-weight:700;color:var(--g5);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:inherit;}
 .tab.active{color:var(--g);border-bottom-color:var(--g);}
 
-/* PANELS */
 .panel{padding:16px;display:flex;flex-direction:column;gap:14px;}
 .panel[hidden]{display:none;}
 
-/* SECTION */
 .slbl{font-size:10px;font-weight:800;color:var(--g5);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;}
 
-/* PRODUCT GRID */
 .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .pcard{border:2px solid var(--g2);border-radius:14px;cursor:pointer;transition:all .18s;background:white;position:relative;overflow:hidden;text-align:left;font-family:inherit;padding:0;}
 .pcard:hover{border-color:#aac9bb;}
@@ -51,13 +46,10 @@ body{font-family:'DM Sans',sans-serif;background:#1a1a1a;min-height:100vh;color:
 .pcard-chk{position:absolute;top:7px;right:7px;width:20px;height:20px;background:var(--g);border-radius:50%;display:none;align-items:center;justify-content:center;font-size:11px;color:white;font-weight:800;}
 .pcard.sel .pcard-chk{display:flex;}
 
-/* PILLS */
 .pills{display:flex;flex-wrap:wrap;gap:5px;}
 .pill{border:1.5px solid var(--g2);background:white;color:var(--g7);font-size:12px;font-weight:600;padding:6px 13px;border-radius:100px;cursor:pointer;transition:all .15s;font-family:inherit;white-space:nowrap;}
 .pill.active{background:var(--g);border-color:var(--g);color:white;}
-.pill:hover:not(.active){border-color:var(--g);color:var(--g);}
 
-/* TEMPLATE PICKER */
 .tpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .tpl-card{border:2px solid var(--g2);border-radius:12px;padding:0;cursor:pointer;background:white;transition:all .18s;overflow:hidden;font-family:inherit;}
 .tpl-card.active{border-color:var(--g);box-shadow:0 0 0 3px rgba(15,77,55,.12);}
@@ -65,26 +57,15 @@ body{font-family:'DM Sans',sans-serif;background:#1a1a1a;min-height:100vh;color:
 .tpl-label{padding:7px 10px;font-size:11px;font-weight:700;color:var(--g9);}
 .tpl-sub{font-size:10px;color:var(--g5);font-weight:500;}
 
-/* PLATFORM */
 .pfm-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
 .pfm-btn{border:1.5px solid var(--g2);background:white;border-radius:10px;padding:8px 10px;cursor:pointer;transition:all .15s;font-family:inherit;display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--g7);}
 .pfm-btn.active{background:var(--g);border-color:var(--g);color:white;}
-.pfm-icon{font-size:16px;}
 
-/* TOPIC INPUT */
-.tin{width:100%;border:1.5px solid var(--g2);border-radius:10px;padding:10px 12px;font-size:13px;font-family:inherit;color:var(--g9);resize:none;outline:none;background:white;transition:border-color .2s;}
-.tin:focus{border-color:var(--g);}
-.tin::placeholder{color:var(--g4);}
-
-/* GEN BTN */
 .genbtn{width:100%;background:var(--g);color:white;border:none;border-radius:13px;padding:15px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:-.01em;}
 .genbtn:hover{background:var(--gd);}
 .genbtn:active{transform:scale(.98);}
-.genbtn:disabled{background:var(--g4);cursor:not-allowed;transform:none;}
+.genbtn:disabled{background:var(--g4);cursor:not-allowed;}
 
-/* ═══════════════════════════════════════════
-   CANVAS / VISUAL OUTPUT AREA
-═══════════════════════════════════════════ */
 .output-wrap{display:flex;flex-direction:column;gap:10px;}
 .output-header{display:flex;align-items:center;justify-content:space-between;}
 .output-title{font-size:11px;font-weight:800;color:var(--g5);text-transform:uppercase;letter-spacing:.06em;}
@@ -92,54 +73,34 @@ body{font-family:'DM Sans',sans-serif;background:#1a1a1a;min-height:100vh;color:
 .act-btn{border:1.5px solid var(--g2);background:white;color:var(--g);font-size:12px;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;gap:5px;}
 .act-btn:hover{background:var(--g);color:white;border-color:var(--g);}
 .act-btn.dl{background:var(--g);color:white;border-color:var(--g);}
-.act-btn.dl:hover{background:var(--gd);}
 
-/* THE VISUAL CARD CANVAS */
 .card-canvas-wrap{border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.18);}
 #cardCanvas{width:100%;display:block;}
 
-/* LOADING */
 .loading-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;padding:40px 20px;}
 .spin{width:32px;height:32px;border:3px solid var(--gp);border-top-color:var(--g);border-radius:50%;animation:sp .7s linear infinite;}
 @keyframes sp{to{transform:rotate(360deg);}}
 .loading-txt{font-size:13px;color:var(--g5);font-weight:500;text-align:center;}
 
-/* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:#111;color:white;font-size:13px;font-weight:600;padding:10px 20px;border-radius:100px;opacity:0;transition:all .25s;z-index:999;pointer-events:none;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* HISTORY */
-.hist-item{background:white;border:1px solid var(--g2);border-radius:12px;overflow:hidden;}
+.hist-item{background:white;border:1px solid var(--g2);border-radius:12px;overflow:hidden;margin-bottom:12px;}
 .hist-thumb{width:100%;aspect-ratio:4/2;object-fit:cover;display:block;background:#e8efeb;}
 .hist-body{padding:10px 12px;}
 .hist-meta{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px;}
 .hist-tag{font-size:9px;font-weight:800;text-transform:uppercase;padding:2px 7px;border-radius:20px;background:var(--gp);color:var(--g);}
-.hist-time{font-size:10px;color:var(--g4);}
 .hist-acts{display:flex;gap:6px;margin-top:8px;}
 .sm-btn{border:1px solid var(--g2);background:white;color:var(--g7);font-size:11px;font-weight:600;padding:5px 10px;border-radius:7px;cursor:pointer;font-family:inherit;}
-.sm-btn:hover{background:var(--gp);border-color:var(--g);color:var(--g);}
 .clr-btn{border:none;background:none;color:var(--r);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;}
 .empty-hist{text-align:center;padding:48px 20px;color:var(--g4);}
-.empty-hist .e{font-size:40px;margin-bottom:10px;}
 
-/* ─── VISUAL CARD TEMPLATES (rendered to canvas) ─────── */
-/* These are actual DOM elements we'll screenshot */
 .vc-wrap{position:fixed;left:-9999px;top:-9999px;width:1080px;z-index:-1;}
-
-/* Story 9:16 */
-.vc-story{width:1080px;height:1920px;position:relative;overflow:hidden;font-family:'Playfair Display',serif;}
-/* Feed 1:1 */
-.vc-feed{width:1080px;height:1080px;position:relative;overflow:hidden;font-family:'DM Sans',sans-serif;}
-/* Wide 4:5 */
-.vc-portrait{width:1080px;height:1350px;position:relative;overflow:hidden;font-family:'DM Sans',sans-serif;}
-/* Landscape */
-.vc-landscape{width:1080px;height:566px;position:relative;overflow:hidden;font-family:'DM Sans',sans-serif;}
 </style>
 </head>
 <body>
 <div class="app">
 
-<!-- HEADER -->
 <div class="hdr">
   <div class="hdr-brand">
     <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" onerror="this.style.display='none'"/>
@@ -150,127 +111,20 @@ body{font-family:'DM Sans',sans-serif;background:#1a1a1a;min-height:100vh;color:
   </div>
 </div>
 
-<!-- TABS -->
 <div class="tabs">
   <button class="tab active" data-tab="gen">🪄 Buat Konten</button>
   <button class="tab" data-tab="hist">🗂 Riwayat</button>
 </div>
 
-<!-- GENERATE PANEL -->
 <div class="panel" id="panel-gen">
-
-  <!-- PRODUCT -->
-  <div>
-    <div class="slbl">Pilih Produk</div>
-    <div class="pgrid" id="pgrid"></div>
-  </div>
-
-  <!-- TEMPLATE -->
-  <div>
-    <div class="slbl">Template Visual</div>
-    <div class="tpl-grid" id="tplGrid">
-      <button class="tpl-card active" data-tpl="story-dark">
-        <div class="tpl-preview" style="background:#0F4D37;">
-          <div style="position:absolute;bottom:10px;left:12px;right:12px;">
-            <div style="height:6px;background:rgba(255,255,255,.5);border-radius:3px;margin-bottom:5px;width:60%;"></div>
-            <div style="height:10px;background:white;border-radius:3px;margin-bottom:4px;"></div>
-            <div style="height:10px;background:white;border-radius:3px;width:80%;"></div>
-          </div>
-        </div>
-        <div class="tpl-label">Story Dark<div class="tpl-sub">Dark green · 9:16</div></div>
-      </button>
-      <button class="tpl-card" data-tpl="story-light">
-        <div class="tpl-preview" style="background:#FDFDF8;">
-          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;padding:12px;">
-            <div style="height:6px;background:#0F4D37;border-radius:3px;width:70%;"></div>
-            <div style="height:20px;background:#0F4D37;border-radius:3px;opacity:.1;width:100%;"></div>
-          </div>
-        </div>
-        <div class="tpl-label">Story Light<div class="tpl-sub">Ivory cream · 9:16</div></div>
-      </button>
-      <button class="tpl-card" data-tpl="feed-bold">
-        <div class="tpl-preview" style="background:#D62828;">
-          <div style="position:absolute;bottom:8px;left:10px;right:10px;">
-            <div style="height:8px;background:white;border-radius:3px;margin-bottom:4px;width:80%;"></div>
-            <div style="height:5px;background:rgba(255,255,255,.6);border-radius:3px;"></div>
-          </div>
-        </div>
-        <div class="tpl-label">Feed Bold<div class="tpl-sub">Merah · 1:1</div></div>
-      </button>
-      <button class="tpl-card" data-tpl="feed-editorial">
-        <div class="tpl-preview" style="background:#111827;">
-          <div style="position:absolute;top:8px;left:10px;"><div style="width:20px;height:2px;background:#F4C430;border-radius:1px;"></div></div>
-          <div style="position:absolute;bottom:8px;left:10px;right:10px;">
-            <div style="height:8px;background:white;border-radius:2px;margin-bottom:4px;"></div>
-            <div style="height:5px;background:rgba(255,255,255,.4);border-radius:2px;width:60%;"></div>
-          </div>
-        </div>
-        <div class="tpl-label">Editorial<div class="tpl-sub">Dark gold · 4:5</div></div>
-      </button>
-      <button class="tpl-card" data-tpl="magazine">
-        <div class="tpl-preview" style="background:#EAF2EE;display:flex;align-items:center;gap:6px;padding:8px;">
-          <div style="width:30px;height:54px;background:#0F4D37;border-radius:4px;flex-shrink:0;"></div>
-          <div style="flex:1;">
-            <div style="height:6px;background:#0F4D37;border-radius:2px;margin-bottom:4px;"></div>
-            <div style="height:4px;background:#0F4D37;border-radius:2px;opacity:.3;margin-bottom:3px;"></div>
-            <div style="height:4px;background:#0F4D37;border-radius:2px;opacity:.3;width:70%;"></div>
-          </div>
-        </div>
-        <div class="tpl-label">Magazine<div class="tpl-sub">Split layout · 1:1</div></div>
-      </button>
-      <button class="tpl-card" data-tpl="minimal">
-        <div class="tpl-preview" style="background:white;display:flex;align-items:flex-end;padding:10px;">
-          <div style="flex:1;">
-            <div style="height:18px;background:#0F4D37;border-radius:3px;margin-bottom:5px;opacity:.08;"></div>
-            <div style="height:6px;background:#0F4D37;border-radius:2px;margin-bottom:4px;width:80%;"></div>
-            <div style="height:3px;background:#D62828;border-radius:2px;width:30%;"></div>
-          </div>
-        </div>
-        <div class="tpl-label">Minimal<div class="tpl-sub">Clean white · 9:16</div></div>
-      </button>
-    </div>
-  </div>
-
-  <!-- PLATFORM -->
-  <div>
-    <div class="slbl">Platform</div>
-    <div class="pfm-grid" id="pfmGrid">
-      <button class="pfm-btn active" data-pfm="instagram"><span class="pfm-icon">📸</span>Instagram Story/Feed</button>
-      <button class="pfm-btn" data-pfm="tiktok"><span class="pfm-icon">🎵</span>TikTok</button>
-      <button class="pfm-btn" data-pfm="threads"><span class="pfm-icon">🧵</span>Threads</button>
-      <button class="pfm-btn" data-pfm="whatsapp"><span class="pfm-icon">💬</span>WhatsApp Status</button>
-    </div>
-  </div>
-
-  <!-- TONE -->
-  <div>
-    <div class="slbl">Tone Copywriting</div>
-    <div class="pills" id="tonePills">
-      <button class="pill active" data-tone="santai">😊 Santai</button>
-      <button class="pill" data-tone="hype">🔥 Hype</button>
-      <button class="pill" data-tone="aesthetic">✨ Aesthetic</button>
-      <button class="pill" data-tone="formal">🤝 Formal</button>
-      <button class="pill" data-tone="lucu">😄 Receh</button>
-    </div>
-  </div>
-
-  <!-- TOPIK -->
-  <div>
-    <div class="slbl">Konteks / Topik <span style="font-weight:400;text-transform:none;color:var(--g4);">(opsional)</span></div>
-    <textarea class="tin" id="topicIn" rows="2" placeholder="Contoh: promo Lebaran, kado ulang tahun, hari panas banget..." maxlength="200"></textarea>
-  </div>
-
-  <!-- GENERATE -->
-  <button class="genbtn" id="genBtn" disabled>
-    <span>🪄</span><span id="genTxt">Pilih produk dulu</span>
-  </button>
-
-  <!-- OUTPUT -->
+  <div><div class="slbl">Pilih Produk</div><div class="pgrid" id="pgrid"></div></div>
+  <div><div class="slbl">Template Visual</div><div class="tpl-grid" id="tplGrid"></div></div>
+  <div><div class="slbl">Platform</div><div class="pfm-grid" id="pfmGrid"></div></div>
+  <div><div class="slbl">Tone Copywriting</div><div class="pills" id="tonePills"></div></div>
+  <button class="genbtn" id="genBtn" disabled><span>🪄</span><span id="genTxt">Pilih produk dulu</span></button>
   <div id="outputArea"></div>
-
 </div>
 
-<!-- HISTORY PANEL -->
 <div class="panel" id="panel-hist" hidden>
   <div style="display:flex;align-items:center;justify-content:space-between;">
     <div class="slbl" style="margin:0;">Konten Tersimpan</div>
@@ -279,15 +133,17 @@ body{font-family:'DM Sans',sans-serif;background:#1a1a1a;min-height:100vh;color:
   <div id="histList"></div>
 </div>
 
-</div><!-- /app -->
-
-<!-- HIDDEN RENDER AREA -->
+</div>
 <div class="vc-wrap" id="vcWrap"></div>
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
+// ─── KONFIGURASI PROXY GAMBAR ─────────────────────────────────
+const IMAGE_PROXY = "https://ghhnnfrmftttptcejizp.supabase.co/functions/v1/smart-api";
+function proxyImage(url) {
+  return IMAGE_PROXY + "?url=" + encodeURIComponent(url);
+}
+
 // ─── PRODUCT DATA ──────────────────────────────────────────────
 const PRODUCTS = [
   { id:'p_m1', name:'Rujak Segar', price:28000, cat:'classic', buah:['Mangga Muda','Nanas','Bengkoang','Jambu Air','Kedondong'], sambal:'Sambal Original', desc:'Ringan, segar, dan cocok untuk semua penikmat rujak.', portion:'1 Orang', thumb:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp', hd:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp', badge:null, bc:null },
@@ -298,88 +154,203 @@ const PRODUCTS = [
   { id:'p_m6', name:'Tampah Nusantara', price:200000, cat:'reserve', buah:['Shine Muscat','Jambu Kristal','Mangga Muda','Nanas','Bengkoang','Jambu Air','Kedondong','Ubi Merah'], sambal:'Sambal Original & Mete', desc:'Sajian kebersamaan dalam tampah bambu untuk momen yang tak terlupakan.', portion:'8–10 Orang', thumb:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-thumb.webp', hd:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp', badge:'8–10 Orang', bc:'g' }
 ];
 
-const BANNER = 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp';
-const LOGO   = 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp';
-
+const LOGO = 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp';
 const fmt = n => 'Rp' + n.toLocaleString('id-ID');
 
-// ─── STATE ─────────────────────────────────────────────────────
 const S = {
   pid: null, tpl: 'story-dark', pfm: 'instagram',
-  tone: 'santai', topic: '', loading: false,
-  history: JSON.parse(localStorage.getItem('rcg_hist') || '[]')
+  tone: 'santai', history: JSON.parse(localStorage.getItem('rcg_hist') || '[]')
 };
 
-// ─── PRODUCT CARD VISUALS (emoji + gradient, no CDN needed) ───
-const PVISUAL = {
-  p_m1: { emoji:'🥭', grad:'linear-gradient(135deg,#d4f7c5 0%,#a8e6a3 50%,#6dbf67 100%)', label:'Segar' },
-  p_m2: { emoji:'🍍', grad:'linear-gradient(135deg,#fff3c4 0%,#ffd97d 50%,#f4b942 100%)', label:'Serut' },
-  p_m3: { emoji:'🫐', grad:'linear-gradient(135deg,#ffd6d6 0%,#ff9a9a 50%,#e05252 100%)', label:'★ Favorit' },
-  p_m4: { emoji:'🍈', grad:'linear-gradient(135deg,#d6ffe8 0%,#85e8a4 50%,#3fba68 100%)', label:'Sharing' },
-  p_m5: { emoji:'🍇', grad:'linear-gradient(135deg,#e8d5ff 0%,#c084fc 50%,#9333ea 100%)', label:'Reserve' },
-  p_m6: { emoji:'🎋', grad:'linear-gradient(135deg,#d4eee2 0%,#7fc8a9 50%,#0F4D37 100%)', label:'Tampah' },
-};
+// ─── STATIC COPYWRITING ────────────────────────────────────────
+function generateCopy(prod) {
+  const tone = S.tone;
+  const pfm = S.pfm;
+  
+  const headlineMap = {
+    santai: [`Rujak ${prod.name.split(' ')[1] || 'Segar'}`, `Kesegaran ${prod.name}`, `Nikmati Sensasi Rujak`, `Rujak Premium ${prod.name}`],
+    hype: [`GILA! ${prod.name} 🔥`, `WAJIB COBA ${prod.name}`, `${prod.name} BOMBASTIS!`, `INI DIA ${prod.name}`],
+    aesthetic: [`Simfoni Buah Segar`, `Elegansi ${prod.name}`, `Puisi dalam Wadah`, `Mahakarya Rujak`],
+    formal: [`Nikmati ${prod.name}`, `Kualitas Premium ${prod.name}`, `${prod.name} dari Rujak.Co`, `Sajian ${prod.name} Istimewa`],
+    lucu: [`Ngiler Dulu 😋`, `Buahnya Bikin Lupa Diri`, `Rujak Bikin Baper`, `Jangan Nangis ${prod.name}`]
+  };
+  const sublineMap = {
+    santai: [`Cocok buat nemenin santai sore kamu yang butuh kesegaran ekstra.`, `Segar, ringan, dan bikin mood langsung naik.`, `Dijamin bikin kamu ketagihan di suapan pertama.`],
+    hype: [`BURUAN SEBELUM KEHABISAN! STOK TERBATAS!`, `Level pedasnya bikin jantung deg-degan tapi nagih!`, `RASA JUARA YANG GAK ADA DUANYA!`],
+    aesthetic: [`Perpaduan rasa dan tekstur yang menari di langit-langit mulut.`, `Setiap gigitan adalah perjalanan rasa yang intim.`, `Dibuat dengan ketelitian untuk mereka yang menghargai keindahan.`],
+    formal: [`Dikurasi dari buah segar pilihan dengan standar kualitas Rujak.Co.`, `Pengalaman rujak premium yang memadukan cita rasa dan higienitas.`, `Persembahan untuk setiap momen berharga Anda.`],
+    lucu: [`Pedas? Tenang, ada buahnya kok... banyak malah.`, `Satu gigitan, semua masalah ilang (sementara).`, `Warning: bisa bikin kamu senyum sendiri.`]
+  };
+  const bodyMap = {
+    santai: [`${prod.desc} Sambal ${prod.sambal.toLowerCase()} yang khas bikin setiap gigitan makin mantap. Cocok buat kamu yang lagi pengen ngemil sehat dan segar.`, `Dengan ${prod.buah.slice(0,3).join(', ')} dan buah segar lainnya, ${prod.name} siap jadi camilan favoritmu. Pesan sekarang, dijamin puas!`],
+    hype: [`${prod.desc} Dengan ${prod.buah.length} buah pilihan dan sambal ${prod.sambal.toLowerCase()} yang LEGENDARIS! Jangan sampe nyesel gak nyobain!`, `STOK TERBATAS! ${prod.name} adalah definisi rujak premium yang bikin kamu ketagihan. Buruan order sebelum sold out!`],
+    aesthetic: [`${prod.desc} Setiap elemen—dari ${prod.buah.slice(0,2).join(', ')} hingga ${prod.buah.slice(-2).join(', ')}—dipilih dengan saksama untuk menciptakan harmoni rasa yang sempurna.`, `Lebih dari sekadar rujak. ${prod.name} adalah pengalaman sensori yang dirancang untuk mereka yang menghargai keindahan dalam setiap detail.`],
+    formal: [`${prod.desc} Disajikan dengan sambal ${prod.sambal.toLowerCase()} dalam kemasan higienis, siap dikirim ke area Jabodetabek. Hubungi kami sekarang.`, `Komposisi buah terbaik musim ini, diracik dengan sambal kacang premium. ${prod.name} adalah pilihan tepat untuk konsumsi pribadi maupun acara.`],
+    lucu: [`${prod.desc} Sambalnya nampol, buahnya seger, dompetnya? Tenang, masih aman. Ngemil rujak gak perlu nunggu gajian.`, `Dari semua drama hidup, ${prod.name} adalah satu-satunya yang bikin kamu happy. Pedesnya pas, manisnya alami, pokoknya TOP!`]
+  };
+  const ctaMap = {
+    santai: ['Pesan Sekarang', 'Order Yuk!', 'Coba Sekarang'],
+    hype: ['ORDER SEKARANG!', 'GASKEUN!', 'BELI SEKARANG!'],
+    aesthetic: ['Jelajahi Rasa', 'Pesan dengan Gaya', 'Rasakan Keindahan'],
+    formal: ['Hubungi Kami', 'Pesan di Sini', 'Kontak Kami'],
+    lucu: ['Ngiler? Pesan Aja!', 'Klik Buat Ngemil', 'Lapar? Gas!']
+  };
+  const hashtagMap = {
+    instagram: ['#RujakCo', '#RujakPremium', '#KulinerIndonesia', '#RujakJabodetabek', '#MakanEnak', '#RekomendasiMakanan', '#PedasSegar'],
+    tiktok: ['#RujakCo', '#RujakPremium', '#FYP', '#MakananViral', '#RujakIndonesia', '#KulinerTikTok'],
+    threads: ['#RujakCo', '#RujakPremium', '#FoodPhotography', '#KulinerNusantara'],
+    whatsapp: ['#RujakCo', '#RujakPremium', '#InfoPemesanan']
+  };
+
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+  const headline = pick(headlineMap[tone] || headlineMap.santai);
+  const subline = pick(sublineMap[tone] || sublineMap.santai);
+  const body = pick(bodyMap[tone] || bodyMap.santai);
+  const cta = pick(ctaMap[tone] || ctaMap.santai);
+  const hashtags = (hashtagMap[pfm] || hashtagMap.instagram).join(' ');
+  
+  const caption = `${headline}\n\n${subline}\n\n${body}\n\n🚀 ${cta}: https://rujakco.vercel.app\n\n${hashtags}`;
+
+  return { HEADLINE: headline, SUBLINE: subline, BODY: body, CTA: cta, HASHTAGS: hashtags, CAPTION: caption };
+}
 
 // ─── RENDER PRODUCTS ───────────────────────────────────────────
 function renderProducts() {
-  document.getElementById('pgrid').innerHTML = PRODUCTS.map(p => {
-    const v = PVISUAL[p.id];
-    return `
+  document.getElementById('pgrid').innerHTML = PRODUCTS.map(p => `
     <button class="pcard${S.pid===p.id?' sel':''}" onclick="selProd('${p.id}')">
       ${p.badge?`<div class="pcard-badge b${p.bc}">${p.badge}</div>`:''}
       <div class="pcard-chk">✓</div>
-      <div class="pcard-img" style="background:${v.grad};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;">
-        <span style="font-size:36px;line-height:1;">${v.emoji}</span>
-        <span style="font-size:9px;font-weight:800;color:rgba(0,0,0,.45);text-transform:uppercase;letter-spacing:.06em;">${v.label}</span>
-      </div>
-      <div class="pcard-body">
-        <div class="pcard-name">${p.name}</div>
-        <div class="pcard-price">${fmt(p.price)}</div>
-      </div>
-    </button>`;
-  }).join('');
+      <img class="pcard-img" src="${p.thumb}" alt="${p.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+      <div class="pcard-img" style="display:none;background:linear-gradient(135deg,#e8efeb,#d4e8de);align-items:center;justify-content:center;font-size:40px;">🥭</div>
+      <div class="pcard-body"><div class="pcard-name">${p.name}</div><div class="pcard-price">${fmt(p.price)}</div></div>
+    </button>`).join('');
 }
 
-function selProd(id) {
-  S.pid = S.pid === id ? null : id;
-  renderProducts();
-  updBtn();
-}
-
+function selProd(id) { S.pid = S.pid===id ? null : id; renderProducts(); updBtn(); }
 function updBtn() {
-  const btn = document.getElementById('genBtn');
-  const txt = document.getElementById('genTxt');
-  if (!S.pid) { btn.disabled=true; txt.textContent='Pilih produk dulu'; }
-  else if (S.loading) { btn.disabled=true; txt.textContent='Sedang membuat visual...'; }
-  else { btn.disabled=false; txt.textContent='Buat Visual Konten'; }
+  const btn = document.getElementById('genBtn'), txt = document.getElementById('genTxt');
+  btn.disabled = !S.pid; txt.textContent = S.pid ? 'Buat Visual Konten' : 'Pilih produk dulu';
 }
 
-// ─── PILL / BUTTON CONTROLS ────────────────────────────────────
-document.getElementById('tplGrid').addEventListener('click', e=>{
-  const c = e.target.closest('.tpl-card');
-  if(!c) return;
-  document.querySelectorAll('.tpl-card').forEach(x=>x.classList.remove('active'));
-  c.classList.add('active');
-  S.tpl = c.dataset.tpl;
+// ─── RENDER TEMPLATES ──────────────────────────────────────────
+function renderTemplates() {
+  document.getElementById('tplGrid').innerHTML = [
+    { tpl:'story-dark', name:'Story Dark', sub:'Dark green · 9:16', bg:'#0F4D37' },
+    { tpl:'story-light', name:'Story Light', sub:'Ivory cream · 9:16', bg:'#FDFDF8' },
+    { tpl:'feed-bold', name:'Feed Bold', sub:'Merah · 1:1', bg:'#D62828' },
+    { tpl:'feed-editorial', name:'Editorial', sub:'Dark gold · 4:5', bg:'#111827' },
+    { tpl:'magazine', name:'Magazine', sub:'Split layout · 1:1', bg:'#EAF2EE' },
+    { tpl:'minimal', name:'Minimal', sub:'Clean white · 9:16', bg:'white' }
+  ].map(t=>`<button class="tpl-card${S.tpl===t.tpl?' active':''}" data-tpl="${t.tpl}" onclick="selTpl('${t.tpl}')"><div class="tpl-preview" style="background:${t.bg};"></div><div class="tpl-label">${t.name}<div class="tpl-sub">${t.sub}</div></div></button>`).join('');
+}
+function selTpl(tpl) { S.tpl = tpl; renderTemplates(); }
+
+// ─── RENDER PLATFORM ───────────────────────────────────────────
+document.getElementById('pfmGrid').innerHTML = [
+  { pfm:'instagram', label:'📸 Instagram Story/Feed' },
+  { pfm:'tiktok', label:'🎵 TikTok' },
+  { pfm:'threads', label:'🧵 Threads' },
+  { pfm:'whatsapp', label:'💬 WhatsApp Status' }
+].map(p=>`<button class="pfm-btn${S.pfm===p.pfm?' active':''}" data-pfm="${p.pfm}" onclick="selPfm('${p.pfm}')">${p.label}</button>`).join('');
+function selPfm(pfm) { S.pfm = pfm; renderPfm(); }
+function renderPfm() {
+  document.querySelectorAll('.pfm-btn').forEach(b=>b.classList.toggle('active', b.dataset.pfm===S.pfm));
+}
+
+// ─── RENDER TONE ───────────────────────────────────────────────
+document.getElementById('tonePills').innerHTML = [
+  { tone:'santai', label:'😊 Santai' },
+  { tone:'hype', label:'🔥 Hype' },
+  { tone:'aesthetic', label:'✨ Aesthetic' },
+  { tone:'formal', label:'🤝 Formal' },
+  { tone:'lucu', label:'😄 Receh' }
+].map(t=>`<button class="pill${S.tone===t.tone?' active':''}" data-tone="${t.tone}" onclick="selTone('${t.tone}')">${t.label}</button>`).join('');
+function selTone(tone) { S.tone = tone; renderTone(); }
+function renderTone() {
+  document.querySelectorAll('#tonePills .pill').forEach(p=>p.classList.toggle('active', p.dataset.tone===S.tone));
+}
+
+// ─── GENERATE ──────────────────────────────────────────────────
+document.getElementById('genBtn').addEventListener('click', async ()=>{
+  if (!S.pid) return;
+  const prod = PRODUCTS.find(p=>p.id===S.pid);
+  const copy = generateCopy(prod);
+  
+  document.getElementById('outputArea').innerHTML = `<div class="loading-wrap"><div class="spin"></div><div class="loading-txt">Membuat visual untuk <strong>${prod.name}</strong>…</div></div>`;
+  
+  const wrap = document.getElementById('vcWrap');
+  wrap.innerHTML = buildCardHTML(prod, copy, S.tpl);
+  
+  setTimeout(()=>{
+    const el = wrap.firstElementChild;
+    if (!el) return;
+    html2canvas(el, { scale: 0.5, useCORS: true, allowTaint: false, backgroundColor: null, logging: false })
+      .then(canvas=>{
+        const imgData = canvas.toDataURL('image/jpeg', 0.92);
+        showOutput(prod, copy, imgData);
+        saveHistory(prod, copy, imgData);
+        wrap.innerHTML='';
+      })
+      .catch(()=>{
+        showOutputFallback(prod, copy);
+        wrap.innerHTML='';
+      });
+  }, 600);
 });
 
-document.getElementById('pfmGrid').addEventListener('click', e=>{
-  const c = e.target.closest('.pfm-btn');
-  if(!c) return;
-  document.querySelectorAll('.pfm-btn').forEach(x=>x.classList.remove('active'));
-  c.classList.add('active');
-  S.pfm = c.dataset.pfm;
-});
+function buildCardHTML(prod, copy, tpl) {
+  const imgUrl = proxyImage(prod.hd); // ⬅️ PAKAI PROXY
+  const logoUrl = LOGO, price = fmt(prod.price);
+  const tpls = {
+    'story-dark': `<div style="width:1080px;height:1920px;position:relative;overflow:hidden;background:#0F4D37;font-family:'DM Sans',sans-serif;"><img src="${imgUrl}" crossorigin="anonymous" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55;"/><div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(15,77,55,.2) 0%,rgba(10,30,20,.0) 30%,rgba(5,15,10,.85) 60%,rgba(0,0,0,.97) 100%);"></div><div style="position:absolute;bottom:0;left:0;right:0;padding:80px 72px 100px;"><div style="font-family:'Playfair Display',serif;font-size:108px;font-weight:900;color:white;line-height:1.0;margin-bottom:24px;">${copy.HEADLINE}</div><div style="font-size:38px;color:rgba(255,255,255,.75);margin-bottom:40px;font-style:italic;">${copy.SUBLINE}</div><div style="display:flex;align-items:center;justify-content:space-between;"><div style="font-size:72px;font-weight:900;color:white;">${price}</div><div style="background:#F4C430;border-radius:20px;padding:28px 48px;font-size:28px;font-weight:800;color:#111;">${copy.CTA} →</div></div></div></div>`,
+    'story-light': `<div style="width:1080px;height:1920px;position:relative;overflow:hidden;background:#FDFDF8;font-family:'DM Sans',sans-serif;"><img src="${imgUrl}" crossorigin="anonymous" style="position:absolute;top:0;left:0;right:0;height:980px;object-fit:cover;"/><div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(253,253,248,0) 50%,#FDFDF8 100%);"></div><div style="position:absolute;bottom:0;left:0;right:0;padding:40px 72px 100px;"><div style="font-family:'Playfair Display',serif;font-size:96px;font-weight:900;color:#0F4D37;line-height:.95;margin-bottom:24px;">${prod.name}</div><div style="font-family:'Playfair Display',serif;font-size:52px;font-weight:700;font-style:italic;color:#111;margin-bottom:20px;">"${copy.SUBLINE}"</div><div style="font-size:30px;color:#6B7280;line-height:1.6;margin-bottom:44px;">${copy.BODY}</div><div style="display:flex;align-items:center;justify-content:space-between;border-top:2px solid #E5E7EB;padding-top:36px;"><div style="font-size:64px;font-weight:900;color:#0F4D37;">${price}</div><div style="background:#D62828;color:white;border-radius:16px;padding:24px 40px;font-size:24px;font-weight:800;">${copy.CTA} →</div></div></div></div>`,
+    'feed-bold': `<div style="width:1080px;height:1080px;position:relative;overflow:hidden;background:#D62828;font-family:'DM Sans',sans-serif;"><img src="${imgUrl}" crossorigin="anonymous" style="position:absolute;right:0;top:0;width:580px;height:100%;object-fit:cover;"/><div style="position:absolute;inset:0;background:linear-gradient(to right,rgba(214,40,40,1) 0%,rgba(214,40,40,0) 60%);"></div><div style="position:absolute;left:72px;top:60px;bottom:60px;width:500px;display:flex;flex-direction:column;justify-content:space-between;"><div><div style="font-family:'Playfair Display',serif;font-size:88px;font-weight:900;color:white;line-height:.95;margin-bottom:20px;">${copy.HEADLINE}</div><div style="font-size:28px;color:rgba(255,255,255,.8);margin-bottom:32px;">${copy.SUBLINE}</div></div><div><div style="font-size:56px;font-weight:900;color:white;margin-bottom:8px;">${price}</div><div style="background:white;color:#D62828;border-radius:14px;padding:20px 32px;font-size:22px;font-weight:800;width:fit-content;">${copy.CTA} →</div></div></div></div>`,
+    'feed-editorial': `<div style="width:1080px;height:1350px;position:relative;overflow:hidden;background:#111827;font-family:'DM Sans',sans-serif;"><img src="${imgUrl}" crossorigin="anonymous" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35;"/><div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(17,24,39,.3) 0%,rgba(17,24,39,.95) 55%);"></div><div style="position:absolute;bottom:80px;left:80px;right:80px;"><div style="width:48px;height:4px;background:#F4C430;margin-bottom:28px;"></div><div style="font-family:'Playfair Display',serif;font-size:110px;font-weight:900;color:white;line-height:.9;margin-bottom:28px;">${copy.HEADLINE}</div><div style="font-family:'Playfair Display',serif;font-size:40px;font-style:italic;color:#F4C430;margin-bottom:28px;">"${copy.SUBLINE}"</div><div style="font-size:26px;color:rgba(255,255,255,.6);line-height:1.6;margin-bottom:48px;">${copy.BODY}</div><div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.1);padding-top:32px;"><div style="font-size:64px;font-weight:900;color:white;">${price}</div><div style="background:#F4C430;color:#111;border-radius:12px;padding:20px 36px;font-size:22px;font-weight:800;">${copy.CTA}</div></div></div></div>`,
+    'magazine': `<div style="width:1080px;height:1080px;display:flex;background:#FDFDF8;font-family:'DM Sans',sans-serif;"><div style="width:460px;height:100%;position:relative;overflow:hidden;"><img src="${imgUrl}" crossorigin="anonymous" style="width:100%;height:100%;object-fit:cover;"/></div><div style="flex:1;padding:64px;display:flex;flex-direction:column;justify-content:space-between;"><div><div style="font-family:'Playfair Display',serif;font-size:80px;font-weight:900;color:#0F4D37;line-height:.95;margin-bottom:20px;">${prod.name}</div><div style="font-family:'Playfair Display',serif;font-size:28px;font-style:italic;color:#374151;margin-bottom:20px;">"${copy.HEADLINE}"</div><div style="font-size:20px;color:#6B7280;line-height:1.6;">${copy.SUBLINE}</div></div><div style="display:flex;align-items:center;gap:16px;border-top:1.5px solid #E5E7EB;padding-top:28px;"><div style="font-size:64px;font-weight:900;color:#0F4D37;">${price}</div><div style="background:#0F4D37;color:white;border-radius:12px;padding:16px 28px;font-size:18px;font-weight:800;white-space:nowrap;">${copy.CTA} →</div></div></div></div>`,
+    'minimal': `<div style="width:1080px;height:1920px;position:relative;overflow:hidden;background:white;font-family:'DM Sans',sans-serif;"><img src="${imgUrl}" crossorigin="anonymous" style="position:absolute;top:0;left:0;right:0;height:1080px;object-fit:cover;"/><div style="position:absolute;bottom:0;left:0;right:0;top:960px;background:white;border-radius:32px 32px 0 0;padding:56px 64px 80px;display:flex;flex-direction:column;justify-content:space-between;"><div><div style="font-family:'Playfair Display',serif;font-size:96px;font-weight:900;color:#111;line-height:.9;margin-bottom:16px;">${copy.HEADLINE}</div><div style="font-size:30px;color:#6B7280;font-style:italic;margin-bottom:28px;">${copy.SUBLINE}</div><div style="font-size:24px;color:#374151;line-height:1.6;margin-bottom:32px;">${copy.BODY}</div></div><div style="display:flex;align-items:center;justify-content:space-between;"><div style="font-size:64px;font-weight:900;color:#0F4D37;">${price}</div><div style="background:#111;color:white;border-radius:14px;padding:22px 44px;font-size:22px;font-weight:800;">${copy.CTA} →</div></div></div></div>`
+  };
+  return tpls[tpl] || tpls['story-dark'];
+}
 
-document.getElementById('tonePills').addEventListener('click', e=>{
-  const c = e.target.closest('.pill');
-  if(!c) return;
-  document.querySelectorAll('#tonePills .pill').forEach(x=>x.classList.remove('active'));
-  c.classList.add('active');
-  S.tone = c.dataset.tone;
-});
+function showOutput(prod, copy, imgData) {
+  document.getElementById('outputArea').innerHTML = `
+    <div class="output-wrap">
+      <div class="output-header"><div class="output-title">✨ Visual Siap</div>
+        <div class="output-acts"><button class="act-btn" onclick="copyCaption(\`${escA(copy.CAPTION)}\`)">📋 Salin Caption</button><button class="act-btn dl" onclick="dlImg('${imgData}','${prod.name}')">⬇ Download</button></div></div>
+      <div class="card-canvas-wrap"><img src="${imgData}" style="width:100%;display:block;" alt="Visual ${prod.name}"/></div>
+      <div style="background:white;border:1.5px solid var(--g2);border-radius:12px;overflow:hidden;">
+        <div style="padding:10px 14px;background:var(--gp);font-size:10px;font-weight:800;color:var(--g);text-transform:uppercase;">Caption ${S.pfm}</div>
+        <div style="padding:14px;font-size:13px;color:var(--g7);line-height:1.7;white-space:pre-wrap;">${escH(copy.CAPTION)}</div>
+        <div style="padding:0 14px 14px;"><button class="act-btn" style="width:100%;justify-content:center;" onclick="copyCaption(\`${escA(copy.CAPTION)}\`)">📋 Salin Caption + Hashtag</button></div>
+      </div></div>`;
+}
+function showOutputFallback(prod, copy) {
+  document.getElementById('outputArea').innerHTML = `<div class="output-wrap"><div style="padding:20px;background:white;border:1.5px solid var(--g2);border-radius:12px;"><div style="font-size:12px;color:var(--g5);margin-bottom:12px;">⚠️ Preview tidak bisa dimuat. Caption tetap bisa disalin.</div><div style="font-size:13px;color:var(--g7);line-height:1.7;white-space:pre-wrap;">${escH(copy.CAPTION)}</div><button class="act-btn" style="margin-top:12px;" onclick="copyCaption(\`${escA(copy.CAPTION)}\`)">📋 Salin Caption</button></div></div>`;
+}
 
-document.getElementById('topicIn').addEventListener('input', function(){ S.topic = this.value; });
+function dlImg(dataUrl, name) {
+  const a = document.createElement('a'); a.href = dataUrl; a.download = `rujakco-${name.replace(/\s+/g,'-').toLowerCase()}-${Date.now()}.jpg`; a.click();
+  toast('🎉 Gambar berhasil didownload!');
+}
+function copyCaption(text) {
+  navigator.clipboard.writeText(text).then(()=>toast('✅ Caption disalin!')).catch(()=>{const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('✅ Caption disalin!');});
+}
+function saveHistory(prod, copy, imgData) {
+  S.history.unshift({ id:Date.now(), prodName:prod.name, tpl:S.tpl, pfm:S.pfm, caption:copy.CAPTION, img:imgData, ts:new Date().toLocaleString('id-ID',{dateStyle:'short',timeStyle:'short'}) });
+  if (S.history.length > 15) S.history.pop();
+  try { localStorage.setItem('rcg_hist', JSON.stringify(S.history)); } catch(e) {}
+}
+
+function renderHistory() {
+  const list = document.getElementById('histList');
+  if (!S.history.length) { list.innerHTML = `<div class="empty-hist"><div class="e">📭</div><div>Belum ada konten tersimpan.</div></div>`; return; }
+  list.innerHTML = S.history.map(h=>`<div class="hist-item">${h.img?`<img class="hist-thumb" src="${h.img}" alt="${h.prodName}"/>`:''}<div class="hist-body"><div class="hist-meta"><span class="hist-tag">${h.prodName}</span><span class="hist-tag">${h.tpl}</span><span class="hist-tag">${h.pfm}</span></div><div class="hist-acts"><button class="sm-btn" onclick="copyCaption(\`${escA(h.caption)}\`)">📋 Salin</button>${h.img?`<button class="sm-btn" onclick="dlImg('${h.img}','${h.prodName}')">⬇ Download</button>`:''}</div></div></div>`).join('');
+}
+
+document.getElementById('clrHist').addEventListener('click',()=>{
+  if (!S.history.length) return;
+  if (confirm('Hapus semua riwayat?')) { S.history=[]; try{localStorage.removeItem('rcg_hist');}catch(e){} renderHistory(); toast('Riwayat dihapus'); }
+});
 
 // ─── TABS ──────────────────────────────────────────────────────
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
@@ -391,488 +362,14 @@ document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   if(w==='hist') renderHistory();
 }));
 
-// ─── GENERATE ──────────────────────────────────────────────────
-document.getElementById('genBtn').addEventListener('click', generate);
-
-async function generate() {
-  if (!S.pid || S.loading) return;
-  const prod = PRODUCTS.find(p=>p.id===S.pid);
-  S.loading = true;
-  updBtn();
-
-  // Show loading
-  document.getElementById('outputArea').innerHTML = `
-    <div class="loading-wrap">
-      <div class="spin"></div>
-      <div class="loading-txt">Menulis copy untuk <strong>${prod.name}</strong>…</div>
-    </div>`;
-
-  // ── Tone guides
-  const toneMap = {
-    santai:'Casual, friendly, bahasa sehari-hari Indonesia, emoji secukupnya, tidak berlebihan.',
-    hype:'Energik, FOMO, huruf kapital di kata kunci penting, berani, dorong orang bertindak segera!',
-    aesthetic:'Puitis, artsy, pilihan kata yang indah dan evocative. Emoji minimalis tapi elegan (🌿✨🍃). Seperti caption majalah food photography.',
-    formal:'Profesional, hangat, bahasa baku tapi tidak kaku. Sedikit emoji.',
-    lucu:'Humor ringan, relatable, wordplay tentang buah/pedas, bikin senyum.'
-  };
-
-  const tplMeta = {
-    'story-dark':  {type:'Story 9:16', style:'dark luxury'},
-    'story-light': {type:'Story 9:16', style:'clean minimal'},
-    'feed-bold':   {type:'Feed 1:1',   style:'bold merah'},
-    'feed-editorial':{type:'Feed 4:5', style:'editorial gelap'},
-    'magazine':    {type:'Feed 1:1',   style:'magazine split'},
-    'minimal':     {type:'Story 9:16', style:'minimalis putih'}
-  };
-
-  const meta = tplMeta[S.tpl];
-  const pfmMap = {instagram:'Instagram',tiktok:'TikTok',threads:'Threads',whatsapp:'WhatsApp'};
-
-  const prompt = `Kamu adalah senior copywriter Indonesia untuk brand rujak premium "Rujak.Co" (tagline: "Indonesia Dalam Satu Wadah").
-
-PRODUK: ${prod.name} — ${fmt(prod.price)}
-DESKRIPSI: ${prod.desc}
-BUAH: ${prod.buah.join(', ')}
-SAMBAL: ${prod.sambal}
-PORSI: ${prod.portion}
-${prod.badge ? `BADGE: ${prod.badge}` : ''}
-${S.topic ? `KONTEKS: ${S.topic}` : ''}
-
-PLATFORM: ${pfmMap[S.pfm]}
-TEMPLATE VISUAL: ${meta.type}, style ${meta.style}
-TONE: ${toneMap[S.tone]}
-
-Tulis copy untuk visual card ini. FORMAT WAJIB (jangan ubah key-nya, isi value saja):
-
-HEADLINE: [maks 5 kata, kuat dan ikonik — ini teks paling besar]
-SUBLINE: [1 kalimat pendek, evocative, maks 12 kata]
-BODY: [2-3 kalimat, benefit + ajakan, max 40 kata]
-CTA: [teks tombol, maks 4 kata, action-oriented]
-HASHTAGS: [5-7 hashtag relevan, tanpa newline]
-CAPTION: [caption media sosial lengkap untuk ${pfmMap[S.pfm]}, 3-6 kalimat + hashtag, tone ${S.tone}]
-
-Tulis langsung tanpa preamble. Bahasa Indonesia.`;
-
-  let copy = {};
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-6', max_tokens:700,
-        messages:[{role:'user',content:prompt}]
-      })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error?.message||'API Error');
-    const txt = data.content.map(b=>b.type==='text'?b.text:'').join('').trim();
-
-    // Parse structured copy
-    const lines = txt.split('\n');
-    lines.forEach(l => {
-      const m = l.match(/^(HEADLINE|SUBLINE|BODY|CTA|HASHTAGS|CAPTION):\s*(.+)$/s);
-      if (m) copy[m[1]] = m[2].trim();
-    });
-    // Fallback if parse fails
-    if (!copy.HEADLINE) { copy.HEADLINE = prod.name; copy.SUBLINE = prod.desc; copy.BODY = prod.desc; copy.CTA = 'Pesan Sekarang'; copy.HASHTAGS = '#rujakco #rujak'; copy.CAPTION = txt; }
-
-  } catch(err) {
-    document.getElementById('outputArea').innerHTML = `<div style="padding:20px;color:var(--r);font-size:13px;">❌ Gagal: ${err.message}</div>`;
-    S.loading=false; updBtn(); return;
-  }
-
-  // ── Render card directly (no CDN image needed)
-  renderCard(prod, copy);
-}
-
-// ─── RENDER VISUAL CARD ────────────────────────────────────────
-function renderCard(prod, copy) {
-  const wrap = document.getElementById('vcWrap');
-  wrap.innerHTML = buildCardHTML(prod, copy, S.tpl);
-
-  // Give fonts time to paint
-  setTimeout(()=>{
-    const el = wrap.firstElementChild;
-    if (!el) return;
-
-    html2canvas(el, {
-      scale: 0.5,
-      useCORS: false,
-      allowTaint: true,
-      backgroundColor: null,
-      logging: false,
-    }).then(canvas=>{
-      const imgData = canvas.toDataURL('image/jpeg', 0.92);
-      showOutput(prod, copy, imgData);
-      saveHistory(prod, copy, imgData);
-      S.loading=false; updBtn();
-      wrap.innerHTML='';
-    }).catch(()=>{
-      showOutputFallback(prod, copy);
-      S.loading=false; updBtn();
-    });
-  }, 600);
-}
-
-function buildCardHTML(prod, copy, tpl) {
-  const imgUrl = prod.hd;
-  const logoUrl = LOGO;
-  const price = fmt(prod.price);
-  const buahStr = prod.buah.slice(0,4).join(' · ');
-
-  const cards = {
-
-    // ── STORY DARK ──────────────────────────────────────────────
-    'story-dark': `
-    <div style="width:1080px;height:1920px;position:relative;overflow:hidden;background:#0F4D37;font-family:'DM Sans',sans-serif;">
-      <!-- BG IMAGE with overlay -->
-      <img src="${imgUrl}" crossorigin="anonymous" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55;"/>
-      <!-- Dark gradient bottom -->
-      <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(15,77,55,.2) 0%, rgba(10,30,20,.0) 30%, rgba(5,15,10,.85) 60%, rgba(0,0,0,.97) 100%);"></div>
-      <!-- TOP: Logo + handle -->
-      <div style="position:absolute;top:72px;left:72px;right:72px;display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:16px;">
-          <img src="${logoUrl}" crossorigin="anonymous" style="width:68px;height:68px;border-radius:50%;border:3px solid rgba(255,255,255,.3);"/>
-          <div>
-            <div style="font-family:'Playfair Display',serif;font-size:36px;font-weight:800;color:white;line-height:1;">Rujak<span style="color:#F4C430;">.Co</span></div>
-            <div style="font-size:22px;color:rgba(255,255,255,.7);font-weight:500;margin-top:4px;">@rujakco.id</div>
-          </div>
-        </div>
-        ${prod.badge ? `<div style="background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25);border-radius:100px;padding:10px 24px;font-size:20px;font-weight:800;color:white;letter-spacing:.04em;text-transform:uppercase;">${prod.badge}</div>` : ''}
-      </div>
-      <!-- BOTTOM CONTENT -->
-      <div style="position:absolute;bottom:0;left:0;right:0;padding:80px 72px 100px;">
-        <!-- Eyebrow -->
-        <div style="display:inline-flex;align-items:center;gap:10px;background:rgba(244,196,48,.15);border:1.5px solid rgba(244,196,48,.5);border-radius:100px;padding:10px 24px;margin-bottom:32px;">
-          <div style="width:8px;height:8px;background:#F4C430;border-radius:50%;"></div>
-          <span style="font-size:20px;font-weight:700;color:#F4C430;letter-spacing:.08em;text-transform:uppercase;">${prod.cat === 'reserve' ? 'Reserve Collection' : prod.cat === 'signature' ? 'Signature Series' : 'Classic Series'}</span>
-        </div>
-        <!-- Headline -->
-        <div style="font-family:'Playfair Display',serif;font-size:108px;font-weight:900;color:white;line-height:1.0;margin-bottom:24px;letter-spacing:-2px;">${copy.HEADLINE}</div>
-        <!-- Subline -->
-        <div style="font-size:38px;color:rgba(255,255,255,.75);font-weight:400;margin-bottom:40px;line-height:1.4;font-style:italic;">${copy.SUBLINE}</div>
-        <!-- Divider -->
-        <div style="width:80px;height:4px;background:#F4C430;border-radius:2px;margin-bottom:40px;"></div>
-        <!-- Buah chips -->
-        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:48px;">
-          ${prod.buah.slice(0,5).map(b=>`<span style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:100px;padding:8px 20px;font-size:20px;font-weight:600;color:rgba(255,255,255,.85);">${b}</span>`).join('')}
-        </div>
-        <!-- Price + CTA row -->
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:24px;">
-          <div>
-            <div style="font-size:22px;color:rgba(255,255,255,.5);font-weight:500;margin-bottom:4px;">Mulai dari</div>
-            <div style="font-size:72px;font-weight:900;color:white;letter-spacing:-2px;line-height:1;">${price}</div>
-          </div>
-          <div style="background:#F4C430;border-radius:20px;padding:28px 48px;font-size:28px;font-weight:800;color:#111;white-space:nowrap;">${copy.CTA} →</div>
-        </div>
-      </div>
-    </div>`,
-
-    // ── STORY LIGHT ─────────────────────────────────────────────
-    'story-light': `
-    <div style="width:1080px;height:1920px;position:relative;overflow:hidden;background:#FDFDF8;font-family:'DM Sans',sans-serif;">
-      <!-- Product image top half -->
-      <div style="position:absolute;top:0;left:0;right:0;height:980px;overflow:hidden;">
-        <img src="${imgUrl}" crossorigin="anonymous" style="width:100%;height:100%;object-fit:cover;"/>
-        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(253,253,248,0) 50%,#FDFDF8 100%);"></div>
-      </div>
-      <!-- TOP: Logo -->
-      <div style="position:absolute;top:60px;left:72px;right:72px;display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:14px;background:rgba(253,253,248,.85);backdrop-filter:blur(12px);border-radius:100px;padding:12px 28px 12px 16px;">
-          <img src="${logoUrl}" crossorigin="anonymous" style="width:52px;height:52px;border-radius:50%;"/>
-          <div style="font-family:'Playfair Display',serif;font-size:30px;font-weight:800;color:#0F4D37;">Rujak<span style="color:#D62828;">.Co</span></div>
-        </div>
-        <div style="background:#0F4D37;border-radius:100px;padding:12px 28px;font-size:18px;font-weight:700;color:white;">${prod.portion}</div>
-      </div>
-      <!-- BOTTOM TEXT AREA -->
-      <div style="position:absolute;bottom:0;left:0;right:0;padding:40px 72px 100px;">
-        <!-- Category -->
-        <div style="font-size:20px;font-weight:800;color:#D62828;text-transform:uppercase;letter-spacing:.1em;margin-bottom:20px;">${prod.cat === 'reserve' ? '✦ Reserve ✦' : prod.cat === 'signature' ? '★ Signature' : '◆ Classic'}</div>
-        <!-- Product name large -->
-        <div style="font-family:'Playfair Display',serif;font-size:96px;font-weight:900;color:#0F4D37;line-height:.95;margin-bottom:24px;letter-spacing:-2px;">${prod.name}</div>
-        <!-- Headline -->
-        <div style="font-family:'Playfair Display',serif;font-size:52px;font-weight:700;color:#111;line-height:1.2;margin-bottom:20px;font-style:italic;">"${copy.SUBLINE}"</div>
-        <!-- Body -->
-        <div style="font-size:30px;color:#6B7280;font-weight:400;line-height:1.6;margin-bottom:44px;">${copy.BODY}</div>
-        <!-- Bottom row -->
-        <div style="display:flex;align-items:center;justify-content:space-between;border-top:2px solid #E5E7EB;padding-top:36px;">
-          <div>
-            <div style="font-size:18px;color:#9CA3AF;font-weight:500;">Harga mulai dari</div>
-            <div style="font-size:64px;font-weight:900;color:#0F4D37;letter-spacing:-2px;">${price}</div>
-          </div>
-          <div style="background:#D62828;color:white;border-radius:16px;padding:24px 40px;font-size:24px;font-weight:800;">${copy.CTA} →</div>
-        </div>
-      </div>
-    </div>`,
-
-    // ── FEED BOLD ────────────────────────────────────────────────
-    'feed-bold': `
-    <div style="width:1080px;height:1080px;position:relative;overflow:hidden;background:#D62828;font-family:'DM Sans',sans-serif;">
-      <!-- Product image right side -->
-      <div style="position:absolute;right:0;top:0;width:580px;height:100%;overflow:hidden;">
-        <img src="${imgUrl}" crossorigin="anonymous" style="width:100%;height:100%;object-fit:cover;"/>
-        <div style="position:absolute;inset:0;background:linear-gradient(to right,#D62828 0%,rgba(214,40,40,0) 50%);"></div>
-      </div>
-      <!-- LEFT CONTENT -->
-      <div style="position:absolute;left:0;top:0;bottom:0;width:580px;display:flex;flex-direction:column;justify-content:space-between;padding:60px 60px 60px 72px;">
-        <!-- Logo -->
-        <div style="display:flex;align-items:center;gap:14px;">
-          <img src="${logoUrl}" crossorigin="anonymous" style="width:56px;height:56px;border-radius:50%;border:2px solid rgba(255,255,255,.4);"/>
-          <div style="font-family:'Playfair Display',serif;font-size:32px;font-weight:800;color:white;">Rujak<span style="color:#F4C430;">.Co</span></div>
-        </div>
-        <!-- Main copy -->
-        <div>
-          <div style="font-size:18px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.12em;margin-bottom:16px;">${buahStr}</div>
-          <div style="font-family:'Playfair Display',serif;font-size:88px;font-weight:900;color:white;line-height:.95;margin-bottom:20px;letter-spacing:-2px;">${copy.HEADLINE}</div>
-          <div style="font-size:28px;color:rgba(255,255,255,.8);line-height:1.5;margin-bottom:32px;">${copy.SUBLINE}</div>
-          <div style="width:60px;height:4px;background:#F4C430;border-radius:2px;margin-bottom:32px;"></div>
-          <div style="font-size:56px;font-weight:900;color:white;margin-bottom:8px;">${price}</div>
-          <div style="font-size:18px;color:rgba(255,255,255,.6);">${prod.portion} · ${prod.sambal}</div>
-        </div>
-        <!-- CTA -->
-        <div style="display:inline-flex;align-items:center;gap:12px;background:white;border-radius:14px;padding:20px 32px;width:fit-content;">
-          <span style="font-size:22px;font-weight:800;color:#D62828;">${copy.CTA}</span>
-          <span style="font-size:22px;color:#D62828;">→</span>
-        </div>
-      </div>
-    </div>`,
-
-    // ── EDITORIAL ────────────────────────────────────────────────
-    'feed-editorial': `
-    <div style="width:1080px;height:1350px;position:relative;overflow:hidden;background:#111827;font-family:'DM Sans',sans-serif;">
-      <!-- Full image BG -->
-      <img src="${imgUrl}" crossorigin="anonymous" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35;"/>
-      <!-- Gradient -->
-      <div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(17,24,39,.3) 0%,rgba(17,24,39,.95) 55%);"></div>
-      <!-- Grid lines (editorial feel) -->
-      <div style="position:absolute;top:0;left:80px;width:1px;height:100%;background:rgba(244,196,48,.2);"></div>
-      <div style="position:absolute;top:0;right:80px;width:1px;height:100%;background:rgba(244,196,48,.2);"></div>
-      <!-- TOP -->
-      <div style="position:absolute;top:64px;left:80px;right:80px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(244,196,48,.3);padding-bottom:28px;">
-        <div style="font-family:'Playfair Display',serif;font-size:30px;font-weight:800;color:white;">Rujak<span style="color:#F4C430;">.Co</span></div>
-        <div style="font-size:18px;color:rgba(255,255,255,.4);font-weight:500;letter-spacing:.1em;text-transform:uppercase;">${prod.cat}</div>
-      </div>
-      <!-- MAIN CONTENT -->
-      <div style="position:absolute;bottom:80px;left:80px;right:80px;">
-        <!-- Gold accent line -->
-        <div style="width:48px;height:4px;background:#F4C430;margin-bottom:28px;"></div>
-        <!-- Headline massive -->
-        <div style="font-family:'Playfair Display',serif;font-size:110px;font-weight:900;color:white;line-height:.9;margin-bottom:28px;letter-spacing:-3px;">${copy.HEADLINE}</div>
-        <!-- Italic quote line -->
-        <div style="font-family:'Playfair Display',serif;font-size:40px;font-weight:700;font-style:italic;color:#F4C430;margin-bottom:28px;line-height:1.3;">"${copy.SUBLINE}"</div>
-        <!-- Body -->
-        <div style="font-size:26px;color:rgba(255,255,255,.6);line-height:1.6;margin-bottom:48px;max-width:800px;">${copy.BODY}</div>
-        <!-- Bottom bar -->
-        <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.1);padding-top:32px;">
-          <div>
-            <div style="font-size:16px;color:rgba(255,255,255,.4);margin-bottom:4px;letter-spacing:.06em;text-transform:uppercase;">Harga</div>
-            <div style="font-size:64px;font-weight:900;color:white;letter-spacing:-2px;">${price}</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:16px;">
-            <img src="${logoUrl}" crossorigin="anonymous" style="width:60px;height:60px;border-radius:50%;opacity:.7;"/>
-            <div style="background:#F4C430;color:#111;border-radius:12px;padding:20px 36px;font-size:22px;font-weight:800;">${copy.CTA}</div>
-          </div>
-        </div>
-      </div>
-    </div>`,
-
-    // ── MAGAZINE ─────────────────────────────────────────────────
-    'magazine': `
-    <div style="width:1080px;height:1080px;position:relative;overflow:hidden;background:#FDFDF8;font-family:'DM Sans',sans-serif;display:flex;">
-      <!-- LEFT PANEL — image -->
-      <div style="width:460px;height:100%;flex-shrink:0;position:relative;overflow:hidden;">
-        <img src="${imgUrl}" crossorigin="anonymous" style="width:100%;height:100%;object-fit:cover;"/>
-        <!-- Vertical brand strip -->
-        <div style="position:absolute;top:0;right:0;width:56px;height:100%;background:#0F4D37;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;">
-          <div style="writing-mode:vertical-rl;transform:rotate(180deg);font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:white;letter-spacing:.12em;text-transform:uppercase;">Rujak.Co</div>
-        </div>
-        <!-- Price badge -->
-        <div style="position:absolute;bottom:40px;left:24px;background:#D62828;border-radius:12px;padding:12px 20px;">
-          <div style="font-size:14px;color:rgba(255,255,255,.7);font-weight:500;">Mulai</div>
-          <div style="font-size:36px;font-weight:900;color:white;letter-spacing:-1px;">${price}</div>
-        </div>
-      </div>
-      <!-- RIGHT PANEL — text -->
-      <div style="flex:1;padding:64px 60px 60px 56px;display:flex;flex-direction:column;justify-content:space-between;">
-        <!-- Top: category + logo -->
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div style="font-size:14px;font-weight:800;color:#D62828;text-transform:uppercase;letter-spacing:.12em;">${prod.cat === 'reserve' ? 'Reserve ✦' : prod.cat === 'signature' ? 'Signature ★' : 'Classic'}</div>
-          <img src="${logoUrl}" crossorigin="anonymous" style="width:44px;height:44px;border-radius:50%;"/>
-        </div>
-        <!-- Headline -->
-        <div>
-          <div style="font-size:16px;font-weight:600;color:#9CA3AF;margin-bottom:12px;letter-spacing:.06em;text-transform:uppercase;">Koleksi Terbaru</div>
-          <div style="font-family:'Playfair Display',serif;font-size:80px;font-weight:900;color:#0F4D37;line-height:.95;margin-bottom:20px;letter-spacing:-2px;">${prod.name}</div>
-          <div style="width:40px;height:3px;background:#F4C430;margin-bottom:20px;"></div>
-          <div style="font-family:'Playfair Display',serif;font-size:28px;font-style:italic;color:#374151;line-height:1.4;margin-bottom:20px;">"${copy.HEADLINE}"</div>
-          <div style="font-size:20px;color:#6B7280;line-height:1.6;margin-bottom:28px;">${copy.SUBLINE}</div>
-          <!-- Buah list -->
-          <div style="font-size:13px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Isi Buah</div>
-          <div style="font-size:17px;color:#374151;font-weight:500;">${prod.buah.join(', ')}</div>
-        </div>
-        <!-- CTA bottom -->
-        <div style="display:flex;align-items:center;gap:16px;border-top:1.5px solid #E5E7EB;padding-top:28px;">
-          <div style="flex:1;">
-            <div style="font-size:13px;color:#9CA3AF;font-weight:500;">Porsi · ${prod.portion}</div>
-            <div style="font-size:13px;color:#9CA3AF;font-weight:500;">@rujakco.id · Jabodetabek</div>
-          </div>
-          <div style="background:#0F4D37;color:white;border-radius:12px;padding:16px 28px;font-size:18px;font-weight:800;white-space:nowrap;">${copy.CTA} →</div>
-        </div>
-      </div>
-    </div>`,
-
-    // ── MINIMAL ──────────────────────────────────────────────────
-    'minimal': `
-    <div style="width:1080px;height:1920px;position:relative;overflow:hidden;background:white;font-family:'DM Sans',sans-serif;">
-      <!-- Full bleed image top -->
-      <div style="position:absolute;top:0;left:0;right:0;height:1080px;overflow:hidden;">
-        <img src="${imgUrl}" crossorigin="anonymous" style="width:100%;height:100%;object-fit:cover;"/>
-      </div>
-      <!-- Logo top -->
-      <div style="position:absolute;top:56px;left:64px;right:64px;display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);border-radius:100px;padding:10px 24px 10px 14px;">
-          <img src="${logoUrl}" crossorigin="anonymous" style="width:44px;height:44px;border-radius:50%;"/>
-          <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:800;color:#0F4D37;">Rujak<span style="color:#D62828;">.Co</span></div>
-        </div>
-        <div style="background:white;border-radius:100px;padding:10px 22px;font-size:16px;font-weight:700;color:#0F4D37;box-shadow:0 2px 12px rgba(0,0,0,.1);">${price}</div>
-      </div>
-      <!-- White bottom panel -->
-      <div style="position:absolute;bottom:0;left:0;right:0;top:960px;background:white;border-radius:32px 32px 0 0;padding:56px 64px 80px;display:flex;flex-direction:column;justify-content:space-between;">
-        <div>
-          <!-- Category pill -->
-          <div style="display:inline-flex;align-items:center;gap:8px;border:1.5px solid #E5E7EB;border-radius:100px;padding:8px 20px;margin-bottom:28px;">
-            <div style="width:8px;height:8px;background:#0F4D37;border-radius:50%;"></div>
-            <span style="font-size:14px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.08em;">${prod.cat}</span>
-          </div>
-          <div style="font-family:'Playfair Display',serif;font-size:96px;font-weight:900;color:#111;line-height:.9;margin-bottom:16px;letter-spacing:-3px;">${copy.HEADLINE}</div>
-          <div style="font-size:30px;color:#6B7280;font-weight:400;line-height:1.5;margin-bottom:28px;font-style:italic;">${copy.SUBLINE}</div>
-          <div style="font-size:24px;color:#374151;line-height:1.6;margin-bottom:32px;">${copy.BODY}</div>
-        </div>
-        <div>
-          <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:36px;">
-            ${prod.buah.slice(0,5).map(b=>`<span style="background:#EAF2EE;color:#0F4D37;border-radius:100px;padding:8px 18px;font-size:18px;font-weight:600;">${b}</span>`).join('')}
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div>
-              <div style="font-size:18px;color:#9CA3AF;">@rujakco.id</div>
-              <div style="font-size:18px;color:#9CA3AF;">${prod.sambal}</div>
-            </div>
-            <div style="background:#111;color:white;border-radius:14px;padding:22px 44px;font-size:22px;font-weight:800;">${copy.CTA} →</div>
-          </div>
-        </div>
-      </div>
-    </div>`
-  };
-
-  return cards[tpl] || cards['story-dark'];
-}
-
-function showOutput(prod, copy, imgData) {
-  const area = document.getElementById('outputArea');
-  area.innerHTML = `
-    <div class="output-wrap">
-      <div class="output-header">
-        <div class="output-title">✨ Visual Siap</div>
-        <div class="output-acts">
-          <button class="act-btn" onclick="copyCaption(\`${escA(copy.CAPTION)}\`)">📋 Salin Caption</button>
-          <button class="act-btn dl" onclick="dlImg('${imgData}','${prod.name}')">⬇ Download</button>
-        </div>
-      </div>
-      <div class="card-canvas-wrap">
-        <img src="${imgData}" style="width:100%;display:block;" alt="Visual ${prod.name}"/>
-      </div>
-      <!-- Caption box -->
-      <div style="background:white;border:1.5px solid var(--g2);border-radius:12px;overflow:hidden;">
-        <div style="padding:10px 14px;background:var(--gp);font-size:10px;font-weight:800;color:var(--g);text-transform:uppercase;letter-spacing:.06em;">Caption ${S.pfm}</div>
-        <div style="padding:14px;font-size:13px;color:var(--g7);line-height:1.7;white-space:pre-wrap;">${escH(copy.CAPTION)}</div>
-        <div style="padding:0 14px 14px;">
-          <button class="act-btn" style="width:100%;justify-content:center;" onclick="copyCaption(\`${escA(copy.CAPTION)}\`)">📋 Salin Caption + Hashtag</button>
-        </div>
-      </div>
-    </div>`;
-}
-
-function showOutputFallback(prod, copy) {
-  const area = document.getElementById('outputArea');
-  area.innerHTML = `
-    <div class="output-wrap">
-      <div style="padding:20px;background:white;border:1.5px solid var(--g2);border-radius:12px;">
-        <div style="font-size:12px;color:var(--g5);margin-bottom:12px;">⚠️ Preview tidak bisa dimuat karena CORS. Caption tetap bisa disalin.</div>
-        <div style="font-size:13px;color:var(--g7);line-height:1.7;white-space:pre-wrap;">${escH(copy.CAPTION)}</div>
-        <button class="act-btn" style="margin-top:12px;" onclick="copyCaption(\`${escA(copy.CAPTION)}\`)">📋 Salin Caption</button>
-      </div>
-    </div>`;
-  toast('Preview tidak tersedia, tapi caption sudah siap disalin!');
-}
-
-function dlImg(dataUrl, name) {
-  const a = document.createElement('a');
-  a.href = dataUrl;
-  a.download = `rujakco-${name.replace(/\s+/g,'-').toLowerCase()}-${Date.now()}.jpg`;
-  a.click();
-  toast('🎉 Gambar berhasil didownload!');
-}
-
-function copyCaption(text) {
-  navigator.clipboard.writeText(text).then(()=>toast('✅ Caption disalin!')).catch(()=>{
-    const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('✅ Caption disalin!');
-  });
-}
-
-function saveHistory(prod, copy, imgData) {
-  S.history.unshift({ id:Date.now(), prodName:prod.name, tpl:S.tpl, pfm:S.pfm, caption:copy.CAPTION, img:imgData, ts:new Date().toLocaleString('id-ID',{dateStyle:'short',timeStyle:'short'}) });
-  if (S.history.length > 15) S.history.pop();
-  try { localStorage.setItem('rcg_hist', JSON.stringify(S.history)); } catch(e) {}
-}
-
-// ─── HISTORY ──────────────────────────────────────────────────
-function renderHistory() {
-  const list = document.getElementById('histList');
-  if (!S.history.length) {
-    list.innerHTML = `<div class="empty-hist"><div class="e">📭</div><div>Belum ada konten tersimpan.</div></div>`;
-    return;
-  }
-  list.innerHTML = S.history.map(h=>`
-    <div class="hist-item">
-      ${h.img ? `<img class="hist-thumb" src="${h.img}" alt="${h.prodName}"/>` : ''}
-      <div class="hist-body">
-        <div class="hist-meta">
-          <span class="hist-tag">${h.prodName}</span>
-          <span class="hist-tag">${h.tpl}</span>
-          <span class="hist-tag">${h.pfm}</span>
-          <span class="hist-time">🕐 ${h.ts}</span>
-        </div>
-        <div class="hist-acts">
-          <button class="sm-btn" onclick="copyCaption(\`${escA(h.caption)}\`)">📋 Salin Caption</button>
-          ${h.img ? `<button class="sm-btn" onclick="dlImg('${h.img}','${h.prodName}')">⬇ Download</button>` : ''}
-        </div>
-      </div>
-    </div>`).join('');
-}
-
-document.getElementById('clrHist').addEventListener('click',()=>{
-  if (!S.history.length) return;
-  if (confirm('Hapus semua riwayat?')) {
-    S.history=[];
-    try{localStorage.removeItem('rcg_hist');}catch(e){}
-    renderHistory();
-    toast('Riwayat dihapus');
-  }
-});
-
 // ─── UTILS ────────────────────────────────────────────────────
 let _tt;
-function toast(msg){
-  const el=document.getElementById('toast');
-  el.textContent=msg;el.classList.add('show');
-  clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),2500);
-}
+function toast(msg){ const el=document.getElementById('toast'); el.textContent=msg;el.classList.add('show'); clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('show'),2500); }
 function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function escA(s){return String(s).replace(/\\/g,'\\\\').replace(/`/g,'\\`').replace(/\$/g,'\\$');}
 
 // ─── INIT ─────────────────────────────────────────────────────
-renderProducts();
-updBtn();
+renderProducts(); renderTemplates(); renderPfm(); renderTone(); updBtn();
 </script>
 </body>
 </html>
