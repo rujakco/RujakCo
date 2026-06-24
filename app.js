@@ -218,264 +218,265 @@
     }
   }
 
-// ===== RENDER FUNCTIONS =====
-function renderMenu() {
-  const container = document.getElementById('menuList');
-  const empty = document.getElementById('emptyState');
-  const skeleton = document.getElementById('skeletonContainer');
-  skeleton.style.display = 'none';
-  container.style.display = 'block';
+  // ===== RENDER FUNCTIONS =====
+  function renderMenu() {
+    const container = document.getElementById('menuList');
+    const empty = document.getElementById('emptyState');
+    const skeleton = document.getElementById('skeletonContainer');
+    skeleton.style.display = 'none';
+    container.style.display = 'block';
 
-  if (state.activeFilter === 'addon') {
-    container.innerHTML = '';
-    empty.style.display = 'none';
-    return;
-  }
-
-  let filtered = PRODUCTS.filter(p => {
-    const matchCat = (state.activeFilter === 'all' || p.cat === state.activeFilter);
-    const q = state.searchQuery.toLowerCase();
-    return matchCat && (p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
-  });
-
-  // Menu rahasia VIP
-  const vipKeyword = 'vip';
-  if (state.searchQuery.toLowerCase().includes(vipKeyword)) {
-    if (!filtered.some(p => p.id === 'p_vip')) {
-      filtered = [VIP_PRODUCT, ...filtered];
+    if (state.activeFilter === 'addon') {
+      container.innerHTML = '';
+      empty.style.display = 'none';
+      return;
     }
-  }
 
-  if (!filtered.length) {
-    empty.style.display = 'block';
-    container.innerHTML = '';
-    return;
-  }
-  empty.style.display = 'none';
-
-  let html = '';
-  filtered.forEach(p => {
-    let qty = 0;
-    let firstCartKey = p.id;
-    Object.keys(state.cart).forEach(k => {
-      if (k === p.id || k.startsWith(p.id + '_')) {
-        qty += state.cart[k].qty;
-        if (qty === state.cart[k].qty) firstCartKey = k;
-      }
+    let filtered = PRODUCTS.filter(p => {
+      const matchCat = (state.activeFilter === 'all' || p.cat === state.activeFilter);
+      const q = state.searchQuery.toLowerCase();
+      return matchCat && (p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
     });
 
-    const control = qty === 0
-      ? `<button type="button" class="add-btn" data-action="open-modal" data-id="${p.id}"><i data-lucide="plus" class="w-4 h-4"></i></button>`
-      : `<div class="qty-control"><button type="button" class="qty-btn" data-action="decrease" data-id="${firstCartKey}">−</button><span class="qty-num">${qty}</span><button type="button" class="qty-btn" data-action="increase" data-id="${firstCartKey}">+</button></div>`;
-    
-    const badgeRight = p.badge ? `<span class="item-badge-right ${p.badgeColor}">${p.badge}</span>` : '';
-    const flavorTag = p.flavorTag ? `<span class="item-flavor-tag">${p.flavorTag}</span>` : '';
-    const buahChips = (p.buah || []).slice(0,4).map(b => `<span class="item-buah-chip">${b}</span>`).join('');
-    const moreChips = (p.buah || []).length > 4 ? `<span class="item-buah-chip">+${p.buah.length - 4}</span>` : '';
-
-    html += `
-      <div class="menu-item" data-id="${p.id}" tabindex="0" role="button" aria-label="Detail ${p.name}">
-        <div class="item-img-wrap">
-          <img src="${p.thumbnail}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; this.nextElementSibling.textContent='${p.name.substring(0,20)}'">
-          <div class="fallback" style="display:none;">${p.name.substring(0,20)}</div>
-        </div>
-        <div class="item-body">
-          <div class="item-name-row"><span class="item-name">${p.name}</span>${badgeRight}</div>
-          <div class="item-flavor-row"><span class="item-flavor">${p.flavor}</span>${flavorTag}</div>
-          <div class="item-spice">🌶️ Level 1–5</div>
-          <p class="item-desc">${p.desc}</p>
-          <div class="item-buah-chips">${buahChips}${moreChips}</div>
-          <div class="item-footer">
-            <div><span class="item-price">${fmt(p.price)}</span><span class="item-portion"> · ${p.portion}</span></div>
-            ${control}
-          </div>
-        </div>
-      </div>
-    `;
-  });
-  container.innerHTML = html;
-}
-
-function renderAddons() {
-  const container = document.getElementById('addonList');
-  const q = state.searchQuery.toLowerCase();
-  const filtered = ADDONS.filter(a => a.name.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q));
-  let html = '';
-  filtered.forEach(a => {
-    const entry = state.cart[a.id];
-    const qty = entry ? entry.qty : 0;
-    const control = qty === 0
-      ? `<button type="button" class="addon-add" data-action="add-addon" data-id="${a.id}"><i data-lucide="plus" class="w-4 h-4"></i></button>`
-      : `<div class="qty-control"><button type="button" class="qty-btn" data-action="decrease" data-id="${a.id}">−</button><span class="qty-num">${qty}</span><button type="button" class="qty-btn" data-action="increase" data-id="${a.id}">+</button></div>`;
-    html += `
-      <div class="addon-card">
-        <div class="addon-icon ${a.iconColor}"><i data-lucide="${a.icon}" class="w-6 h-6"></i></div>
-        <div class="addon-name">${a.name}</div>
-        <div class="addon-desc">${a.desc}</div>
-        <div class="addon-footer"><span class="addon-price">${fmt(a.price)}</span>${control}</div>
-      </div>
-    `;
-  });
-  container.innerHTML = html;
-  const header = document.getElementById('addonHeader');
-  const divider = document.getElementById('addonDivider');
-  const show = filtered.length > 0;
-  header.style.display = show ? 'flex' : 'none';
-  divider.style.display = show ? 'block' : 'none';
-}
-
-function updateProgressBar(subtotal) {
-  const container = document.getElementById('progressContainer');
-  const label = document.getElementById('progressLabel');
-  const percent = document.getElementById('progressPercent');
-  const fill = document.getElementById('progressFill');
-  
-  if (subtotal >= SYSTEM.DISCOUNT_THRESHOLD) {
-    container.style.display = 'none';
-    return;
-  }
-  
-  const remaining = SYSTEM.DISCOUNT_THRESHOLD - subtotal;
-  const progressPercent = Math.min(100, Math.round((subtotal / SYSTEM.DISCOUNT_THRESHOLD) * 100));
-  
-  container.style.display = 'block';
-  label.textContent = `Tambah ${fmt(remaining)} lagi untuk potongan Rp5.000`;
-  percent.textContent = progressPercent + '%';
-  fill.style.width = progressPercent + '%';
-  fill.style.background = progressPercent >= 80 ? 'var(--green)' : 'var(--red)';
-}
-
-function updateMissionCheckboxes(subtotal) {
-  const missionSpend = document.getElementById('missionSpend');
-  const checkShare = document.getElementById('checkShare');
-  if (missionSpend) missionSpend.checked = subtotal >= SYSTEM.DISCOUNT_THRESHOLD;
-  if (checkShare) checkShare.checked = state.hasShared;
-}
-
-function renderCart() {
-  const keys = Object.keys(state.cart);
-  let totalQty = 0, subtotal = 0;
-  keys.forEach(id => {
-    const entry = state.cart[id];
-    const item = getItemById(id);
-    if (item && entry) {
-      totalQty += entry.qty;
-      subtotal += item.price * entry.qty;
-    } else {
-      delete state.cart[id];
+    const vipKeyword = 'vip';
+    if (state.searchQuery.toLowerCase().includes(vipKeyword)) {
+      if (!filtered.some(p => p.id === 'p_vip')) {
+        filtered = [VIP_PRODUCT, ...filtered];
+      }
     }
-  });
-  
-  updateProgressBar(subtotal);
-  updateMissionCheckboxes(subtotal);
-  
-  const discount = calculateDiscount(subtotal);
-  const bar = document.getElementById('bottom-bar');
-  const discountLabel = document.getElementById('discountLabel');
-  const totalEl = document.getElementById('cartTotalDisplay');
-  const footer = document.querySelector('.footer-brand');
 
-  if (totalQty > 0 && !state.isCartMinimized) {
-    bar.classList.add('visible');
-    if (footer) footer.style.paddingBottom = '180px';
-    document.getElementById('cartPreview').textContent = totalQty + ' item' + (totalQty > 1 ? 's' : '');
-    if (discount > 0) {
-      discountLabel.style.display = 'inline-block';
-      discountLabel.textContent = '-Rp' + discount.toLocaleString('id-ID');
-      totalEl.innerHTML = `<span style="text-decoration:line-through;font-size:11px;color:#9CA3AF;margin-right:4px;">${fmt(subtotal)}</span>${fmt(subtotal - discount)}`;
-    } else {
-      discountLabel.style.display = 'none';
-      totalEl.textContent = fmt(subtotal);
+    if (!filtered.length) {
+      empty.style.display = 'block';
+      container.innerHTML = '';
+      return;
     }
-  } else {
-    bar.classList.remove('visible');
-    if (footer) footer.style.paddingBottom = '0';
-  }
-  saveCart();
-  updateFloatingButton();
-}
+    empty.style.display = 'none';
 
-function renderMiniCart() {
-  const list = document.getElementById('miniCartList');
-  const shippingRow = document.getElementById('miniCartShipping');
-  const shippingAmt = document.getElementById('miniCartShippingAmount');
-  const finalTotal = document.getElementById('miniCartFinalTotal');
-  const keys = Object.keys(state.cart);
-  let subtotal = 0, html = '';
+    let html = '';
+    filtered.forEach(p => {
+      let qty = 0;
+      let firstCartKey = p.id;
+      Object.keys(state.cart).forEach(k => {
+        if (k === p.id || k.startsWith(p.id + '_')) {
+          qty += state.cart[k].qty;
+          if (qty === state.cart[k].qty) firstCartKey = k;
+        }
+      });
 
-  document.getElementById('orderNotes').value = state.orderNotes;
-  document.getElementById('customerName').value = state.customerName;
-  document.getElementById('customerPhone').value = state.customerPhone;
-  document.getElementById('customerAddress').value = state.customerAddress;
-  document.getElementById('giftToggle').checked = state.isGift;
-  document.getElementById('giftSender').value = state.giftSender;
-  document.getElementById('giftMessage').value = state.giftMessage;
-  document.getElementById('giftFields').style.display = state.isGift ? 'block' : 'none';
+      const control = qty === 0
+        ? `<button type="button" class="add-btn" data-action="open-modal" data-id="${p.id}"><i data-lucide="plus" class="w-4 h-4"></i></button>`
+        : `<div class="qty-control"><button type="button" class="qty-btn" data-action="decrease" data-id="${firstCartKey}">−</button><span class="qty-num">${qty}</span><button type="button" class="qty-btn" data-action="increase" data-id="${firstCartKey}">+</button></div>`;
+      
+      const badgeRight = p.badge ? `<span class="item-badge-right ${p.badgeColor}">${p.badge}</span>` : '';
+      const flavorTag = p.flavorTag ? `<span class="item-flavor-tag">${p.flavorTag}</span>` : '';
+      const buahChips = (p.buah || []).slice(0,4).map(b => `<span class="item-buah-chip">${b}</span>`).join('');
+      const moreChips = (p.buah || []).length > 4 ? `<span class="item-buah-chip">+${p.buah.length - 4}</span>` : '';
 
-  if (keys.length === 0) {
-    html = '<p style="color:var(--gray-500);text-align:center;padding:20px 0;">Keranjang kosong</p>';
-    shippingRow.style.display = 'none';
-    finalTotal.textContent = 'Rp0';
-  } else {
-    keys.forEach(id => {
-      const entry = state.cart[id];
-      const item = getItemById(id);
-      if (!item || !entry) return;
-      subtotal += item.price * entry.qty;
-      const spiceText = entry.spice ? ' (Level ' + entry.spice + ')' : '';
       html += `
-        <div class="mini-cart-item">
-          <div class="mini-cart-info">
-            <div class="mini-cart-name">${item.name}${spiceText}</div>
-            <div class="mini-cart-detail">${fmt(item.price)}</div>
+        <div class="menu-item" data-id="${p.id}" tabindex="0" role="button" aria-label="Detail ${p.name}">
+          <div class="item-left">
+            <div class="item-img-wrap">
+              <img src="${p.thumbnail}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; this.nextElementSibling.textContent='${p.name.substring(0,20)}'">
+              <div class="fallback" style="display:none;">${p.name.substring(0,20)}</div>
+            </div>
+            <div class="item-spice">🌶️ Level 1–5</div>
           </div>
-          <div class="mini-cart-qty">
-            <button data-action="decrease" data-id="${id}">−</button>
-            <span>${entry.qty}</span>
-            <button data-action="increase" data-id="${id}">+</button>
-            <button class="mini-cart-remove" data-action="remove" data-id="${id}">🗑️</button>
+          <div class="item-body">
+            <div class="item-name-row"><span class="item-name">${p.name}</span>${badgeRight}</div>
+            <div class="item-flavor-row"><span class="item-flavor">${p.flavor}</span>${flavorTag}</div>
+            <p class="item-desc">${p.desc}</p>
+            <div class="item-buah-chips">${buahChips}${moreChips}</div>
+            <div class="item-footer">
+              <div><span class="item-price">${fmt(p.price)}</span><span class="item-portion"> · ${p.portion}</span></div>
+              ${control}
+            </div>
           </div>
         </div>
       `;
     });
-    const dist = state.userDistance !== null ? state.userDistance : SYSTEM.DEFAULT_DISTANCE;
-    const ship = calculateShipping(dist, state.isPriority);
-    const shippingCost = ship.cost === Infinity ? 0 : ship.cost;
+    container.innerHTML = html;
+  }
+
+  function renderAddons() {
+    const container = document.getElementById('addonList');
+    const q = state.searchQuery.toLowerCase();
+    const filtered = ADDONS.filter(a => a.name.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q));
+    let html = '';
+    filtered.forEach(a => {
+      const entry = state.cart[a.id];
+      const qty = entry ? entry.qty : 0;
+      const control = qty === 0
+        ? `<button type="button" class="addon-add" data-action="add-addon" data-id="${a.id}"><i data-lucide="plus" class="w-4 h-4"></i></button>`
+        : `<div class="qty-control"><button type="button" class="qty-btn" data-action="decrease" data-id="${a.id}">−</button><span class="qty-num">${qty}</span><button type="button" class="qty-btn" data-action="increase" data-id="${a.id}">+</button></div>`;
+      html += `
+        <div class="addon-card">
+          <div class="addon-icon ${a.iconColor}"><i data-lucide="${a.icon}" class="w-6 h-6"></i></div>
+          <div class="addon-name">${a.name}</div>
+          <div class="addon-desc">${a.desc}</div>
+          <div class="addon-footer"><span class="addon-price">${fmt(a.price)}</span>${control}</div>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+    const header = document.getElementById('addonHeader');
+    const divider = document.getElementById('addonDivider');
+    const show = filtered.length > 0;
+    header.style.display = show ? 'flex' : 'none';
+    divider.style.display = show ? 'block' : 'none';
+  }
+
+  function updateProgressBar(subtotal) {
+    const container = document.getElementById('progressContainer');
+    const label = document.getElementById('progressLabel');
+    const percent = document.getElementById('progressPercent');
+    const fill = document.getElementById('progressFill');
+    
+    if (subtotal >= SYSTEM.DISCOUNT_THRESHOLD) {
+      container.style.display = 'none';
+      return;
+    }
+    
+    const remaining = SYSTEM.DISCOUNT_THRESHOLD - subtotal;
+    const progressPercent = Math.min(100, Math.round((subtotal / SYSTEM.DISCOUNT_THRESHOLD) * 100));
+    
+    container.style.display = 'block';
+    label.textContent = `Tambah ${fmt(remaining)} lagi untuk potongan Rp5.000`;
+    percent.textContent = progressPercent + '%';
+    fill.style.width = progressPercent + '%';
+    fill.style.background = progressPercent >= 80 ? 'var(--green)' : 'var(--red)';
+  }
+
+  function updateMissionCheckboxes(subtotal) {
+    const missionSpend = document.getElementById('missionSpend');
+    const checkShare = document.getElementById('checkShare');
+    if (missionSpend) missionSpend.checked = subtotal >= SYSTEM.DISCOUNT_THRESHOLD;
+    if (checkShare) checkShare.checked = state.hasShared;
+  }
+
+  function renderCart() {
+    const keys = Object.keys(state.cart);
+    let totalQty = 0, subtotal = 0;
+    keys.forEach(id => {
+      const entry = state.cart[id];
+      const item = getItemById(id);
+      if (item && entry) {
+        totalQty += entry.qty;
+        subtotal += item.price * entry.qty;
+      } else {
+        delete state.cart[id];
+      }
+    });
+    
+    updateProgressBar(subtotal);
+    updateMissionCheckboxes(subtotal);
+    
     const discount = calculateDiscount(subtotal);
-    shippingRow.style.display = 'flex';
-    shippingAmt.textContent = 'Ongkir: ' + fmt(shippingCost);
-    finalTotal.textContent = fmt(subtotal - discount + shippingCost);
-  }
-  list.innerHTML = html;
+    const bar = document.getElementById('bottom-bar');
+    const discountLabel = document.getElementById('discountLabel');
+    const totalEl = document.getElementById('cartTotalDisplay');
+    const footer = document.querySelector('.footer-brand');
 
-  const btnPay = document.getElementById('btnOpenPayment');
-  if (state.userDistance === null) {
-    btnPay.disabled = true;
-    btnPay.style.opacity = '0.5';
-    btnPay.textContent = '⏳ Menghitung Jarak...';
-  } else if (state.userDistance > SYSTEM.MAX_DISTANCE) {
-    btnPay.disabled = true;
-    btnPay.style.opacity = '0.5';
-    btnPay.textContent = 'Di luar jangkauan';
-  } else if (keys.length === 0) {
-    btnPay.disabled = true;
-    btnPay.style.opacity = '0.5';
-    btnPay.textContent = 'Keranjang kosong';
-  } else {
-    btnPay.disabled = false;
-    btnPay.style.opacity = '1';
-    btnPay.textContent = 'Bayar Via QRIS';
+    if (totalQty > 0 && !state.isCartMinimized) {
+      bar.classList.add('visible');
+      if (footer) footer.style.paddingBottom = '180px';
+      document.getElementById('cartPreview').textContent = totalQty + ' item' + (totalQty > 1 ? 's' : '');
+      if (discount > 0) {
+        discountLabel.style.display = 'inline-block';
+        discountLabel.textContent = '-Rp' + discount.toLocaleString('id-ID');
+        totalEl.innerHTML = `<span style="text-decoration:line-through;font-size:11px;color:#9CA3AF;margin-right:4px;">${fmt(subtotal)}</span>${fmt(subtotal - discount)}`;
+      } else {
+        discountLabel.style.display = 'none';
+        totalEl.textContent = fmt(subtotal);
+      }
+    } else {
+      bar.classList.remove('visible');
+      if (footer) footer.style.paddingBottom = '0';
+    }
+    saveCart();
+    updateFloatingButton();
   }
-  if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
-}
 
-function renderAll() {
-  renderMenu();
-  renderAddons();
-  renderCart();
-  if (document.getElementById('miniCartModal').classList.contains('active')) renderMiniCart();
-  if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
-}
+  function renderMiniCart() {
+    const list = document.getElementById('miniCartList');
+    const shippingRow = document.getElementById('miniCartShipping');
+    const shippingAmt = document.getElementById('miniCartShippingAmount');
+    const finalTotal = document.getElementById('miniCartFinalTotal');
+    const keys = Object.keys(state.cart);
+    let subtotal = 0, html = '';
+
+    document.getElementById('orderNotes').value = state.orderNotes;
+    document.getElementById('customerName').value = state.customerName;
+    document.getElementById('customerPhone').value = state.customerPhone;
+    document.getElementById('customerAddress').value = state.customerAddress;
+    document.getElementById('giftToggle').checked = state.isGift;
+    document.getElementById('giftSender').value = state.giftSender;
+    document.getElementById('giftMessage').value = state.giftMessage;
+    document.getElementById('giftFields').style.display = state.isGift ? 'block' : 'none';
+
+    if (keys.length === 0) {
+      html = '<p style="color:var(--gray-500);text-align:center;padding:20px 0;">Keranjang kosong</p>';
+      shippingRow.style.display = 'none';
+      finalTotal.textContent = 'Rp0';
+    } else {
+      keys.forEach(id => {
+        const entry = state.cart[id];
+        const item = getItemById(id);
+        if (!item || !entry) return;
+        subtotal += item.price * entry.qty;
+        const spiceText = entry.spice ? ' (Level ' + entry.spice + ')' : '';
+        html += `
+          <div class="mini-cart-item">
+            <div class="mini-cart-info">
+              <div class="mini-cart-name">${item.name}${spiceText}</div>
+              <div class="mini-cart-detail">${fmt(item.price)}</div>
+            </div>
+            <div class="mini-cart-qty">
+              <button data-action="decrease" data-id="${id}">−</button>
+              <span>${entry.qty}</span>
+              <button data-action="increase" data-id="${id}">+</button>
+              <button class="mini-cart-remove" data-action="remove" data-id="${id}">🗑️</button>
+            </div>
+          </div>
+        `;
+      });
+      const dist = state.userDistance !== null ? state.userDistance : SYSTEM.DEFAULT_DISTANCE;
+      const ship = calculateShipping(dist, state.isPriority);
+      const shippingCost = ship.cost === Infinity ? 0 : ship.cost;
+      const discount = calculateDiscount(subtotal);
+      shippingRow.style.display = 'flex';
+      shippingAmt.textContent = 'Ongkir: ' + fmt(shippingCost);
+      finalTotal.textContent = fmt(subtotal - discount + shippingCost);
+    }
+    list.innerHTML = html;
+
+    const btnPay = document.getElementById('btnOpenPayment');
+    if (state.userDistance === null) {
+      btnPay.disabled = true;
+      btnPay.style.opacity = '0.5';
+      btnPay.textContent = '⏳ Menghitung Jarak...';
+    } else if (state.userDistance > SYSTEM.MAX_DISTANCE) {
+      btnPay.disabled = true;
+      btnPay.style.opacity = '0.5';
+      btnPay.textContent = 'Di luar jangkauan';
+    } else if (keys.length === 0) {
+      btnPay.disabled = true;
+      btnPay.style.opacity = '0.5';
+      btnPay.textContent = 'Keranjang kosong';
+    } else {
+      btnPay.disabled = false;
+      btnPay.style.opacity = '1';
+      btnPay.textContent = 'Bayar Via QRIS';
+    }
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+  }
+
+  function renderAll() {
+    renderMenu();
+    renderAddons();
+    renderCart();
+    if (document.getElementById('miniCartModal').classList.contains('active')) renderMiniCart();
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+  }
 
   // ===== MODAL PRODUK =====
   const productModal = document.getElementById('productModal');
@@ -606,7 +607,7 @@ function renderAll() {
     }
   }
 
-  // ===== HANDLE CHECKOUT (DENGAN MISI JAJAN) =====
+  // ===== HANDLE CHECKOUT =====
   function handleCheckout() {
     if (state.userDistance !== null && state.userDistance > SYSTEM.MAX_DISTANCE) {
       showToast('Maaf, pengiriman hanya tersedia untuk Jabodetabek');
@@ -750,7 +751,6 @@ function renderAll() {
 
   // ===== STORE STATUS (SELALU BUKA) =====
   function updateStoreStatus() {
-    // Toko selalu buka, tidak ada mode tutup/PO
     const statusEl = document.getElementById('storeStatus');
     const statusText = document.getElementById('storeStatusText');
     if (statusEl) statusEl.classList.remove('closed');
@@ -798,6 +798,26 @@ function renderAll() {
 
     renderAll(); detectLocation(); updateClearButton(); updateFloatingButton();
 
+    // Search toggle logic
+    const searchToggleWrap = document.getElementById('searchToggleWrap');
+    const searchIconBtn = document.getElementById('searchIconBtn');
+    const searchInputWrap = document.getElementById('searchInputWrap');
+    const searchInput = document.getElementById('searchInput');
+
+    if (searchIconBtn) {
+      searchIconBtn.addEventListener('click', () => {
+        searchInputWrap.classList.toggle('open');
+        if (searchInputWrap.classList.contains('open')) {
+          searchInput.focus();
+        }
+      });
+      document.addEventListener('click', (e) => {
+        if (!searchToggleWrap.contains(e.target)) {
+          searchInputWrap.classList.remove('open');
+        }
+      });
+    }
+
     ['customerName', 'customerPhone', 'customerAddress', 'giftSender', 'giftMessage'].forEach(id => {
       document.getElementById(id).addEventListener('input', function() { state[id] = this.value.trim(); saveCustomerData(); });
     });
@@ -820,7 +840,6 @@ function renderAll() {
       state.selectedDistrict = this.value; if (state.selectedDistrict) detectLocation();
     });
 
-    // Share button utama dihapus, tapi share di modal misi tetap berfungsi
     document.getElementById('shareBtnModal').addEventListener('click', function() {
       state.hasShared = true;
       saveCustomerData();
