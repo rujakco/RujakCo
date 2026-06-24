@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Orders — Rujak.Co</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #f5f5f5; padding: 20px; }
+    .container { max-width: 700px; margin: 0 auto; }
+    h2 { color: #0F4D37; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+    .order {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .order-name { font-weight: 700; font-size: 16px; color: #111827; }
+    .order-date { font-size: 12px; color: #6b7280; }
+    .order-items { margin-bottom: 10px; }
+    .order-item { display: flex; justify-content: space-between; font-size: 14px; color: #374151; padding: 2px 0; }
+    .order-total { font-weight: 800; font-size: 16px; color: #0F4D37; margin-top: 8px; text-align: right; }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-pending { background: #fef3c7; color: #92400e; }
+    .badge-gift { background: #fce7f3; color: #9d174d; }
+    .contact { font-size: 13px; color: #6b7280; margin-top: 6px; }
+    .empty { text-align: center; color: #9ca3af; padding: 40px; }
+    .loading { text-align: center; color: #9ca3af; padding: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🛎️ Pesanan Masuk</h2>
+    <div id="orderList"><div class="loading">Memuat data...</div></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // 🔐 SERVICE ROLE KEY — JANGAN DIUNGGAH KE PUBLIK
+    const SUPABASE_URL = "https://ghhnnfrmftttptcejizp.supabase.co";
+    const SERVICE_ROLE_KEY = "PASTE_SERVICE_ROLE_KEY_DISINI"; // <-- ganti dengan key asli
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
+
+    async function loadOrders() {
+      const container = document.getElementById('orderList');
+      container.innerHTML = '<div class="loading">Memuat data...</div>';
+
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        container.innerHTML = '<div class="empty">Gagal memuat data. Pastikan SERVICE_ROLE_KEY benar.</div>';
+        return;
+      }
+      if (!data || data.length === 0) {
+        container.innerHTML = '<div class="empty">Belum ada pesanan.</div>';
+        return;
+      }
+      renderOrders(data);
+    }
+
+    function renderOrders(orders) {
+      const container = document.getElementById('orderList');
+      container.innerHTML = orders.map(o => `
+        <div class="order">
+          <div class="order-header">
+            <span class="order-name">${escapeHtml(o.customer_name)}</span>
+            <span class="order-date">${new Date(o.created_at).toLocaleString('id-ID')}</span>
+          </div>
+          <div class="order-items">
+            ${(o.items || []).map(i => `
+              <div class="order-item">
+                <span>${escapeHtml(i.name)} x${i.qty}</span>
+                <span>Rp${i.price.toLocaleString('id-ID')}</span>
+              </div>
+            `).join('')}
+          </div>
+          ${o.order_notes ? `<p style="font-size:13px;color:#6b7280;margin-top:6px;">📝 ${escapeHtml(o.order_notes)}</p>` : ''}
+          ${o.is_gift ? '<span class="badge badge-gift">🎁 Kado</span>' : ''}
+          <div class="contact">
+            📱 ${escapeHtml(o.customer_phone)} &nbsp;|&nbsp; 📍 ${escapeHtml(o.customer_address)}
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+            <span class="badge badge-pending">${o.status || 'pending'}</span>
+            <span style="font-size:13px; color:#6b7280;">
+              Diskon: Rp${(o.discount || 0).toLocaleString('id-ID')} | Ongkir: Rp${(o.shipping_cost || 0).toLocaleString('id-ID')}
+            </span>
+          </div>
+          <div class="order-total">Rp${o.total.toLocaleString('id-ID')}</div>
+        </div>
+      `).join('');
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Realtime subscription (pakai service_role)
+    supabase
+      .channel('orders-admin')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
+        // Notifikasi browser
+        if (Notification.permission === "granted") {
+          new Notification('Pesanan Baru!', { body: `${payload.new.customer_name} - Rp${payload.new.total}` });
+        }
+        loadOrders();
+      })
+      .subscribe();
+
+    if (Notification.permission !== "denied") Notification.requestPermission();
+
+    loadOrders();
+  </script>
+</body>
+</html>
