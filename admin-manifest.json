@@ -1,7 +1,6 @@
 {
   "name": "Rujak.Co Admin",
   "short_name": "Admin Rujak",
-  "description": "Panel admin untuk mengelola pesanan Rujak.Co",
   "start_url": "/admin.html",
   "display": "standalone",
   "background_color": "#FDFDF8",
