@@ -43,6 +43,16 @@
               <span class="location-value" id="locationDisplay">Bekasi ▾</span>
             </div>
           </div>
+          <!-- Search toggle di header -->
+          <div class="search-toggle-wrap" id="searchToggleWrap">
+            <button class="search-icon-btn" id="searchIconBtn" aria-label="Cari">
+              <i data-lucide="search" class="w-5 h-5"></i>
+            </button>
+            <div class="search-input-wrap" id="searchInputWrap">
+              <input type="text" id="searchInput" placeholder="Cari menu..." autocomplete="off" />
+              <button type="button" class="clear-search" id="clearSearchBtn" aria-label="Hapus">✕</button>
+            </div>
+          </div>
         </div>
       </div>
     </header>
@@ -59,16 +69,19 @@
         </div>
       </div>
 
-      <!-- PROMO MISI JAJAN (GANTI YANG LAMA) -->
+      <!-- PROMO MISI JAJAN dengan animasi sparkle -->
       <div class="promo-strip" id="promoTrigger" data-action="open-promo">
         <div class="promo-icon"><i data-lucide="gift" class="w-5 h-5 text-[#3d2b00]"></i></div>
         <div class="promo-text">
           <div class="promo-title">🎁 Klaim Diskon s/d Rp10.000!</div>
           <div class="promo-sub">Selesaikan misi jajan di sini.</div>
         </div>
+        <div class="promo-anim">
+          <i data-lucide="sparkles" class="w-6 h-6 text-[#F4C430] promo-sparkle"></i>
+        </div>
       </div>
 
-      <!-- Tombol Ajak Teman Jajan -->
+      <!-- Tombol Ajak Teman Jajan (disembunyikan via JS) -->
       <div class="share-strip" id="shareStrip">
         <div class="share-strip-inner">
           <div class="share-left">
@@ -97,15 +110,17 @@
         <span class="signature">Signature – Gurih mete, favorit semua</span>
         <span class="reserve">Reserve – Buah premium, momen istimewa</span>
       </div></div>
-    <div class="search-wrap"><div class="search-box"><i data-lucide="search" class="w-4 h-4 text-gray-400"></i><input type="text" id="searchInput" placeholder="Cari rasa, buah, atau sambal..." autocomplete="off" /><button type="button" class="clear-search" id="clearSearchBtn" aria-label="Hapus pencarian">✕</button></div></div>
+    <!-- Search wrap yang lama sudah dihapus -->
     <div style="padding: 0 20px 12px; font-size: 13px; color: var(--green); font-weight: 600;"><i data-lucide="star" class="w-4 h-4 inline"></i> Pertama kali? Coba <strong>Rujak Segar</strong> — ringan & mudah disukai.</div>
     <div class="sec-header" id="menuHeader"><span class="sec-title">Koleksi Rasa</span></div>
     <div class="empty-state" id="emptyState">Menu tidak ditemukan.</div>
     <div id="skeletonContainer" style="padding:0 20px;"><div class="skeleton-item"><div class="skeleton-img skeleton"></div><div class="skeleton-body"><div class="skeleton-line skeleton"></div><div class="skeleton-line skeleton medium"></div><div class="skeleton-line skeleton short"></div></div></div><div class="skeleton-item"><div class="skeleton-img skeleton"></div><div class="skeleton-body"><div class="skeleton-line skeleton"></div><div class="skeleton-line skeleton medium"></div><div class="skeleton-line skeleton short"></div></div></div></div>
     <div class="menu-list" id="menuList" style="display:none;"></div>
     <div class="divider" id="addonDivider"></div>
-    <div class="sec-header" id="addonHeader"><span class="sec-title">Tambahan</span></div>
-    <div style="padding: 0 20px 4px; font-size: 11px; color: var(--gray-500); font-weight: 500;">Opsional — Sambal ekstra, buah tambahan, dll.</div>
+    <div class="sec-header" id="addonHeader" style="align-items: baseline; gap: 8px;">
+      <span class="sec-title">Tambahan</span>
+      <span style="font-size: 11px; color: var(--gray-500); font-weight: 500; white-space: nowrap;">Opsional — Sambal ekstra, buah tambahan, dll.</span>
+    </div>
     <div class="addon-grid" id="addonList"></div>
     <div class="divider"></div>
     <div class="sec-header" style="margin-top:16px"><span class="sec-title">Kenapa Memilih Rujak.Co?</span></div>
