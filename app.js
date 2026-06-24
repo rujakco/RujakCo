@@ -152,7 +152,7 @@
   // ===== FUNGSI ONGKIR (LOGIKA BARU) =====
   function calculateShipping(d, priority) {
     const rawDistance = (d === null || d === undefined || isNaN(d)) ? SYSTEM.DEFAULT_DISTANCE : d;
-    const dist = rawDistance * 1.3; // koreksi rute darat
+    const dist = rawDistance * 1.2; // koreksi rute darat
     const rounded = Math.ceil(dist);
 
     if (rounded > SYSTEM.MAX_DISTANCE) {
