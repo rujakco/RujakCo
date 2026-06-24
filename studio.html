@@ -226,18 +226,18 @@
       btn.disabled = !S.pid; txt.textContent = S.pid ? 'Buat Visual Konten' : 'Pilih produk dulu';
     }
 
-    // ─── KONTROL GAMBAR (STABIL UNTUK SEMUA TEMPLATE) ─────
+    // ─── KONTROL GAMBAR (DENGAN DIMENSI EKSPLISIT) ─────
     function showImgControls() {
       document.getElementById('imgControls').style.display = S.pid ? 'block' : 'none';
       if (S.pid) updateLivePreview();
     }
 
-    // Fungsi membuat HTML gambar yang selalu proporsional
     function imgHTML(url, w, h, extraStyle = '') {
       const z = S.imgZoom / 100;
       const originX = 50 + S.imgX;
       const originY = 50 + S.imgY;
-      return `<div style="position:absolute;inset:0;overflow:hidden;width:${w}px;height:${h}px;${extraStyle}">
+      // Kontainer gambar dengan dimensi eksplisit
+      return `<div style="position:absolute;overflow:hidden;width:${w}px;height:${h}px;${extraStyle}">
         <img src="${proxyUrl(url)}" crossorigin="anonymous" 
              style="width:100%;height:100%;object-fit:cover;
                     transform:scale(${z});transform-origin:${originX}% ${originY}%;"
@@ -313,7 +313,7 @@
         }
       }
 
-      await new Promise(r => setTimeout(r, 300));
+      await new Promise(r => setTimeout(r, 500));
       const el = wrap.firstElementChild;
       if (!el) return;
       html2canvas(el, { scale: 0.5, useCORS: true, allowTaint: false, backgroundColor: null, logging: false })
