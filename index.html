@@ -43,16 +43,6 @@
               <span class="location-value" id="locationDisplay">Bekasi ▾</span>
             </div>
           </div>
-          <!-- Search toggle di header -->
-          <div class="search-toggle-wrap" id="searchToggleWrap">
-            <button class="search-icon-btn" id="searchIconBtn" aria-label="Cari">
-              <i data-lucide="search" class="w-5 h-5"></i>
-            </button>
-            <div class="search-input-wrap" id="searchInputWrap">
-              <input type="text" id="searchInput" placeholder="Cari menu..." autocomplete="off" />
-              <button type="button" class="clear-search" id="clearSearchBtn" aria-label="Hapus">✕</button>
-            </div>
-          </div>
         </div>
       </div>
     </header>
@@ -110,9 +100,20 @@
         <span class="signature">Signature – Gurih mete, favorit semua</span>
         <span class="reserve">Reserve – Buah premium, momen istimewa</span>
       </div></div>
-    <!-- Search wrap yang lama sudah dihapus -->
     <div style="padding: 0 20px 12px; font-size: 13px; color: var(--green); font-weight: 600;"><i data-lucide="star" class="w-4 h-4 inline"></i> Pertama kali? Coba <strong>Rujak Segar</strong> — ringan & mudah disukai.</div>
-    <div class="sec-header" id="menuHeader"><span class="sec-title">Koleksi Rasa</span></div>
+    <!-- Search toggle dipindahkan ke samping "Koleksi Rasa" -->
+    <div class="sec-header" id="menuHeader">
+      <span class="sec-title">Koleksi Rasa</span>
+      <div class="search-toggle-wrap" id="searchToggleWrap">
+        <button class="search-icon-btn" id="searchIconBtn" aria-label="Cari">
+          <i data-lucide="search" class="w-5 h-5"></i>
+        </button>
+        <div class="search-input-wrap" id="searchInputWrap">
+          <input type="text" id="searchInput" placeholder="Cari menu..." autocomplete="off" />
+          <button type="button" class="clear-search" id="clearSearchBtn" aria-label="Hapus">✕</button>
+        </div>
+      </div>
+    </div>
     <div class="empty-state" id="emptyState">Menu tidak ditemukan.</div>
     <div id="skeletonContainer" style="padding:0 20px;"><div class="skeleton-item"><div class="skeleton-img skeleton"></div><div class="skeleton-body"><div class="skeleton-line skeleton"></div><div class="skeleton-line skeleton medium"></div><div class="skeleton-line skeleton short"></div></div></div><div class="skeleton-item"><div class="skeleton-img skeleton"></div><div class="skeleton-body"><div class="skeleton-line skeleton"></div><div class="skeleton-line skeleton medium"></div><div class="skeleton-line skeleton short"></div></div></div></div>
     <div class="menu-list" id="menuList" style="display:none;"></div>
@@ -178,7 +179,6 @@
 <div id="bottom-bar">
   <button class="close-bottom-bar" id="closeBottomBar" aria-label="Tutup keranjang">✕</button>
 
-  <!-- PROGRESS BAR PROMO -->
   <div class="progress-container" id="progressContainer" style="display:none;">
     <div class="progress-text">
       <span id="progressLabel">Tambah Rp20.000 lagi untuk diskon</span>
@@ -230,214 +230,211 @@
   <span class="badge-cart" id="floatingBadge">0</span>
 </div>
 <div id="toast" role="alert" aria-live="polite"></div>
-  <!-- MODAL MISI JAJAN -->
-  <div class="modal-overlay" id="promoModal">
-    <div class="modal-content" style="max-width: 350px;">
-      <div class="modal-header">
-        <span class="modal-header-title">🎯 Misi Jajan</span>
-        <button class="modal-close" id="promoClose" aria-label="Tutup">&times;</button>
+
+<!-- MODAL MISI JAJAN -->
+<div class="modal-overlay" id="promoModal">
+  <div class="modal-content" style="max-width: 350px;">
+    <div class="modal-header">
+      <span class="modal-header-title">🎯 Misi Jajan</span>
+      <button class="modal-close" id="promoClose" aria-label="Tutup">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="margin:0 0 16px; font-size:13px; color:var(--gray-500);">Selesaikan misi untuk klaim diskonmu!</p>
+      <div class="mission-item">
+        <input type="checkbox" id="missionSpend" disabled />
+        <span>Belanja min. Rp100.000 <b>(Potong Rp5.000)</b></span>
       </div>
-      <div class="modal-body">
-        <p style="margin:0 0 16px; font-size:13px; color:var(--gray-500);">Selesaikan misi untuk klaim diskonmu!</p>
-        <div class="mission-item">
-          <input type="checkbox" id="missionSpend" disabled />
-          <span>Belanja min. Rp100.000 <b>(Potong Rp5.000)</b></span>
-        </div>
-        <div class="mission-item">
-          <input type="checkbox" id="checkShare" disabled />
-          <span>Bagikan ke teman <b>(Potong Rp5.000)</b></span>
-        </div>
-        <button type="button" class="share-btn" id="shareBtnModal" style="width:100%; justify-content:center; margin-top:12px;">
-          <i data-lucide="share-2" class="w-4 h-4"></i> Bagikan Sekarang
-        </button>
-        <p style="font-size:11px; color:var(--gray-400); margin-top:10px; text-align:center;">
-          ✅ Misi yang sudah tercapai akan otomatis tercentang.
-        </p>
+      <div class="mission-item">
+        <input type="checkbox" id="checkShare" disabled />
+        <span>Bagikan ke teman <b>(Potong Rp5.000)</b></span>
       </div>
+      <button type="button" class="share-btn" id="shareBtnModal" style="width:100%; justify-content:center; margin-top:12px;">
+        <i data-lucide="share-2" class="w-4 h-4"></i> Bagikan Sekarang
+      </button>
+      <p style="font-size:11px; color:var(--gray-400); margin-top:10px; text-align:center;">
+        ✅ Misi yang sudah tercapai akan otomatis tercentang.
+      </p>
     </div>
   </div>
+</div>
 
-  <!-- MODAL PRODUK -->
-  <div class="modal-overlay" id="productModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <span class="modal-header-title">Detail Produk</span>
-        <button class="modal-close" id="modalClose" aria-label="Tutup">&times;</button>
+<!-- MODAL PRODUK -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="modal-header-title">Detail Produk</span>
+      <button class="modal-close" id="modalClose" aria-label="Tutup">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <div class="modal-img" id="modalImg"></div>
+      <div class="modal-title-wrap">
+        <h2 class="modal-title" id="modalTitle">Nama Produk</h2>
+        <span class="modal-badge-eyebrow" id="modalBadge" style="display:none;">Badge</span>
       </div>
-      <div class="modal-body" id="modalBody">
-        <div class="modal-img" id="modalImg"></div>
-        <div class="modal-title-wrap">
-          <h2 class="modal-title" id="modalTitle">Nama Produk</h2>
-          <span class="modal-badge-eyebrow" id="modalBadge" style="display:none;">Badge</span>
+      <p class="modal-desc" id="modalDesc">Deskripsi produk</p>
+      <div class="modal-detail-grid">
+        <div class="detail-row"><span class="label">Wadah</span><span class="value" id="modalContainer">-</span></div>
+        <div class="detail-row"><span class="label">Ukuran</span><span class="value" id="modalSize">-</span></div>
+        <div class="detail-row"><span class="label">Sambal</span><span class="value" id="modalSambal">-</span></div>
+      </div>
+      <div id="modalBuahContainer">
+        <div style="font-size:12px; font-weight:600; color:var(--gray-500); text-transform:uppercase; letter-spacing:.03em; margin-bottom:2px;">Buah-buahan</div>
+        <div class="modal-buah-text" id="modalBuahText"></div>
+      </div>
+      <div class="modal-tags" id="modalTags"></div>
+      <div class="spice-row">
+        <span class="spice-icon"><i data-lucide="flame"></i></span>
+        <span class="spice-label">Level Pedas</span>
+        <span class="spice-value" id="modalSpiceLabel">3 - Pedas</span>
+        <select id="spiceSelect">
+          <option value="1">1 - Mild</option>
+          <option value="2">2 - Sedang</option>
+          <option value="3" selected>3 - Pedas</option>
+          <option value="4">4 - Extra Pedas</option>
+          <option value="5">5 - Very Hot</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-add" id="modalAdd">
+        <span>Tambah ke Keranjang</span>
+        <span id="btnPrice">Rp0</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL KERANJANG (MINI CART) -->
+<div class="modal-overlay" id="miniCartModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="modal-header-title">🛒 Keranjang</span>
+      <div class="modal-header-actions">
+        <button class="clear-cart-btn" id="clearCartBtn" aria-label="Kosongkan keranjang">
+          <i data-lucide="trash" class="w-4 h-4"></i> Kosongkan
+        </button>
+        <button class="modal-close" id="miniCartClose" aria-label="Tutup">&times;</button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div id="miniCartList"></div>
+
+      <div class="form-section">
+        <label class="form-label">Metode Pengiriman</label>
+        <div class="shipping-method-row">
+          <button type="button" class="method-btn active" id="btnAutoDetect">📍 Deteksi Otomatis</button>
+          <button type="button" class="method-btn" id="btnManualDistrict">📋 Pilih Kecamatan</button>
         </div>
-        <p class="modal-desc" id="modalDesc">Deskripsi produk</p>
-        <div class="modal-detail-grid">
-          <div class="detail-row"><span class="label">Wadah</span><span class="value" id="modalContainer">-</span></div>
-          <div class="detail-row"><span class="label">Ukuran</span><span class="value" id="modalSize">-</span></div>
-          <div class="detail-row"><span class="label">Sambal</span><span class="value" id="modalSambal">-</span></div>
-        </div>
-        <div id="modalBuahContainer">
-          <div style="font-size:12px; font-weight:600; color:var(--gray-500); text-transform:uppercase; letter-spacing:.03em; margin-bottom:2px;">Buah-buahan</div>
-          <div class="modal-buah-text" id="modalBuahText"></div>
-        </div>
-        <div class="modal-tags" id="modalTags"></div>
-        <div class="spice-row">
-          <span class="spice-icon"><i data-lucide="flame"></i></span>
-          <span class="spice-label">Level Pedas</span>
-          <span class="spice-value" id="modalSpiceLabel">3 - Pedas</span>
-          <select id="spiceSelect">
-            <option value="1">1 - Mild</option>
-            <option value="2">2 - Sedang</option>
-            <option value="3" selected>3 - Pedas</option>
-            <option value="4">4 - Extra Pedas</option>
-            <option value="5">5 - Very Hot</option>
+        <div class="district-select-wrap" id="districtSelectWrap" style="display:none;">
+          <select id="districtSelect">
+            <option value="">-- Pilih Kecamatan --</option>
+            <option value="bekasi barat">Bekasi Barat</option>
+            <option value="bekasi timur">Bekasi Timur</option>
+            <option value="bekasi selatan">Bekasi Selatan</option>
+            <option value="bekasi utara">Bekasi Utara</option>
+            <option value="rawalumbu">Rawalumbu</option>
+            <option value="jatiasih">Jatiasih</option>
+            <option value="pondokgede">Pondok Gede</option>
+            <option value="cikarang">Cikarang</option>
+            <option value="jakarta pusat">Jakarta Pusat</option>
+            <option value="jakarta selatan">Jakarta Selatan</option>
+            <option value="jakarta timur">Jakarta Timur</option>
+            <option value="jakarta barat">Jakarta Barat</option>
+            <option value="jakarta utara">Jakarta Utara</option>
+            <option value="depok">Depok</option>
+            <option value="bogor">Bogor</option>
+            <option value="tangerang">Tangerang</option>
+            <option value="tangerang selatan">Tangerang Selatan</option>
           </select>
         </div>
       </div>
-      <div class="modal-footer">
-        <button class="modal-add" id="modalAdd">
-          <span>Tambah ke Keranjang</span>
-          <span id="btnPrice">Rp0</span>
+
+      <div class="form-section">
+        <label class="form-label">Nama Penerima</label>
+        <input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name" />
+      </div>
+      <div class="form-section">
+        <label class="form-label">Nomor HP</label>
+        <input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" autocomplete="tel" />
+      </div>
+      <div class="form-section">
+        <label class="form-label">Alamat Pengiriman</label>
+        <textarea id="customerAddress" placeholder="Alamat lengkap (jalan, kecamatan, kota)" rows="2" autocomplete="street-address"></textarea>
+      </div>
+
+      <div class="form-section">
+        <label class="form-label">Catatan Pesanan (Opsional)</label>
+        <textarea id="orderNotes" placeholder="Contoh: Sambal dipisah, untuk kado..." rows="2"></textarea>
+      </div>
+
+      <div class="form-section">
+        <div class="gift-toggle-wrap">
+          <span class="gift-toggle-label"><i data-lucide="gift" class="w-4 h-4"></i> Kirim Sebagai Kado</span>
+          <label class="switch">
+            <input type="checkbox" id="giftToggle" />
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div id="giftFields" style="display:none; margin-top:12px;">
+          <div class="form-section">
+            <label class="form-label">Nama Pengirim</label>
+            <input type="text" id="giftSender" placeholder="Nama pengirim kado" />
+          </div>
+          <div class="form-section">
+            <label class="form-label">Ucapan Kado</label>
+            <textarea id="giftMessage" placeholder="Tulis pesan ucapan di sini..." rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div id="miniCartShipping" class="mini-cart-shipping" style="display:none;">
+        <span class="shipping-amount" id="miniCartShippingAmount">Rp0</span>
+        <div class="shipping-toggle">
+          <input type="checkbox" id="priorityToggleMini" />
+          <label for="priorityToggleMini" class="toggle-label">
+            <i data-lucide="rocket"></i>
+            <span class="badge-priority">Prioritas</span>
+          </label>
+        </div>
+      </div>
+      <div class="mini-cart-total-final">
+        <span>Total</span>
+        <span id="miniCartFinalTotal">Rp0</span>
+      </div>
+      <button type="button" class="wa-btn" id="btnOpenPayment" style="margin-top: 16px;">Bayar Via QRIS</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PEMBAYARAN QRIS -->
+<div class="modal-overlay" id="paymentModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="modal-header-title">Pembayaran QRIS</span>
+      <button class="modal-close" id="paymentClose" aria-label="Tutup">&times;</button>
+    </div>
+    <div class="modal-body" style="text-align:center;">
+      <div style="position: relative; display: block; width: 100%;">
+        <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" id="qrisImagePayment" style="width:100%; height:auto; aspect-ratio: 1/1; object-fit:contain; border-radius:10px; background:white; display: block;" />
+        <span style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.5); color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 14px; pointer-events: none; z-index: 1;"><i data-lucide="zoom-in" style="width: 16px; height: 16px;"></i></span>
+      </div>
+      <p style="font-size: 11px; color: var(--green); margin-top: 8px; font-weight: 700; font-style: italic;">Ketuk / Klik 2x untuk memperbesar QRIS</p>
+      <div style="margin-top: 12px;">
+        <button type="button" class="download-btn" id="downloadQrisBtnPayment" style="display:inline-flex; align-items:center; gap:6px; background:white; color:var(--green); padding:8px 16px; border-radius:10px; font-size:13px; font-weight:700; text-decoration:none; border:1px solid var(--green); cursor:pointer; transition:transform .2s;">
+          <i data-lucide="download" class="w-4 h-4"></i> Scan / Unduh QRIS
         </button>
       </div>
     </div>
-  </div>
-
-  <!-- MODAL KERANJANG (MINI CART) -->
-  <div class="modal-overlay" id="miniCartModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <span class="modal-header-title">🛒 Keranjang</span>
-        <div class="modal-header-actions">
-          <button class="clear-cart-btn" id="clearCartBtn" aria-label="Kosongkan keranjang">
-            <i data-lucide="trash" class="w-4 h-4"></i> Kosongkan
-          </button>
-          <button class="modal-close" id="miniCartClose" aria-label="Tutup">&times;</button>
-        </div>
+    <div class="modal-footer" style="flex-direction: column; align-items: stretch; gap: 10px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; background: var(--red); color: white; border-radius: 12px; padding: 12px 16px; font-weight: 700;">
+        <span style="font-size: 14px;">Total Tagihan</span>
+        <span id="paymentTotalDisplay" style="font-size: 20px; font-weight: 800;">Rp0</span>
       </div>
-      <div class="modal-body">
-        <div id="miniCartList"></div>
-
-        <!-- Metode Pengiriman -->
-        <div class="form-section">
-          <label class="form-label">Metode Pengiriman</label>
-          <div class="shipping-method-row">
-            <button type="button" class="method-btn active" id="btnAutoDetect">📍 Deteksi Otomatis</button>
-            <button type="button" class="method-btn" id="btnManualDistrict">📋 Pilih Kecamatan</button>
-          </div>
-          <div class="district-select-wrap" id="districtSelectWrap" style="display:none;">
-            <select id="districtSelect">
-              <option value="">-- Pilih Kecamatan --</option>
-              <option value="bekasi barat">Bekasi Barat</option>
-              <option value="bekasi timur">Bekasi Timur</option>
-              <option value="bekasi selatan">Bekasi Selatan</option>
-              <option value="bekasi utara">Bekasi Utara</option>
-              <option value="rawalumbu">Rawalumbu</option>
-              <option value="jatiasih">Jatiasih</option>
-              <option value="pondokgede">Pondok Gede</option>
-              <option value="cikarang">Cikarang</option>
-              <option value="jakarta pusat">Jakarta Pusat</option>
-              <option value="jakarta selatan">Jakarta Selatan</option>
-              <option value="jakarta timur">Jakarta Timur</option>
-              <option value="jakarta barat">Jakarta Barat</option>
-              <option value="jakarta utara">Jakarta Utara</option>
-              <option value="depok">Depok</option>
-              <option value="bogor">Bogor</option>
-              <option value="tangerang">Tangerang</option>
-              <option value="tangerang selatan">Tangerang Selatan</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Form Data Diri -->
-        <div class="form-section">
-          <label class="form-label">Nama Penerima</label>
-          <input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name" />
-        </div>
-        <div class="form-section">
-          <label class="form-label">Nomor HP</label>
-          <input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" autocomplete="tel" />
-        </div>
-        <div class="form-section">
-          <label class="form-label">Alamat Pengiriman</label>
-          <textarea id="customerAddress" placeholder="Alamat lengkap (jalan, kecamatan, kota)" rows="2" autocomplete="street-address"></textarea>
-        </div>
-
-        <!-- Catatan -->
-        <div class="form-section">
-          <label class="form-label">Catatan Pesanan (Opsional)</label>
-          <textarea id="orderNotes" placeholder="Contoh: Sambal dipisah, untuk kado..." rows="2"></textarea>
-        </div>
-
-        <!-- Mode Kado -->
-        <div class="form-section">
-          <div class="gift-toggle-wrap">
-            <span class="gift-toggle-label"><i data-lucide="gift" class="w-4 h-4"></i> Kirim Sebagai Kado</span>
-            <label class="switch">
-              <input type="checkbox" id="giftToggle" />
-              <span class="slider round"></span>
-            </label>
-          </div>
-          <div id="giftFields" style="display:none; margin-top:12px;">
-            <div class="form-section">
-              <label class="form-label">Nama Pengirim</label>
-              <input type="text" id="giftSender" placeholder="Nama pengirim kado" />
-            </div>
-            <div class="form-section">
-              <label class="form-label">Ucapan Kado</label>
-              <textarea id="giftMessage" placeholder="Tulis pesan ucapan di sini..." rows="2"></textarea>
-            </div>
-          </div>
-        </div>
-
-        <div id="miniCartShipping" class="mini-cart-shipping" style="display:none;">
-          <span class="shipping-amount" id="miniCartShippingAmount">Rp0</span>
-          <div class="shipping-toggle">
-            <input type="checkbox" id="priorityToggleMini" />
-            <label for="priorityToggleMini" class="toggle-label">
-              <i data-lucide="rocket"></i>
-              <span class="badge-priority">Prioritas</span>
-            </label>
-          </div>
-        </div>
-        <div class="mini-cart-total-final">
-          <span>Total</span>
-          <span id="miniCartFinalTotal">Rp0</span>
-        </div>
-        <button type="button" class="wa-btn" id="btnOpenPayment" style="margin-top: 16px;">Bayar Via QRIS</button>
-      </div>
+      <button type="button" class="modal-add" data-action="confirm-wa" style="justify-content:center; gap:8px; margin-top: 0;">
+        <i data-lucide="message-circle" class="w-5 h-5"></i> Kirim Bukti Transfer
+      </button>
     </div>
   </div>
-
-  <!-- MODAL PEMBAYARAN QRIS -->
-  <div class="modal-overlay" id="paymentModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <span class="modal-header-title">Pembayaran QRIS</span>
-        <button class="modal-close" id="paymentClose" aria-label="Tutup">&times;</button>
-      </div>
-      <div class="modal-body" style="text-align:center;">
-        <div style="position: relative; display: block; width: 100%;">
-          <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" id="qrisImagePayment" style="width:100%; height:auto; aspect-ratio: 1/1; object-fit:contain; border-radius:10px; background:white; display: block;" />
-          <span style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.5); color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 14px; pointer-events: none; z-index: 1;"><i data-lucide="zoom-in" style="width: 16px; height: 16px;"></i></span>
-        </div>
-        <p style="font-size: 11px; color: var(--green); margin-top: 8px; font-weight: 700; font-style: italic;">Ketuk / Klik 2x untuk memperbesar QRIS</p>
-        <div style="margin-top: 12px;">
-          <button type="button" class="download-btn" id="downloadQrisBtnPayment" style="display:inline-flex; align-items:center; gap:6px; background:white; color:var(--green); padding:8px 16px; border-radius:10px; font-size:13px; font-weight:700; text-decoration:none; border:1px solid var(--green); cursor:pointer; transition:transform .2s;">
-            <i data-lucide="download" class="w-4 h-4"></i> Scan / Unduh QRIS
-          </button>
-        </div>
-      </div>
-      <div class="modal-footer" style="flex-direction: column; align-items: stretch; gap: 10px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; background: var(--red); color: white; border-radius: 12px; padding: 12px 16px; font-weight: 700;">
-          <span style="font-size: 14px;">Total Tagihan</span>
-          <span id="paymentTotalDisplay" style="font-size: 20px; font-weight: 800;">Rp0</span>
-        </div>
-        <button type="button" class="modal-add" data-action="confirm-wa" style="justify-content:center; gap:8px; margin-top: 0;">
-          <i data-lucide="message-circle" class="w-5 h-5"></i> Kirim Bukti Transfer
-        </button>
-      </div>
-    </div>
-  </div>
+</div>
 </body>
 </html>
