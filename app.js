@@ -1,10 +1,9 @@
 (function() {
   'use strict';
 
-  // === SUPABASE CONFIG (UPDATED) ===
+  // ===================== SUPABASE =====================
   const SUPABASE_URL = "https://ghhnnfrmftttptcejizp.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoaG5uZnJtZnR0dHB0Y2VqaXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNjA1ODksImV4cCI6MjA5NzgzNjU4OX0.FM-sPvJJzviX2kA0GEHnznOppivm4JNyC4IPFv_RkdE";
-
   let supabase = null;
   if (window.supabase && window.supabase.createClient) {
     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -12,7 +11,7 @@
     console.warn('Supabase client tidak tersedia.');
   }
 
-  // ===== DATA PRODUK =====
+  // ===================== DATA =====================
   const PRODUCTS = [
     {
       id: 'p_m1', name: 'Rujak Segar',
@@ -127,69 +126,20 @@
     hasShared: false
   };
 
-  // ===== UTILS =====
+  // ===================== UTILS =====================
   function fmt(num) { return 'Rp' + num.toLocaleString('id-ID'); }
   function loadCart() { try { const s = localStorage.getItem('rujak_cart'); if (s) { const p = JSON.parse(s); if (typeof p === 'object' && p !== null) state.cart = p; } } catch (_) { state.cart = {}; } }
   function saveCart() { try { localStorage.setItem('rujak_cart', JSON.stringify(state.cart)); } catch (_) {} }
-  
   function getItemById(id) {
     if (id === 'p_vip') return VIP_PRODUCT;
-    // Cek prefix untuk varian level pedas
     if (id.startsWith('p_vip_')) return VIP_PRODUCT;
     let item = PRODUCTS.find(p => p.id === id) || ADDONS.find(a => a.id === id);
     if (item) return item;
-    // Cari produk dasar dari varian (misal p_m1_3)
     return PRODUCTS.find(p => id.startsWith(p.id + '_'));
   }
-  
   function debounce(fn, delay) { let t; return function(...args) { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), delay); }; }
 
-  // ===== CART ENGINE (SINGLE SOURCE OF TRUTH) =====
-  function getCartSummary() {
-    const items = [];
-    let subtotal = 0;
-    let totalQty = 0;
-    
-    Object.keys(state.cart).forEach(id => {
-      const entry = state.cart[id];
-      const item = getItemById(id);
-      if (item && entry && entry.qty > 0) {
-        const lineTotal = item.price * entry.qty;
-        subtotal += lineTotal;
-        totalQty += entry.qty;
-        items.push({
-          id,
-          name: item.name,
-          price: item.price,
-          qty: entry.qty,
-          spice: entry.spice || null,
-          lineTotal
-        });
-      } else {
-        // Hapus entri yang tidak valid
-        delete state.cart[id];
-      }
-    });
-    
-    const discount = calculateDiscount(subtotal);
-    const distance = state.userDistance !== null ? state.userDistance : SYSTEM.DEFAULT_DISTANCE;
-    const shipping = calculateShipping(distance, state.isPriority);
-    const shippingCost = shipping.cost === Infinity ? 0 : shipping.cost;
-    const total = subtotal - discount + shippingCost;
-    
-    return {
-      items,
-      totalQty,
-      subtotal,
-      discount,
-      shippingCost,
-      shippingLabel: shipping.label,
-      shippingDistance: shipping.distance,
-      total,
-      isOutOfRange: distance > SYSTEM.MAX_DISTANCE
-    };
-  }
-
+  // ===================== CART ENGINE =====================
   function calculateDiscount(subtotal) {
     let discount = 0;
     if (subtotal >= SYSTEM.DISCOUNT_THRESHOLD) discount += 5000;
@@ -210,7 +160,35 @@
     return { cost, label: label + ' (' + Math.ceil(rawDistance) + ' km)', distance: rawDistance };
   }
 
-  // ===== LOKASI & UI =====
+  function getCartSummary() {
+    const items = [];
+    let subtotal = 0;
+    let totalQty = 0;
+    Object.keys(state.cart).forEach(id => {
+      const entry = state.cart[id];
+      const item = getItemById(id);
+      if (item && entry && entry.qty > 0) {
+        const lineTotal = item.price * entry.qty;
+        subtotal += lineTotal;
+        totalQty += entry.qty;
+        items.push({ id, name: item.name, price: item.price, qty: entry.qty, spice: entry.spice || null, lineTotal });
+      } else {
+        delete state.cart[id];
+      }
+    });
+    const discount = calculateDiscount(subtotal);
+    const distance = state.userDistance !== null ? state.userDistance : SYSTEM.DEFAULT_DISTANCE;
+    const shipping = calculateShipping(distance, state.isPriority);
+    const shippingCost = shipping.cost === Infinity ? 0 : shipping.cost;
+    const total = subtotal - discount + shippingCost;
+    return {
+      items, totalQty, subtotal, discount, shippingCost,
+      shippingLabel: shipping.label, shippingDistance: shipping.distance,
+      total, isOutOfRange: distance > SYSTEM.MAX_DISTANCE
+    };
+  }
+
+  // ===================== LOKASI =====================
   function getLocationFallback() {
     return new Promise(resolve => {
       fetch('https://ipapi.co/json/').then(r => r.json()).then(data => {
@@ -269,58 +247,39 @@
     }
   }
 
-  // ===== RENDER =====
+  // ===================== UI RENDER =====================
   function renderMenu() {
     const container = document.getElementById('menuList');
     const empty = document.getElementById('emptyState');
     const skeleton = document.getElementById('skeletonContainer');
     skeleton.style.display = 'none';
     container.style.display = 'block';
-
-    if (state.activeFilter === 'addon') {
-      container.innerHTML = '';
-      empty.style.display = 'none';
-      return;
-    }
+    if (state.activeFilter === 'addon') { container.innerHTML = ''; empty.style.display = 'none'; return; }
 
     let filtered = PRODUCTS.filter(p => {
       const matchCat = (state.activeFilter === 'all' || p.cat === state.activeFilter);
       const q = state.searchQuery.toLowerCase();
       return matchCat && (p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
     });
-
-    const vipKeyword = 'vip';
-    if (state.searchQuery.toLowerCase().includes(vipKeyword)) {
+    if (state.searchQuery.toLowerCase().includes('vip')) {
       if (!filtered.some(p => p.id === 'p_vip')) filtered = [VIP_PRODUCT, ...filtered];
     }
-
-    if (!filtered.length) {
-      empty.style.display = 'block';
-      container.innerHTML = '';
-      return;
-    }
+    if (!filtered.length) { empty.style.display = 'block'; container.innerHTML = ''; return; }
     empty.style.display = 'none';
 
     let html = '';
     filtered.forEach(p => {
-      let qty = 0;
-      let firstCartKey = p.id;
+      let qty = 0; let firstCartKey = p.id;
       Object.keys(state.cart).forEach(k => {
-        if (k === p.id || k.startsWith(p.id + '_')) {
-          qty += state.cart[k].qty;
-          if (qty === state.cart[k].qty) firstCartKey = k;
-        }
+        if (k === p.id || k.startsWith(p.id + '_')) { qty += state.cart[k].qty; if (qty === state.cart[k].qty) firstCartKey = k; }
       });
-
       const control = qty === 0
         ? `<button type="button" class="add-btn" data-action="open-modal" data-id="${p.id}"><i data-lucide="plus" class="w-4 h-4"></i></button>`
         : `<div class="qty-control"><button type="button" class="qty-btn" data-action="decrease" data-id="${firstCartKey}">−</button><span class="qty-num">${qty}</span><button type="button" class="qty-btn" data-action="increase" data-id="${firstCartKey}">+</button></div>`;
-      
       const badgeRight = p.badge ? `<span class="item-badge-right ${p.badgeColor}">${p.badge}</span>` : '';
       const flavorTag = p.flavorTag ? `<span class="item-flavor-tag">${p.flavorTag}</span>` : '';
       const buahChips = (p.buah || []).slice(0,4).map(b => `<span class="item-buah-chip">${b}</span>`).join('');
       const moreChips = (p.buah || []).length > 4 ? `<span class="item-buah-chip">+${p.buah.length - 4}</span>` : '';
-
       html += `
         <div class="menu-item" data-id="${p.id}" tabindex="0" role="button" aria-label="Detail ${p.name}">
           <div class="item-img-wrap">
@@ -350,8 +309,7 @@
     const filtered = ADDONS.filter(a => a.name.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q));
     let html = '';
     filtered.forEach(a => {
-      const entry = state.cart[a.id];
-      const qty = entry ? entry.qty : 0;
+      const entry = state.cart[a.id]; const qty = entry ? entry.qty : 0;
       const control = qty === 0
         ? `<button type="button" class="addon-add" data-action="add-addon" data-id="${a.id}"><i data-lucide="plus" class="w-4 h-4"></i></button>`
         : `<div class="qty-control"><button type="button" class="qty-btn" data-action="decrease" data-id="${a.id}">−</button><span class="qty-num">${qty}</span><button type="button" class="qty-btn" data-action="increase" data-id="${a.id}">+</button></div>`;
@@ -365,30 +323,21 @@
       `;
     });
     container.innerHTML = html;
-    const header = document.getElementById('addonHeader');
-    const divider = document.getElementById('addonDivider');
+    const header = document.getElementById('addonHeader'), divider = document.getElementById('addonDivider');
     const show = filtered.length > 0;
-    header.style.display = show ? 'flex' : 'none';
-    divider.style.display = show ? 'block' : 'none';
+    header.style.display = show ? 'flex' : 'none'; divider.style.display = show ? 'block' : 'none';
   }
 
   function updateProgressBar(subtotal) {
     const container = document.getElementById('progressContainer');
-    const label = document.getElementById('progressLabel');
-    const percent = document.getElementById('progressPercent');
-    const fill = document.getElementById('progressFill');
-    
-    if (subtotal >= SYSTEM.DISCOUNT_THRESHOLD) {
-      container.style.display = 'none';
-      return;
-    }
+    if (subtotal >= SYSTEM.DISCOUNT_THRESHOLD) { container.style.display = 'none'; return; }
     const remaining = SYSTEM.DISCOUNT_THRESHOLD - subtotal;
     const progressPercent = Math.min(100, Math.round((subtotal / SYSTEM.DISCOUNT_THRESHOLD) * 100));
     container.style.display = 'block';
-    label.textContent = `Tambah ${fmt(remaining)} lagi untuk potongan Rp5.000`;
-    percent.textContent = progressPercent + '%';
-    fill.style.width = progressPercent + '%';
-    fill.style.background = progressPercent >= 80 ? 'var(--green)' : 'var(--red)';
+    document.getElementById('progressLabel').textContent = `Tambah ${fmt(remaining)} lagi untuk potongan Rp5.000`;
+    document.getElementById('progressPercent').textContent = progressPercent + '%';
+    document.getElementById('progressFill').style.width = progressPercent + '%';
+    document.getElementById('progressFill').style.background = progressPercent >= 80 ? 'var(--green)' : 'var(--red)';
   }
 
   function updateMissionCheckboxes(subtotal) {
@@ -400,12 +349,9 @@
 
   function renderCart() {
     const summary = getCartSummary();
-    updateProgressBar(summary.subtotal);
-    updateMissionCheckboxes(summary.subtotal);
-    
+    updateProgressBar(summary.subtotal); updateMissionCheckboxes(summary.subtotal);
     const bar = document.getElementById('bottom-bar');
-    const discountLabel = document.getElementById('discountLabel');
-    const totalEl = document.getElementById('cartTotalDisplay');
+    const discountLabel = document.getElementById('discountLabel'), totalEl = document.getElementById('cartTotalDisplay');
     const footer = document.querySelector('.footer-brand');
 
     if (summary.totalQty > 0 && !state.isCartMinimized) {
@@ -424,16 +370,13 @@
       bar.classList.remove('visible');
       if (footer) footer.style.paddingBottom = '0';
     }
-    saveCart();
-    updateFloatingButton();
+    saveCart(); updateFloatingButton();
   }
 
   function renderMiniCart() {
     const summary = getCartSummary();
-    const list = document.getElementById('miniCartList');
-    const shippingRow = document.getElementById('miniCartShipping');
-    const shippingAmt = document.getElementById('miniCartShippingAmount');
-    const finalTotal = document.getElementById('miniCartFinalTotal');
+    const list = document.getElementById('miniCartList'), shippingRow = document.getElementById('miniCartShipping');
+    const shippingAmt = document.getElementById('miniCartShippingAmount'), finalTotal = document.getElementById('miniCartFinalTotal');
 
     document.getElementById('orderNotes').value = state.orderNotes;
     document.getElementById('customerName').value = state.customerName;
@@ -447,54 +390,41 @@
     let html = '';
     if (summary.items.length === 0) {
       html = '<p style="color:var(--gray-500);text-align:center;padding:20px 0;">Keranjang kosong</p>';
-      shippingRow.style.display = 'none';
-      finalTotal.textContent = 'Rp0';
+      shippingRow.style.display = 'none'; finalTotal.textContent = 'Rp0';
     } else {
       summary.items.forEach(item => {
         const spiceText = item.spice ? ' (Level ' + item.spice + ')' : '';
         html += `
           <div class="mini-cart-item">
-            <div class="mini-cart-info">
-              <div class="mini-cart-name">${item.name}${spiceText}</div>
-              <div class="mini-cart-detail">${fmt(item.price)}</div>
-            </div>
+            <div class="mini-cart-info"><div class="mini-cart-name">${item.name}${spiceText}</div><div class="mini-cart-detail">${fmt(item.price)}</div></div>
             <div class="mini-cart-qty">
-              <button data-action="decrease" data-id="${item.id}">−</button>
-              <span>${item.qty}</span>
-              <button data-action="increase" data-id="${item.id}">+</button>
+              <button data-action="decrease" data-id="${item.id}">−</button><span>${item.qty}</span><button data-action="increase" data-id="${item.id}">+</button>
               <button class="mini-cart-remove" data-action="remove" data-id="${item.id}">🗑️</button>
             </div>
           </div>
         `;
       });
-      shippingRow.style.display = 'flex';
-      shippingAmt.textContent = 'Ongkir: ' + fmt(summary.shippingCost);
+      shippingRow.style.display = 'flex'; shippingAmt.textContent = 'Ongkir: ' + fmt(summary.shippingCost);
       finalTotal.textContent = fmt(summary.total);
     }
     list.innerHTML = html;
 
     const btnPay = document.getElementById('btnOpenPayment');
-    if (state.userDistance === null) {
-      btnPay.disabled = true; btnPay.style.opacity = '0.5'; btnPay.textContent = '⏳ Menghitung Jarak...';
-    } else if (summary.isOutOfRange) {
-      btnPay.disabled = true; btnPay.style.opacity = '0.5'; btnPay.textContent = 'Di luar jangkauan';
-    } else if (summary.items.length === 0) {
-      btnPay.disabled = true; btnPay.style.opacity = '0.5'; btnPay.textContent = 'Keranjang kosong';
-    } else {
-      btnPay.disabled = false; btnPay.style.opacity = '1'; btnPay.textContent = 'Bayar Via QRIS';
-    }
+    if (state.userDistance === null) { btnPay.disabled = true; btnPay.style.opacity = '0.5'; btnPay.textContent = '⏳ Menghitung Jarak...'; }
+    else if (summary.isOutOfRange) { btnPay.disabled = true; btnPay.style.opacity = '0.5'; btnPay.textContent = 'Di luar jangkauan'; }
+    else if (summary.items.length === 0) { btnPay.disabled = true; btnPay.style.opacity = '0.5'; btnPay.textContent = 'Keranjang kosong'; }
+    else { btnPay.disabled = false; btnPay.style.opacity = '1'; btnPay.textContent = 'Bayar Via QRIS'; }
     if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
   }
 
-  function renderAll() {
-    renderMenu();
-    renderAddons();
-    renderCart();
+  function updateUI() {
+    renderMenu(); renderAddons(); renderCart();
     if (document.getElementById('miniCartModal').classList.contains('active')) renderMiniCart();
+    updateClearButton(); updateFloatingButton();
     if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
   }
 
-  // ===== MODAL PRODUK =====
+  // ===================== MODALS =====================
   const productModal = document.getElementById('productModal');
   let currentProductId = null;
   const SPICE_NAMES = ['Mild', 'Sedang', 'Pedas', 'Extra Pedas', 'Very Hot'];
@@ -503,13 +433,10 @@
     const product = id === 'p_vip' ? VIP_PRODUCT : PRODUCTS.find(p => p.id === id);
     if (!product) return;
     currentProductId = id;
-
     document.getElementById('modalImg').innerHTML = `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'; this.parentElement.textContent='${product.name.substring(0,20)}';">`;
     const badgeEl = document.getElementById('modalBadge');
-    if (product.badge) {
-      badgeEl.style.display = 'inline-block'; badgeEl.textContent = product.badge;
-      badgeEl.className = 'modal-badge-eyebrow ' + (product.badgeColor || '');
-    } else { badgeEl.style.display = 'none'; }
+    if (product.badge) { badgeEl.style.display = 'inline-block'; badgeEl.textContent = product.badge; badgeEl.className = 'modal-badge-eyebrow ' + (product.badgeColor || ''); }
+    else badgeEl.style.display = 'none';
     document.getElementById('modalTitle').textContent = product.name;
     document.getElementById('modalDesc').textContent = product.desc;
     document.getElementById('modalContainer').textContent = product.container || '-';
@@ -519,42 +446,16 @@
     document.getElementById('modalTags').innerHTML = (product.tags || []).map(t => `<span class="modal-tag">${t}</span>`).join('');
     document.getElementById('btnPrice').textContent = fmt(product.price);
     document.getElementById('modalAdd').dataset.id = product.id;
-
     const select = document.getElementById('spiceSelect');
-    select.value = product.defaultSpice || 3;
-    updateSpiceHighlight(product.defaultSpice || 3);
+    const defaultVal = product.defaultSpice || 3;
+    select.value = defaultVal; updateSpiceHighlight(defaultVal);
     select.onchange = function() { updateSpiceHighlight(parseInt(this.value, 10)); };
-
-    productModal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+    productModal.classList.add('active'); document.body.style.overflow = 'hidden';
   }
 
-  function updateSpiceHighlight(level) {
-    document.getElementById('modalSpiceLabel').textContent = level + ' - ' + (SPICE_NAMES[level-1] || 'Pedas');
-  }
+  function updateSpiceHighlight(level) { document.getElementById('modalSpiceLabel').textContent = level + ' - ' + (SPICE_NAMES[level-1] || 'Pedas'); }
+  function closeProductModal() { productModal.classList.remove('active'); document.body.style.overflow = ''; currentProductId = null; }
 
-  function closeProductModal() {
-    productModal.classList.remove('active');
-    document.body.style.overflow = '';
-    currentProductId = null;
-  }
-
-  document.getElementById('modalAdd').addEventListener('click', function() {
-    const baseId = this.dataset.id;
-    if (baseId) {
-      const spice = parseInt(document.getElementById('spiceSelect').value, 10) || 3;
-      const cartKey = baseId + '_' + spice;
-      const entry = state.cart[cartKey] || { qty: 0, spice: spice };
-      entry.qty += 1; entry.spice = spice;
-      state.cart[cartKey] = entry;
-      renderAll();
-      showToast('Berhasil ditambahkan ✓');
-      closeProductModal();
-    }
-  });
-
-  // ===== MINI CART =====
   const miniCartModal = document.getElementById('miniCartModal');
   function openMiniCart() { renderMiniCart(); miniCartModal.classList.add('active'); document.body.style.overflow = 'hidden'; }
   function closeMiniCart() {
@@ -565,53 +466,35 @@
     state.isGift = document.getElementById('giftToggle').checked;
     state.giftSender = document.getElementById('giftSender').value.trim();
     state.giftMessage = document.getElementById('giftMessage').value.trim();
-    miniCartModal.classList.remove('active');
-    document.body.style.overflow = '';
-    saveCustomerData();
+    miniCartModal.classList.remove('active'); document.body.style.overflow = ''; saveCustomerData();
   }
-
   function clearCart() {
     if (Object.keys(state.cart).length === 0) return showToast('Keranjang sudah kosong');
     if (confirm('Yakin ingin mengosongkan keranjang?')) {
-      state.cart = {};
-      renderAll();
-      if (miniCartModal.classList.contains('active')) renderMiniCart();
+      state.cart = {}; updateUI(); if (miniCartModal.classList.contains('active')) renderMiniCart();
       showToast('Keranjang dikosongkan');
     }
   }
 
-  // ===== SUPABASE =====
+  // ===================== SUPABASE =====================
   async function saveOrderToDatabase(orderItems, total, subtotal, shippingCost, discount) {
     if (!supabase) return false;
     try {
       const payload = {
-        customer_name: state.customerName || 'Guest',
-        customer_phone: state.customerPhone || '',
-        customer_address: state.customerAddress || '',
-        items: orderItems,
-        subtotal, shipping_cost: shippingCost, discount, total,
-        status: 'pending',
-        is_gift: state.isGift,
-        gift_sender: state.giftSender || null,
-        gift_message: state.giftMessage || null,
-        mission_shared: state.hasShared
+        customer_name: state.customerName || 'Guest', customer_phone: state.customerPhone || '',
+        customer_address: state.customerAddress || '', items: orderItems, subtotal, shipping_cost: shippingCost,
+        discount, total, status: 'pending', is_gift: state.isGift, gift_sender: state.giftSender || null,
+        gift_message: state.giftMessage || null, mission_shared: state.hasShared
       };
       const { error } = await supabase.from('orders').insert([payload]);
-      if (error) throw error;
-      return true;
-    } catch (err) {
-      console.error('Supabase error:', err);
-      return false;
-    }
+      if (error) throw error; return true;
+    } catch (err) { console.error('Supabase error:', err); return false; }
   }
 
   function handleCheckout() {
     const summary = getCartSummary();
     if (summary.isOutOfRange) return showToast('Maaf, pengiriman hanya tersedia untuk Jabodetabek');
-
-    const name = state.customerName.trim();
-    const phone = state.customerPhone.trim();
-    const address = state.customerAddress.trim();
+    const name = state.customerName.trim(), phone = state.customerPhone.trim(), address = state.customerAddress.trim();
     if (!name || name.length < 2) return showToast('❌ Nama penerima tidak valid'), document.getElementById('customerName').focus();
     if (!phone || phone.length < 8) return showToast('❌ Nomor HP tidak valid'), document.getElementById('customerPhone').focus();
     if (!address || address.length < 5) return showToast('❌ Alamat pengiriman tidak valid'), document.getElementById('customerAddress').focus();
@@ -639,127 +522,103 @@
         if (summary.discount > 0) msg += '\nDiskon Misi Jajan: -' + fmt(summary.discount);
         msg += '\n*Total Akhir: ' + fmt(summary.total) + '*\n\n*Saya sudah transfer via QRIS, ini bukti transfernya:*\n*(sertakan foto)*';
         window.location.href = 'https://wa.me/' + SYSTEM.WA_NUMBER + '?text=' + encodeURIComponent(msg);
-        setTimeout(() => { if (payBtn) payBtn.innerHTML = '<i data-lucide="message-circle" class="w-5 h-5"></i> Kirim Bukti Transfer'; lucide.createIcons(); }, 2000);
       });
   }
 
+  // ===================== CUSTOMER DATA =====================
   function saveCustomerData() {
-    try {
-      localStorage.setItem('rujak_customer', JSON.stringify({
-        name: state.customerName, phone: state.customerPhone, address: state.customerAddress,
-        isGift: state.isGift, giftSender: state.giftSender, giftMessage: state.giftMessage,
-        hasShared: state.hasShared
-      }));
-    } catch (_) {}
+    try { localStorage.setItem('rujak_customer', JSON.stringify({ name: state.customerName, phone: state.customerPhone, address: state.customerAddress, isGift: state.isGift, giftSender: state.giftSender, giftMessage: state.giftMessage, hasShared: state.hasShared })); } catch (_) {}
   }
-
   function loadCustomerData() {
     try {
       const raw = localStorage.getItem('rujak_customer');
-      if (raw) {
-        const data = JSON.parse(raw);
-        state.customerName = data.name || ''; state.customerPhone = data.phone || '';
-        state.customerAddress = data.address || ''; state.isGift = data.isGift || false;
-        state.giftSender = data.giftSender || ''; state.giftMessage = data.giftMessage || '';
-        state.hasShared = data.hasShared || false;
-      }
+      if (raw) { const data = JSON.parse(raw); state.customerName = data.name || ''; state.customerPhone = data.phone || ''; state.customerAddress = data.address || ''; state.isGift = data.isGift || false; state.giftSender = data.giftSender || ''; state.giftMessage = data.giftMessage || ''; state.hasShared = data.hasShared || false; }
     } catch (_) {}
   }
 
+  // ===================== TOAST =====================
   let toastTimer;
   function showToast(msg) {
-    const el = document.getElementById('toast');
-    el.textContent = msg; el.classList.remove('show');
+    const el = document.getElementById('toast'); el.textContent = msg; el.classList.remove('show');
     void el.offsetWidth; el.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => el.classList.remove('show'), SYSTEM.TOAST_DURATION);
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), SYSTEM.TOAST_DURATION);
   }
 
+  // ===================== FLOATING BUTTON =====================
   function updateFloatingButton() {
-    const btn = document.getElementById('floatingCartBtn');
-    const badge = document.getElementById('floatingBadge');
+    const btn = document.getElementById('floatingCartBtn'), badge = document.getElementById('floatingBadge');
     const summary = getCartSummary();
-    if (state.isCartMinimized && summary.totalQty > 0) {
-      btn.classList.add('visible'); badge.textContent = summary.totalQty;
-    } else {
-      btn.classList.remove('visible');
-    }
+    if (state.isCartMinimized && summary.totalQty > 0) { btn.classList.add('visible'); badge.textContent = summary.totalQty; }
+    else btn.classList.remove('visible');
   }
-
   function minimizeCart() {
-    state.isCartMinimized = true;
-    localStorage.setItem('rujak_cart_minimized', 'true');
-    document.getElementById('bottom-bar').classList.remove('visible');
-    updateFloatingButton();
-    const footer = document.querySelector('.footer-brand');
-    if (footer) footer.style.paddingBottom = '0';
+    state.isCartMinimized = true; localStorage.setItem('rujak_cart_minimized', 'true');
+    document.getElementById('bottom-bar').classList.remove('visible'); updateFloatingButton();
+    const footer = document.querySelector('.footer-brand'); if (footer) footer.style.paddingBottom = '0';
   }
-
-  function expandCart() {
-    state.isCartMinimized = false;
-    localStorage.setItem('rujak_cart_minimized', 'false');
-    updateFloatingButton();
-    renderCart();
-  }
+  function expandCart() { state.isCartMinimized = false; localStorage.setItem('rujak_cart_minimized', 'false'); updateFloatingButton(); renderCart(); }
 
   function handlePriorityToggle(checked) {
-    state.isPriority = checked;
-    document.getElementById('priorityToggle').checked = checked;
+    state.isPriority = checked; document.getElementById('priorityToggle').checked = checked;
     document.getElementById('priorityToggleMini').checked = checked;
     if (state.userDistance !== null) updateShippingUI(state.userDistance, checked);
   }
 
-  function updateStoreStatus() {
-    const statusText = document.getElementById('storeStatusText');
-    if (statusText) statusText.textContent = 'Buka';
-    document.getElementById('storeStatus')?.classList.remove('closed');
-  }
-
-  function shareToWhatsApp() {
-    window.location.href = 'https://wa.me/?text=' + encodeURIComponent(
-      'Hai! Cobain Rujak.Co yuk — rujak premium dengan buah segar pilihan dan sambal khas Indonesia. Lihat menu dan pesan langsung di sini:\n' + window.location.href
-    );
-  }
+  function updateStoreStatus() { document.getElementById('storeStatusText').textContent = 'Buka'; document.getElementById('storeStatus')?.classList.remove('closed'); }
+  function shareToWhatsApp() { window.location.href = 'https://wa.me/?text=' + encodeURIComponent('Hai! Cobain Rujak.Co yuk — rujak premium dengan buah segar pilihan dan sambal khas Indonesia. Lihat menu dan pesan langsung di sini:\n' + window.location.href); }
 
   const promoModal = document.getElementById('promoModal');
-  function openPromoModal() {
-    const summary = getCartSummary();
-    updateMissionCheckboxes(summary.subtotal);
-    promoModal.classList.add('active'); document.body.style.overflow = 'hidden';
-  }
-  function closePromoModal() {
-    promoModal.classList.remove('active'); document.body.style.overflow = '';
-  }
+  function openPromoModal() { const summary = getCartSummary(); updateMissionCheckboxes(summary.subtotal); promoModal.classList.add('active'); document.body.style.overflow = 'hidden'; }
+  function closePromoModal() { promoModal.classList.remove('active'); document.body.style.overflow = ''; }
 
-  function init() {
-    loadCart(); loadCustomerData(); updateStoreStatus();
-    const shareStrip = document.getElementById('shareStrip');
-    if (shareStrip) shareStrip.style.display = 'none';
+  const searchInput = document.getElementById('searchInput'), clearSearchBtn = document.getElementById('clearSearchBtn');
+  function updateClearButton() { clearSearchBtn.classList.toggle('visible', searchInput.value.length > 0); }
 
-    try { const s = localStorage.getItem('rujak_cart_minimized'); if (s !== null) state.isCartMinimized = s === 'true'; } catch (_) {}
+  // ===================== EVENT BINDING =====================
+  function bindEvents() {
+    document.getElementById('modalAdd').addEventListener('click', function() {
+      const baseId = this.dataset.id;
+      if (baseId) {
+        const spice = parseInt(document.getElementById('spiceSelect').value, 10) || 3;
+        const cartKey = baseId + '_' + spice;
+        const entry = state.cart[cartKey] || { qty: 0, spice: spice };
+        entry.qty += 1; entry.spice = spice; state.cart[cartKey] = entry;
+        updateUI(); showToast('Berhasil ditambahkan ✓'); closeProductModal();
+      }
+    });
 
-    document.getElementById('customerName').value = state.customerName;
-    document.getElementById('customerPhone').value = state.customerPhone;
-    document.getElementById('customerAddress').value = state.customerAddress;
-    document.getElementById('giftToggle').checked = state.isGift;
-    document.getElementById('giftSender').value = state.giftSender;
-    document.getElementById('giftMessage').value = state.giftMessage;
-    document.getElementById('giftFields').style.display = state.isGift ? 'block' : 'none';
+    document.getElementById('priorityToggle').addEventListener('change', function() { handlePriorityToggle(this.checked); });
+    document.getElementById('priorityToggleMini').addEventListener('change', function() { handlePriorityToggle(this.checked); });
 
-    renderAll(); detectLocation(); updateClearButton(); updateFloatingButton();
+    document.getElementById('btnAutoDetect').addEventListener('click', function() {
+      state.useManualDistrict = false; state.selectedDistrict = '';
+      this.classList.add('active'); document.getElementById('btnManualDistrict').classList.remove('active');
+      document.getElementById('districtSelectWrap').style.display = 'none'; detectLocation();
+    });
+    document.getElementById('btnManualDistrict').addEventListener('click', function() {
+      state.useManualDistrict = true; this.classList.add('active'); document.getElementById('btnAutoDetect').classList.remove('active');
+      document.getElementById('districtSelectWrap').style.display = 'block';
+    });
+    document.getElementById('districtSelect').addEventListener('change', function() {
+      state.selectedDistrict = this.value; if (state.selectedDistrict) detectLocation();
+    });
+
+    document.getElementById('shareBtnModal').addEventListener('click', function() {
+      state.hasShared = true; saveCustomerData(); updateUI(); showToast('Diskon Rp5.000 berhasil diaktifkan!'); shareToWhatsApp();
+    });
+    document.getElementById('promoTrigger').addEventListener('click', openPromoModal);
+    document.getElementById('promoClose').addEventListener('click', closePromoModal);
+    promoModal.addEventListener('click', function(e) { if (e.target === promoModal) closePromoModal(); });
+
+    document.getElementById('closeBottomBar').addEventListener('click', e => { e.stopPropagation(); minimizeCart(); });
+    document.getElementById('floatingCartBtn').addEventListener('click', expandCart);
 
     const searchToggleWrap = document.getElementById('searchToggleWrap');
     const searchIconBtn = document.getElementById('searchIconBtn');
     const searchInputWrap = document.getElementById('searchInputWrap');
-    const searchInput = document.getElementById('searchInput');
     if (searchIconBtn) {
-      searchIconBtn.addEventListener('click', () => {
-        searchInputWrap.classList.toggle('open');
-        if (searchInputWrap.classList.contains('open')) searchInput.focus();
-      });
-      document.addEventListener('click', (e) => {
-        if (!searchToggleWrap.contains(e.target)) searchInputWrap.classList.remove('open');
-      });
+      searchIconBtn.addEventListener('click', () => { searchInputWrap.classList.toggle('open'); if (searchInputWrap.classList.contains('open')) searchInput.focus(); });
+      document.addEventListener('click', (e) => { if (!searchToggleWrap.contains(e.target)) searchInputWrap.classList.remove('open'); });
     }
 
     ['customerName','customerPhone','customerAddress','giftSender','giftMessage'].forEach(id => {
@@ -770,131 +629,102 @@
       state.isGift = this.checked; document.getElementById('giftFields').style.display = this.checked ? 'block' : 'none'; saveCustomerData();
     });
 
-    document.getElementById('btnAutoDetect').addEventListener('click', function() {
-      state.useManualDistrict = false; state.selectedDistrict = '';
-      this.classList.add('active'); document.getElementById('btnManualDistrict').classList.remove('active');
-      document.getElementById('districtSelectWrap').style.display = 'none'; detectLocation();
-    });
-    document.getElementById('btnManualDistrict').addEventListener('click', function() {
-      state.useManualDistrict = true;
-      this.classList.add('active'); document.getElementById('btnAutoDetect').classList.remove('active');
-      document.getElementById('districtSelectWrap').style.display = 'block';
-    });
-    document.getElementById('districtSelect').addEventListener('change', function() {
-      state.selectedDistrict = this.value; if (state.selectedDistrict) detectLocation();
+    searchInput.addEventListener('input', debounce(function() { state.searchQuery = this.value; updateUI(); updateClearButton(); }, 300));
+    searchInput.addEventListener('keyup', updateClearButton);
+
+    // Global delegation
+    document.addEventListener('click', function(e) {
+      const actionBtn = e.target.closest('[data-action]');
+      if (actionBtn) {
+        const { action, id } = actionBtn.dataset;
+        if (action === 'open-modal' && id) return openProductModal(id);
+        if (action === 'open-cart') return openMiniCart();
+        if (action === 'add-addon' && id) { state.cart[id] = state.cart[id] || { qty:0 }; state.cart[id].qty++; updateUI(); showToast('Berhasil ditambahkan ✓'); return; }
+        if (action === 'increase' && id && state.cart[id]) { state.cart[id].qty++; updateUI(); if (miniCartModal.classList.contains('active')) renderMiniCart(); return; }
+        if (action === 'decrease' && id && state.cart[id]) { state.cart[id].qty--; if (state.cart[id].qty <= 0) delete state.cart[id]; updateUI(); if (miniCartModal.classList.contains('active')) renderMiniCart(); return; }
+        if (action === 'remove' && id && state.cart[id]) { delete state.cart[id]; updateUI(); if (miniCartModal.classList.contains('active')) renderMiniCart(); showToast('Item dihapus'); return; }
+        if (action === 'confirm-wa') return handleCheckout();
+        if (action === 'toast') return showToast(actionBtn.dataset.msg);
+        if (action === 'share') return shareToWhatsApp();
+        if (action === 'open-promo') return openPromoModal();
+      }
+
+      if (e.target.closest('#btnOpenPayment')) {
+        if (getCartSummary().items.length === 0) return showToast('Keranjang kosong');
+        if (state.userDistance === null) return showToast('Mohon tunggu, menghitung jarak pengiriman...');
+        if (state.userDistance > SYSTEM.MAX_DISTANCE) return showToast('Maaf, pengiriman di luar jangkauan');
+        document.getElementById('paymentTotalDisplay').textContent = document.getElementById('miniCartFinalTotal').textContent;
+        closeMiniCart(); document.getElementById('paymentModal').classList.add('active'); document.body.style.overflow = 'hidden'; return;
+      }
+
+      const menuItem = e.target.closest('.menu-item');
+      if (menuItem && !e.target.closest('.add-btn') && !e.target.closest('.qty-btn')) return openProductModal(menuItem.dataset.id);
+
+      const catBtn = e.target.closest('.cat-pill');
+      if (catBtn && catBtn.dataset.cat) {
+        document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+        catBtn.classList.add('active'); state.activeFilter = catBtn.dataset.cat; updateUI(); return;
+      }
+
+      const faqToggle = e.target.closest('[data-toggle="faq"]');
+      if (faqToggle) return faqToggle.closest('.faq-item')?.classList.toggle('open');
+
+      if (e.target.closest('#modalClose') || e.target === productModal) return closeProductModal();
+      if (e.target.closest('#miniCartClose') || e.target === miniCartModal) return closeMiniCart();
+      if (e.target.closest('#paymentClose') || e.target === document.getElementById('paymentModal')) {
+        document.getElementById('paymentModal').classList.remove('active'); document.body.style.overflow = ''; return;
+      }
+      if (e.target.closest('#clearCartBtn')) return clearCart();
+      if (e.target.closest('.cart-summary')) return openMiniCart();
+
+      if (e.target.closest('#downloadQrisBtnPayment')) {
+        const url = document.getElementById('qrisImagePayment').src;
+        fetch(url).then(r => r.blob()).then(blob => {
+          const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'QRIS-RujakCo.jpg';
+          document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
+        }).catch(() => { window.location.href = url; });
+        showToast('Gambar QRIS sedang diunduh...'); return;
+      }
+      if (e.target.closest('#clearSearchBtn')) {
+        searchInput.value = ''; state.searchQuery = ''; updateUI(); updateClearButton(); return;
+      }
     });
 
-    document.getElementById('shareBtnModal').addEventListener('click', function() {
-      state.hasShared = true; saveCustomerData(); renderAll(); showToast('Diskon Rp5.000 berhasil diaktifkan!'); shareToWhatsApp();
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        if (productModal.classList.contains('active')) closeProductModal();
+        if (miniCartModal.classList.contains('active')) closeMiniCart();
+        if (document.getElementById('paymentModal').classList.contains('active')) {
+          document.getElementById('paymentModal').classList.remove('active'); document.body.style.overflow = '';
+        }
+        if (promoModal.classList.contains('active')) closePromoModal();
+      }
     });
 
-    document.getElementById('promoTrigger').addEventListener('click', openPromoModal);
-    document.getElementById('promoClose').addEventListener('click', closePromoModal);
-    promoModal.addEventListener('click', function(e) { if (e.target === promoModal) closePromoModal(); });
+    const qrisImg = document.getElementById('qrisImagePayment');
+    qrisImg.addEventListener('click', function() { this.classList.toggle('qr-zoomed'); });
+    qrisImg.addEventListener('dblclick', function() { this.classList.toggle('qr-zoomed'); });
+
     window.addEventListener('scroll', () => { document.getElementById('header')?.classList.toggle('shadowed', window.scrollY > 4); });
+  }
 
+  // ===================== INIT =====================
+  function init() {
+    loadCart(); loadCustomerData(); updateStoreStatus();
+    document.getElementById('shareStrip').style.display = 'none';
+    try { const s = localStorage.getItem('rujak_cart_minimized'); if (s !== null) state.isCartMinimized = s === 'true'; } catch (_) {}
+    document.getElementById('customerName').value = state.customerName;
+    document.getElementById('customerPhone').value = state.customerPhone;
+    document.getElementById('customerAddress').value = state.customerAddress;
+    document.getElementById('giftToggle').checked = state.isGift;
+    document.getElementById('giftSender').value = state.giftSender;
+    document.getElementById('giftMessage').value = state.giftMessage;
+    document.getElementById('giftFields').style.display = state.isGift ? 'block' : 'none';
+    updateUI(); detectLocation(); bindEvents();
     if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
     else { const int = setInterval(() => { if (typeof lucide !== 'undefined' && lucide.createIcons) { lucide.createIcons(); clearInterval(int); } }, 100); }
   }
 
-  document.addEventListener('click', function(e) {
-    const actionBtn = e.target.closest('[data-action]');
-    if (actionBtn) {
-      const { action, id } = actionBtn.dataset;
-      if (action === 'open-modal' && id) return openProductModal(id);
-      if (action === 'open-cart') return openMiniCart();
-      if (action === 'add-addon' && id) {
-        state.cart[id] = state.cart[id] || { qty: 0 }; state.cart[id].qty += 1;
-        renderAll(); return showToast('Berhasil ditambahkan ✓');
-      }
-      if (action === 'increase' && id && state.cart[id]) {
-        state.cart[id].qty += 1; renderAll();
-        if (miniCartModal.classList.contains('active')) renderMiniCart(); return;
-      }
-      if (action === 'decrease' && id && state.cart[id]) {
-        state.cart[id].qty -= 1; if (state.cart[id].qty <= 0) delete state.cart[id];
-        renderAll(); if (miniCartModal.classList.contains('active')) renderMiniCart(); return;
-      }
-      if (action === 'remove' && id && state.cart[id]) {
-        delete state.cart[id]; renderAll();
-        if (miniCartModal.classList.contains('active')) renderMiniCart(); return showToast('Item dihapus');
-      }
-      if (action === 'confirm-wa') return handleCheckout();
-      if (action === 'toast') return showToast(actionBtn.dataset.msg);
-      if (action === 'share') return shareToWhatsApp();
-      if (action === 'open-promo') return openPromoModal();
-    }
-
-    if (e.target.closest('#btnOpenPayment')) {
-      if (getCartSummary().items.length === 0) return showToast('Keranjang kosong');
-      if (state.userDistance === null) return showToast('Mohon tunggu, menghitung jarak pengiriman...');
-      if (state.userDistance > SYSTEM.MAX_DISTANCE) return showToast('Maaf, pengiriman di luar jangkauan');
-      document.getElementById('paymentTotalDisplay').textContent = document.getElementById('miniCartFinalTotal').textContent;
-      closeMiniCart();
-      document.getElementById('paymentModal').classList.add('active'); document.body.style.overflow = 'hidden';
-      return;
-    }
-
-    const menuItem = e.target.closest('.menu-item');
-    if (menuItem && !e.target.closest('.add-btn') && !e.target.closest('.qty-btn')) return openProductModal(menuItem.dataset.id);
-
-    const catBtn = e.target.closest('.cat-pill');
-    if (catBtn && catBtn.dataset.cat) {
-      document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
-      catBtn.classList.add('active'); state.activeFilter = catBtn.dataset.cat; return renderAll();
-    }
-
-    const faqToggle = e.target.closest('[data-toggle="faq"]');
-    if (faqToggle) return faqToggle.closest('.faq-item')?.classList.toggle('open');
-
-    if (e.target.closest('#modalClose') || e.target === productModal) return closeProductModal();
-    if (e.target.closest('#miniCartClose') || e.target === miniCartModal) return closeMiniCart();
-    if (e.target.closest('#paymentClose') || e.target === document.getElementById('paymentModal')) {
-      document.getElementById('paymentModal').classList.remove('active'); document.body.style.overflow = ''; return;
-    }
-
-    if (e.target.closest('#clearCartBtn')) return clearCart();
-    if (e.target.closest('.cart-summary')) return openMiniCart();
-    if (e.target.closest('#downloadQrisBtnPayment')) {
-      const url = document.getElementById('qrisImagePayment').src;
-      fetch(url).then(r => r.blob()).then(blob => {
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'QRIS-RujakCo.jpg';
-        document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
-      }).catch(() => { window.location.href = url; });
-      return showToast('Gambar QRIS sedang diunduh...');
-    }
-    if (e.target.closest('#clearSearchBtn')) {
-      document.getElementById('searchInput').value = ''; state.searchQuery = '';
-      renderAll(); updateClearButton(); return;
-    }
-  });
-
-  document.getElementById('priorityToggle').addEventListener('change', function() { handlePriorityToggle(this.checked); });
-  document.getElementById('priorityToggleMini').addEventListener('change', function() { handlePriorityToggle(this.checked); });
-
-  const searchInput = document.getElementById('searchInput');
-  const clearSearchBtn = document.getElementById('clearSearchBtn');
-  function updateClearButton() { clearSearchBtn.classList.toggle('visible', searchInput.value.length > 0); }
-  searchInput.addEventListener('input', debounce(function() { state.searchQuery = this.value; renderAll(); updateClearButton(); }, 300));
-  searchInput.addEventListener('keyup', updateClearButton);
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-      if (productModal.classList.contains('active')) closeProductModal();
-      if (miniCartModal.classList.contains('active')) closeMiniCart();
-      if (document.getElementById('paymentModal').classList.contains('active')) {
-        document.getElementById('paymentModal').classList.remove('active'); document.body.style.overflow = '';
-      }
-      if (promoModal.classList.contains('active')) closePromoModal();
-    }
-  });
-
-  const qrisImg = document.getElementById('qrisImagePayment');
-  qrisImg.addEventListener('click', function() { this.classList.toggle('qr-zoomed'); });
-  qrisImg.addEventListener('dblclick', function() { this.classList.toggle('qr-zoomed'); });
-
-  document.getElementById('closeBottomBar').addEventListener('click', e => { e.stopPropagation(); minimizeCart(); });
-  document.getElementById('floatingCartBtn').addEventListener('click', expandCart);
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();
