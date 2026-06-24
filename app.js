@@ -3,7 +3,7 @@
 
   // === SUPABASE CONFIG (UPDATED) ===
   const SUPABASE_URL = "https://ghhnnfrmftttptcejizp.supabase.co";
-  const SUPABASE_KEY = "Sb_publishable_m15TQVkLM-h84t6FOzYA8Q_QNYkws7z";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoaG5uZnJtZnR0dHB0Y2VqaXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNjA1ODksImV4cCI6MjA5NzgzNjU4OX0.FM-sPvJJzviX2kA0GEHnznOppivm4JNyC4IPFv_RkdE";
 
   let supabase = null;
   if (window.supabase && window.supabase.createClient) {
@@ -748,23 +748,13 @@ function renderAll() {
     if (state.userDistance !== null) updateShippingUI(state.userDistance, checked);
   }
 
-  // ===== STORE STATUS (BUKA/TUTUP) =====
+  // ===== STORE STATUS (SELALU BUKA) =====
   function updateStoreStatus() {
-    const now = new Date();
-    const day = now.getDay();
-    const currentTime = now.getHours() * 60 + now.getMinutes();
-
-    let isOpen = false;
-    if (day >= 1 && day <= 5) { if (currentTime >= 600 && currentTime < 1200) isOpen = true; }
-    else if (day === 6 || day === 0) { if (currentTime >= 540 && currentTime < 1080) isOpen = true; }
-
+    // Toko selalu buka, tidak ada mode tutup/PO
     const statusEl = document.getElementById('storeStatus');
     const statusText = document.getElementById('storeStatusText');
-    if (isOpen) {
-      statusEl.classList.remove('closed'); statusText.textContent = 'Buka';
-    } else {
-      statusEl.classList.add('closed'); statusText.textContent = 'Tutup (Pre-Order)';
-    }
+    if (statusEl) statusEl.classList.remove('closed');
+    if (statusText) statusText.textContent = 'Buka';
   }
 
   function shareToWhatsApp() {
@@ -791,6 +781,10 @@ function renderAll() {
   // ===== INIT =====
   function init() {
     loadCart(); loadCustomerData(); updateStoreStatus();
+
+    // Sembunyikan strip "Ajak Teman Jajan"
+    const shareStrip = document.getElementById('shareStrip');
+    if (shareStrip) shareStrip.style.display = 'none';
 
     try { const saved = localStorage.getItem('rujak_cart_minimized'); if (saved !== null) state.isCartMinimized = saved === 'true'; } catch (_) {}
 
@@ -826,7 +820,7 @@ function renderAll() {
       state.selectedDistrict = this.value; if (state.selectedDistrict) detectLocation();
     });
 
-    document.getElementById('shareBtn').addEventListener('click', shareToWhatsApp);
+    // Share button utama dihapus, tapi share di modal misi tetap berfungsi
     document.getElementById('shareBtnModal').addEventListener('click', function() {
       state.hasShared = true;
       saveCustomerData();
