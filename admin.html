@@ -3,279 +3,65 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Rujak.Co</title>
+  <title>Admin Rujak.Co - Debug</title>
   <link rel="manifest" href="/admin-manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'DM Sans', sans-serif; background: #f5f5f5; padding: 20px; }
-    .container { max-width: 700px; margin: 0 auto; }
-    h2 { color: #0F4D37; margin: 20px 0; display: flex; align-items: center; gap: 8px; }
-    .nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-    .nav-tab { padding: 10px 20px; border: none; background: #e5e7eb; border-radius: 8px; cursor: pointer; font-weight: 600; }
-    .nav-tab.active { background: #0F4D37; color: white; }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-    .order, .product-item { background: white; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-    .order-header, .product-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; }
-    .badge-pending { background: #fef3c7; color: #92400e; }
-    .badge-active { background: #d1fae5; color: #065f46; }
-    .badge-inactive { background: #fee2e2; color: #991b1b; }
-    .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; margin-top: 8px; }
-    .btn-primary { background: #0F4D37; color: white; }
-    .btn-danger { background: #dc2626; color: white; }
-    .btn-edit { background: #f59e0b; color: white; }
-    .form-group { margin-bottom: 12px; }
-    .form-group label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 13px; }
-    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; }
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .loading { text-align: center; color: #9ca3af; padding: 20px; }
-    .empty { text-align: center; color: #9ca3af; padding: 40px; }
-    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #0F4D37; color: white; padding: 12px 24px; border-radius: 50px; font-weight: 700; z-index: 999; opacity: 0; transition: opacity 0.3s; }
-    .toast.show { opacity: 1; }
-    #productModal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center; padding:20px; }
-    #productModal .modal-content { background:white; border-radius:16px; padding:24px; width:100%; max-width:500px; max-height:90vh; overflow-y:auto; }
+    body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
+    .card { background: white; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .btn { padding: 10px 16px; background: #0F4D37; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    .error { color: red; background: #fee; padding: 10px; border-radius: 8px; margin: 10px 0; }
+    .success { color: green; background: #efe; padding: 10px; border-radius: 8px; margin: 10px 0; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>🛎️ Admin Panel — Rujak.Co</h2>
-    <div class="nav-tabs">
-      <button class="nav-tab active" onclick="switchTab('orders')">📦 Pesanan</button>
-      <button class="nav-tab" onclick="switchTab('products')">🥭 Produk</button>
-    </div>
-
-    <div id="tab-orders" class="tab-content active">
-      <div id="orderList"><div class="loading">Memuat...</div></div>
-      <button class="btn btn-primary" onclick="loadOrders()">🔄 Muat Ulang</button>
-    </div>
-
-    <div id="tab-products" class="tab-content">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-        <strong>Daftar Produk</strong>
-        <button class="btn btn-primary" onclick="showProductForm()">+ Tambah Produk</button>
-      </div>
-      <div id="productList"><div class="loading">Memuat...</div></div>
-    </div>
-
-    <div id="productModal">
-      <div class="modal-content">
-        <h3 id="productModalTitle">Tambah Produk</h3>
-        <form id="productForm">
-          <input type="hidden" id="prodId">
-          <div class="form-group"><label>Nama</label><input type="text" id="prodName" required></div>
-          <div class="form-group"><label>Deskripsi</label><textarea id="prodDesc" rows="2"></textarea></div>
-          <div class="two-col">
-            <div class="form-group"><label>Harga</label><input type="number" id="prodPrice" required></div>
-            <div class="form-group"><label>Kategori</label><select id="prodCat"><option value="classic">Classic</option><option value="signature">Signature</option><option value="reserve">Reserve</option></select></div>
-          </div>
-          <div class="form-group"><label>Tags (pisahkan dengan koma)</label><input type="text" id="prodTags" placeholder="Bestseller, Pedas"></div>
-          <div class="form-group"><label>Buah (pisahkan dengan koma)</label><input type="text" id="prodBuah" placeholder="Mangga, Nanas"></div>
-          <div class="form-group"><label>Wadah</label><input type="text" id="prodContainer"></div>
-          <div class="form-group"><label>Ukuran</label><input type="text" id="prodSize"></div>
-          <div class="form-group"><label>Sambal</label><input type="text" id="prodSambal"></div>
-          <div class="form-group"><label>Flavor</label><input type="text" id="prodFlavor"></div>
-          <div class="form-group"><label>Level Pedas Default</label><input type="number" id="prodSpice" min="1" max="5" value="3"></div>
-          <div class="form-group"><label>Porsi</label><input type="text" id="prodPortion"></div>
-          <div class="form-group"><label>Thumbnail URL</label><input type="text" id="prodThumb"></div>
-          <div class="form-group"><label>Image URL</label><input type="text" id="prodImage"></div>
-          <div style="display:flex; gap:8px; margin-top:16px;">
-            <button type="submit" class="btn btn-primary">Simpan</button>
-            <button type="button" class="btn" onclick="closeProductForm()">Batal</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <div class="toast" id="toastNotif">🔔 Pesanan baru masuk!</div>
+  <h2>🔧 Debug Produk</h2>
+  <button class="btn" onclick="cekKoneksi()">🔍 Tes Koneksi & Tampilkan Produk</button>
+  <div id="status"></div>
+  <div id="productList"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    (function() {
-      const PASSWORD = "rujakco123"; // GANTI PASSWORD RAHASIAMU
-      const SUPABASE_URL = "https://ghhnnfrmftttptcejizp.supabase.co";
-      const SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoaG5uZnJtZnR0dHB0Y2VqaXpwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MjI2MDU4OSwiZXhwIjoyMDk3ODM2NTg5fQ.THg4A8pxUjKCdc6Cs7dhQwjgoHZDXBPGtej4-Krj1q4";
+    const SUPABASE_URL = "https://ghhnnfrmftttptcejizp.supabase.co";
+    const SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoaG5uZnJtZnR0dHB0Y2VqaXpwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MjI2MDU4OSwiZXhwIjoyMDk3ODM2NTg5fQ.THg4A8pxUjKCdc6Cs7dhQwjgoHZDXBPGtej4-Krj1q4";
+    const supabaseAdmin = window.supabase.createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
-      // Password protection
-      if (sessionStorage.getItem('admin_auth') !== 'true') {
-        const input = prompt("Masukkan password admin:");
-        if (input !== PASSWORD) {
-          document.body.innerHTML = '<div style="text-align:center; padding:40px; color:red; font-weight:700;">Akses ditolak.</div>';
-          throw new Error("Unauthorized");
+    window.cekKoneksi = async function() {
+      const statusDiv = document.getElementById('status');
+      const listDiv = document.getElementById('productList');
+      statusDiv.innerHTML = '⏳ Mengecek koneksi...';
+      listDiv.innerHTML = '';
+
+      try {
+        // Coba ambil semua produk
+        const { data, error } = await supabaseAdmin
+          .from('products')
+          .select('*')
+          .order('cat');
+
+        if (error) {
+          statusDiv.innerHTML = `<div class="error">❌ Gagal query: ${error.message}</div>`;
+          return;
         }
-        sessionStorage.setItem('admin_auth', 'true');
+
+        if (!data || data.length === 0) {
+          statusDiv.innerHTML = `<div class="success">✅ Koneksi OK, tapi tabel kosong.</div>`;
+          return;
+        }
+
+        statusDiv.innerHTML = `<div class="success">✅ Berhasil! Ditemukan ${data.length} produk.</div>`;
+        listDiv.innerHTML = data.map(p => `
+          <div class="card">
+            <strong>${p.name}</strong> (${p.cat})<br>
+            💰 Rp${p.price.toLocaleString('id-ID')}<br>
+            🏷️ ${(p.tags || []).join(', ')}<br>
+            Aktif: ${p.is_active ? '✅' : '❌'}
+          </div>
+        `).join('');
+      } catch (err) {
+        statusDiv.innerHTML = `<div class="error">❌ Error jaringan: ${err.message}</div>`;
       }
-
-      const supabaseAdmin = window.supabase.createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
-      const toastNotif = document.getElementById('toastNotif');
-
-      function showToast(msg) {
-        toastNotif.textContent = msg;
-        toastNotif.classList.add('show');
-        setTimeout(() => toastNotif.classList.remove('show'), 3000);
-      }
-
-      window.switchTab = function(tab) {
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.querySelector(`.nav-tab:contains('${tab === 'orders' ? 'Pesanan' : 'Produk'}')`).classList.add('active');
-        document.getElementById(`tab-${tab}`).classList.add('active');
-        if (tab === 'orders') window.loadOrders();
-        else window.loadProducts();
-      };
-
-      // ===== ORDERS =====
-      window.loadOrders = async function() {
-        const container = document.getElementById('orderList');
-        container.innerHTML = '<div class="loading">Memuat...</div>';
-        try {
-          const { data, error } = await supabaseAdmin.from('orders').select('*').order('created_at', { ascending: false });
-          if (error) throw error;
-          if (!data || data.length === 0) {
-            container.innerHTML = '<div class="empty">📭 Belum ada pesanan.</div>';
-            return;
-          }
-          container.innerHTML = data.map(o => `
-            <div class="order">
-              <div class="order-header"><span class="order-name">${escapeHtml(o.customer_name)}</span><span class="order-date">${new Date(o.created_at).toLocaleString('id-ID')}</span></div>
-              <div>${(o.items || []).map(i => `<div class="order-item"><span>${escapeHtml(i.name)} x${i.qty}</span><span>Rp${i.price.toLocaleString('id-ID')}</span></div>`).join('')}</div>
-              <div class="contact">📱 ${escapeHtml(o.customer_phone)} | 📍 ${escapeHtml(o.customer_address)}</div>
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-                <span class="badge badge-pending">${o.status || 'pending'}</span>
-                <span style="font-size:13px; color:#6b7280;">Diskon: Rp${(o.discount||0).toLocaleString('id-ID')} | Ongkir: Rp${(o.shipping_cost||0).toLocaleString('id-ID')}</span>
-              </div>
-              <div class="order-total">Rp${o.total.toLocaleString('id-ID')}</div>
-            </div>
-          `).join('');
-        } catch (err) {
-          container.innerHTML = '<div class="empty">❌ Gagal memuat data.</div>';
-        }
-      };
-
-      // ===== PRODUCTS =====
-      window.loadProducts = async function() {
-        const container = document.getElementById('productList');
-        container.innerHTML = '<div class="loading">Memuat...</div>';
-        try {
-          const { data, error } = await supabaseAdmin.from('products').select('*').order('cat');
-          if (error) throw error;
-          if (!data || data.length === 0) {
-            container.innerHTML = '<div class="empty">📭 Belum ada produk.</div>';
-            return;
-          }
-          container.innerHTML = data.map(p => `
-            <div class="product-item">
-              <div class="product-header">
-                <span><strong>${escapeHtml(p.name)}</strong> (${p.cat}) — Rp${p.price.toLocaleString('id-ID')}</span>
-                <span class="badge ${p.is_active ? 'badge-active' : 'badge-inactive'}">${p.is_active ? 'Aktif' : 'Nonaktif'}</span>
-              </div>
-              <div style="display:flex; gap:8px; margin-top:8px;">
-                <button class="btn btn-edit" onclick="editProduct('${p.id}')">✏️ Edit</button>
-                <button class="btn btn-danger" onclick="deleteProduct('${p.id}')">🗑️ Hapus</button>
-              </div>
-            </div>
-          `).join('');
-        } catch (err) {
-          container.innerHTML = '<div class="empty">❌ Gagal memuat produk.</div>';
-        }
-      };
-
-      window.showProductForm = function(id = null) {
-        document.getElementById('productModal').style.display = 'flex';
-        if (id) {
-          supabaseAdmin.from('products').select('*').eq('id', id).single().then(({ data }) => {
-            if (!data) return;
-            document.getElementById('prodId').value = data.id;
-            document.getElementById('prodName').value = data.name || '';
-            document.getElementById('prodDesc').value = data.desc || '';
-            document.getElementById('prodPrice').value = data.price;
-            document.getElementById('prodCat').value = data.cat;
-            document.getElementById('prodTags').value = (data.tags || []).join(', ');
-            document.getElementById('prodBuah').value = (data.buah || []).join(', ');
-            document.getElementById('prodContainer').value = data.container || '';
-            document.getElementById('prodSize').value = data.size || '';
-            document.getElementById('prodSambal').value = data.sambal || '';
-            document.getElementById('prodFlavor').value = data.flavor || '';
-            document.getElementById('prodSpice').value = data.default_spice || 3;
-            document.getElementById('prodPortion').value = data.portion || '';
-            document.getElementById('prodThumb').value = data.thumbnail || '';
-            document.getElementById('prodImage').value = data.image || '';
-            document.getElementById('productModalTitle').textContent = 'Edit Produk';
-          });
-        } else {
-          document.getElementById('productForm').reset();
-          document.getElementById('prodId').value = '';
-          document.getElementById('productModalTitle').textContent = 'Tambah Produk';
-        }
-      };
-
-      window.closeProductForm = function() {
-        document.getElementById('productModal').style.display = 'none';
-      };
-
-      document.getElementById('productForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const id = document.getElementById('prodId').value || 'p_' + Date.now();
-        const payload = {
-          id,
-          name: document.getElementById('prodName').value,
-          desc: document.getElementById('prodDesc').value,
-          price: parseInt(document.getElementById('prodPrice').value),
-          cat: document.getElementById('prodCat').value,
-          tags: document.getElementById('prodTags').value.split(',').map(t => t.trim()).filter(Boolean),
-          buah: document.getElementById('prodBuah').value.split(',').map(b => b.trim()).filter(Boolean),
-          container: document.getElementById('prodContainer').value,
-          size: document.getElementById('prodSize').value,
-          sambal: document.getElementById('prodSambal').value,
-          flavor: document.getElementById('prodFlavor').value,
-          default_spice: parseInt(document.getElementById('prodSpice').value) || 3,
-          portion: document.getElementById('prodPortion').value,
-          thumbnail: document.getElementById('prodThumb').value,
-          image: document.getElementById('prodImage').value,
-          is_active: true
-        };
-        const { error } = await supabaseAdmin.from('products').upsert(payload);
-        if (error) { alert('Gagal menyimpan: ' + error.message); return; }
-        closeProductForm();
-        window.loadProducts();
-        showToast('✅ Produk disimpan!');
-      });
-
-      window.editProduct = (id) => showProductForm(id);
-      window.deleteProduct = async (id) => {
-        if (!confirm('Yakin hapus produk ini?')) return;
-        await supabaseAdmin.from('products').update({ is_active: false }).eq('id', id);
-        window.loadProducts();
-        showToast('🗑️ Produk dinonaktifkan');
-      };
-
-      function escapeHtml(text) {
-        if (!text) return '';
-        const div = document.createElement('div');
-        div.textContent = String(text);
-        return div.innerHTML;
-      }
-
-      // Realtime orders
-      supabaseAdmin.channel('orders-admin')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
-          if (Notification.permission === "granted") {
-            new Notification('Pesanan Baru!', { body: `${payload.new.customer_name} - Rp${payload.new.total}` });
-          }
-          showToast('🔔 Pesanan baru dari ' + payload.new.customer_name + '!');
-          window.loadOrders();
-        })
-        .subscribe();
-
-      if (Notification.permission !== "denied") Notification.requestPermission();
-
-      // Muat pesanan saat halaman dibuka
-      window.loadOrders();
-    })();
+    };
   </script>
 </body>
 </html>
