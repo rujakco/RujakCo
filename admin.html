@@ -4,132 +4,95 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Orders — Rujak.Co</title>
+  <link rel="manifest" href="/admin-manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'DM Sans', sans-serif; background: #f5f5f5; padding: 20px; }
     .container { max-width: 700px; margin: 0 auto; }
-    h2 { color: #0F4D37; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
-    .order {
-      background: white;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    }
-    .order-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
+    h2 { color: #0F4D37; margin-bottom: 20px; }
+    .order { background: white; border-radius: 12px; padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .order-name { font-weight: 700; font-size: 16px; color: #111827; }
     .order-date { font-size: 12px; color: #6b7280; }
-    .order-items { margin-bottom: 10px; }
     .order-item { display: flex; justify-content: space-between; font-size: 14px; color: #374151; padding: 2px 0; }
     .order-total { font-weight: 800; font-size: 16px; color: #0F4D37; margin-top: 8px; text-align: right; }
-    .badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; }
     .badge-pending { background: #fef3c7; color: #92400e; }
     .badge-gift { background: #fce7f3; color: #9d174d; }
     .contact { font-size: 13px; color: #6b7280; margin-top: 6px; }
     .empty { text-align: center; color: #9ca3af; padding: 40px; }
     .loading { text-align: center; color: #9ca3af; padding: 20px; }
+    .btn { padding: 10px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; margin-top: 12px; }
+    .btn-primary { background: #0F4D37; color: white; }
+    .btn-danger { background: #dc2626; color: white; margin-left: 8px; }
   </style>
 </head>
 <body>
   <div class="container">
     <h2>🛎️ Pesanan Masuk</h2>
     <div id="orderList"><div class="loading">Memuat data...</div></div>
+    <button class="btn btn-primary" onclick="loadOrders()">🔄 Muat Ulang</button>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // 🔐 SERVICE ROLE KEY — JANGAN DIUNGGAH KE PUBLIK
-    const SUPABASE_URL = "https://ghhnnfrmftttptcejizp.supabase.co";
-    const SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoaG5uZnJtZnR0dHB0Y2VqaXpwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MjI2MDU4OSwiZXhwIjoyMDk3ODM2NTg5fQ.THg4A8pxUjKCdc6Cs7dhQwjgoHZDXBPGtej4-Krj1q4"; // <-- ganti dengan key asli
+    (function() {
+      const SUPABASE_URL = "https://ghhnnfrmftttptcejizp.supabase.co";
+      const SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoaG5uZnJtZnR0dHB0Y2VqaXpwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MjI2MDU4OSwiZXhwIjoyMDk3ODM2NTg5fQ.THg4A8pxUjKCdc6Cs7dhQwjgoHZDXBPGtej4-Krj1q4";
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
+      const supabaseAdmin = window.supabase.createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
+      const orderList = document.getElementById('orderList');
 
-    async function loadOrders() {
-      const container = document.getElementById('orderList');
-      container.innerHTML = '<div class="loading">Memuat data...</div>';
-
-      const { data, error } = await supabase
-        .from('orders')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        container.innerHTML = '<div class="empty">Gagal memuat data. Pastikan SERVICE_ROLE_KEY benar.</div>';
-        return;
-      }
-      if (!data || data.length === 0) {
-        container.innerHTML = '<div class="empty">Belum ada pesanan.</div>';
-        return;
-      }
-      renderOrders(data);
-    }
-
-    function renderOrders(orders) {
-      const container = document.getElementById('orderList');
-      container.innerHTML = orders.map(o => `
-        <div class="order">
-          <div class="order-header">
-            <span class="order-name">${escapeHtml(o.customer_name)}</span>
-            <span class="order-date">${new Date(o.created_at).toLocaleString('id-ID')}</span>
-          </div>
-          <div class="order-items">
-            ${(o.items || []).map(i => `
-              <div class="order-item">
-                <span>${escapeHtml(i.name)} x${i.qty}</span>
-                <span>Rp${i.price.toLocaleString('id-ID')}</span>
+      window.loadOrders = async function() {
+        orderList.innerHTML = '<div class="loading">Memuat data...</div>';
+        try {
+          const { data, error } = await supabaseAdmin
+            .from('orders')
+            .select('*')
+            .order('created_at', { ascending: false });
+          if (error) throw error;
+          if (!data || data.length === 0) {
+            orderList.innerHTML = '<div class="empty">📭 Belum ada pesanan.</div>';
+            return;
+          }
+          orderList.innerHTML = data.map(o => `
+            <div class="order">
+              <div class="order-header">
+                <span class="order-name">${escapeHtml(o.customer_name)}</span>
+                <span class="order-date">${new Date(o.created_at).toLocaleString('id-ID')}</span>
               </div>
-            `).join('')}
-          </div>
-          ${o.order_notes ? `<p style="font-size:13px;color:#6b7280;margin-top:6px;">📝 ${escapeHtml(o.order_notes)}</p>` : ''}
-          ${o.is_gift ? '<span class="badge badge-gift">🎁 Kado</span>' : ''}
-          <div class="contact">
-            📱 ${escapeHtml(o.customer_phone)} &nbsp;|&nbsp; 📍 ${escapeHtml(o.customer_address)}
-          </div>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-            <span class="badge badge-pending">${o.status || 'pending'}</span>
-            <span style="font-size:13px; color:#6b7280;">
-              Diskon: Rp${(o.discount || 0).toLocaleString('id-ID')} | Ongkir: Rp${(o.shipping_cost || 0).toLocaleString('id-ID')}
-            </span>
-          </div>
-          <div class="order-total">Rp${o.total.toLocaleString('id-ID')}</div>
-        </div>
-      `).join('');
-    }
-
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-    // Realtime subscription (pakai service_role)
-    supabase
-      .channel('orders-admin')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
-        // Notifikasi browser
-        if (Notification.permission === "granted") {
-          new Notification('Pesanan Baru!', { body: `${payload.new.customer_name} - Rp${payload.new.total}` });
+              <div>${(o.items || []).map(i => `<div class="order-item"><span>${escapeHtml(i.name)} x${i.qty}</span><span>Rp${i.price.toLocaleString('id-ID')}</span></div>`).join('')}</div>
+              <div class="contact">📱 ${escapeHtml(o.customer_phone)} | 📍 ${escapeHtml(o.customer_address)}</div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+                <span class="badge badge-pending">${o.status || 'pending'}</span>
+                <span style="font-size:13px; color:#6b7280;">Diskon: Rp${(o.discount||0).toLocaleString('id-ID')} | Ongkir: Rp${(o.shipping_cost||0).toLocaleString('id-ID')}</span>
+              </div>
+              <div class="order-total">Rp${o.total.toLocaleString('id-ID')}</div>
+            </div>
+          `).join('');
+        } catch (err) {
+          orderList.innerHTML = '<div class="empty">❌ Gagal memuat data. Pastikan SERVICE_ROLE_KEY benar.</div>';
         }
-        loadOrders();
-      })
-      .subscribe();
+      };
 
-    if (Notification.permission !== "denied") Notification.requestPermission();
+      function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = String(text);
+        return div.innerHTML;
+      }
 
-    loadOrders();
+      // Realtime
+      supabaseAdmin
+        .channel('orders-admin')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, () => window.loadOrders())
+        .subscribe();
+
+      if (Notification.permission !== "denied") Notification.requestPermission();
+
+      window.loadOrders();
+    })();
   </script>
 </body>
 </html>
