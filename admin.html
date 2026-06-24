@@ -6,6 +6,8 @@
   <title>Admin Orders — Rujak.Co</title>
   <link rel="manifest" href="/admin-manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'DM Sans', sans-serif; background: #f5f5f5; padding: 20px; }
@@ -25,7 +27,8 @@
     .loading { text-align: center; color: #9ca3af; padding: 20px; }
     .btn { padding: 10px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; margin-top: 12px; }
     .btn-primary { background: #0F4D37; color: white; }
-    .btn-danger { background: #dc2626; color: white; margin-left: 8px; }
+    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #0F4D37; color: white; padding: 12px 24px; border-radius: 50px; font-weight: 700; z-index: 999; opacity: 0; transition: opacity 0.3s; }
+    .toast.show { opacity: 1; }
   </style>
 </head>
 <body>
@@ -35,6 +38,8 @@
     <button class="btn btn-primary" onclick="loadOrders()">🔄 Muat Ulang</button>
   </div>
 
+  <div class="toast" id="toastNotif">🔔 Pesanan baru masuk!</div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     (function() {
@@ -43,6 +48,35 @@
 
       const supabaseAdmin = window.supabase.createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
       const orderList = document.getElementById('orderList');
+      const toastNotif = document.getElementById('toastNotif');
+
+      // Fungsi untuk memutar suara notifikasi
+      function playNotifSound() {
+        try {
+          const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          const oscillator = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
+          oscillator.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          oscillator.type = 'sine';
+          // Nada "ding-ding" sederhana
+          oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+          oscillator.frequency.setValueAtTime(1000, audioCtx.currentTime + 0.1);
+          gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+          oscillator.start(audioCtx.currentTime);
+          oscillator.stop(audioCtx.currentTime + 0.4);
+        } catch (e) {
+          // fallback: tidak ada suara
+        }
+      }
+
+      // Toast notification
+      function showToast(msg) {
+        toastNotif.textContent = msg;
+        toastNotif.classList.add('show');
+        setTimeout(() => toastNotif.classList.remove('show'), 3000);
+      }
 
       window.loadOrders = async function() {
         orderList.innerHTML = '<div class="loading">Memuat data...</div>';
@@ -72,7 +106,7 @@
             </div>
           `).join('');
         } catch (err) {
-          orderList.innerHTML = '<div class="empty">❌ Gagal memuat data. Pastikan SERVICE_ROLE_KEY benar.</div>';
+          orderList.innerHTML = '<div class="empty">❌ Gagal memuat data.</div>';
         }
       };
 
@@ -83,14 +117,41 @@
         return div.innerHTML;
       }
 
-      // Realtime
+      // Realtime subscription dengan notifikasi suara & getar
       supabaseAdmin
         .channel('orders-admin')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, () => window.loadOrders())
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
+          // Suara
+          playNotifSound();
+
+          // Getar (vibrate) untuk HP
+          if (navigator.vibrate) {
+            navigator.vibrate([200, 100, 200]);
+          }
+
+          // Notifikasi browser
+          if (Notification.permission === "granted") {
+            new Notification('Pesanan Baru!', {
+              body: `${payload.new.customer_name} - Rp${payload.new.total?.toLocaleString('id-ID')}`,
+              icon: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp',
+              vibrate: [200, 100, 200]
+            });
+          }
+
+          // Toast di layar
+          showToast('🔔 Pesanan baru dari ' + payload.new.customer_name + '!');
+
+          // Refresh daftar
+          window.loadOrders();
+        })
         .subscribe();
 
-      if (Notification.permission !== "denied") Notification.requestPermission();
+      // Minta izin notifikasi
+      if (Notification.permission !== "denied") {
+        Notification.requestPermission();
+      }
 
+      // Muat pertama kali
       window.loadOrders();
     })();
   </script>
