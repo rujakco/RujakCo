@@ -29,13 +29,20 @@
     .btn-primary { background: #0F4D37; color: white; }
     .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #0F4D37; color: white; padding: 12px 24px; border-radius: 50px; font-weight: 700; z-index: 999; opacity: 0; transition: opacity 0.3s; }
     .toast.show { opacity: 1; }
+    #debugInfo { margin-top: 20px; padding: 12px; background: #f0f0f0; border-radius: 8px; font-size: 12px; color: #333; }
   </style>
 </head>
 <body>
   <div class="container">
     <h2>🛎️ Pesanan Masuk</h2>
-    <div id="orderList"><div class="loading">Memuat data...</div></div>
     <button class="btn btn-primary" onclick="loadOrders()">🔄 Muat Ulang</button>
+    <div id="orderList"><div class="loading">Memuat data...</div></div>
+    <div id="debugInfo">
+      <strong>Status Notifikasi:</strong><br>
+      Suara: <span id="soundStatus">❓</span><br>
+      Getar: <span id="vibrateStatus">❓</span><br>
+      Notifikasi Browser: <span id="notifStatus">❓</span>
+    </div>
   </div>
 
   <div class="toast" id="toastNotif">🔔 Pesanan baru masuk!</div>
@@ -50,7 +57,31 @@
       const orderList = document.getElementById('orderList');
       const toastNotif = document.getElementById('toastNotif');
 
-      // Fungsi untuk memutar suara notifikasi
+      // Debug status
+      const soundStatus = document.getElementById('soundStatus');
+      const vibrateStatus = document.getElementById('vibrateStatus');
+      const notifStatus = document.getElementById('notifStatus');
+
+      // Cek dukungan fitur
+      if (window.AudioContext || window.webkitAudioContext) {
+        soundStatus.textContent = '✅ Didukung';
+      } else {
+        soundStatus.textContent = '❌ Tidak didukung';
+      }
+
+      if (navigator.vibrate) {
+        vibrateStatus.textContent = '✅ Didukung';
+      } else {
+        vibrateStatus.textContent = '❌ Tidak didukung';
+      }
+
+      if ('Notification' in window) {
+        notifStatus.textContent = Notification.permission;
+      } else {
+        notifStatus.textContent = '❌ Tidak didukung';
+      }
+
+      // Fungsi suara (pakai Web Audio API)
       function playNotifSound() {
         try {
           const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -59,25 +90,50 @@
           oscillator.connect(gainNode);
           gainNode.connect(audioCtx.destination);
           oscillator.type = 'sine';
-          // Nada "ding-ding" sederhana
           oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
           oscillator.frequency.setValueAtTime(1000, audioCtx.currentTime + 0.1);
           gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
           gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
           oscillator.start(audioCtx.currentTime);
           oscillator.stop(audioCtx.currentTime + 0.4);
+          return true;
         } catch (e) {
-          // fallback: tidak ada suara
+          return false;
         }
       }
 
-      // Toast notification
+      // Toast
       function showToast(msg) {
         toastNotif.textContent = msg;
         toastNotif.classList.add('show');
         setTimeout(() => toastNotif.classList.remove('show'), 3000);
       }
 
+      // Fungsi untuk menangani notifikasi (suara + getar + browser)
+      function handleNewOrder(customerName, total) {
+        // Suara
+        const okSound = playNotifSound();
+        if (!okSound) console.log('Suara gagal dimainkan');
+
+        // Getar
+        if (navigator.vibrate) {
+          navigator.vibrate([200, 100, 200]);
+        }
+
+        // Notifikasi browser
+        if (Notification.permission === "granted") {
+          new Notification('Pesanan Baru!', {
+            body: `${customerName} - Rp${total?.toLocaleString('id-ID')}`,
+            icon: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp',
+            vibrate: [200, 100, 200]
+          });
+        }
+
+        // Toast
+        showToast(`🔔 Pesanan baru dari ${customerName}!`);
+      }
+
+      // Muat pesanan
       window.loadOrders = async function() {
         orderList.innerHTML = '<div class="loading">Memuat data...</div>';
         try {
@@ -117,41 +173,30 @@
         return div.innerHTML;
       }
 
-      // Realtime subscription dengan notifikasi suara & getar
+      // Realtime
       supabaseAdmin
         .channel('orders-admin')
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
-          // Suara
-          playNotifSound();
-
-          // Getar (vibrate) untuk HP
-          if (navigator.vibrate) {
-            navigator.vibrate([200, 100, 200]);
-          }
-
-          // Notifikasi browser
-          if (Notification.permission === "granted") {
-            new Notification('Pesanan Baru!', {
-              body: `${payload.new.customer_name} - Rp${payload.new.total?.toLocaleString('id-ID')}`,
-              icon: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp',
-              vibrate: [200, 100, 200]
-            });
-          }
-
-          // Toast di layar
-          showToast('🔔 Pesanan baru dari ' + payload.new.customer_name + '!');
-
-          // Refresh daftar
+          handleNewOrder(payload.new.customer_name, payload.new.total);
           window.loadOrders();
         })
         .subscribe();
 
-      // Minta izin notifikasi
-      if (Notification.permission !== "denied") {
-        Notification.requestPermission();
-      }
+      // Minta izin notifikasi saat ada interaksi pertama (klik di mana saja)
+      document.addEventListener('click', function() {
+        if (Notification.permission === 'default') {
+          Notification.requestPermission().then(perm => {
+            notifStatus.textContent = perm;
+          });
+        }
+      }, { once: true });
 
-      // Muat pertama kali
+      // Tes suara manual: klik dua kali pada judul
+      document.querySelector('h2').addEventListener('dblclick', function() {
+        const ok = playNotifSound();
+        showToast(ok ? '✅ Suara OK' : '❌ Gagal bunyi');
+      });
+
       window.loadOrders();
     })();
   </script>
