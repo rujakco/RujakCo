@@ -1,9 +1,9 @@
 (function() {
   'use strict';
 
-  // === SUPABASE CONFIG ===
-  const SUPABASE_URL = "https://xkyduxhjlmvhzdavbbwk.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhreWR1eGhqbG12aHpkYXZiYndrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyMTEzNzQsImV4cCI6MjA5Nzc4NzM3NH0.ua2hvVLuDuQ36c91ZjO215GtdJp-Cs9zzdK36_52L-Y";
+  // === SUPABASE CONFIG (UPDATED) ===
+  const SUPABASE_URL = "https://ghhnnfrmftttptcejizp.supabase.co";
+  const SUPABASE_KEY = "Sb_publishable_m15TQVkLM-h84t6FOzYA8Q_QNYkws7z";
 
   let supabase = null;
   if (window.supabase && window.supabase.createClient) {
@@ -145,9 +145,7 @@
   // ===== FUNGSI DISKON MISI JAJAN =====
   function calculateDiscount(subtotal) {
     let discount = 0;
-    // Misi 1: Belanja min Rp100.000
     if (subtotal >= SYSTEM.DISCOUNT_THRESHOLD) discount += 5000;
-    // Misi 2: Sudah share
     if (state.hasShared) discount += 5000;
     return discount;
   }
@@ -219,6 +217,7 @@
       getLocationFallback().then(({ city, distance }) => { state.userDistance = distance; document.getElementById('locationDisplay').textContent = city + ' ▾'; updateShippingUI(distance, state.isPriority); });
     }
   }
+
 // ===== RENDER FUNCTIONS =====
 function renderMenu() {
   const container = document.getElementById('menuList');
@@ -477,6 +476,7 @@ function renderAll() {
   if (document.getElementById('miniCartModal').classList.contains('active')) renderMiniCart();
   if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 }
+
   // ===== MODAL PRODUK =====
   const productModal = document.getElementById('productModal');
   let currentProductId = null;
