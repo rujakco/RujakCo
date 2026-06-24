@@ -96,6 +96,11 @@ body{font-family:'DM Sans',sans-serif;background:#1a1a1a;min-height:100vh;color:
 .empty-hist{text-align:center;padding:48px 20px;color:var(--g4);}
 
 .vc-wrap{position:fixed;left:-9999px;top:-9999px;width:1080px;z-index:-1;}
+
+/* slider controls */
+.range-group{display:flex;align-items:center;gap:8px;margin-top:4px;}
+.range-group input[type=range]{flex:1;}
+.range-label{font-size:10px;font-weight:600;color:var(--g5);min-width:36px;}
 </style>
 </head>
 <body>
@@ -121,6 +126,30 @@ body{font-family:'DM Sans',sans-serif;background:#1a1a1a;min-height:100vh;color:
   <div><div class="slbl">Template Visual</div><div class="tpl-grid" id="tplGrid"></div></div>
   <div><div class="slbl">Platform</div><div class="pfm-grid" id="pfmGrid"></div></div>
   <div><div class="slbl">Tone Copywriting</div><div class="pills" id="tonePills"></div></div>
+  
+  <!-- Kontrol Posisi & Zoom Gambar -->
+  <div id="imgControls" style="display:none;">
+    <div class="slbl">Atur Posisi & Zoom Gambar</div>
+    <div class="range-group">
+      <span class="range-label">↔️ X</span>
+      <input type="range" id="posX" min="-100" max="100" value="0" oninput="updateLivePreview()">
+      <span class="range-label" id="valX">0%</span>
+    </div>
+    <div class="range-group">
+      <span class="range-label">↕️ Y</span>
+      <input type="range" id="posY" min="-100" max="100" value="0" oninput="updateLivePreview()">
+      <span class="range-label" id="valY">0%</span>
+    </div>
+    <div class="range-group">
+      <span class="range-label">🔍 Zoom</span>
+      <input type="range" id="zoomLvl" min="100" max="200" value="120" oninput="updateLivePreview()">
+      <span class="range-label" id="valZoom">120%</span>
+    </div>
+    <div style="border:2px dashed var(--g2); border-radius:12px; overflow:hidden; margin-top:8px;">
+      <div id="livePreview" style="width:100%; aspect-ratio:9/16; background:#0F4D37; position:relative; overflow:hidden;"></div>
+    </div>
+  </div>
+  
   <button class="genbtn" id="genBtn" disabled><span>🪄</span><span id="genTxt">Pilih produk dulu</span></button>
   <div id="outputArea"></div>
 </div>
@@ -138,11 +167,9 @@ body{font-family:'DM Sans',sans-serif;background:#1a1a1a;min-height:100vh;color:
 <div class="toast" id="toast"></div>
 
 <script>
-// ─── KONFIGURASI PROXY ───────────────────────────────────────
+// ─── PROXY ────────────────────────────────────────────────────
 const IMAGE_PROXY = "https://ghhnnfrmftttptcejizp.supabase.co/functions/v1/smart-api";
-function proxyImage(url) {
-  return IMAGE_PROXY + "?url=" + encodeURIComponent(url);
-}
+function proxyImage(url) { return IMAGE_PROXY + "?url=" + encodeURIComponent(url); }
 
 // ─── PRODUCT DATA ──────────────────────────────────────────────
 const PRODUCTS = [
@@ -158,15 +185,14 @@ const LOGO = 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp'
 const fmt = n => 'Rp' + n.toLocaleString('id-ID');
 
 const S = {
-  pid: null, tpl: 'story-dark', pfm: 'instagram',
-  tone: 'santai', history: JSON.parse(localStorage.getItem('rcg_hist') || '[]')
+  pid: null, tpl: 'story-dark', pfm: 'instagram', tone: 'santai',
+  imgX: 0, imgY: 0, imgZoom: 120,
+  history: JSON.parse(localStorage.getItem('rcg_hist') || '[]')
 };
 
-// ─── STATIC COPYWRITING ────────────────────────────────────────
+// ─── COPYWRITING ────────────────────────────────────────────────
 function generateCopy(prod) {
-  const tone = S.tone;
-  const pfm = S.pfm;
-  
+  const tone = S.tone, pfm = S.pfm;
   const headlineMap = {
     santai: [`Rujak ${prod.name.split(' ')[1] || 'Segar'}`, `Kesegaran ${prod.name}`, `Nikmati Sensasi Rujak`, `Rujak Premium ${prod.name}`],
     hype: [`GILA! ${prod.name} 🔥`, `WAJIB COBA ${prod.name}`, `${prod.name} BOMBASTIS!`, `INI DIA ${prod.name}`],
@@ -201,20 +227,17 @@ function generateCopy(prod) {
     threads: ['#RujakCo', '#RujakPremium', '#FoodPhotography', '#KulinerNusantara'],
     whatsapp: ['#RujakCo', '#RujakPremium', '#InfoPemesanan']
   };
-
   const pick = arr => arr[Math.floor(Math.random() * arr.length)];
   const headline = pick(headlineMap[tone] || headlineMap.santai);
   const subline = pick(sublineMap[tone] || sublineMap.santai);
   const body = pick(bodyMap[tone] || bodyMap.santai);
   const cta = pick(ctaMap[tone] || ctaMap.santai);
   const hashtags = (hashtagMap[pfm] || hashtagMap.instagram).join(' ');
-  
   const caption = `${headline}\n\n${subline}\n\n${body}\n\n🚀 ${cta}: https://rujakco.vercel.app\n\n${hashtags}`;
-
   return { HEADLINE: headline, SUBLINE: subline, BODY: body, CTA: cta, HASHTAGS: hashtags, CAPTION: caption };
 }
 
-// ─── RENDER PRODUCTS ───────────────────────────────────────────
+// ─── RENDER PRODUK ──────────────────────────────────────────────
 function renderProducts() {
   document.getElementById('pgrid').innerHTML = PRODUCTS.map(p => `
     <button class="pcard${S.pid===p.id?' sel':''}" onclick="selProd('${p.id}')">
@@ -225,14 +248,38 @@ function renderProducts() {
       <div class="pcard-body"><div class="pcard-name">${p.name}</div><div class="pcard-price">${fmt(p.price)}</div></div>
     </button>`).join('');
 }
-
-function selProd(id) { S.pid = S.pid===id ? null : id; renderProducts(); updBtn(); }
+function selProd(id) { S.pid = S.pid===id ? null : id; renderProducts(); updBtn(); showImgControls(); }
 function updBtn() {
   const btn = document.getElementById('genBtn'), txt = document.getElementById('genTxt');
   btn.disabled = !S.pid; txt.textContent = S.pid ? 'Buat Visual Konten' : 'Pilih produk dulu';
 }
 
-// ─── RENDER TEMPLATES ──────────────────────────────────────────
+// ─── IMAGE CONTROLS ────────────────────────────────────────────
+function showImgControls() {
+  const ctrl = document.getElementById('imgControls');
+  if (S.pid && (S.tpl === 'story-dark' || S.tpl === 'story-light' || S.tpl === 'feed-editorial' || S.tpl === 'minimal' || S.tpl === 'feed-bold' || S.tpl === 'magazine')) {
+    ctrl.style.display = 'block';
+    updateLivePreview();
+  } else {
+    ctrl.style.display = 'none';
+  }
+}
+
+function updateLivePreview() {
+  S.imgX = parseInt(document.getElementById('posX').value);
+  S.imgY = parseInt(document.getElementById('posY').value);
+  S.imgZoom = parseInt(document.getElementById('zoomLvl').value);
+  document.getElementById('valX').textContent = S.imgX + '%';
+  document.getElementById('valY').textContent = S.imgY + '%';
+  document.getElementById('valZoom').textContent = S.imgZoom + '%';
+  
+  if (!S.pid) return;
+  const prod = PRODUCTS.find(p=>p.id===S.pid);
+  const preview = document.getElementById('livePreview');
+  preview.innerHTML = `<img src="${proxyImage(prod.hd)}" style="width:100%;height:100%;object-fit:cover;object-position:${50+S.imgX}% ${50+S.imgY}%;transform:scale(${S.imgZoom/100});" crossorigin="anonymous"/>`;
+}
+
+// ─── TEMPLATES ──────────────────────────────────────────────────
 function renderTemplates() {
   document.getElementById('tplGrid').innerHTML = [
     { tpl:'story-dark', name:'Story Dark', sub:'Dark green · 9:16', bg:'#0F4D37' },
@@ -243,9 +290,9 @@ function renderTemplates() {
     { tpl:'minimal', name:'Minimal', sub:'Clean white · 9:16', bg:'white' }
   ].map(t=>`<button class="tpl-card${S.tpl===t.tpl?' active':''}" data-tpl="${t.tpl}" onclick="selTpl('${t.tpl}')"><div class="tpl-preview" style="background:${t.bg};"></div><div class="tpl-label">${t.name}<div class="tpl-sub">${t.sub}</div></div></button>`).join('');
 }
-function selTpl(tpl) { S.tpl = tpl; renderTemplates(); }
+function selTpl(tpl) { S.tpl = tpl; renderTemplates(); showImgControls(); }
 
-// ─── RENDER PLATFORM ───────────────────────────────────────────
+// ─── PLATFORM ───────────────────────────────────────────────────
 document.getElementById('pfmGrid').innerHTML = [
   { pfm:'instagram', label:'📸 Instagram Story/Feed' },
   { pfm:'tiktok', label:'🎵 TikTok' },
@@ -253,11 +300,9 @@ document.getElementById('pfmGrid').innerHTML = [
   { pfm:'whatsapp', label:'💬 WhatsApp Status' }
 ].map(p=>`<button class="pfm-btn${S.pfm===p.pfm?' active':''}" data-pfm="${p.pfm}" onclick="selPfm('${p.pfm}')">${p.label}</button>`).join('');
 function selPfm(pfm) { S.pfm = pfm; renderPfm(); }
-function renderPfm() {
-  document.querySelectorAll('.pfm-btn').forEach(b=>b.classList.toggle('active', b.dataset.pfm===S.pfm));
-}
+function renderPfm() { document.querySelectorAll('.pfm-btn').forEach(b=>b.classList.toggle('active', b.dataset.pfm===S.pfm)); }
 
-// ─── RENDER TONE ───────────────────────────────────────────────
+// ─── TONE ──────────────────────────────────────────────────────
 document.getElementById('tonePills').innerHTML = [
   { tone:'santai', label:'😊 Santai' },
   { tone:'hype', label:'🔥 Hype' },
@@ -266,59 +311,29 @@ document.getElementById('tonePills').innerHTML = [
   { tone:'lucu', label:'😄 Receh' }
 ].map(t=>`<button class="pill${S.tone===t.tone?' active':''}" data-tone="${t.tone}" onclick="selTone('${t.tone}')">${t.label}</button>`).join('');
 function selTone(tone) { S.tone = tone; renderTone(); }
-function renderTone() {
-  document.querySelectorAll('#tonePills .pill').forEach(p=>p.classList.toggle('active', p.dataset.tone===S.tone));
-}
+function renderTone() { document.querySelectorAll('#tonePills .pill').forEach(p=>p.classList.toggle('active', p.dataset.tone===S.tone)); }
 
-// ─── GENERATE (MENUNGGU GAMBAR) ────────────────────────────────
+// ─── GENERATE ──────────────────────────────────────────────────
 document.getElementById('genBtn').addEventListener('click', async ()=>{
   if (!S.pid) return;
   const prod = PRODUCTS.find(p=>p.id===S.pid);
   const copy = generateCopy(prod);
-  
   document.getElementById('outputArea').innerHTML = `<div class="loading-wrap"><div class="spin"></div><div class="loading-txt">Membuat visual untuk <strong>${prod.name}</strong>…</div></div>`;
   
   const wrap = document.getElementById('vcWrap');
-  wrap.innerHTML = buildCardHTML(prod, copy, S.tpl);
+  wrap.innerHTML = buildCardHTML(prod, copy);
   
-  // Tunggu semua gambar selesai dimuat
   const images = wrap.querySelectorAll('img');
-  const loadPromises = Array.from(images).map(img => {
-    return new Promise((resolve, reject) => {
-      if (img.complete) {
-        // Jika sudah dimuat, cek apakah gambar error (naturalWidth 0)
-        if (img.naturalWidth === 0) {
-          // Coba fallback ke URL asli (tanpa proxy)
-          const originalSrc = img.getAttribute('data-original') || img.src;
-          if (img.src !== originalSrc) {
-            img.src = originalSrc;
-            img.onload = resolve;
-            img.onerror = () => resolve(); // tetap lanjut meski gagal
-          } else {
-            resolve(); // tidak bisa fallback lebih lanjut
-          }
-        } else {
-          resolve();
-        }
-        return;
-      }
-      img.onload = () => resolve();
-      img.onerror = () => {
-        // Coba fallback ke URL asli
-        const originalSrc = img.getAttribute('data-original');
-        if (originalSrc && img.src !== originalSrc) {
-          img.src = originalSrc;
-          img.onload = resolve;
-          img.onerror = () => resolve(); // lanjutkan meski gagal
-        } else {
-          resolve();
-        }
-      };
-    });
-  });
-  
+  const loadPromises = Array.from(images).map(img => new Promise((resolve) => {
+    if (img.complete && img.naturalWidth > 0) return resolve();
+    img.onload = () => resolve();
+    img.onerror = () => {
+      const orig = img.getAttribute('data-original');
+      if (orig && img.src !== orig) { img.src = orig; img.onload = resolve; img.onerror = resolve; }
+      else resolve();
+    };
+  }));
   await Promise.all(loadPromises);
-  // Tunggu sedikit agar render selesai
   await new Promise(r => setTimeout(r, 300));
   
   const el = wrap.firstElementChild;
@@ -336,22 +351,33 @@ document.getElementById('genBtn').addEventListener('click', async ()=>{
     });
 });
 
-function buildCardHTML(prod, copy, tpl) {
-  // Gunakan proxy, tapi simpan URL asli untuk fallback
+function buildCardHTML(prod, copy) {
   const originalUrl = prod.hd;
   const proxyUrl = proxyImage(originalUrl);
   const price = fmt(prod.price);
+  const objPos = `${50+S.imgX}% ${50+S.imgY}%`;
+  const zoomScale = S.imgZoom/100;
+
   const tpls = {
-    'story-dark': `<div style="width:1080px;height:1920px;position:relative;overflow:hidden;background:#0F4D37;font-family:'DM Sans',sans-serif;"><img src="${proxyUrl}" data-original="${originalUrl}" crossorigin="anonymous" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55;"/><div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(15,77,55,.2) 0%,rgba(10,30,20,.0) 30%,rgba(5,15,10,.85) 60%,rgba(0,0,0,.97) 100%);"></div><div style="position:absolute;bottom:0;left:0;right:0;padding:80px 72px 100px;"><div style="font-family:'Playfair Display',serif;font-size:108px;font-weight:900;color:white;line-height:1.0;margin-bottom:24px;">${copy.HEADLINE}</div><div style="font-size:38px;color:rgba(255,255,255,.75);margin-bottom:40px;font-style:italic;">${copy.SUBLINE}</div><div style="display:flex;align-items:center;justify-content:space-between;"><div style="font-size:72px;font-weight:900;color:white;">${price}</div><div style="background:#F4C430;border-radius:20px;padding:28px 48px;font-size:28px;font-weight:800;color:#111;">${copy.CTA} →</div></div></div></div>`,
-    'story-light': `<div style="width:1080px;height:1920px;position:relative;overflow:hidden;background:#FDFDF8;font-family:'DM Sans',sans-serif;"><img src="${proxyUrl}" data-original="${originalUrl}" crossorigin="anonymous" style="position:absolute;top:0;left:0;right:0;height:980px;object-fit:cover;"/><div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(253,253,248,0) 50%,#FDFDF8 100%);"></div><div style="position:absolute;bottom:0;left:0;right:0;padding:40px 72px 100px;"><div style="font-family:'Playfair Display',serif;font-size:96px;font-weight:900;color:#0F4D37;line-height:.95;margin-bottom:24px;">${prod.name}</div><div style="font-family:'Playfair Display',serif;font-size:52px;font-weight:700;font-style:italic;color:#111;margin-bottom:20px;">"${copy.SUBLINE}"</div><div style="font-size:30px;color:#6B7280;line-height:1.6;margin-bottom:44px;">${copy.BODY}</div><div style="display:flex;align-items:center;justify-content:space-between;border-top:2px solid #E5E7EB;padding-top:36px;"><div style="font-size:64px;font-weight:900;color:#0F4D37;">${price}</div><div style="background:#D62828;color:white;border-radius:16px;padding:24px 40px;font-size:24px;font-weight:800;">${copy.CTA} →</div></div></div></div>`,
-    'feed-bold': `<div style="width:1080px;height:1080px;position:relative;overflow:hidden;background:#D62828;font-family:'DM Sans',sans-serif;"><img src="${proxyUrl}" data-original="${originalUrl}" crossorigin="anonymous" style="position:absolute;right:0;top:0;width:580px;height:100%;object-fit:cover;"/><div style="position:absolute;inset:0;background:linear-gradient(to right,rgba(214,40,40,1) 0%,rgba(214,40,40,0) 60%);"></div><div style="position:absolute;left:72px;top:60px;bottom:60px;width:500px;display:flex;flex-direction:column;justify-content:space-between;"><div><div style="font-family:'Playfair Display',serif;font-size:88px;font-weight:900;color:white;line-height:.95;margin-bottom:20px;">${copy.HEADLINE}</div><div style="font-size:28px;color:rgba(255,255,255,.8);margin-bottom:32px;">${copy.SUBLINE}</div></div><div><div style="font-size:56px;font-weight:900;color:white;margin-bottom:8px;">${price}</div><div style="background:white;color:#D62828;border-radius:14px;padding:20px 32px;font-size:22px;font-weight:800;width:fit-content;">${copy.CTA} →</div></div></div></div>`,
-    'feed-editorial': `<div style="width:1080px;height:1350px;position:relative;overflow:hidden;background:#111827;font-family:'DM Sans',sans-serif;"><img src="${proxyUrl}" data-original="${originalUrl}" crossorigin="anonymous" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35;"/><div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(17,24,39,.3) 0%,rgba(17,24,39,.95) 55%);"></div><div style="position:absolute;bottom:80px;left:80px;right:80px;"><div style="width:48px;height:4px;background:#F4C430;margin-bottom:28px;"></div><div style="font-family:'Playfair Display',serif;font-size:110px;font-weight:900;color:white;line-height:.9;margin-bottom:28px;">${copy.HEADLINE}</div><div style="font-family:'Playfair Display',serif;font-size:40px;font-style:italic;color:#F4C430;margin-bottom:28px;">"${copy.SUBLINE}"</div><div style="font-size:26px;color:rgba(255,255,255,.6);line-height:1.6;margin-bottom:48px;">${copy.BODY}</div><div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.1);padding-top:32px;"><div style="font-size:64px;font-weight:900;color:white;">${price}</div><div style="background:#F4C430;color:#111;border-radius:12px;padding:20px 36px;font-size:22px;font-weight:800;">${copy.CTA}</div></div></div></div>`,
-    'magazine': `<div style="width:1080px;height:1080px;display:flex;background:#FDFDF8;font-family:'DM Sans',sans-serif;"><div style="width:460px;height:100%;position:relative;overflow:hidden;"><img src="${proxyUrl}" data-original="${originalUrl}" crossorigin="anonymous" style="width:100%;height:100%;object-fit:cover;"/></div><div style="flex:1;padding:64px;display:flex;flex-direction:column;justify-content:space-between;"><div><div style="font-family:'Playfair Display',serif;font-size:80px;font-weight:900;color:#0F4D37;line-height:.95;margin-bottom:20px;">${prod.name}</div><div style="font-family:'Playfair Display',serif;font-size:28px;font-style:italic;color:#374151;margin-bottom:20px;">"${copy.HEADLINE}"</div><div style="font-size:20px;color:#6B7280;line-height:1.6;">${copy.SUBLINE}</div></div><div style="display:flex;align-items:center;gap:16px;border-top:1.5px solid #E5E7EB;padding-top:28px;"><div style="font-size:64px;font-weight:900;color:#0F4D37;">${price}</div><div style="background:#0F4D37;color:white;border-radius:12px;padding:16px 28px;font-size:18px;font-weight:800;white-space:nowrap;">${copy.CTA} →</div></div></div></div>`,
-    'minimal': `<div style="width:1080px;height:1920px;position:relative;overflow:hidden;background:white;font-family:'DM Sans',sans-serif;"><img src="${proxyUrl}" data-original="${originalUrl}" crossorigin="anonymous" style="position:absolute;top:0;left:0;right:0;height:1080px;object-fit:cover;"/><div style="position:absolute;bottom:0;left:0;right:0;top:960px;background:white;border-radius:32px 32px 0 0;padding:56px 64px 80px;display:flex;flex-direction:column;justify-content:space-between;"><div><div style="font-family:'Playfair Display',serif;font-size:96px;font-weight:900;color:#111;line-height:.9;margin-bottom:16px;">${copy.HEADLINE}</div><div style="font-size:30px;color:#6B7280;font-style:italic;margin-bottom:28px;">${copy.SUBLINE}</div><div style="font-size:24px;color:#374151;line-height:1.6;margin-bottom:32px;">${copy.BODY}</div></div><div style="display:flex;align-items:center;justify-content:space-between;"><div style="font-size:64px;font-weight:900;color:#0F4D37;">${price}</div><div style="background:#111;color:white;border-radius:14px;padding:22px 44px;font-size:22px;font-weight:800;">${copy.CTA} →</div></div></div></div>`
+    'story-dark': `<div style="width:1080px;height:1920px;position:relative;overflow:hidden;background:#0F4D37;font-family:'DM Sans',sans-serif;">
+      <img src="${proxyUrl}" data-original="${originalUrl}" crossorigin="anonymous" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:${objPos};transform:scale(${zoomScale});"/>
+      <!-- Overlay: transparan di atas, hijau gelap di bawah (mulai dari tengah) -->
+      <div style="position:absolute;inset:0;background:linear-gradient(to bottom, transparent 0%, transparent 45%, rgba(10,30,20,0.4) 60%, rgba(5,15,10,0.8) 75%, rgba(0,0,0,0.97) 100%);"></div>
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:80px 72px 100px;">
+        <div style="font-family:'Playfair Display',serif;font-size:108px;font-weight:900;color:white;line-height:1.0;margin-bottom:24px;">${copy.HEADLINE}</div>
+        <div style="font-size:38px;color:rgba(255,255,255,.75);margin-bottom:40px;font-style:italic;">${copy.SUBLINE}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;"><div style="font-size:72px;font-weight:900;color:white;">${price}</div><div style="background:#F4C430;border-radius:20px;padding:28px 48px;font-size:28px;font-weight:800;color:#111;">${copy.CTA} →</div></div>
+      </div></div>`,
+    'story-light': `<div style="width:1080px;height:1920px;position:relative;overflow:hidden;background:#FDFDF8;font-family:'DM Sans',sans-serif;"><img src="${proxyUrl}" data-original="${originalUrl}" crossorigin="anonymous" style="position:absolute;top:0;left:0;right:0;height:980px;object-fit:cover;object-position:${objPos};transform:scale(${zoomScale});"/><div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(253,253,248,0) 50%,#FDFDF8 100%);"></div><div style="position:absolute;bottom:0;left:0;right:0;padding:40px 72px 100px;"><div style="font-family:'Playfair Display',serif;font-size:96px;font-weight:900;color:#0F4D37;line-height:.95;margin-bottom:24px;">${prod.name}</div><div style="font-family:'Playfair Display',serif;font-size:52px;font-weight:700;font-style:italic;color:#111;margin-bottom:20px;">"${copy.SUBLINE}"</div><div style="font-size:30px;color:#6B7280;line-height:1.6;margin-bottom:44px;">${copy.BODY}</div><div style="display:flex;align-items:center;justify-content:space-between;border-top:2px solid #E5E7EB;padding-top:36px;"><div style="font-size:64px;font-weight:900;color:#0F4D37;">${price}</div><div style="background:#D62828;color:white;border-radius:16px;padding:24px 40px;font-size:24px;font-weight:800;">${copy.CTA} →</div></div></div></div>`,
+    'feed-bold': `<div style="width:1080px;height:1080px;position:relative;overflow:hidden;background:#D62828;font-family:'DM Sans',sans-serif;"><img src="${proxyUrl}" data-original="${originalUrl}" crossorigin="anonymous" style="position:absolute;right:0;top:0;width:580px;height:100%;object-fit:cover;object-position:${objPos};transform:scale(${zoomScale});"/><div style="position:absolute;inset:0;background:linear-gradient(to right,#D62828 0%,rgba(214,40,40,0) 60%);"></div><div style="position:absolute;left:72px;top:60px;bottom:60px;width:500px;display:flex;flex-direction:column;justify-content:space-between;"><div><div style="font-family:'Playfair Display',serif;font-size:88px;font-weight:900;color:white;line-height:.95;margin-bottom:20px;">${copy.HEADLINE}</div><div style="font-size:28px;color:rgba(255,255,255,.8);margin-bottom:32px;">${copy.SUBLINE}</div></div><div><div style="font-size:56px;font-weight:900;color:white;margin-bottom:8px;">${price}</div><div style="background:white;color:#D62828;border-radius:14px;padding:20px 32px;font-size:22px;font-weight:800;width:fit-content;">${copy.CTA} →</div></div></div></div>`,
+    'feed-editorial': `<div style="width:1080px;height:1350px;position:relative;overflow:hidden;background:#111827;font-family:'DM Sans',sans-serif;"><img src="${proxyUrl}" data-original="${originalUrl}" crossorigin="anonymous" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:${objPos};transform:scale(${zoomScale});opacity:.35;"/><div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(17,24,39,.3) 0%,rgba(17,24,39,.95) 55%);"></div><div style="position:absolute;bottom:80px;left:80px;right:80px;"><div style="width:48px;height:4px;background:#F4C430;margin-bottom:28px;"></div><div style="font-family:'Playfair Display',serif;font-size:110px;font-weight:900;color:white;line-height:.9;margin-bottom:28px;">${copy.HEADLINE}</div><div style="font-family:'Playfair Display',serif;font-size:40px;font-style:italic;color:#F4C430;margin-bottom:28px;">"${copy.SUBLINE}"</div><div style="font-size:26px;color:rgba(255,255,255,.6);line-height:1.6;margin-bottom:48px;">${copy.BODY}</div><div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.1);padding-top:32px;"><div style="font-size:64px;font-weight:900;color:white;">${price}</div><div style="background:#F4C430;color:#111;border-radius:12px;padding:20px 36px;font-size:22px;font-weight:800;">${copy.CTA}</div></div></div></div>`,
+    'magazine': `<div style="width:1080px;height:1080px;display:flex;background:#FDFDF8;font-family:'DM Sans',sans-serif;"><div style="width:460px;height:100%;position:relative;overflow:hidden;"><img src="${proxyUrl}" data-original="${originalUrl}" crossorigin="anonymous" style="width:100%;height:100%;object-fit:cover;object-position:${objPos};transform:scale(${zoomScale});"/></div><div style="flex:1;padding:64px;display:flex;flex-direction:column;justify-content:space-between;"><div><div style="font-family:'Playfair Display',serif;font-size:80px;font-weight:900;color:#0F4D37;line-height:.95;margin-bottom:20px;">${prod.name}</div><div style="font-family:'Playfair Display',serif;font-size:28px;font-style:italic;color:#374151;margin-bottom:20px;">"${copy.HEADLINE}"</div><div style="font-size:20px;color:#6B7280;line-height:1.6;">${copy.SUBLINE}</div></div><div style="display:flex;align-items:center;gap:16px;border-top:1.5px solid #E5E7EB;padding-top:28px;"><div style="font-size:64px;font-weight:900;color:#0F4D37;">${price}</div><div style="background:#0F4D37;color:white;border-radius:12px;padding:16px 28px;font-size:18px;font-weight:800;white-space:nowrap;">${copy.CTA} →</div></div></div></div>`,
+    'minimal': `<div style="width:1080px;height:1920px;position:relative;overflow:hidden;background:white;font-family:'DM Sans',sans-serif;"><img src="${proxyUrl}" data-original="${originalUrl}" crossorigin="anonymous" style="position:absolute;top:0;left:0;right:0;height:1080px;object-fit:cover;object-position:${objPos};transform:scale(${zoomScale});"/><div style="position:absolute;bottom:0;left:0;right:0;top:960px;background:white;border-radius:32px 32px 0 0;padding:56px 64px 80px;display:flex;flex-direction:column;justify-content:space-between;"><div><div style="font-family:'Playfair Display',serif;font-size:96px;font-weight:900;color:#111;line-height:.9;margin-bottom:16px;">${copy.HEADLINE}</div><div style="font-size:30px;color:#6B7280;font-style:italic;margin-bottom:28px;">${copy.SUBLINE}</div><div style="font-size:24px;color:#374151;line-height:1.6;margin-bottom:32px;">${copy.BODY}</div></div><div style="display:flex;align-items:center;justify-content:space-between;"><div style="font-size:64px;font-weight:900;color:#0F4D37;">${price}</div><div style="background:#111;color:white;border-radius:14px;padding:22px 44px;font-size:22px;font-weight:800;">${copy.CTA} →</div></div></div></div>`
   };
-  return tpls[tpl] || tpls['story-dark'];
+  return tpls[S.tpl] || tpls['story-dark'];
 }
 
+// ─── OUTPUT ────────────────────────────────────────────────────
 function showOutput(prod, copy, imgData) {
   document.getElementById('outputArea').innerHTML = `
     <div class="output-wrap">
