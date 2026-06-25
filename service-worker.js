@@ -1,48 +1,31 @@
-// service-worker.js (Pembersih Cache Otomatis)
-const CACHE_NAME = 'rujakco-v2-' + Date.now();
-const urlsToCache = [
-  '/',
-  '/index.html',
-  '/app.js',
-  '/manifest.json',
-  'https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Playfair+Display:wght@700;800&display=swap',
-  'https://unpkg.com/lucide@latest',
-  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'
-];
+// service-worker.js (Auto Update Real-Time)
+const CACHE_NAME = 'rujakco-' + Date.now();
 
-// Saat Service Worker baru terinstall, hapus SEMUA cache lama
 self.addEventListener('install', event => {
+  // Hapus semua cache lama
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cache => caches.delete(cache))
-      );
-    }).then(() => {
-      return caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache));
+    caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))))
+  );
+  // Skip waiting → langsung aktifkan SW baru
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', event => {
+  // Klaim semua halaman yang terbuka
+  event.waitUntil(clients.claim());
+  // Beritahu semua halaman bahwa ada update
+  event.waitUntil(
+    clients.matchAll({ type: 'window' }).then(clients => {
+      clients.forEach(client => client.postMessage({ type: 'SW_UPDATED' }));
     })
   );
 });
 
-// Saat Service Worker baru aktif, klaim semua halaman yang terbuka
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.filter(name => name !== CACHE_NAME).map(name => caches.delete(name))
-      );
-    }).then(() => clients.claim())
-  );
-});
-
-// Strategi: Network First (utamakan jaringan), fallback ke cache jika offline
+// Strategi: Network First (utamakan jaringan)
 self.addEventListener('fetch', event => {
   event.respondWith(
     fetch(event.request)
-      .then(response => {
-        const responseClone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseClone));
-        return response;
-      })
+      .then(response => response)
       .catch(() => caches.match(event.request))
   );
 });
