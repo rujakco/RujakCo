@@ -424,76 +424,91 @@
   <script defer src="app.js"></script>
   
   <!-- ============================================ -->
-  <!-- SUBSIDI POP-UP JAVASCRIPT -->
+  <!-- SUBSIDI POP-UP JAVASCRIPT (FIXED)            -->
   <!-- ============================================ -->
   <script>
   (function() {
     
-    const COUNTDOWN_MINUTES = 30;
-    const COOLDOWN_HOURS = 2;
-    const SCROLL_TRIGGER = 0.45;
-    const STORAGE_PREFIX = 'rujakco_subsidi_';
+    var COUNTDOWN_MINUTES = 30;
+    var COOLDOWN_HOURS = 2;
+    var SCROLL_TRIGGER = 0.45;
+    var STORAGE_PREFIX = 'rujakco_subsidi_';
     
-    let fingerprint = null;
-    let countdownInterval = null;
-    let secondsRemaining = COUNTDOWN_MINUTES * 60;
-    let popupActive = false;
+    var fingerprint = null;
+    var countdownInterval = null;
+    var secondsRemaining = COUNTDOWN_MINUTES * 60;
+    var popupActive = false;
+    var initialized = false;
   
-    const popup = document.getElementById('subsidiPopup');
-    const claimBtn = document.getElementById('subsidiClaimBtnSub');
-    const closeBtn = document.getElementById('subsidiCloseBtnSub');
-    const minutesEl = document.getElementById('countdownMinutesSub');
-    const secondsEl = document.getElementById('countdownSecondsSub');
+    var popup = document.getElementById('subsidiPopup');
+    var claimBtn = document.getElementById('subsidiClaimBtnSub');
+    var closeBtn = document.getElementById('subsidiCloseBtnSub');
+    var minutesEl = document.getElementById('countdownMinutesSub');
+    var secondsEl = document.getElementById('countdownSecondsSub');
+  
+    function getFallbackFingerprint() {
+      return btoa(
+        (screen.width || '') + '|' + 
+        (screen.height || '') + '|' + 
+        (navigator.userAgent || '') + '|' + 
+        (Intl.DateTimeFormat().resolvedOptions().timeZone || '')
+      ).substring(0, 32);
+    }
   
     async function getFingerprint() {
       if (fingerprint) return fingerprint;
       try {
-        const fp = await FingerprintJS.load();
-        const result = await fp.get();
-        fingerprint = result.visitorId;
-        return fingerprint;
+        if (typeof FingerprintJS !== 'undefined') {
+          var fp = await FingerprintJS.load();
+          var result = await fp.get();
+          fingerprint = result.visitorId;
+        } else {
+          fingerprint = getFallbackFingerprint();
+        }
       } catch (e) {
-        fingerprint = btoa(
-          screen.width + '|' + 
-          screen.height + '|' + 
-          navigator.userAgent + '|' + 
-          Intl.DateTimeFormat().resolvedOptions().timeZone
-        ).substring(0, 32);
-        return fingerprint;
+        fingerprint = getFallbackFingerprint();
       }
+      return fingerprint;
     }
   
     function getStorageKey(key) {
-      return STORAGE_PREFIX + key + '_' + (fingerprint || 'unknown');
+      return STORAGE_PREFIX + key + '_' + (fingerprint || 'fallback');
     }
   
     function setStorage(key, value) {
-      const k = getStorageKey(key);
-      localStorage.setItem(k, JSON.stringify({
-        value: value,
-        timestamp: Date.now()
-      }));
+      try {
+        var k = getStorageKey(key);
+        localStorage.setItem(k, JSON.stringify({
+          value: value,
+          timestamp: Date.now()
+        }));
+      } catch (e) {}
     }
   
     function getStorage(key) {
-      const k = getStorageKey(key);
-      const data = localStorage.getItem(k);
-      if (!data) return null;
-      try { return JSON.parse(data); } catch (e) { return null; }
+      try {
+        var k = getStorageKey(key);
+        var data = localStorage.getItem(k);
+        if (!data) return null;
+        return JSON.parse(data);
+      } catch (e) {
+        return null;
+      }
     }
   
     function removeStorage(key) {
-      const k = getStorageKey(key);
-      localStorage.removeItem(k);
+      try {
+        var k = getStorageKey(key);
+        localStorage.removeItem(k);
+      } catch (e) {}
     }
   
     async function canShowPopup() {
       await getFingerprint();
-      const cooldownData = getStorage('cooldown');
+      var cooldownData = getStorage('cooldown');
       if (!cooldownData) return true;
-      const cooldownUntil = cooldownData.value;
-      const now = Date.now();
-      if (now >= cooldownUntil) {
+      var now = Date.now();
+      if (now >= cooldownData.value) {
         removeStorage('cooldown');
         return true;
       }
@@ -501,13 +516,14 @@
     }
   
     function setCooldown() {
-      const cooldownUntil = Date.now() + (COOLDOWN_HOURS * 60 * 60 * 1000);
+      var cooldownUntil = Date.now() + (COOLDOWN_HOURS * 60 * 60 * 1000);
       setStorage('cooldown', cooldownUntil);
     }
   
     function updateCountdownDisplay() {
-      const mins = Math.floor(secondsRemaining / 60);
-      const secs = secondsRemaining % 60;
+      if (!minutesEl || !secondsEl) return;
+      var mins = Math.floor(secondsRemaining / 60);
+      var secs = secondsRemaining % 60;
       minutesEl.textContent = String(mins).padStart(2, '0');
       secondsEl.textContent = String(secs).padStart(2, '0');
       if (secondsRemaining <= 300) {
@@ -522,6 +538,7 @@
     function startCountdown() {
       secondsRemaining = COUNTDOWN_MINUTES * 60;
       updateCountdownDisplay();
+      if (countdownInterval) clearInterval(countdownInterval);
       countdownInterval = setInterval(function() {
         secondsRemaining--;
         updateCountdownDisplay();
@@ -535,17 +552,19 @@
   
     async function openPopup() {
       if (popupActive) return;
-      if (!(await canShowPopup())) return;
+      if (!popup) return;
+      var canShow = await canShowPopup();
+      if (!canShow) return;
       popupActive = true;
       popup.style.display = 'flex';
       startCountdown();
-      minutesEl.style.color = '#F4C430';
-      secondsEl.style.color = '#F4C430';
+      if (minutesEl) minutesEl.style.color = '#F4C430';
+      if (secondsEl) secondsEl.style.color = '#F4C430';
     }
   
     function closePopup() {
       popupActive = false;
-      popup.style.display = 'none';
+      if (popup) popup.style.display = 'none';
       if (countdownInterval) {
         clearInterval(countdownInterval);
         countdownInterval = null;
@@ -558,64 +577,64 @@
       setStorage('countdown_expired', true);
     }
   
-    let scrollListenerAdded = false;
-  
-    async function handleScroll() {
-      const scrollPercent = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight;
-      if (scrollPercent > SCROLL_TRIGGER && !popupActive) {
-        const canShow = await canShowPopup();
-        if (canShow) {
-          openPopup();
-        }
+    function handleScroll() {
+      if (popupActive) return;
+      var scrollPercent = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight;
+      if (scrollPercent > SCROLL_TRIGGER) {
         window.removeEventListener('scroll', handleScroll);
-        scrollListenerAdded = false;
+        openPopup();
       }
     }
   
     function initScrollListener() {
-      if (!scrollListenerAdded) {
-        window.addEventListener('scroll', handleScroll);
-        scrollListenerAdded = true;
-      }
+      window.addEventListener('scroll', handleScroll, { passive: true });
     }
   
-    claimBtn.addEventListener('click', function() {
-      closePopup();
-      const menuEl = document.getElementById('menuList') || document.getElementById('catScroll');
-      if (menuEl) {
-        menuEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
+    if (claimBtn) {
+      claimBtn.addEventListener('click', function() {
+        closePopup();
+        var menuEl = document.getElementById('menuList') || document.getElementById('catScroll');
+        if (menuEl) {
+          menuEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }
   
-    closeBtn.addEventListener('click', function() {
-      closePopupAndCooldown();
-    });
-  
-    popup.addEventListener('click', function(e) {
-      if (e.target === popup) {
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function() {
         closePopupAndCooldown();
-      }
-    });
+      });
+    }
+  
+    if (popup) {
+      popup.addEventListener('click', function(e) {
+        if (e.target === popup) {
+          closePopupAndCooldown();
+        }
+      });
+    }
   
     async function init() {
+      if (initialized) return;
+      initialized = true;
+      
       await getFingerprint();
-      const expired = getStorage('countdown_expired');
-      if (!expired) {
-        initScrollListener();
-      }
-      const cooldownData = getStorage('cooldown');
+      
+      var expired = getStorage('countdown_expired');
+      var cooldownData = getStorage('cooldown');
+      
       if (cooldownData && Date.now() >= cooldownData.value) {
         removeStorage('cooldown');
         removeStorage('countdown_expired');
+      }
+      
+      var currentCooldown = getStorage('cooldown');
+      if (!currentCooldown) {
         initScrollListener();
       }
     }
   
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
-    } else {
-      init();
-    }
+    setTimeout(init, 2000);
   
   })();
   </script>
