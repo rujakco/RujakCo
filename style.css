@@ -82,7 +82,7 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 .badge-priority{background:var(--red);color:white;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;text-transform:uppercase}
 .shipping-out-of-range{background:#fee2e2;border:1px solid #fecaca;color:var(--red);padding:6px 12px;border-radius:var(--radius-pill);font-size:12px;font-weight:600;display:none;text-align:center}
 
-/* Search toggle â€“ dipakai di baris "Koleksi Rasa" */
+/* Search toggle */
 .search-toggle-wrap {
   display: flex;
   align-items: center;
@@ -154,7 +154,6 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 .promo-title{font-size:14px;font-weight:800;color:#3d2b00}
 .promo-sub{font-size:12px;color:#5a3e00;margin-top:1px;font-weight:500}
 
-/* Animasi promo */
 .promo-anim {
   margin-left: auto;
   display: flex;
@@ -237,7 +236,7 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 .addon-add{width:26px;height:26px;background:var(--green-pale);border:none;border-radius:50%;color:var(--green);cursor:pointer;display:flex;align-items:center;justify-content:center}
 .addon-add:focus-visible{outline:2px solid var(--green)}
 
-/* === EDUKASI & FAQ === */
+/* Edukasi & FAQ */
 .edu-container { padding: 0 20px 24px; display: flex; flex-direction: column; gap: 12px; }
 .edu-card { background: white; border: 1px solid rgba(15, 77, 55, 0.08); box-shadow: 0 4px 14px rgba(15, 77, 55, 0.02); border-radius: 14px; padding: 16px; display: flex; gap: 14px; align-items: flex-start; }
 .edu-icon-wrap { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -252,8 +251,8 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 .faq-item.open .faq-answer { max-height: 200px; margin-top: 8px; } .faq-item.open .faq-question svg { transform: rotate(180deg); }
 .divider { height: 8px; background: rgba(244, 196, 48, 0.08); margin: 12px 0; }
 
-/* === FOOTER (VERSI BARU - NO BORDER TOP, ICON BESAR, WA DI BAWAH) === */
-.footer-brand { background: var(--green); color: white; width: 100%; transition: padding-bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+/* Footer */
+.footer-brand { background: var(--green); color: white; width: 100%; transition: padding-bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-top: none !important; }
 .footer-brand-inner { max-width: 480px; margin: 0 auto; padding: 32px 20px 24px; display: flex; flex-direction: column; gap: 20px; }
 .footer-brand-row { display: flex; align-items: center; gap: 12px; }
 .footer-brand-row img { height: 44px; width: 44px; border-radius: 50%; object-fit: cover; }
@@ -266,31 +265,18 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 .footer-col ul li { font-size: 13px; opacity: .8; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
 .footer-col ul li svg { color: var(--gold); width: 16px; height: 16px; }
 
-/* Social Icons */
 .footer-social { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 6px; margin-bottom: 16px; }
-.footer-social a { 
-  color: white; 
-  background: rgba(255,255,255,.12); 
-  width: 44px; 
-  height: 44px; 
-  border-radius: 50%; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  transition: background .2s, transform .2s; 
-  text-decoration: none; 
-}
-.footer-social a img { width: 24px; height: 24px; object-fit: contain; }
+.footer-social a { color: white; background: rgba(255,255,255,.12); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background .2s, transform .2s; text-decoration: none; }
+.footer-social a img { width: 24px !important; height: 24px !important; object-fit: contain; }
 .footer-social a:hover { background: var(--gold); transform: translateY(-3px); }
 
-/* WhatsApp Button */
-.footer-wa { display: inline-flex; align-items: center; gap: 10px; background: var(--gold); color: var(--green); padding: 12px 20px; border-radius: 50px; font-weight: 700; font-size: 14px; text-decoration: none; transition: background .2s, transform .2s; width: fit-content; border: none; margin-top: 4px; }
+.footer-wa { display: inline-flex; align-items: center; gap: 10px; background: var(--gold); color: var(--green); padding: 12px 20px; border-radius: 50px; font-weight: 700; font-size: 14px; text-decoration: none; transition: background .2s, transform .2s; width: fit-content; border: none; margin-top: 12px !important; }
 .footer-wa img { width: 18px; height: 18px; object-fit: contain; }
 .footer-wa:hover { background: #e0b51a; color: var(--green-dark); transform: translateY(-2px); }
 
 .footer-bottom { border-top: 1px solid rgba(255,255,255,.12); padding-top: 16px; text-align: center; font-size: 11px; opacity: .5; margin-top: 8px; }
 
-/* === BOTTOM BAR & FLOATING CART === */
+/* Bottom Bar & Floating Cart */
 #bottom-bar { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: var(--ivory); border-top: 1px solid rgba(15, 77, 55, 0.1); padding: 12px 20px 20px; z-index: 200; box-shadow: 0 -10px 30px rgba(15, 77, 55, 0.05); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform: translateY(100%); }
 #bottom-bar.visible { transform: translateY(0); }
 .cart-summary { display: flex; align-items: center; background: white; border: 1px solid rgba(15, 77, 55, 0.1); box-shadow: 0 2px 10px rgba(15, 77, 55, 0.03); border-radius: 14px; padding: 10px 14px; margin-bottom: 10px; gap: 10px; cursor: pointer; }
@@ -311,14 +297,14 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 #floatingCartBtn .badge-cart { position: absolute; top: -4px; right: -4px; background: var(--red); color: white; font-size: 12px; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; line-height: 1; }
 #floatingCartBtn.visible { display: flex; }
 
-/* === FORM SECTION === */
+/* Form Section */
 .form-section { margin-bottom: 14px; }
 .form-label { font-size: 12px; font-weight: 700; color: var(--gray-700); display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .03em; }
 .form-section input, .form-section textarea { width: 100%; border: 1px solid var(--gray-200); border-radius: 10px; padding: 10px 12px; font-size: 14px; font-family: inherit; outline: none; background: white; transition: border-color .2s, box-shadow .2s; resize: vertical; }
 .form-section input:focus, .form-section textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(15, 77, 55, 0.1); }
 .form-section textarea { min-height: 70px; }
 
-/* === SHIPPING METHOD ROW === */
+/* Shipping Method Row */
 .shipping-method-row { display: flex; gap: 8px; margin-bottom: 4px; }
 .method-btn { flex: 1; padding: 10px 8px; border: 1px solid var(--gray-200); border-radius: 10px; background: white; font-size: 12px; font-weight: 600; color: var(--gray-700); cursor: pointer; transition: all .2s; text-align: center; white-space: nowrap; }
 .method-btn.active { background: var(--green-pale); border-color: var(--green); color: var(--green); }
@@ -331,7 +317,7 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
   background-repeat: no-repeat; background-position: right 12px center; background-size: 14px;
 }
 
-/* === GIFT TOGGLE (MODE KADO) === */
+/* Gift Toggle */
 .gift-toggle-wrap { display: flex; align-items: center; justify-content: space-between; background: #fef3c7; border: 1px solid #fcd34d; border-radius: 12px; padding: 12px 14px; }
 .gift-toggle-label { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: #92400e; }
 .switch { position: relative; display: inline-block; width: 48px; height: 26px; }
@@ -343,18 +329,18 @@ input:checked + .slider:before { transform: translateX(22px); }
 .slider.round { border-radius: 26px; }
 .slider.round:before { border-radius: 50%; }
 
-/* === MISI JAJAN === */
+/* Misi Jajan */
 .mission-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 14px; color: var(--gray-700); }
 .mission-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--green); flex-shrink: 0; }
 .mission-item b { color: var(--green); }
 #promoModal .modal-content { max-width: 350px; }
 
-/* === TOAST NOTIFICATION === */
+/* Toast Notification */
 #toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--green); color: white; font-size: 14px; font-weight: 600; padding: 10px 20px; border-radius: var(--radius-pill); z-index: 999; opacity: 0; pointer-events: none; transition: all .25s; max-width: 90%; word-wrap: break-word; box-shadow: 0 4px 16px rgba(15,77,55,.4); }
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 .empty-state { padding: 40px 20px; text-align: center; color: var(--gray-500); font-size: 15px; display: none; }
 
-/* === MODAL UTAMA === */
+/* Modal Utama */
 .modal-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.5); z-index: 300; display: flex; align-items: center; justify-content: center; opacity:0; pointer-events: none; transition: opacity .3s ease; padding: 20px; }
 .modal-overlay.active { opacity:1; pointer-events: auto; }
 .modal-content { background: white; border-radius: 24px; max-width: 400px; width:100%; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3); transform: scale(0.95); transition: transform .3s ease; }
@@ -369,7 +355,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 .modal-footer .modal-add { display: flex; justify-content: space-between; align-items: center; width: 100%; background: var(--green); color: white; border: none; border-radius: 12px; padding: 14px 20px; font-weight: 700; font-size: 15px; cursor: pointer; transition: background .2s, transform .2s; }
 .modal-footer .modal-add:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; } .modal-footer .modal-add:active { background: var(--green-light); transform: scale(.98); }
 
-/* === ISI MODAL PRODUK === */
+/* Isi Modal Produk */
 .modal-img { width:100%; aspect-ratio: 1/1; background: var(--gray-100); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; font-size: 48px; color: var(--gray-400); overflow: hidden; }
 .modal-img img { width:100%; height:100%; object-fit:cover; }
 .modal-title-wrap { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 2px; }
@@ -390,7 +376,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 .spice-row select { padding: 6px 32px 6px 12px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 14px; font-weight: 600; color: var(--gray-900); background: white; font-family: inherit; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; background-size: 14px; cursor: pointer; flex: 1; min-width: 100px; }
 .spice-row select:focus { outline: 2px solid var(--green); border-color: transparent; }
 
-/* === MINI CART MODAL === */
+/* Mini Cart Modal (LAMA — untuk kompatibilitas) */
 .mini-cart-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--gray-200); }
 .mini-cart-item:last-child { border-bottom: none; } .mini-cart-info { flex:1; }
 .mini-cart-name { font-weight: 600; font-size: 14px; color: var(--gray-900); } .mini-cart-detail { font-size: 12px; color: var(--gray-500); }
@@ -404,7 +390,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 .clear-cart-btn { background: none; border: none; color: var(--red); font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 6px; transition: background .2s; }
 .clear-cart-btn:focus-visible { outline: 2px solid var(--red); } .clear-cart-btn:active { background: rgba(214,40,40,0.08); }
 
-/* === SKELETON LOADING === */
+/* Skeleton Loading */
 .skeleton { background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
 @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
 .skeleton-item { display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid rgba(15, 77, 55, 0.06); }
@@ -412,11 +398,194 @@ input:checked + .slider:before { transform: translateX(22px); }
 .skeleton-body { flex:1; display: flex; flex-direction: column; gap: 8px; }
 .skeleton-line { height: 14px; border-radius: 6px; width: 100%; } .skeleton-line.short { width: 60%; } .skeleton-line.medium { width: 80%; }
 
-/* === QRIS IMAGE ZOOM === */
+/* QRIS Image Zoom */
 #qrisImagePayment { transition: transform 0.3s ease; cursor: pointer; }
 #qrisImagePayment.qr-zoomed { transform: scale(2); }
 
-/* === RESPONSIVE UTILITIES === */
+/* ==================== CART STEP / CHECKOUT (BARU) ==================== */
+
+/* Step Indicator */
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 4px;
+}
+.step {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--gray-200);
+  color: var(--gray-500);
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+.step.active { background: var(--green); color: white; }
+.step-line {
+  width: 40px; height: 2px;
+  background: var(--gray-200);
+  transition: all 0.3s ease;
+}
+.step-line.active { background: var(--green); }
+
+/* Cart Step */
+.cart-step { 
+  animation: fadeInStep 0.3s ease; 
+}
+@keyframes fadeInStep {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Subtotal */
+.cart-subtotal {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--gray-200);
+  margin-top: 8px;
+}
+.cart-subtotal span:last-child {
+  color: var(--green);
+}
+
+/* Button Step */
+.btn-step {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  background: var(--gray-200);
+  color: var(--gray-700);
+  margin-top: 10px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+.btn-step:active { transform: scale(0.98); }
+.btn-step.primary { 
+  background: var(--green); 
+  color: white; 
+}
+.btn-step.primary:hover { 
+  background: var(--green-dark); 
+}
+.btn-step.primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Shipping Options */
+.shipping-options, .vehicle-options {
+  display: flex;
+  gap: 8px;
+}
+.ship-btn, .veh-btn {
+  flex: 1;
+  padding: 10px 12px;
+  border: 2px solid var(--gray-200);
+  border-radius: 10px;
+  background: white;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+.ship-btn:active, .veh-btn:active { transform: scale(0.97); }
+.ship-btn.active, .veh-btn.active {
+  border-color: var(--green);
+  background: var(--green-pale);
+  color: var(--green);
+}
+
+/* Priority Toggle di step 2 */
+.priority-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: var(--gray-100);
+  border-radius: 10px;
+}
+.priority-toggle span {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--gray-700);
+}
+
+/* Final Summary */
+.final-summary {
+  background: var(--gray-100);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.final-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  padding: 4px 0;
+  color: var(--gray-700);
+}
+.final-row.discount { color: var(--red); }
+.final-row.total {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--green);
+  border-top: 2px solid var(--gray-300);
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+/* Gift Section di step 3 */
+.gift-section {
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-top: 8px;
+}
+.gift-section input[type="checkbox"] { 
+  accent-color: var(--green); 
+  width: 16px; 
+  height: 16px;
+  margin-right: 6px;
+}
+.gift-section label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #92400e;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+.gift-section input, .gift-section textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  margin-top: 6px;
+}
+.gift-section input:focus, .gift-section textarea:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(15,77,55,0.1);
+}
+
+/* Responsive Utilities */
 @media (max-width: 420px) {
   .brand-name { font-size: 17px; } .location-value { font-size: 11px; }
   .footer-grid { grid-template-columns: 1fr; gap: 12px; }
@@ -425,10 +594,10 @@ input:checked + .slider:before { transform: translateX(22px); }
   .store-status { font-size: 11px; padding: 3px 8px; }
   .share-strip-inner { flex-direction: column; gap: 8px; align-items: stretch; }
   .share-btn { justify-content: center; }
+  .step-line { width: 20px; }
+  .shipping-options, .vehicle-options { flex-direction: column; }
+  .ship-btn, .veh-btn { flex: none; }
 }
-
-
-/* ==================== UPDATED / MERGED FROM USER SNIPPET ==================== */
 
 /* ==================== GAYA SWITCH PRIORITAS ==================== */
 .switch {
@@ -486,7 +655,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 }
 #customerDataForm { transition: all 0.3s ease; }
 
-/* ==================== MINI CART ITEMS ==================== */
+/* ==================== MINI CART ITEMS (BARU) ==================== */
 .mini-cart-item {
   display: flex;
   justify-content: space-between;
@@ -527,7 +696,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   margin-top: 8px;
 }
 
-/* ==================== FORM SECTION ==================== */
+/* ==================== FORM SECTION (REVISI) ==================== */
 .form-section { margin-bottom: 12px; }
 .form-label {
   display: block;
@@ -589,4 +758,4 @@ input:checked + .slider:before { transform: translateX(22px); }
 }
 .clear-cart-btn:hover { text-decoration: underline; }
 
-/* ==================== END UPDATE ==================== */
+/* ==================== END ==================== */
