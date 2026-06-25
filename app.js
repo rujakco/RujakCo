@@ -43,7 +43,9 @@
     SUBSIDY_AMOUNT1: 5000,
     SUBSIDY_AMOUNT2: 10000,
     PRIORITY_SURCHARGE: 8000,
-    MAX_SUBSIDY: 30000
+    MAX_SUBSIDY: 30000,
+    STORE_LAT: -6.2347,
+    STORE_LNG: 106.9895
   };
 
   const DISTRICT_MAP = { 'bekasi barat':3,'bekasi timur':5,'bekasi selatan':7,'bekasi utara':8,'rawalumbu':6,'jatiasih':9,'pondokgede':12,'cikarang':18,'jakarta pusat':18,'jakarta selatan':20,'jakarta timur':15,'jakarta barat':22,'jakarta utara':25,'depok':28,'bogor':35,'tangerang':30,'tangerang selatan':27 };
@@ -56,6 +58,7 @@
   };
 
   let addToCartLocked = false;
+  let checkoutLocked = false;
   function lockAddToCart() { addToCartLocked = true; setTimeout(() => { addToCartLocked = false; }, 300); }
 
   function escapeHTML(str) { return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
@@ -103,7 +106,7 @@
     return 'Zona E (>20 km)';
   }
 
-  // ===================== SURGE DETECTION (FIXED) =====================
+  // ===================== SURGE DETECTION =====================
   function isPeakHour() {
     const now = new Date();
     const hour = now.getHours();
@@ -118,8 +121,7 @@
       return 1.0;
     }
     if (state.currentSurge) return state.currentSurge;
-    const surge = 1.3 + (Math.random() * 0.2);
-    state.currentSurge = Math.round(surge * 10) / 10;
+    state.currentSurge = 1.3;
     return state.currentSurge;
   }
 
@@ -163,7 +165,7 @@
     return subsidy;
   }
 
-  // ===================== LOCATION (FIXED IPAPI CACHE) =====================
+  // ===================== LOCATION =====================
   function getLocationFallback() {
     return new Promise(resolve => {
       const cached = localStorage.getItem('rujak_location');
@@ -171,9 +173,7 @@
         try {
           const data = JSON.parse(cached);
           const age = Date.now() - data.timestamp;
-          if (age < 86400000 && data.distance < 900) {
-            return resolve(data);
-          }
+          if (age < 86400000 && data.distance < 900) return resolve(data);
         } catch(e) {}
       }
       fetch('https://ipapi.co/json/')
@@ -218,11 +218,10 @@
   }
 
   function detectLocation() {
-    const STORE_LAT=-6.2333,STORE_LNG=107.0;
     const costEl = document.getElementById('shippingCost');
     if (costEl) costEl.textContent = '⏳';
     if(state.useManualDistrict&&state.selectedDistrict){ const dist=DISTRICT_MAP[state.selectedDistrict]||SYSTEM.DEFAULT_DISTANCE; state.userDistance=dist; const distName=state.selectedDistrict.replace(/\b\w/g,l=>l.toUpperCase()); document.getElementById('locationDisplay').textContent=distName+' ▾'; updateShippingUI(dist,state.isPriority); return; }
-    if(navigator.geolocation){ navigator.geolocation.getCurrentPosition(pos=>{ const lat=pos.coords.latitude,lng=pos.coords.longitude; const R=6371; const dLat=(lat-STORE_LAT)*Math.PI/180; const dLon=(lng-STORE_LNG)*Math.PI/180; const a=Math.sin(dLat/2)**2+Math.cos(STORE_LAT*Math.PI/180)*Math.cos(lat*Math.PI/180)*Math.sin(dLon/2)**2; const distance=R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)); fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=10&accept-language=id`).then(r=>r.json()).then(data=>{ const city=data.address?.city||data.address?.town||'Lokasi Anda'; state.userDistance=distance; document.getElementById('locationDisplay').textContent=city+' ▾'; updateShippingUI(distance,state.isPriority); }).catch(()=>{ state.userDistance=distance; document.getElementById('locationDisplay').textContent='Lokasi Anda ▾'; updateShippingUI(distance,state.isPriority); }); },()=>{ getLocationFallback().then(({city,distance})=>{ state.userDistance=distance; document.getElementById('locationDisplay').textContent=city+' ▾'; updateShippingUI(distance,state.isPriority); }); },{enableHighAccuracy:true,timeout:10000}); } else { getLocationFallback().then(({city,distance})=>{ state.userDistance=distance; document.getElementById('locationDisplay').textContent=city+' ▾'; updateShippingUI(distance,state.isPriority); }); }
+    if(navigator.geolocation){ navigator.geolocation.getCurrentPosition(pos=>{ const lat=pos.coords.latitude,lng=pos.coords.longitude; const R=6371; const dLat=(lat-SYSTEM.STORE_LAT)*Math.PI/180; const dLon=(lng-SYSTEM.STORE_LNG)*Math.PI/180; const a=Math.sin(dLat/2)**2+Math.cos(SYSTEM.STORE_LAT*Math.PI/180)*Math.cos(lat*Math.PI/180)*Math.sin(dLon/2)**2; const distance=R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)); fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=10&accept-language=id`,{headers:{'User-Agent':'RujakCo/1.0'}}).then(r=>r.json()).then(data=>{ const city=data.address?.city||data.address?.town||'Lokasi Anda'; state.userDistance=distance; document.getElementById('locationDisplay').textContent=city+' ▾'; updateShippingUI(distance,state.isPriority); }).catch(()=>{ state.userDistance=distance; document.getElementById('locationDisplay').textContent='Lokasi Anda ▾'; updateShippingUI(distance,state.isPriority); }); },()=>{ getLocationFallback().then(({city,distance})=>{ state.userDistance=distance; document.getElementById('locationDisplay').textContent=city+' ▾'; updateShippingUI(distance,state.isPriority); }); },{enableHighAccuracy:true,timeout:10000}); } else { getLocationFallback().then(({city,distance})=>{ state.userDistance=distance; document.getElementById('locationDisplay').textContent=city+' ▾'; updateShippingUI(distance,state.isPriority); }); }
   }
 
   function getCartSummary() {
@@ -346,14 +345,24 @@
 
   function openProductModal(id) {
     const product=PRODUCTS.find(p=>p.id===id); if(!product) return; currentProductId=id;
+    
+    // ✅ FIX: Hapus node lama sebelum tambah baru
+    const oldRitual = document.querySelector('.ritual-box');
+    if (oldRitual) oldRitual.remove();
+    const oldHarga = document.querySelector('.harga-box');
+    if (oldHarga) oldHarga.remove();
+    
     document.getElementById('modalImg').innerHTML=`<img src="${product.image}" alt="${escapeHTML(product.name)}" onerror="this.style.display='none'; this.parentElement.textContent='${escapeHTML(product.name.substring(0,20))}';">`;
     const be=document.getElementById('modalBadge'); if(product.badge){ be.style.display='inline-block'; be.textContent=product.badge; be.className='modal-badge-eyebrow '+(product.badgeColor||''); } else be.style.display='none';
     document.getElementById('modalTitle').textContent=product.name; document.getElementById('modalDesc').textContent=product.desc;
     document.getElementById('modalContainer').textContent=product.container||'-'; document.getElementById('modalSize').textContent=product.size||'-'; document.getElementById('modalSambal').textContent=product.sambal||'-';
     document.getElementById('modalBuahText').textContent=(product.buah||[]).join(', ');
     document.getElementById('modalTags').innerHTML=(product.tags||[]).map(t=>`<span class="modal-tag">${escapeHTML(t)}</span>`).join('');
-    const ritualDiv=document.createElement('div'); ritualDiv.style.cssText='background:var(--ivory);border:1px solid var(--green-pale);border-radius:10px;padding:10px 12px;margin:8px 0;'; ritualDiv.innerHTML=`<div style="font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.05em;">🎯 Ritual Nikmat</div><div style="font-size:11px;color:var(--gray-700);margin-top:4px;line-height:1.6;"><span style="color:var(--green);font-weight:700;">①</span> Tuang sambal ke wadah<br><span style="color:var(--green);font-weight:700;">②</span> Aduk rata & nikmati tiap gigitan<br><span style="color:var(--green);font-weight:700;">③</span> Tambah level pedas sesuai selera</div>`; document.getElementById('modalTags').after(ritualDiv);
-    const breakdown=product.price<=30000?`${(product.buah||[]).length} jenis buah segar • sambal homemade • wadah food grade`:product.price<=85000?`${(product.buah||[]).length} jenis buah premium • sambal spesial • wadah jumbo`:`${(product.buah||[]).length}+ jenis buah • tampah bambu • sambal variant`; const hargaDiv=document.createElement('div'); hargaDiv.style.cssText='font-size:10px;color:var(--gray-500);margin:4px 0 6px;line-height:1.4;text-align:center;'; hargaDiv.innerHTML=`💰 <strong>${fmt(product.price)}</strong> sudah termasuk:<br>${breakdown}`; const detailGrid=document.getElementById('modalDetailGrid'); if(detailGrid) detailGrid.after(hargaDiv);
+    
+    const ritualDiv=document.createElement('div'); ritualDiv.className='ritual-box'; ritualDiv.style.cssText='background:var(--ivory);border:1px solid var(--green-pale);border-radius:10px;padding:10px 12px;margin:8px 0;'; ritualDiv.innerHTML=`<div style="font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.05em;">🎯 Ritual Nikmat</div><div style="font-size:11px;color:var(--gray-700);margin-top:4px;line-height:1.6;"><span style="color:var(--green);font-weight:700;">①</span> Tuang sambal ke wadah<br><span style="color:var(--green);font-weight:700;">②</span> Aduk rata & nikmati tiap gigitan<br><span style="color:var(--green);font-weight:700;">③</span> Tambah level pedas sesuai selera</div>`; document.getElementById('modalTags').after(ritualDiv);
+    
+    const breakdown=product.price<=30000?`${(product.buah||[]).length} jenis buah segar • sambal homemade • wadah food grade`:product.price<=85000?`${(product.buah||[]).length} jenis buah premium • sambal spesial • wadah jumbo`:`${(product.buah||[]).length}+ jenis buah • tampah bambu • sambal variant`; const hargaDiv=document.createElement('div'); hargaDiv.className='harga-box'; hargaDiv.style.cssText='font-size:10px;color:var(--gray-500);margin:4px 0 6px;line-height:1.4;text-align:center;'; hargaDiv.innerHTML=`💰 <strong>${fmt(product.price)}</strong> sudah termasuk:<br>${breakdown}`; const detailGrid=document.getElementById('modalDetailGrid'); if(detailGrid) detailGrid.after(hargaDiv);
+    
     document.getElementById('btnPrice').textContent=fmt(product.price); document.getElementById('modalAdd').dataset.id=product.id;
     const sel=document.getElementById('spiceSelect'); const dv=product.defaultSpice||3; sel.value=dv; updateSpiceHighlight(dv); sel.onchange=function(){ updateSpiceHighlight(parseInt(this.value,10)); };
     productModal.classList.add('active'); document.body.style.overflow='hidden';
@@ -372,6 +381,9 @@
   }
 
   function handleCheckout() {
+    // ✅ FIX: Anti spam order
+    if (checkoutLocked) return showToast('⏳ Pesanan sedang diproses...');
+    
     const summary=getCartSummary(); if(summary.isOutOfRange) return showToast('Maaf, area Anda di luar jangkauan. Admin akan menghubungi.');
     const name=state.customerName.trim(),phone=state.customerPhone.trim(),address=state.customerAddress.trim();
     if(!name||name.length<2) return showToast('❌ Nama penerima tidak valid'),document.getElementById('customerName').focus();
@@ -380,8 +392,10 @@
     if(!phoneRegex.test(cleanedPhone)){ if(cleanedPhone.startsWith('0')&&cleanedPhone.length<10) return showToast('❌ Nomor HP terlalu pendek (min 10 digit)'),document.getElementById('customerPhone').focus(); if(cleanedPhone.startsWith('0')&&cleanedPhone.length>13) return showToast('❌ Nomor HP terlalu panjang (max 13 digit)'),document.getElementById('customerPhone').focus(); return showToast('❌ Format: 08xx, +628xx, atau 628xx'),document.getElementById('customerPhone').focus(); }
     if(!address||address.length<5) return showToast('❌ Alamat pengiriman tidak valid'),document.getElementById('customerAddress').focus();
     if(summary.items.length===0) return showToast('Keranjang kosong');
+    
+    checkoutLocked = true;
     const payBtn=document.querySelector('[data-action="confirm-wa"]'); if(payBtn){ payBtn.textContent='⏳ Menyimpan...'; payBtn.disabled=true; }
-    saveOrderToDatabase(summary.items,summary.total,summary.subtotal,summary.shippingCost,summary.discount).then((saved)=>{ showToast(saved?'✅ Pesanan tersimpan!':'⚠️ Lanjut WhatsApp tanpa simpan'); }).catch(()=>{ showToast('⚠️ Gagal menyimpan, lanjut WhatsApp'); }).finally(()=>{ setTimeout(()=>{ if(payBtn){ payBtn.textContent='💳 Kirim Bukti Transfer'; payBtn.disabled=false; } },1000); setTimeout(()=>{ let msg='Halo Rujak.Co! Saya ingin memesan:\n\n'; summary.items.forEach(item=>{ const spiceText=item.spice?' (Level '+item.spice+')':''; msg+='• '+item.name+spiceText+' (x'+item.qty+') — '+fmt(item.lineTotal)+'\n'; }); if(state.orderNotes) msg+='\n*Catatan Pesanan:*\n'+state.orderNotes+'\n'; if(state.isGift){ msg+='\n🎁 *PESANAN KADO*\n'; if(state.giftSender) msg+='Dari: '+state.giftSender+'\n'; if(state.giftMessage) msg+='Ucapan: '+state.giftMessage+'\n'; } msg+='\n*Pengiriman:* '+(state.shippingProvider==='pembeli'?'Kurir Saya':'Kurir Rujak.Co - '+state.vehicleType+(state.isPriority?' (Prioritas)':'')); msg+='\n*Data:*\nNama : '+name+'\nNo. HP : '+phone+'\nAlamat : '+address+'\n'; if(state.shippingProvider==='rujakco'){ msg+='\nBiaya Pengantaran: '+fmt(summary.rawShippingCost)+' ('+summary.shippingLabel+')'; if(summary.lalamoveCost>0) msg+='\n  └ Tarif Kurir: '+fmt(summary.lalamoveCost); if(summary.shippingSubsidy>0) msg+='\n  └ Subsidi Rujak.Co: -'+fmt(summary.shippingSubsidy); msg+='\n  └ Total Bayar: '+fmt(summary.shippingCost); } msg+='\nSubtotal: '+fmt(summary.subtotal); if(summary.discount>0) msg+='\nDiskon Misi Jajan: -'+fmt(summary.discount); msg+='\n*Total Akhir: '+fmt(summary.total)+'*\n\n*Saya sudah transfer via QRIS, ini bukti transfernya:*\n*(sertakan foto)*'; window.open('https://wa.me/'+SYSTEM.WA_NUMBER+'?text='+encodeURIComponent(msg),'_blank'); },500); });
+    saveOrderToDatabase(summary.items,summary.total,summary.subtotal,summary.shippingCost,summary.discount).then((saved)=>{ showToast(saved?'✅ Pesanan tersimpan!':'⚠️ Lanjut WhatsApp tanpa simpan'); }).catch(()=>{ showToast('⚠️ Gagal menyimpan, lanjut WhatsApp'); }).finally(()=>{ setTimeout(()=>{ checkoutLocked = false; if(payBtn){ payBtn.textContent='💳 Kirim Bukti Transfer'; payBtn.disabled=false; } },3000); setTimeout(()=>{ let msg='Halo Rujak.Co! Saya ingin memesan:\n\n'; summary.items.forEach(item=>{ const spiceText=item.spice?' (Level '+item.spice+')':''; msg+='• '+item.name+spiceText+' (x'+item.qty+') — '+fmt(item.lineTotal)+'\n'; }); if(state.orderNotes) msg+='\n*Catatan Pesanan:*\n'+state.orderNotes+'\n'; if(state.isGift){ msg+='\n🎁 *PESANAN KADO*\n'; if(state.giftSender) msg+='Dari: '+state.giftSender+'\n'; if(state.giftMessage) msg+='Ucapan: '+state.giftMessage+'\n'; } msg+='\n*Pengiriman:* '+(state.shippingProvider==='pembeli'?'Kurir Saya':'Kurir Rujak.Co - '+state.vehicleType+(state.isPriority?' (Prioritas)':'')); msg+='\n*Data:*\nNama : '+name+'\nNo. HP : '+phone+'\nAlamat : '+address+'\n'; if(state.shippingProvider==='rujakco'){ msg+='\nBiaya Pengantaran: '+fmt(summary.rawShippingCost)+' ('+summary.shippingLabel+')'; if(summary.lalamoveCost>0) msg+='\n  └ Tarif Kurir: '+fmt(summary.lalamoveCost); if(summary.shippingSubsidy>0) msg+='\n  └ Subsidi Rujak.Co: -'+fmt(summary.shippingSubsidy); msg+='\n  └ Total Bayar: '+fmt(summary.shippingCost); } msg+='\nSubtotal: '+fmt(summary.subtotal); if(summary.discount>0) msg+='\nDiskon Misi Jajan: -'+fmt(summary.discount); msg+='\n*Total Akhir: '+fmt(summary.total)+'*\n\n*Saya sudah transfer via QRIS, ini bukti transfernya:*\n*(sertakan foto)*'; window.open('https://wa.me/'+SYSTEM.WA_NUMBER+'?text='+encodeURIComponent(msg),'_blank'); },500); });
   }
 
   function saveCustomerData(){ try { localStorage.setItem('rujak_customer',JSON.stringify({ name:state.customerName,phone:state.customerPhone,address:state.customerAddress,isGift:state.isGift,giftSender:state.giftSender,giftMessage:state.giftMessage,hasShared:state.hasShared,shippingProvider:state.shippingProvider,vehicleType:state.vehicleType })); } catch(_) {} }
@@ -400,7 +414,7 @@
   const promoModal=document.getElementById('promoModal'); function openPromoModal(){ const summary=getCartSummary(); updateMissionCheckboxes(summary.subtotal); if(promoModal){ promoModal.classList.add('active'); document.body.style.overflow='hidden'; } } function closePromoModal(){ if(promoModal){ promoModal.classList.remove('active'); document.body.style.overflow=''; } }
   const searchInput=document.getElementById('searchInput'),clearSearchBtn=document.getElementById('clearSearchBtn'); function updateClearButton(){ if(clearSearchBtn) clearSearchBtn.classList.toggle('visible',searchInput.value.length>0); }
 
-  function bindCartEvents(){ const ma=document.getElementById('modalAdd'); if(ma){ ma.addEventListener('click',function(){ if(addToCartLocked) return; lockAddToCart(); const baseId=this.dataset.id; if(baseId){ const spice=parseInt(document.getElementById('spiceSelect').value,10)||3; const cartKey=baseId+'_'+spice; const entry=state.cart[cartKey]||{qty:0,spice:spice}; entry.qty+=1; entry.spice=spice; state.cart[cartKey]=entry; updateUI(); showToast('Berhasil ditambahkan ✓'); closeProductModal(); } }); } }
+  function bindCartEvents(){ const ma=document.getElementById('modalAdd'); if(ma){ ma.addEventListener('click',function(){ if(addToCartLocked) return; lockAddToCart(); const baseId=this.dataset.id; if(baseId){ const spice=Math.min(5,Math.max(1,parseInt(document.getElementById('spiceSelect').value,10)||3)); const cartKey=baseId+'_'+spice; const entry=state.cart[cartKey]||{qty:0,spice:spice}; entry.qty+=1; entry.spice=spice; state.cart[cartKey]=entry; updateUI(); showToast('Berhasil ditambahkan ✓'); closeProductModal(); } }); } }
   function bindModalEvents(){ document.getElementById('priorityToggle').addEventListener('change',function(){ handlePriorityToggle(this.checked); }); const pm=document.getElementById('priorityToggleMini'); if(pm) pm.addEventListener('change',function(){ handlePriorityToggle(this.checked); }); document.getElementById('shareBtnModal').addEventListener('click',function(){ state.hasShared=true; saveCustomerData(); updateUI(); showToast('Diskon Rp5.000 berhasil diaktifkan!'); shareToWhatsApp(); }); document.getElementById('promoTrigger').addEventListener('click',openPromoModal); document.getElementById('promoClose').addEventListener('click',closePromoModal); if(promoModal) promoModal.addEventListener('click',function(e){ if(e.target===promoModal) closePromoModal(); }); document.getElementById('closeBottomBar').addEventListener('click',e=>{ e.stopPropagation(); minimizeCart(); }); const fb=document.getElementById('floatingCartBtn'); if(fb) fb.addEventListener('click',expandCart); document.getElementById('giftToggle').addEventListener('change',function(){ state.isGift=this.checked; document.getElementById('giftFields').style.display=this.checked?'block':'none'; saveCustomerData(); }); }
   function bindSearchEvents(){ const stw=document.getElementById('searchToggleWrap'),sib=document.getElementById('searchIconBtn'),siw=document.getElementById('searchInputWrap'); if(sib){ sib.addEventListener('click',()=>{ siw.classList.toggle('open'); if(siw.classList.contains('open')) searchInput.focus(); }); document.addEventListener('click',(e)=>{ if(stw&&!stw.contains(e.target)) siw.classList.remove('open'); }); } searchInput.addEventListener('input',debounce(function(){ state.searchQuery=this.value; updateUI(); updateClearButton(); },300)); searchInput.addEventListener('keyup',updateClearButton); }
   function bindShippingEvents(){ document.querySelectorAll('.ship-btn').forEach(btn=>{ btn.addEventListener('click',function(){ document.querySelectorAll('.ship-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active'); state.shippingProvider=this.dataset.provider; const ro=document.getElementById('rujakcoOptions'); if(ro) ro.style.display=state.shippingProvider==='rujakco'?'block':'none'; updateUI(); }); }); document.querySelectorAll('.veh-btn').forEach(btn=>{ btn.addEventListener('click',function(){ document.querySelectorAll('.veh-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active'); state.vehicleType=this.dataset.vehicle; updateUI(); }); }); }
