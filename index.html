@@ -94,14 +94,8 @@
       margin: auto;
     }
     @keyframes popIn {
-      from {
-        opacity: 0;
-        transform: translateY(40px) scale(0.9);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+      from { opacity: 0; transform: translateY(40px) scale(0.9); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
     #subsidiClaimBtnSub:active {
       transform: scale(0.96);
@@ -114,6 +108,12 @@
       letter-spacing: 2px;
       font-variant-numeric: tabular-nums;
       transition: color 0.5s;
+    }
+    /* Animasi subsidi bar setelah klaim */
+    #shippingSubsidy.subsidi-claimed {
+      background: #C8E6C9 !important;
+      border: 1px solid #4CAF50 !important;
+      transition: all 0.3s ease;
     }
   </style>
 </head>
@@ -302,9 +302,11 @@
         <span style="font-size:9px;color:var(--gray-400);margin-left:4px;">🚀 Lebih cepat</span>
       </div>
     </div>
-    <div class="shipping-subsidy" id="shippingSubsidy" style="margin: 0 0 6px 0; border-radius: 12px; background: #E8F5E9; padding: 8px 12px; font-size: 11px; color: var(--green); font-weight: 600; display: flex; align-items: center; gap: 6px;">
+    <!-- SUBSIDI BAR — DENGAN INDIKATOR -->
+    <div class="shipping-subsidy" id="shippingSubsidy" style="margin: 0 0 6px 0; border-radius: 12px; background: #E8F5E9; padding: 8px 12px; font-size: 11px; color: var(--green); font-weight: 600; display: flex; align-items: center; gap: 6px; transition: all 0.3s ease;">
       <i data-lucide="coins" class="w-4 h-4"></i>
-      <span>Subsidi ongkir s/d Rp10.000 berlaku!</span>
+      <span id="subsidyStatusText">Subsidi ongkir s/d Rp10.000 berlaku!</span>
+      <span id="subsidyCheck" style="display:none; margin-left:auto; background:var(--green); color:white; border-radius:50%; width:18px; height:18px; font-size:10px; text-align:center; line-height:18px;">✓</span>
     </div>
     <div class="shipping-out-of-range" id="outOfRange" style="margin: 0 0 10px 0; border-radius: 12px;">⚠️ Pengiriman hanya tersedia untuk wilayah Jabodetabek (maks. 50 km)</div>
     <div class="cart-summary" id="cartSummary" tabindex="0" role="button" aria-label="Buka keranjang"><span class="cart-items-preview" id="cartPreview">0 item</span><div class="cart-total-wrap"><span id="discountLabel" class="cart-discount-label" style="display: none;">-Rp10.000</span><span class="cart-total" id="cartTotalDisplay">Rp0</span></div></div>
@@ -361,7 +363,7 @@
       <div id="step2BaseCost" style="font-size:11px;color:var(--gray-500);margin-top:2px;display:none;"></div>
       <div style="font-size:11px;color:var(--gray-500);margin-top:2px;">Jarak: <span id="step2Distance">-</span></div>
       <div style="font-size:12px;color:var(--gray-500);margin-top:6px;text-align:center;border-top:1px dashed var(--gray-200);padding-top:6px;">🕐 Estimasi tiba: <strong style="color:var(--green);">30-45 menit</strong> setelah konfirmasi</div>
-      <div style="font-size:11px;color:var(--green);margin-top:6px;text-align:center;background:#E8F5E9;border-radius:6px;padding:6px;font-weight:600;"><i data-lucide="coins" class="w-3 h-3 inline"></i> Subsidi ongkir s/d Rp10.000 berlaku</div>
+      <div style="font-size:11px;color:var(--green);margin-top:6px;text-align:center;background:#E8F5E9;border-radius:6px;padding:6px;font-weight:600;" id="step2SubsidyClaimed"><i data-lucide="coins" class="w-3 h-3 inline"></i> Subsidi ongkir s/d Rp10.000 berlaku</div>
     </div>
     <button class="btn-step primary" id="step2Next" style="width:100%;margin-top:12px;">Lanjut ke Bayar →</button>
   </div>
@@ -443,7 +445,7 @@
   <script defer src="app.js"></script>
   
   <!-- ============================================ -->
-  <!-- SUBSIDI POP-UP JAVASCRIPT (FINAL FIXED)      -->
+  <!-- SUBSIDI POP-UP JAVASCRIPT (FINAL + INDIKATOR) -->
   <!-- ============================================ -->
   <script>
   (function() {
@@ -581,6 +583,35 @@
       popupActive = false;
     }
   
+    // === UPDATE INDIKATOR SUBSIDI ===
+    function updateSubsidyIndicator() {
+      var statusText = document.getElementById('subsidyStatusText');
+      var checkIcon = document.getElementById('subsidyCheck');
+      var subsidyBar = document.getElementById('shippingSubsidy');
+      var step2Claimed = document.getElementById('step2SubsidyClaimed');
+      
+      if (statusText) {
+        statusText.textContent = '✅ Subsidi ongkir Rp10.000 sudah diklaim!';
+        statusText.style.color = '#0a3d2a';
+      }
+      if (checkIcon) {
+        checkIcon.style.display = 'inline-block';
+      }
+      if (subsidyBar) {
+        subsidyBar.classList.add('subsidi-claimed');
+      }
+      if (step2Claimed) {
+        step2Claimed.innerHTML = '<i data-lucide="check-circle" class="w-3 h-3 inline"></i> ✅ Subsidi ongkir Rp10.000 sudah diklaim!';
+        step2Claimed.style.background = '#C8E6C9';
+        step2Claimed.style.color = '#0a3d2a';
+        step2Claimed.style.fontWeight = '700';
+      }
+      // Re-init lucide icons untuk icon baru
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+    }
+  
     async function openPopup() {
       if (popupActive) return;
       if (!popup) return;
@@ -622,6 +653,12 @@
     if (claimBtn) {
       claimBtn.addEventListener('click', function() {
         closePopup();
+        
+        // Update indikator subsidi
+        updateSubsidyIndicator();
+        setStorage('subsidi_claimed', true);
+        
+        // Scroll ke menu
         var menuEl = document.getElementById('menuList') || document.getElementById('catScroll');
         if (menuEl) {
           menuEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -649,12 +686,18 @@
       
       await getFingerprint();
       
-      var expired = getStorage('countdown_expired');
+      // Cek apakah user sudah klaim subsidi sebelumnya
+      var claimed = getStorage('subsidi_claimed');
+      if (claimed && claimed.value === true) {
+        updateSubsidyIndicator();
+      }
+      
       var cooldownData = getStorage('cooldown');
       
       if (cooldownData && Date.now() >= cooldownData.value) {
         removeStorage('cooldown');
         removeStorage('countdown_expired');
+        removeStorage('subsidi_claimed');
       }
       
       var currentCooldown = getStorage('cooldown');
