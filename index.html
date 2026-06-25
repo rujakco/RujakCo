@@ -62,6 +62,41 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <script defer src="https://unpkg.com/lucide@0.383.0"></script>
+  <style>
+    /* === SUBSIDI POP-UP STYLES === */
+    #subsidiPopup {
+      z-index: 10000;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    #subsidiPopup .modal-content {
+      animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    @keyframes popIn {
+      from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    #subsidiClaimBtnSub:active {
+      transform: scale(0.96);
+      background: #0a3d2a !important;
+    }
+    #subsidiCloseBtnSub:hover {
+      color: #666 !important;
+    }
+    #countdownMinutesSub, #countdownSecondsSub {
+      letter-spacing: 2px;
+      font-variant-numeric: tabular-nums;
+      transition: color 0.5s;
+    }
+  </style>
 </head>
 <body>
   <div id="app">
@@ -328,7 +363,261 @@
 
   <div class="modal-overlay" id="paymentModal"><div class="modal-content"><div class="modal-header"><span class="modal-header-title">Pembayaran QRIS</span><button class="modal-close" id="paymentClose" aria-label="Tutup">&times;</button></div><div class="modal-body" style="text-align:center;"><div style="position: relative; display: block; width: 100%;"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" id="qrisImagePayment" style="width:100%; height:auto; aspect-ratio: 1/1; object-fit:contain; border-radius:10px; background:white; display: block;" /></div><p style="font-size: 12px; color: var(--green); margin-top: 8px; font-weight: 700;">📱 Ketuk untuk perbesar QRIS</p><div style="margin-top: 12px;"><button type="button" class="download-btn" id="downloadQrisBtnPayment" style="display:inline-flex; align-items:center; gap:6px; background:white; color:var(--green); padding:8px 16px; border-radius:10px; font-size:13px; font-weight:700; border:1px solid var(--green); cursor:pointer;"><i data-lucide="download" class="w-4 h-4"></i> Unduh QRIS</button></div></div><div class="modal-footer" style="flex-direction: column; align-items: stretch; gap: 10px;"><div style="display: flex; align-items: center; justify-content: space-between; background: var(--red); color: white; border-radius: 12px; padding: 12px 16px; font-weight: 700;"><span style="font-size: 14px;">Total Tagihan</span><span id="paymentTotalDisplay" style="font-size: 20px; font-weight: 800;">Rp0</span></div><button type="button" class="modal-add" data-action="confirm-wa" style="justify-content:center; gap:8px; margin-top: 0;"><i data-lucide="send" class="w-5 h-5"></i> Kirim Bukti Transfer</button></div></div></div>
 
+  <!-- ============================================ -->
+  <!-- SUBSIDI POP-UP dengan FINGERPRINT + COUNTDOWN -->
+  <!-- ============================================ -->
+  <div class="modal-overlay" id="subsidiPopup" style="display:none;">
+    <div class="modal-content" style="max-width: 380px; text-align: center; padding: 24px 20px;">
+      
+      <div style="margin-bottom: 16px;">
+        <span style="background: #D62828; color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;">⚡ SUBSIDI TERBATAS</span>
+      </div>
+      
+      <div style="font-size: 56px; margin-bottom: 8px;">🚚</div>
+      
+      <h3 style="font-size: 20px; font-weight: 800; color: #0F4D37; margin: 0 0 6px;">Subsidi Ongkir s/d Rp10.000</h3>
+      <p style="font-size: 13px; color: var(--gray-500); margin: 0 0 16px; line-height: 1.5;">Kami bantu biaya pengiriman Anda.<br>Tapi cuma 30 menit aja nih.</p>
+      
+      <div style="background: var(--gray-100); border-radius: 10px; padding: 12px 16px; margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <span style="font-size: 12px; color: var(--gray-500);">Ongkir normal</span>
+          <span style="font-size: 14px; color: var(--gray-400); text-decoration: line-through;">Rp20.000</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 12px; font-weight: 700; color: var(--green);">Anda bayar mulai</span>
+          <span style="font-size: 18px; font-weight: 800; color: var(--green);">Rp2.000*</span>
+        </div>
+        <div style="font-size: 9px; color: var(--gray-400); margin-top: 6px; text-align: left;">*Gratis ongkir radius 5 km. Makin jauh tetap kami bantu.</div>
+      </div>
+      
+      <div style="background: #1a1a1a; border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+        <div style="font-size: 10px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">⏱️ Subsidi hilang dalam</div>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 6px;">
+          <div style="background: #2a2a2a; border-radius: 8px; padding: 8px 6px; min-width: 52px;">
+            <span id="countdownMinutesSub" style="font-size: 32px; font-weight: 800; color: #F4C430; font-family: 'Courier New', monospace;">30</span>
+          </div>
+          <span style="font-size: 32px; font-weight: 800; color: #F4C430;">:</span>
+          <div style="background: #2a2a2a; border-radius: 8px; padding: 8px 6px; min-width: 52px;">
+            <span id="countdownSecondsSub" style="font-size: 32px; font-weight: 800; color: #F4C430; font-family: 'Courier New', monospace;">00</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="margin-bottom: 14px; font-size: 11px; color: var(--gray-500); display: flex; align-items: center; justify-content: center; gap: 4px;">
+        <i data-lucide="smartphone" class="w-3 h-3"></i>
+        <span>Khusus HP ini aja. Jangan sampai kehabisan.</span>
+      </div>
+      
+      <button id="subsidiClaimBtnSub" style="width: 100%; background: var(--green); color: white; padding: 14px; border-radius: 12px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; margin-bottom: 10px; transition: all 0.2s;">
+        🔒 Klaim Subsidi & Pesan Sekarang
+      </button>
+      
+      <button id="subsidiCloseBtnSub" style="background: none; border: none; color: var(--gray-400); font-size: 11px; cursor: pointer; text-decoration: underline; transition: color 0.2s;">
+        Biarin aja. Saya nggak butuh subsidi.
+      </button>
+      
+    </div>
+  </div>
+
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@4/dist/fp.min.js"></script>
   <script defer src="app.js"></script>
+  
+  <!-- ============================================ -->
+  <!-- SUBSIDI POP-UP JAVASCRIPT -->
+  <!-- ============================================ -->
+  <script>
+  (function() {
+    
+    const COUNTDOWN_MINUTES = 30;
+    const COOLDOWN_HOURS = 2;
+    const SCROLL_TRIGGER = 0.45;
+    const STORAGE_PREFIX = 'rujakco_subsidi_';
+    
+    let fingerprint = null;
+    let countdownInterval = null;
+    let secondsRemaining = COUNTDOWN_MINUTES * 60;
+    let popupActive = false;
+  
+    const popup = document.getElementById('subsidiPopup');
+    const claimBtn = document.getElementById('subsidiClaimBtnSub');
+    const closeBtn = document.getElementById('subsidiCloseBtnSub');
+    const minutesEl = document.getElementById('countdownMinutesSub');
+    const secondsEl = document.getElementById('countdownSecondsSub');
+  
+    async function getFingerprint() {
+      if (fingerprint) return fingerprint;
+      try {
+        const fp = await FingerprintJS.load();
+        const result = await fp.get();
+        fingerprint = result.visitorId;
+        return fingerprint;
+      } catch (e) {
+        fingerprint = btoa(
+          screen.width + '|' + 
+          screen.height + '|' + 
+          navigator.userAgent + '|' + 
+          Intl.DateTimeFormat().resolvedOptions().timeZone
+        ).substring(0, 32);
+        return fingerprint;
+      }
+    }
+  
+    function getStorageKey(key) {
+      return STORAGE_PREFIX + key + '_' + (fingerprint || 'unknown');
+    }
+  
+    function setStorage(key, value) {
+      const k = getStorageKey(key);
+      localStorage.setItem(k, JSON.stringify({
+        value: value,
+        timestamp: Date.now()
+      }));
+    }
+  
+    function getStorage(key) {
+      const k = getStorageKey(key);
+      const data = localStorage.getItem(k);
+      if (!data) return null;
+      try { return JSON.parse(data); } catch (e) { return null; }
+    }
+  
+    function removeStorage(key) {
+      const k = getStorageKey(key);
+      localStorage.removeItem(k);
+    }
+  
+    async function canShowPopup() {
+      await getFingerprint();
+      const cooldownData = getStorage('cooldown');
+      if (!cooldownData) return true;
+      const cooldownUntil = cooldownData.value;
+      const now = Date.now();
+      if (now >= cooldownUntil) {
+        removeStorage('cooldown');
+        return true;
+      }
+      return false;
+    }
+  
+    function setCooldown() {
+      const cooldownUntil = Date.now() + (COOLDOWN_HOURS * 60 * 60 * 1000);
+      setStorage('cooldown', cooldownUntil);
+    }
+  
+    function updateCountdownDisplay() {
+      const mins = Math.floor(secondsRemaining / 60);
+      const secs = secondsRemaining % 60;
+      minutesEl.textContent = String(mins).padStart(2, '0');
+      secondsEl.textContent = String(secs).padStart(2, '0');
+      if (secondsRemaining <= 300) {
+        minutesEl.style.color = '#FF4444';
+        secondsEl.style.color = '#FF4444';
+      } else if (secondsRemaining <= 600) {
+        minutesEl.style.color = '#FF8C00';
+        secondsEl.style.color = '#FF8C00';
+      }
+    }
+  
+    function startCountdown() {
+      secondsRemaining = COUNTDOWN_MINUTES * 60;
+      updateCountdownDisplay();
+      countdownInterval = setInterval(function() {
+        secondsRemaining--;
+        updateCountdownDisplay();
+        if (secondsRemaining <= 0) {
+          clearInterval(countdownInterval);
+          countdownInterval = null;
+          closePopupAndCooldown();
+        }
+      }, 1000);
+    }
+  
+    async function openPopup() {
+      if (popupActive) return;
+      if (!(await canShowPopup())) return;
+      popupActive = true;
+      popup.style.display = 'flex';
+      startCountdown();
+      minutesEl.style.color = '#F4C430';
+      secondsEl.style.color = '#F4C430';
+    }
+  
+    function closePopup() {
+      popupActive = false;
+      popup.style.display = 'none';
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+      }
+    }
+  
+    function closePopupAndCooldown() {
+      closePopup();
+      setCooldown();
+      setStorage('countdown_expired', true);
+    }
+  
+    let scrollListenerAdded = false;
+  
+    async function handleScroll() {
+      const scrollPercent = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight;
+      if (scrollPercent > SCROLL_TRIGGER && !popupActive) {
+        const canShow = await canShowPopup();
+        if (canShow) {
+          openPopup();
+        }
+        window.removeEventListener('scroll', handleScroll);
+        scrollListenerAdded = false;
+      }
+    }
+  
+    function initScrollListener() {
+      if (!scrollListenerAdded) {
+        window.addEventListener('scroll', handleScroll);
+        scrollListenerAdded = true;
+      }
+    }
+  
+    claimBtn.addEventListener('click', function() {
+      closePopup();
+      const menuEl = document.getElementById('menuList') || document.getElementById('catScroll');
+      if (menuEl) {
+        menuEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  
+    closeBtn.addEventListener('click', function() {
+      closePopupAndCooldown();
+    });
+  
+    popup.addEventListener('click', function(e) {
+      if (e.target === popup) {
+        closePopupAndCooldown();
+      }
+    });
+  
+    async function init() {
+      await getFingerprint();
+      const expired = getStorage('countdown_expired');
+      if (!expired) {
+        initScrollListener();
+      }
+      const cooldownData = getStorage('cooldown');
+      if (cooldownData && Date.now() >= cooldownData.value) {
+        removeStorage('cooldown');
+        removeStorage('countdown_expired');
+        initScrollListener();
+      }
+    }
+  
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  
+  })();
+  </script>
 </body>
 </html>
