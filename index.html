@@ -207,6 +207,7 @@
   <div id="floatingCartBtn" aria-label="Buka keranjang"><i data-lucide="shopping-bag" style="width: 24px; height: 24px;"></i><span class="badge-cart" id="floatingBadge">0</span></div>
   <div id="toast" role="alert" aria-live="polite"></div>
 
+  <!-- MODAL MISI JAJAN -->
   <div class="modal-overlay" id="promoModal">
     <div class="modal-content" style="max-width: 350px;">
       <div class="modal-header">
@@ -222,6 +223,7 @@
     </div>
   </div>
 
+  <!-- MODAL PRODUK -->
   <div class="modal-overlay" id="productModal">
     <div class="modal-content">
       <div class="modal-header">
@@ -262,6 +264,7 @@
     </div>
   </div>
 
+  <!-- MODAL KERANJANG (MINI CART) -->
   <div class="modal-overlay" id="miniCartModal">
     <div class="modal-content">
       <div class="modal-header">
@@ -274,16 +277,17 @@
       <div class="modal-body">
         <div id="miniCartList"></div>
 
-        <div class="form-section" style="margin-bottom: 16px;">
-          <div id="customerSummaryToggle" style="display:flex; justify-content:space-between; align-items:center; background:var(--green-pale); padding:12px 14px; border-radius:12px; cursor:pointer; color:var(--green); border: 1px solid rgba(15,77,55,0.1);">
+        <!-- 1. Form Data Pelanggan (Dropdown Accordion) -->
+        <div class="form-section" style="margin-bottom: 16px; border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden;">
+          <div id="customerSummaryToggle" style="display:flex; justify-content:space-between; align-items:center; background:white; padding:12px 14px; cursor:pointer;">
             <div style="display:flex; align-items:center; gap:8px;">
-              <i data-lucide="user" class="w-4 h-4"></i>
-              <span id="customerSummaryText" style="font-weight:700; font-size:14px;">Lengkapi Data Pengiriman</span>
+              <i data-lucide="user" class="w-4 h-4 text-[#0F4D37]"></i>
+              <span id="customerSummaryText" style="font-weight:700; font-size:14px; color:var(--gray-900);">Isi Data Pengiriman</span>
             </div>
-            <i data-lucide="chevron-down" id="customerSummaryIcon" style="transition: transform 0.3s;"></i>
+            <i data-lucide="chevron-down" id="customerSummaryIcon" style="color:var(--gray-500); transition: transform 0.3s;"></i>
           </div>
 
-          <div id="customerFormFields" style="margin-top:12px; display:block;">
+          <div id="customerFormFields" style="padding: 14px; background: #fafafa; border-top: 1px solid var(--gray-200); display: block;">
             <div class="form-section">
               <label class="form-label">Nama Penerima</label>
               <input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name" />
@@ -300,10 +304,11 @@
               <label class="form-label">Catatan Pesanan (Opsional)</label>
               <textarea id="orderNotes" placeholder="Contoh: Sambal dipisah, untuk kado..." rows="2"></textarea>
             </div>
-            <button type="button" class="wa-btn" id="btnSaveCustomer" style="padding:10px; font-size:13px; border-radius:10px; justify-content:center;">Simpan & Lipat Data</button>
+            <button type="button" class="wa-btn" id="btnSaveCustomer" style="padding:10px; font-size:13px; border-radius:10px; justify-content:center; margin-top:8px;">Simpan & Lipat Data</button>
           </div>
         </div>
 
+        <!-- 2. Waktu Pengiriman -->
         <div class="form-section" style="border-top: 1px dashed var(--gray-200); padding-top: 16px;">
           <label class="form-label">Waktu Pengiriman</label>
           <div class="shipping-method-row">
@@ -316,6 +321,7 @@
           </div>
         </div>
 
+        <!-- 3. Pemesanan Kurir (Pembeli vs RujakCo) -->
         <div class="form-section" style="margin-top: 16px; border-top: 1px dashed var(--gray-200); padding-top: 16px;">
           <label class="form-label">Siapa yang memesan kurir?</label>
           <div class="shipping-method-row">
@@ -323,10 +329,12 @@
             <button type="button" class="method-btn" id="btnOrderRujakCo">Dipesan Rujak.Co</button>
           </div>
 
+          <!-- Info Jika Dipesan Pembeli -->
           <div id="pembeliShippingWrap" style="margin-top:12px; background:var(--green-pale); padding:10px 12px; border-radius:10px; font-size:12px; color:var(--green); font-weight:600; line-height: 1.5;">
             📌 Anda memesan kurir sendiri (Grab/Gojek/Lalamove) ke titik jemput Rujak.Co Bekasi setelah pesanan dikonfirmasi siap.
           </div>
 
+          <!-- Opsi Jika Dipesan RujakCo -->
           <div id="rujakCoShippingWrap" style="display:none; margin-top:16px;">
             <div class="form-section" id="courierSection">
               <label class="form-label">Estimasi Ongkir & Kurir</label>
@@ -383,6 +391,7 @@
     </div>
   </div>
 
+  <!-- MODAL PEMBAYARAN QRIS -->
   <div class="modal-overlay" id="paymentModal">
     <div class="modal-content">
       <div class="modal-header">
