@@ -82,7 +82,7 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 .badge-priority{background:var(--red);color:white;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;text-transform:uppercase}
 .shipping-out-of-range{background:#fee2e2;border:1px solid #fecaca;color:var(--red);padding:6px 12px;border-radius:var(--radius-pill);font-size:12px;font-weight:600;display:none;text-align:center}
 
-/* Search toggle – dipakai di baris "Koleksi Rasa" */
+/* Search toggle â€“ dipakai di baris "Koleksi Rasa" */
 .search-toggle-wrap {
   display: flex;
   align-items: center;
@@ -426,3 +426,167 @@ input:checked + .slider:before { transform: translateX(22px); }
   .share-strip-inner { flex-direction: column; gap: 8px; align-items: stretch; }
   .share-btn { justify-content: center; }
 }
+
+
+/* ==================== UPDATED / MERGED FROM USER SNIPPET ==================== */
+
+/* ==================== GAYA SWITCH PRIORITAS ==================== */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+  flex-shrink: 0;
+}
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .3s;
+  border-radius: 34px;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+}
+.switch input:checked + .slider { background-color: var(--green); }
+.switch input:checked + .slider:before { transform: translateX(18px); }
+.switch input:disabled + .slider { opacity: 0.5; cursor: not-allowed; }
+
+/* ==================== RINGKASAN DATA PELANGGAN ==================== */
+#customerDataSummary {
+  background: var(--green-pale);
+  border-radius: 12px;
+  padding: 12px;
+  transition: all 0.3s ease;
+}
+#customerDataSummary button {
+  background: white;
+  border: 1px solid var(--green);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--green);
+  cursor: pointer;
+  transition: all .2s;
+}
+#customerDataSummary button:hover {
+  background: var(--green);
+  color: white;
+}
+#customerDataForm { transition: all 0.3s ease; }
+
+/* ==================== MINI CART ITEMS ==================== */
+.mini-cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--gray-100);
+}
+.mini-cart-info { flex: 1; }
+.mini-cart-name { font-weight: 600; font-size: 14px; }
+.mini-cart-detail { font-size: 13px; color: var(--gray-500); }
+.mini-cart-qty { display: flex; align-items: center; gap: 6px; }
+.mini-cart-qty button {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--gray-200);
+  background: white;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mini-cart-qty button:hover { background: var(--green-pale); }
+.mini-cart-remove {
+  background: transparent !important;
+  border: none !important;
+  font-size: 16px;
+  color: var(--red);
+  margin-left: 4px;
+}
+.mini-cart-total-final {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 18px;
+  padding: 12px 0;
+  border-top: 2px solid var(--green);
+  margin-top: 8px;
+}
+
+/* ==================== FORM SECTION ==================== */
+.form-section { margin-bottom: 12px; }
+.form-label {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: var(--gray-700);
+}
+.form-section input,
+.form-section textarea,
+.form-section select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--gray-200);
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+.form-section textarea { resize: vertical; min-height: 60px; }
+.form-section input:focus,
+.form-section textarea:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(15,77,55,0.1);
+}
+
+/* ==================== GIFT TOGGLE ==================== */
+.gift-toggle-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+.gift-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* ==================== MODAL HEADER ACTIONS ==================== */
+.modal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.clear-cart-btn {
+  background: transparent;
+  border: none;
+  color: var(--red);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.clear-cart-btn:hover { text-decoration: underline; }
+
+/* ==================== END UPDATE ==================== */
