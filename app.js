@@ -4,7 +4,6 @@
   const SUPABASE_URL = "https://ghhnnfrmftttptcejizp.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoaG5uZnJtZnR0dHB0Y2VqaXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNjA1ODksImV4cCI6MjA5NzgzNjU4OX0.FM-sPvJJzviX2kA0GEHnznOppivm4JNyC4IPFv_RkdE";
 
-  // Lazy-init Supabase
   let supabase = null;
   function getSupabase() {
     if (supabase) return supabase;
@@ -15,7 +14,6 @@
     return supabase;
   }
 
-  // ===================== DATA PRODUK =====================
   const PRODUCTS = [
     { id:'p_m1', name:'Rujak Segar', desc:'Kombinasi buah pilihan dengan sambal original Rujak.Co.', price:28000, cat:'classic', tags:['Pilihan Klasik','5 Buah'], badge:null, badgeColor:null, container:'Thinwall 750ml (PP Food Grade)', size:'Porsi Reguler', sambal:'Sambal Original (1 Cup)', buah:['Mangga Muda','Nanas','Bengkoang','Jambu Air','Kedondong'], flavor:'Segar & Autentik', flavorTag:null, defaultSpice:3, portion:'1 Orang', thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp', isHidden:false },
     { id:'p_m2', name:'Rujak Serut', desc:'Buah diserut halus untuk pengalaman rasa yang lebih menyatu.', price:26000, cat:'classic', tags:['Renyah','Serut'], badge:null, badgeColor:null, container:'Thinwall 750ml (PP Food Grade)', size:'Porsi Reguler', sambal:'Sambal Original (1 Cup)', buah:['Mangga Muda','Bengkoang','Nanas','Ubi Merah'], flavor:'Renyah Segar', flavorTag:'Renyah', defaultSpice:3, portion:'1 Orang', thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp', isHidden:false },
@@ -114,7 +112,11 @@
     if(!filtered.length){ empty.style.display='block'; container.innerHTML=''; return; }
     empty.style.display='none';
     let html='';
-    filtered.forEach(p=>{ let qty=0,firstCartKey=p.id; Object.keys(state.cart).forEach(k=>{ if(k===p.id||k.startsWith(p.id+'_')){ qty+=state.cart[k].qty; if(qty===state.cart[k].qty) firstCartKey=k; } }); const control=qty===0?`<button type="button" class="add-btn" data-action="open-modal" data-id="${p.id}"><i data-lucide="plus" class="w-4 h-4"></i></button>`:`<div class="qty-control"><button type="button" class="qty-btn" data-action="decrease" data-id="${firstCartKey}">−</button><span class="qty-num">${qty}</span><button type="button" class="qty-btn" data-action="increase" data-id="${firstCartKey}">+</button></div>`; const badgeRight=p.badge?`<span class="item-badge-right ${p.badgeColor}">${escapeHTML(p.badge)}</span>`:''; const flavorTag=p.flavorTag?`<span class="item-flavor-tag">${escapeHTML(p.flavorTag)}</span>`:''; const buahChips=(p.buah||[]).slice(0,4).map(b=>`<span class="item-buah-chip">${escapeHTML(b)}</span>`).join(''); const moreChips=(p.buah||[]).length>4?`<span class="item-buah-chip">+${p.buah.length-4}</span>`:''; html+=`<div class="menu-item" data-id="${p.id}" tabindex="0" role="button" aria-label="Detail ${escapeHTML(p.name)}"><div class="item-img-wrap"><img src="${p.thumbnail}" alt="${escapeHTML(p.name)}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; this.nextElementSibling.textContent='${escapeHTML(p.name.substring(0,20))}'"><div class="fallback" style="display:none;">${escapeHTML(p.name.substring(0,20))}</div></div><div class="item-body"><div class="item-name-row"><span class="item-name">${escapeHTML(p.name)}</span>${badgeRight}</div><div class="item-flavor-row"><span class="item-flavor">${escapeHTML(p.flavor)}</span>${flavorTag}</div><div class="item-spice">🌶️ Level 1–5</div><p class="item-desc">${escapeHTML(p.desc)}</p><div class="item-buah-chips">${buahChips}${moreChips}</div><div class="item-footer"><div><span class="item-price">${fmt(p.price)}</span><span class="item-portion"> · ${p.portion}</span></div>${control}</div></div></div>`; });
+    filtered.forEach(p=>{ let qty=0,firstCartKey=p.id; Object.keys(state.cart).forEach(k=>{ if(k===p.id||k.startsWith(p.id+'_')){ qty+=state.cart[k].qty; if(qty===state.cart[k].qty) firstCartKey=k; } }); const control=qty===0?`<button type="button" class="add-btn" data-action="open-modal" data-id="${p.id}"><i data-lucide="plus" class="w-4 h-4"></i></button>`:`<div class="qty-control"><button type="button" class="qty-btn" data-action="decrease" data-id="${firstCartKey}">−</button><span class="qty-num">${qty}</span><button type="button" class="qty-btn" data-action="increase" data-id="${firstCartKey}">+</button></div>`; const badgeRight=p.badge?`<span class="item-badge-right ${p.badgeColor}">${escapeHTML(p.badge)}</span>`:''; const flavorTag=p.flavorTag?`<span class="item-flavor-tag">${escapeHTML(p.flavorTag)}</span>`:'';
+    // ✅ PERUBAHAN #4: Pedas Meter visual
+    const defaultSpice = p.defaultSpice || 3;
+    const spiceIcons = Array(5).fill(null).map((_, i) => i < defaultSpice ? '🌶️' : '<span style="opacity:0.25">🌶️</span>').join('');
+    const buahChips=(p.buah||[]).slice(0,4).map(b=>`<span class="item-buah-chip">${escapeHTML(b)}</span>`).join(''); const moreChips=(p.buah||[]).length>4?`<span class="item-buah-chip">+${p.buah.length-4}</span>`:''; html+=`<div class="menu-item" data-id="${p.id}" tabindex="0" role="button" aria-label="Detail ${escapeHTML(p.name)}"><div class="item-img-wrap"><img src="${p.thumbnail}" alt="${escapeHTML(p.name)}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; this.nextElementSibling.textContent='${escapeHTML(p.name.substring(0,20))}'"><div class="fallback" style="display:none;">${escapeHTML(p.name.substring(0,20))}</div></div><div class="item-body"><div class="item-name-row"><span class="item-name">${escapeHTML(p.name)}</span>${badgeRight}</div><div class="item-flavor-row"><span class="item-flavor">${escapeHTML(p.flavor)}</span>${flavorTag}</div><div class="item-spice" style="display:flex;align-items:center;gap:4px;font-size:11px;"><span style="font-size:10px;color:var(--gray-500);">Pedas:</span>${spiceIcons}<span style="font-size:10px;color:var(--gray-400);">(bisa diatur)</span></div><p class="item-desc">${escapeHTML(p.desc)}</p><div class="item-buah-chips">${buahChips}${moreChips}</div><div class="item-footer"><div><span class="item-price">${fmt(p.price)}</span><span class="item-portion"> · ${p.portion}</span></div>${control}</div></div></div>`; });
     container.innerHTML=html;
   }
 
@@ -154,7 +156,33 @@
 
   const productModal=document.getElementById('productModal'); let currentProductId=null; const SPICE_NAMES=['Mild','Sedang','Pedas','Extra Pedas','Very Hot'];
 
-  function openProductModal(id) { const product=PRODUCTS.find(p=>p.id===id); if(!product) return; currentProductId=id; document.getElementById('modalImg').innerHTML=`<img src="${product.image}" alt="${escapeHTML(product.name)}" onerror="this.style.display='none'; this.parentElement.textContent='${escapeHTML(product.name.substring(0,20))}';">`; const be=document.getElementById('modalBadge'); if(product.badge){ be.style.display='inline-block'; be.textContent=product.badge; be.className='modal-badge-eyebrow '+(product.badgeColor||''); } else be.style.display='none'; document.getElementById('modalTitle').textContent=product.name; document.getElementById('modalDesc').textContent=product.desc; document.getElementById('modalContainer').textContent=product.container||'-'; document.getElementById('modalSize').textContent=product.size||'-'; document.getElementById('modalSambal').textContent=product.sambal||'-'; document.getElementById('modalBuahText').textContent=(product.buah||[]).join(', '); document.getElementById('modalTags').innerHTML=(product.tags||[]).map(t=>`<span class="modal-tag">${escapeHTML(t)}</span>`).join(''); document.getElementById('btnPrice').textContent=fmt(product.price); document.getElementById('modalAdd').dataset.id=product.id; const sel=document.getElementById('spiceSelect'); const dv=product.defaultSpice||3; sel.value=dv; updateSpiceHighlight(dv); sel.onchange=function(){ updateSpiceHighlight(parseInt(this.value,10)); }; productModal.classList.add('active'); document.body.style.overflow='hidden'; }
+  function openProductModal(id) {
+    const product=PRODUCTS.find(p=>p.id===id); if(!product) return; currentProductId=id;
+    document.getElementById('modalImg').innerHTML=`<img src="${product.image}" alt="${escapeHTML(product.name)}" onerror="this.style.display='none'; this.parentElement.textContent='${escapeHTML(product.name.substring(0,20))}';">`;
+    const be=document.getElementById('modalBadge'); if(product.badge){ be.style.display='inline-block'; be.textContent=product.badge; be.className='modal-badge-eyebrow '+(product.badgeColor||''); } else be.style.display='none';
+    document.getElementById('modalTitle').textContent=product.name; document.getElementById('modalDesc').textContent=product.desc;
+    document.getElementById('modalContainer').textContent=product.container||'-'; document.getElementById('modalSize').textContent=product.size||'-'; document.getElementById('modalSambal').textContent=product.sambal||'-';
+    document.getElementById('modalBuahText').textContent=(product.buah||[]).join(', ');
+    document.getElementById('modalTags').innerHTML=(product.tags||[]).map(t=>`<span class="modal-tag">${escapeHTML(t)}</span>`).join('');
+
+    // ✅ PERUBAHAN #5a: Ritual Nikmat
+    const ritualDiv = document.createElement('div');
+    ritualDiv.style.cssText = 'background:var(--ivory);border:1px solid var(--green-pale);border-radius:10px;padding:10px 12px;margin:8px 0;';
+    ritualDiv.innerHTML = `<div style="font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.05em;">🎯 Ritual Nikmat</div><div style="font-size:11px;color:var(--gray-700);margin-top:4px;line-height:1.6;"><span style="color:var(--green);font-weight:700;">①</span> Tuang sambal ke wadah<br><span style="color:var(--green);font-weight:700;">②</span> Aduk rata & nikmati tiap gigitan<br><span style="color:var(--green);font-weight:700;">③</span> Tambah level pedas sesuai selera</div>`;
+    document.getElementById('modalTags').after(ritualDiv);
+
+    // ✅ PERUBAHAN #5b: Justifikasi Harga
+    const breakdown = product.price <= 30000 ? `${(product.buah||[]).length} jenis buah segar • sambal homemade • wadah food grade` : product.price <= 85000 ? `${(product.buah||[]).length} jenis buah premium • sambal spesial • wadah jumbo` : `${(product.buah||[]).length}+ jenis buah • tampah bambu • sambal variant`;
+    const hargaDiv = document.createElement('div');
+    hargaDiv.style.cssText = 'font-size:10px;color:var(--gray-500);margin:4px 0 6px;line-height:1.4;text-align:center;';
+    hargaDiv.innerHTML = `💰 <strong>${fmt(product.price)}</strong> sudah termasuk:<br>${breakdown}`;
+    const detailGrid = document.getElementById('modalDetailGrid');
+    if (detailGrid) detailGrid.after(hargaDiv);
+
+    document.getElementById('btnPrice').textContent=fmt(product.price); document.getElementById('modalAdd').dataset.id=product.id;
+    const sel=document.getElementById('spiceSelect'); const dv=product.defaultSpice||3; sel.value=dv; updateSpiceHighlight(dv); sel.onchange=function(){ updateSpiceHighlight(parseInt(this.value,10)); };
+    productModal.classList.add('active'); document.body.style.overflow='hidden';
+  }
   function updateSpiceHighlight(l){ document.getElementById('modalSpiceLabel').textContent=l+' - '+(SPICE_NAMES[l-1]||'Pedas'); }
   function closeProductModal(){ productModal.classList.remove('active'); document.body.style.overflow=''; currentProductId=null; }
 
@@ -164,8 +192,7 @@
   function clearCart(){ if(Object.keys(state.cart).length===0) return showToast('Keranjang sudah kosong'); if(confirm('Yakin ingin mengosongkan keranjang?')){ state.cart={}; updateUI(); if(miniCartModal.classList.contains('active')) renderMiniCart(); showToast('Keranjang dikosongkan'); } }
 
   async function saveOrderToDatabase(orderItems,total,subtotal,shippingCost,discount) {
-    const client=getSupabase();
-    if(!client){ console.warn('⚠️ Supabase belum siap'); return false; }
+    const client=getSupabase(); if(!client){ console.warn('⚠️ Supabase belum siap'); return false; }
     try { const payload={ customer_name:state.customerName||'Guest',customer_phone:state.customerPhone||'',customer_address:state.customerAddress||'',items:orderItems,subtotal,shipping_cost:shippingCost,discount,total,status:'pending',is_gift:state.isGift,gift_sender:state.giftSender||null,gift_message:state.giftMessage||null,mission_shared:state.hasShared,shipping_provider:state.shippingProvider,vehicle:state.vehicleType,priority:state.isPriority }; const {error}=await client.from('orders').insert([payload]); if(error) throw error; return true; } catch(err){ console.error('Supabase error:',err); return false; }
   }
 
