@@ -343,7 +343,8 @@
     document.querySelectorAll('.ship-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.provider === state.shippingProvider);
     });
-    document.getElementById('rujakcoOptions').style.display = state.shippingProvider === 'rujakco' ? 'block' : 'none';
+    const rujakOpts = document.getElementById('rujakcoOptions');
+    if (rujakOpts) rujakOpts.style.display = state.shippingProvider === 'rujakco' ? 'block' : 'none';
     document.querySelectorAll('.veh-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.vehicle === state.vehicleType);
     });
@@ -480,7 +481,6 @@
         showToast('⚠️ Gagal menyimpan, lanjut WhatsApp');
       })
       .finally(() => {
-        // ✅ Balikin tombol setelah 1 detik
         setTimeout(() => {
           if (payBtn) {
             payBtn.textContent = '💳 Kirim Bukti Transfer';
@@ -488,7 +488,6 @@
           }
         }, 1000);
 
-        // Buka WhatsApp
         setTimeout(() => {
           let msg = 'Halo Rujak.Co! Saya ingin memesan:\n\n';
           summary.items.forEach(item => {
@@ -547,7 +546,8 @@
 
   function handlePriorityToggle(checked) {
     state.isPriority = checked; document.getElementById('priorityToggle').checked = checked;
-    document.getElementById('priorityToggleMini').checked = checked;
+    const priorityMini = document.getElementById('priorityToggleMini');
+    if (priorityMini) priorityMini.checked = checked;
     if (state.userDistance !== null) updateShippingUI(state.userDistance, checked);
   }
 
@@ -575,20 +575,42 @@
     });
 
     document.getElementById('priorityToggle').addEventListener('change', function() { handlePriorityToggle(this.checked); });
-    document.getElementById('priorityToggleMini').addEventListener('change', function() { handlePriorityToggle(this.checked); });
+    const priorityMini = document.getElementById('priorityToggleMini');
+    if (priorityMini) priorityMini.addEventListener('change', function() { handlePriorityToggle(this.checked); });
 
-    document.getElementById('btnAutoDetect').addEventListener('click', function() {
-      state.useManualDistrict = false; state.selectedDistrict = '';
-      this.classList.add('active'); document.getElementById('btnManualDistrict').classList.remove('active');
-      document.getElementById('districtSelectWrap').style.display = 'none'; detectLocation();
-    });
-    document.getElementById('btnManualDistrict').addEventListener('click', function() {
-      state.useManualDistrict = true; this.classList.add('active'); document.getElementById('btnAutoDetect').classList.remove('active');
-      document.getElementById('districtSelectWrap').style.display = 'block';
-    });
-    document.getElementById('districtSelect').addEventListener('change', function() {
-      state.selectedDistrict = this.value; if (state.selectedDistrict) detectLocation();
-    });
+    // ✅ PERBAIKAN: Optional chaining untuk elemen yang mungkin tidak ada
+    const btnAutoDetect = document.getElementById('btnAutoDetect');
+    if (btnAutoDetect) {
+      btnAutoDetect.addEventListener('click', function() {
+        state.useManualDistrict = false; state.selectedDistrict = '';
+        this.classList.add('active');
+        const btnManual = document.getElementById('btnManualDistrict');
+        if (btnManual) btnManual.classList.remove('active');
+        const districtWrap = document.getElementById('districtSelectWrap');
+        if (districtWrap) districtWrap.style.display = 'none';
+        detectLocation();
+      });
+    }
+
+    const btnManualDistrict = document.getElementById('btnManualDistrict');
+    if (btnManualDistrict) {
+      btnManualDistrict.addEventListener('click', function() {
+        state.useManualDistrict = true;
+        this.classList.add('active');
+        const btnAuto = document.getElementById('btnAutoDetect');
+        if (btnAuto) btnAuto.classList.remove('active');
+        const districtWrap = document.getElementById('districtSelectWrap');
+        if (districtWrap) districtWrap.style.display = 'block';
+      });
+    }
+
+    const districtSelect = document.getElementById('districtSelect');
+    if (districtSelect) {
+      districtSelect.addEventListener('change', function() {
+        state.selectedDistrict = this.value;
+        if (state.selectedDistrict) detectLocation();
+      });
+    }
 
     document.getElementById('shareBtnModal').addEventListener('click', function() {
       state.hasShared = true; saveCustomerData(); updateUI(); showToast('Diskon Rp5.000 berhasil diaktifkan!'); shareToWhatsApp();
@@ -618,7 +640,8 @@
         document.querySelectorAll('.ship-btn').forEach(b => b.classList.remove('active'));
         this.classList.add('active');
         state.shippingProvider = this.dataset.provider;
-        document.getElementById('rujakcoOptions').style.display = state.shippingProvider === 'rujakco' ? 'block' : 'none';
+        const rujakOpts = document.getElementById('rujakcoOptions');
+        if (rujakOpts) rujakOpts.style.display = state.shippingProvider === 'rujakco' ? 'block' : 'none';
         updateUI();
       });
     });
@@ -718,7 +741,11 @@
   // ===================== INIT =====================
   function init() {
     loadCart(); loadCustomerData(); updateStoreStatus();
-    document.getElementById('shareStrip').style.display = 'none';
+    
+    // ✅ PERBAIKAN: Optional chaining
+    const shareStrip = document.getElementById('shareStrip');
+    if (shareStrip) shareStrip.style.display = 'none';
+    
     try { const s = localStorage.getItem('rujak_cart_minimized'); if (s !== null) state.isCartMinimized = s === 'true'; } catch (_) {}
     updateUI(); detectLocation(); bindEvents();
 
