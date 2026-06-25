@@ -13,12 +13,16 @@
   }
 
   // ===================== DATA PRODUK =====================
-  const PRODUCTS = [
-    // ... (data produk tetap sama, tidak diubah)
-  ];
+  // Data dari products.js (satu sumber)
+  const PRODUCTS = typeof PRODUCTS_DATA !== 'undefined' ? PRODUCTS_DATA : [];
+  const VIP_PRODUCT = typeof VIP_PRODUCT_DATA !== 'undefined' ? VIP_PRODUCT_DATA : null;
 
-  const VIP_PRODUCT = { /* ... */ };
-  const ADDONS = [ /* ... */ ];
+  const ADDONS = [
+    { id: 'a_sambal1', name: 'Sambal Original', price: 8000, icon: 'flame', iconColor: 'text-red-500', desc: 'Warisan rasa klasik.' },
+    { id: 'a_sambal2', name: 'Sambal Mete Premium', price: 12000, icon: 'flame', iconColor: 'text-red-600', desc: 'Lebih gurih dan kaya rasa.' },
+    { id: 'a_extra_jambu', name: 'Extra Jambu Kristal', price: 10000, icon: 'apple', iconColor: 'text-green-500', desc: 'Tambahan jambu kristal segar' },
+    { id: 'a_extra_muscat', name: 'Extra Shine Muscat', price: 15000, icon: 'grape', iconColor: 'text-purple-500', desc: 'Tambahan anggur Shine Muscat impor' }
+  ];
 
   const SYSTEM = {
     DISCOUNT_THRESHOLD: 100000,
@@ -214,7 +218,7 @@
       const q = state.searchQuery.toLowerCase();
       return matchCat && (p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
     });
-    if (state.searchQuery.toLowerCase().includes('vip')) {
+    if (state.searchQuery.toLowerCase().includes('vip') && VIP_PRODUCT) {
       if (!filtered.some(p => p.id === 'p_vip')) filtered = [VIP_PRODUCT, ...filtered];
     }
     if (!filtered.length) { empty.style.display = 'block'; container.innerHTML = ''; return; }
@@ -355,20 +359,31 @@
     const summary = getCartSummary();
     const list = document.getElementById('miniCartList');
     
+    if (!list) return;
+    
     if (summary.items.length === 0) {
-      list.innerHTML = '<p style="text-align:center;color:var(--gray-400);padding:20px 0;">Keranjang kosong</p>';
+      list.innerHTML = `
+        <div style="text-align:center;padding:30px 0;color:var(--gray-400);">
+          <div style="font-size:40px;margin-bottom:8px;">🛒</div>
+          <div style="font-size:14px;font-weight:600;">Keranjang kosong</div>
+          <div style="font-size:12px;">Tambahkan menu favoritmu</div>
+        </div>
+      `;
       document.getElementById('cartSubtotalDisplay').textContent = 'Rp0';
       return;
     }
     
     list.innerHTML = summary.items.map(item => `
       <div class="mini-cart-item">
-        <div><div class="mini-cart-name">${item.name}</div><div class="mini-cart-detail">${fmt(item.price)}</div></div>
+        <div class="mini-cart-info">
+          <div class="mini-cart-name">${item.name}${item.spice ? ' (Level ' + item.spice + ')' : ''}</div>
+          <div class="mini-cart-detail">${fmt(item.price)}</div>
+        </div>
         <div class="mini-cart-qty">
           <button data-action="decrease" data-id="${item.id}">−</button>
           <span>${item.qty}</span>
           <button data-action="increase" data-id="${item.id}">+</button>
-          <button data-action="remove" data-id="${item.id}" style="background:none;border:none;color:var(--red);font-size:16px;">✕</button>
+          <button data-action="remove" data-id="${item.id}" class="mini-cart-remove">✕</button>
         </div>
       </div>
     `).join('');
@@ -699,20 +714,24 @@
     // Toggle prioritas (sinkronisasi antara dua toggle)
     const priorityToggle = document.getElementById('priorityToggle');
     const priorityToggleMini = document.getElementById('priorityToggleMini');
-    priorityToggle.addEventListener('change', function() {
-      state.isPriority = this.checked;
-      priorityToggleMini.checked = this.checked;
-      if (state.userDistance !== null) updateShippingUI(state.userDistance);
-      renderMiniCart();
-      updateUI();
-    });
-    priorityToggleMini.addEventListener('change', function() {
-      state.isPriority = this.checked;
-      priorityToggle.checked = this.checked;
-      if (state.userDistance !== null) updateShippingUI(state.userDistance);
-      renderMiniCart();
-      updateUI();
-    });
+    if (priorityToggle) {
+      priorityToggle.addEventListener('change', function() {
+        state.isPriority = this.checked;
+        if (priorityToggleMini) priorityToggleMini.checked = this.checked;
+        if (state.userDistance !== null) updateShippingUI(state.userDistance);
+        renderMiniCart();
+        updateUI();
+      });
+    }
+    if (priorityToggleMini) {
+      priorityToggleMini.addEventListener('change', function() {
+        state.isPriority = this.checked;
+        if (priorityToggle) priorityToggle.checked = this.checked;
+        if (state.userDistance !== null) updateShippingUI(state.userDistance);
+        renderMiniCart();
+        updateUI();
+      });
+    }
 
     // Promo & share
     document.getElementById('shareBtnModal').addEventListener('click', function() {
@@ -748,23 +767,30 @@
     searchInput.addEventListener('keyup', updateClearButton);
 
     // ===================== STEP NAVIGATION =====================
-    document.getElementById('step1Next').addEventListener('click', () => goToStep(2));
-    document.getElementById('step2Back').addEventListener('click', () => goToStep(1));
-    document.getElementById('step2Next').addEventListener('click', () => {
-      const name = document.getElementById('customerName').value.trim();
-      const phone = document.getElementById('customerPhone').value.trim();
-      const address = document.getElementById('customerAddress').value.trim();
-      if (!name || !phone || !address) {
-        showToast('❌ Lengkapi data penerima dulu');
-        return;
-      }
-      state.customerName = name;
-      state.customerPhone = phone;
-      state.customerAddress = address;
-      saveCustomerData();
-      goToStep(3);
-    });
-    document.getElementById('step3Back').addEventListener('click', () => goToStep(2));
+    const step1Next = document.getElementById('step1Next');
+    const step2Back = document.getElementById('step2Back');
+    const step2Next = document.getElementById('step2Next');
+    const step3Back = document.getElementById('step3Back');
+
+    if (step1Next) step1Next.addEventListener('click', () => goToStep(2));
+    if (step2Back) step2Back.addEventListener('click', () => goToStep(1));
+    if (step2Next) {
+      step2Next.addEventListener('click', () => {
+        const name = document.getElementById('customerName').value.trim();
+        const phone = document.getElementById('customerPhone').value.trim();
+        const address = document.getElementById('customerAddress').value.trim();
+        if (!name || !phone || !address) {
+          showToast('❌ Lengkapi data penerima dulu');
+          return;
+        }
+        state.customerName = name;
+        state.customerPhone = phone;
+        state.customerAddress = address;
+        saveCustomerData();
+        goToStep(3);
+      });
+    }
+    if (step3Back) step3Back.addEventListener('click', () => goToStep(2));
 
     // ===================== SHIPPING OPTIONS (Tombol) =====================
     document.querySelectorAll('.ship-btn').forEach(btn => {
@@ -772,8 +798,10 @@
         document.querySelectorAll('.ship-btn').forEach(b => b.classList.remove('active'));
         this.classList.add('active');
         state.shippingProvider = this.dataset.provider;
-        document.getElementById('rujakcoOptions').style.display = 
-          this.dataset.provider === 'rujakco' ? 'block' : 'none';
+        const rujakcoOptions = document.getElementById('rujakcoOptions');
+        if (rujakcoOptions) {
+          rujakcoOptions.style.display = this.dataset.provider === 'rujakco' ? 'block' : 'none';
+        }
         if (state.userDistance !== null) updateShippingUI(state.userDistance);
         renderMiniCart();
         updateUI();
@@ -863,8 +891,10 @@
 
     // QRIS zoom
     const qrisImg = document.getElementById('qrisImagePayment');
-    qrisImg.addEventListener('click', function() { this.classList.toggle('qr-zoomed'); });
-    qrisImg.addEventListener('dblclick', function() { this.classList.toggle('qr-zoomed'); });
+    if (qrisImg) {
+      qrisImg.addEventListener('click', function() { this.classList.toggle('qr-zoomed'); });
+      qrisImg.addEventListener('dblclick', function() { this.classList.toggle('qr-zoomed'); });
+    }
 
     window.addEventListener('scroll', () => { document.getElementById('header')?.classList.toggle('shadowed', window.scrollY > 4); });
   }
