@@ -42,7 +42,8 @@
     SUBSIDY_TIER3: 200000,
     SUBSIDY_AMOUNT1: 5000,
     SUBSIDY_AMOUNT2: 10000,
-    PRIORITY_SURCHARGE: 8000
+    PRIORITY_SURCHARGE: 8000,
+    MAX_SUBSIDY: 30000
   };
 
   const DISTRICT_MAP = { 'bekasi barat':3,'bekasi timur':5,'bekasi selatan':7,'bekasi utara':8,'rawalumbu':6,'jatiasih':9,'pondokgede':12,'cikarang':18,'jakarta pusat':18,'jakarta selatan':20,'jakarta timur':15,'jakarta barat':22,'jakarta utara':25,'depok':28,'bogor':35,'tangerang':30,'tangerang selatan':27 };
@@ -51,7 +52,7 @@
     cart:{}, activeFilter:'all', searchQuery:'', userDistance:null, isPriority:false, orderNotes:'',
     isCartMinimized:false, customerName:'', customerPhone:'', customerAddress:'', isGift:false,
     giftSender:'', giftMessage:'', useManualDistrict:false, selectedDistrict:'', hasShared:false,
-    shippingProvider:'pembeli', vehicleType:'motor', currentStep:1
+    shippingProvider:'rujakco', vehicleType:'motor', currentStep:1
   };
 
   let addToCartLocked = false;
@@ -78,46 +79,83 @@
 
   function calculateDiscount(subtotal) { let discount=0; if(subtotal>=SYSTEM.DISCOUNT_THRESHOLD) discount+=5000; if(state.hasShared) discount+=5000; return discount; }
 
-  // ===================== SISTEM ZONA ONGKIR =====================
-  function getShippingZone(distance) {
-    if (distance === null || distance === undefined || isNaN(distance)) return null;
-    if (distance <= 5) return { zone: 'A', label: 'Zona A (0-5 km)', cost: 10000 };
-    if (distance <= 10) return { zone: 'B', label: 'Zona B (5-10 km)', cost: 15000 };
-    if (distance <= 15) return { zone: 'C', label: 'Zona C (10-15 km)', cost: 20000 };
-    if (distance <= 20) return { zone: 'D', label: 'Zona D (15-20 km)', cost: 25000 };
-    return { zone: 'E', label: 'Zona E (>20 km)', cost: null };
+  // ===================== TARIF LALAMOVE REAL =====================
+  function calculateLalamoveCost(distance, vehicleType) {
+    const dist = Math.ceil(distance);
+    if (vehicleType === 'motor') {
+      if (dist <= 3) return 8000;
+      if (dist <= 25) return 8000 + ((dist - 3) * 2000);
+      return 8000 + (22 * 2000) + ((dist - 25) * 2400);
+    }
+    if (vehicleType === 'mobil') {
+      if (dist <= 3) return 24000;
+      if (dist <= 15) return 24000 + ((dist - 3) * 4500);
+      return 24000 + (12 * 4500) + ((dist - 15) * 5000);
+    }
+    return 0;
   }
 
+  function getZoneLabel(distance) {
+    if (distance <= 5) return 'Zona A (0-5 km)';
+    if (distance <= 10) return 'Zona B (5-10 km)';
+    if (distance <= 15) return 'Zona C (10-15 km)';
+    if (distance <= 20) return 'Zona D (15-20 km)';
+    return 'Zona E (>20 km)';
+  }
+
+  // ===================== SURGE DETECTION =====================
+  function isPeakHour() {
+    const now = new Date();
+    const hour = now.getHours();
+    const day = now.getDay();
+    if (day === 0 || day === 6) return (hour >= 11 && hour <= 13);
+    return (hour >= 11 && hour <= 13) || (hour >= 16 && hour <= 19);
+  }
+
+  function getSurgeMultiplier() {
+    if (!isPeakHour()) return 1.0;
+    const surge = 1.3 + (Math.random() * 0.2);
+    return Math.round(surge * 10) / 10;
+  }
+
+  // ===================== SHIPPING CALCULATION =====================
   function calculateShipping(distance, priority) {
-    if (state.shippingProvider === 'pembeli') return { cost: 0, label: 'Kurir Saya', distance, zone: null };
-    
-    const rawDistance = (distance === null || distance === undefined || isNaN(distance)) 
-      ? SYSTEM.DEFAULT_DISTANCE : distance;
-    
-    const zone = getShippingZone(rawDistance);
-    
-    if (!zone || !zone.cost) {
-      return { cost: null, label: 'Admin Konfirmasi', distance: rawDistance, zone: 'E' };
+    if (state.shippingProvider === 'pembeli') {
+      return { cost: 0, label: 'Kurir Saya', distance, zone: null, surge: 1.0, isSurge: false, lalamoveCost: 0, baseLalamoveCost: 0 };
     }
-    
-    const baseCost = priority ? zone.cost + SYSTEM.PRIORITY_SURCHARGE : zone.cost;
-    
+    const rawDistance = (distance === null || distance === undefined || isNaN(distance)) ? SYSTEM.DEFAULT_DISTANCE : distance;
+    if (rawDistance > SYSTEM.MAX_DISTANCE) {
+      return { cost: null, label: 'Admin Konfirmasi', distance: rawDistance, zone: 'E', surge: 1.0, isSurge: false, lalamoveCost: 0, baseLalamoveCost: 0 };
+    }
+    const surgeMultiplier = getSurgeMultiplier();
+    const isSurge = surgeMultiplier > 1.0;
+    const lalamoveCost = calculateLalamoveCost(rawDistance, state.vehicleType);
+    const surgedCost = Math.round(lalamoveCost * surgeMultiplier);
+    const priorityCost = priority ? SYSTEM.PRIORITY_SURCHARGE : 0;
+    const totalCost = surgedCost + priorityCost;
+    const zoneLabel = getZoneLabel(rawDistance);
+    const surgeLabel = isSurge ? ' ⚡Jam Sibuk' : '';
     return {
-      cost: baseCost,
-      label: zone.label + (priority ? ' • Prioritas' : ''),
+      cost: totalCost, lalamoveCost: surgedCost, baseLalamoveCost: lalamoveCost,
+      surgeMultiplier: surgeMultiplier, isSurge: isSurge,
+      label: zoneLabel + ' • ' + (state.vehicleType === 'motor' ? 'Motor' : 'Mobil') + (priority ? ' • Prioritas' : '') + surgeLabel,
       distance: rawDistance,
-      zone: zone.zone
+      zone: rawDistance <= 20 ? (rawDistance <= 5 ? 'A' : rawDistance <= 10 ? 'B' : rawDistance <= 15 ? 'C' : 'D') : 'E'
     };
   }
 
   function calculateSubsidy(subtotal, shippingZone, rawShippingCost) {
     if (shippingZone === 'E' || !rawShippingCost) return 0;
+    let subsidy = 0;
     if (subtotal >= SYSTEM.SUBSIDY_TIER3 && ['A','B','C','D'].includes(shippingZone)) {
-      return rawShippingCost; // GRATIS ONGKIR
+      subsidy = rawShippingCost;
+    } else if (subtotal >= SYSTEM.SUBSIDY_TIER2) {
+      subsidy = SYSTEM.SUBSIDY_AMOUNT2;
+    } else if (subtotal >= SYSTEM.SUBSIDY_TIER1) {
+      subsidy = SYSTEM.SUBSIDY_AMOUNT1;
     }
-    if (subtotal >= SYSTEM.SUBSIDY_TIER2) return SYSTEM.SUBSIDY_AMOUNT2;
-    if (subtotal >= SYSTEM.SUBSIDY_TIER1) return SYSTEM.SUBSIDY_AMOUNT1;
-    return 0;
+    if (subsidy > SYSTEM.MAX_SUBSIDY) subsidy = SYSTEM.MAX_SUBSIDY;
+    return subsidy;
   }
 
   function getLocationFallback() {
@@ -129,17 +167,17 @@
     const distEl = document.getElementById('shippingDistance');
     const costEl = document.getElementById('shippingCost');
     const outEl = document.getElementById('outOfRange');
-    
     if (distEl) distEl.textContent = '~' + Math.ceil(distance) + ' km';
-    
     if (shipping.zone === 'E') {
       if (costEl) { costEl.textContent = 'Konfirmasi'; costEl.style.color = 'var(--red)'; }
       if (outEl) outEl.style.display = 'block';
+    } else if (state.shippingProvider === 'pembeli') {
+      if (costEl) { costEl.textContent = 'Gratis'; costEl.style.color = 'var(--green)'; }
+      if (outEl) outEl.style.display = 'none';
     } else {
       if (costEl) { costEl.textContent = shipping.cost ? fmt(shipping.cost) : 'Gratis'; costEl.style.color = 'var(--red)'; }
       if (outEl) outEl.style.display = 'none';
     }
-    
     if (document.getElementById('miniCartModal').classList.contains('active')) renderMiniCart();
   }
 
@@ -160,7 +198,7 @@
     const shippingSubsidy=calculateSubsidy(subtotal,shipping.zone,rawShippingCost);
     const shippingCost=state.shippingProvider==='pembeli'?0:Math.max(0,rawShippingCost-shippingSubsidy);
     const total=subtotal-discount+shippingCost;
-    return {items,totalQty,subtotal,discount,shippingCost,shippingSubsidy,rawShippingCost,shippingLabel:shipping.label,shippingDistance:shipping.distance,shippingZone:shipping.zone,total,isOutOfRange:shipping.zone==='E'};
+    return {items,totalQty,subtotal,discount,shippingCost,shippingSubsidy,rawShippingCost,lalamoveCost:shipping.lalamoveCost,baseLalamoveCost:shipping.baseLalamoveCost,surgeMultiplier:shipping.surgeMultiplier,isSurge:shipping.isSurge,shippingLabel:shipping.label,shippingDistance:shipping.distance,shippingZone:shipping.zone,total,isOutOfRange:shipping.zone==='E'};
   }
 
   function renderMenu() {
@@ -198,7 +236,6 @@
     if(summary.items.length===0){ html='<p style="color:var(--gray-500);text-align:center;padding:20px 0;">Keranjang kosong</p>'; } else { summary.items.forEach(item=>{ const spiceText=item.spice?' (Level '+item.spice+')':''; html+=`<div class="mini-cart-item"><div class="mini-cart-info"><div class="mini-cart-name">${escapeHTML(item.name)}${spiceText}</div><div class="mini-cart-detail">${fmt(item.price)}</div></div><div class="mini-cart-qty"><button data-action="decrease" data-id="${item.id}">−</button><span>${item.qty}</span><button data-action="increase" data-id="${item.id}">+</button><button class="mini-cart-remove" data-action="remove" data-id="${item.id}">🗑️</button></div></div>`; }); }
     list.innerHTML=html; document.getElementById('cartSubtotalDisplay').textContent=fmt(summary.subtotal);
 
-    // ===== STEP 1: PROGRESS + SUBSIDI + UPSELL =====
     const step1Progress=document.getElementById('step1Progress');
     if(step1Progress&&summary.items.length>0){
       let progressHTML='';
@@ -206,16 +243,25 @@
       const progressPercent=Math.min(100,Math.round((summary.subtotal/SYSTEM.DISCOUNT_THRESHOLD)*100));
       if(remaining>0){ progressHTML+=`<div style="background:white;border:1px solid var(--gray-200);border-radius:12px;padding:12px;margin-bottom:8px;"><div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;margin-bottom:6px;"><span>🎯 Tambah ${fmt(remaining)} lagi dapat potongan Rp5.000</span><span style="color:var(--green);">${progressPercent}%</span></div><div style="width:100%;height:6px;background:var(--gray-200);border-radius:10px;overflow:hidden;"><div style="width:${progressPercent}%;height:100%;background:${progressPercent>=80?'var(--green)':'var(--red)'};border-radius:10px;transition:width 0.4s;"></div></div></div>`; } else { progressHTML+=`<div style="background:var(--green-pale);border:1px solid var(--green);border-radius:12px;padding:10px 12px;text-align:center;font-weight:700;color:var(--green);font-size:13px;margin-bottom:8px;">✅ Diskon Rp5.000 aktif!</div>`; }
       
-      if(summary.shippingProvider==='rujakco'&&!summary.isOutOfRange){
-        if(summary.subtotal>=SYSTEM.SUBSIDY_TIER3){ progressHTML+=`<div style="background:var(--green-pale);border:1px solid var(--green);border-radius:12px;padding:10px 12px;text-align:center;font-weight:700;color:var(--green);font-size:13px;">🚚 Gratis Pengiriman!</div>`; }
-        else if(summary.subtotal>=SYSTEM.SUBSIDY_TIER2){ progressHTML+=`<div style="background:var(--green-pale);border:1px solid var(--green);border-radius:12px;padding:10px 12px;text-align:center;font-weight:700;color:var(--green);font-size:13px;">✅ Subsidi Pengiriman Rp10.000 aktif!</div>`; }
-        else if(summary.subtotal>=SYSTEM.SUBSIDY_TIER1){ const toNext=SYSTEM.SUBSIDY_TIER2-summary.subtotal; progressHTML+=`<div style="background:white;border:1px solid var(--gold);border-radius:12px;padding:10px 12px;text-align:center;font-size:12px;font-weight:600;color:#92400e;">🚀 Tambah ${fmt(toNext)} lagi → Subsidi Rp10.000</div>`; }
-        else { const toSubsidy=SYSTEM.SUBSIDY_TIER1-summary.subtotal; progressHTML+=`<div style="background:white;border:1px solid var(--gray-200);border-radius:12px;padding:10px 12px;text-align:center;font-size:12px;font-weight:600;color:var(--gray-500);">📦 Tambah ${fmt(toSubsidy)} lagi → Subsidi Rp5.000</div>`; }
+      if(!summary.isOutOfRange){
+        if(state.shippingProvider==='pembeli'){
+          progressHTML+=`<div style="background:white;border:1px solid var(--gold);border-radius:12px;padding:10px 12px;text-align:center;font-size:12px;font-weight:600;color:#92400e;">💡 Pilih <strong>Kurir Rujak.Co</strong> untuk dapat subsidi pengiriman!</div>`;
+        } else {
+          if(summary.isSurge){
+            progressHTML+=`<div style="background:#FFF3CD;border:1px solid #F4C430;border-radius:10px;padding:8px 10px;margin-bottom:8px;text-align:center;font-size:11px;font-weight:600;color:#92400e;">⚡ Jam sibuk: tarif kurir sedang tinggi. Subsidi tetap berlaku maks. Rp30.000.</div>`;
+          }
+          if(summary.subtotal>=SYSTEM.SUBSIDY_TIER3){
+            const afterSubsidy=Math.max(0,summary.rawShippingCost-SYSTEM.MAX_SUBSIDY);
+            if(afterSubsidy>0){ progressHTML+=`<div style="background:var(--green-pale);border:1px solid var(--green);border-radius:12px;padding:10px 12px;text-align:center;font-weight:700;color:var(--green);font-size:13px;">🚚 Gratis Ongkir (Maks. Subsidi Rp30.000) — Sisa ${fmt(afterSubsidy)}</div>`; }
+            else { progressHTML+=`<div style="background:var(--green-pale);border:1px solid var(--green);border-radius:12px;padding:10px 12px;text-align:center;font-weight:700;color:var(--green);font-size:13px;">🚚 Gratis Pengiriman!</div>`; }
+          } else if(summary.subtotal>=SYSTEM.SUBSIDY_TIER2){ progressHTML+=`<div style="background:var(--green-pale);border:1px solid var(--green);border-radius:12px;padding:10px 12px;text-align:center;font-weight:700;color:var(--green);font-size:13px;">✅ Subsidi Pengiriman Rp10.000 aktif!</div>`; }
+          else if(summary.subtotal>=SYSTEM.SUBSIDY_TIER1){ const toNext=SYSTEM.SUBSIDY_TIER2-summary.subtotal; progressHTML+=`<div style="background:white;border:1px solid var(--gold);border-radius:12px;padding:10px 12px;text-align:center;font-size:12px;font-weight:600;color:#92400e;">🚀 Tambah ${fmt(toNext)} lagi → Subsidi Rp10.000</div>`; }
+          else { const toSubsidy=SYSTEM.SUBSIDY_TIER1-summary.subtotal; progressHTML+=`<div style="background:white;border:1px solid var(--gray-200);border-radius:12px;padding:10px 12px;text-align:center;font-size:12px;font-weight:600;color:var(--gray-500);">📦 Tambah ${fmt(toSubsidy)} lagi → Subsidi Rp5.000</div>`; }
+        }
       }
       step1Progress.innerHTML=progressHTML;
     }
 
-    // ===== UPSELL =====
     const upsellDiv=document.getElementById('step1Upsell');
     if(upsellDiv&&summary.items.length>0){
       const hasGaco=summary.items.some(i=>i.id.startsWith('p_m3'));
@@ -229,15 +275,16 @@
       upsellDiv.innerHTML=upsellHTML;
     }
 
-    // ===== STEP 2: ONGKIR + ZONA + SUBSIDI =====
-    const s2c=document.getElementById('step2ShippingCost'),s2d=document.getElementById('step2Distance'),s2z=document.getElementById('step2Zone'),s2s=document.getElementById('step2Subsidy');
+    const s2c=document.getElementById('step2ShippingCost'),s2d=document.getElementById('step2Distance'),s2z=document.getElementById('step2Zone'),s2s=document.getElementById('step2Subsidy'),s2b=document.getElementById('step2BaseCost');
     if(s2c&&summary.shippingProvider==='rujakco'){
-      if(summary.isOutOfRange){ s2c.textContent='Konfirmasi Admin'; if(s2z) s2z.textContent=summary.shippingLabel; if(s2s) s2s.style.display='none'; }
-      else { s2c.textContent=fmt(summary.shippingCost); if(s2z) s2z.textContent=summary.shippingLabel; if(s2s&&summary.shippingSubsidy>0){ s2s.style.display='block'; s2s.innerHTML=`💰 Subsidi Rujak.Co: <strong style="color:var(--green);">-${fmt(summary.shippingSubsidy)}</strong>`; } else if(s2s){ s2s.style.display='none'; } }
-    } else if(s2c){ s2c.textContent='Gratis'; if(s2z) s2z.textContent='Kurir Saya'; if(s2s) s2s.style.display='none'; }
+      if(summary.isOutOfRange){ s2c.textContent='Konfirmasi Admin'; if(s2z) s2z.textContent=summary.shippingLabel; if(s2s) s2s.style.display='none'; if(s2b) s2b.style.display='none'; }
+      else { s2c.textContent=fmt(summary.shippingCost); if(s2z) s2z.textContent=summary.shippingLabel;
+        if(s2b&&summary.lalamoveCost>0){ s2b.style.display='block'; let baseHTML=`🚚 Tarif Kurir: <strong>${fmt(summary.lalamoveCost)}</strong>`; if(summary.isSurge){ baseHTML+=` <span style="font-size:10px;color:#D62828;">(⚡Jam Sibuk ${summary.surgeMultiplier}x)</span>`; } s2b.innerHTML=baseHTML; }
+        if(s2s&&summary.shippingSubsidy>0){ s2s.style.display='block'; s2s.innerHTML=`💰 Subsidi Rujak.Co: <strong style="color:var(--green);">-${fmt(summary.shippingSubsidy)}</strong> ${summary.rawShippingCost-summary.shippingSubsidy>SYSTEM.MAX_SUBSIDY?'(Maks. Rp30.000)':''}`; } else if(s2s){ s2s.style.display='none'; }
+      }
+    } else if(s2c&&summary.shippingProvider==='pembeli'){ s2c.textContent='Gratis'; if(s2z) s2z.textContent='Kurir Saya'; if(s2s) s2s.style.display='none'; if(s2b) s2b.style.display='none'; }
     if(s2d) s2d.textContent='~'+Math.ceil(summary.shippingDistance)+' km';
 
-    // Step 3
     document.getElementById('finalSubtotal').textContent=fmt(summary.subtotal);
     document.getElementById('finalDiscount').textContent=summary.discount>0?'-Rp'+summary.discount.toLocaleString('id-ID'):'Rp0';
     document.getElementById('finalShipping').textContent=summary.isOutOfRange?'Konfirmasi Admin':fmt(summary.shippingCost);
@@ -294,7 +341,7 @@
     if(!address||address.length<5) return showToast('❌ Alamat pengiriman tidak valid'),document.getElementById('customerAddress').focus();
     if(summary.items.length===0) return showToast('Keranjang kosong');
     const payBtn=document.querySelector('[data-action="confirm-wa"]'); if(payBtn){ payBtn.textContent='⏳ Menyimpan...'; payBtn.disabled=true; }
-    saveOrderToDatabase(summary.items,summary.total,summary.subtotal,summary.shippingCost,summary.discount).then((saved)=>{ showToast(saved?'✅ Pesanan tersimpan!':'⚠️ Lanjut WhatsApp tanpa simpan'); }).catch(()=>{ showToast('⚠️ Gagal menyimpan, lanjut WhatsApp'); }).finally(()=>{ setTimeout(()=>{ if(payBtn){ payBtn.textContent='💳 Kirim Bukti Transfer'; payBtn.disabled=false; } },1000); setTimeout(()=>{ let msg='Halo Rujak.Co! Saya ingin memesan:\n\n'; summary.items.forEach(item=>{ const spiceText=item.spice?' (Level '+item.spice+')':''; msg+='• '+item.name+spiceText+' (x'+item.qty+') — '+fmt(item.lineTotal)+'\n'; }); if(state.orderNotes) msg+='\n*Catatan Pesanan:*\n'+state.orderNotes+'\n'; if(state.isGift){ msg+='\n🎁 *PESANAN KADO*\n'; if(state.giftSender) msg+='Dari: '+state.giftSender+'\n'; if(state.giftMessage) msg+='Ucapan: '+state.giftMessage+'\n'; } msg+='\n*Pengiriman:* '+(state.shippingProvider==='pembeli'?'Kurir Saya':'Kurir Rujak.Co - '+state.vehicleType+(state.isPriority?' (Prioritas)':'')); msg+='\n*Data:*\nNama : '+name+'\nNo. HP : '+phone+'\nAlamat : '+address+'\n'; if(state.shippingProvider==='rujakco'){ msg+='\nBiaya Pengantaran: '+fmt(summary.rawShippingCost)+' ('+summary.shippingLabel+')'; if(summary.shippingSubsidy>0) msg+='\nSubsidi Rujak.Co: -'+fmt(summary.shippingSubsidy); msg+='\nTotal Pengantaran: '+fmt(summary.shippingCost); } msg+='\nSubtotal: '+fmt(summary.subtotal); if(summary.discount>0) msg+='\nDiskon Misi Jajan: -'+fmt(summary.discount); msg+='\n*Total Akhir: '+fmt(summary.total)+'*\n\n*Saya sudah transfer via QRIS, ini bukti transfernya:*\n*(sertakan foto)*'; window.open('https://wa.me/'+SYSTEM.WA_NUMBER+'?text='+encodeURIComponent(msg),'_blank'); },500); });
+    saveOrderToDatabase(summary.items,summary.total,summary.subtotal,summary.shippingCost,summary.discount).then((saved)=>{ showToast(saved?'✅ Pesanan tersimpan!':'⚠️ Lanjut WhatsApp tanpa simpan'); }).catch(()=>{ showToast('⚠️ Gagal menyimpan, lanjut WhatsApp'); }).finally(()=>{ setTimeout(()=>{ if(payBtn){ payBtn.textContent='💳 Kirim Bukti Transfer'; payBtn.disabled=false; } },1000); setTimeout(()=>{ let msg='Halo Rujak.Co! Saya ingin memesan:\n\n'; summary.items.forEach(item=>{ const spiceText=item.spice?' (Level '+item.spice+')':''; msg+='• '+item.name+spiceText+' (x'+item.qty+') — '+fmt(item.lineTotal)+'\n'; }); if(state.orderNotes) msg+='\n*Catatan Pesanan:*\n'+state.orderNotes+'\n'; if(state.isGift){ msg+='\n🎁 *PESANAN KADO*\n'; if(state.giftSender) msg+='Dari: '+state.giftSender+'\n'; if(state.giftMessage) msg+='Ucapan: '+state.giftMessage+'\n'; } msg+='\n*Pengiriman:* '+(state.shippingProvider==='pembeli'?'Kurir Saya':'Kurir Rujak.Co - '+state.vehicleType+(state.isPriority?' (Prioritas)':'')); msg+='\n*Data:*\nNama : '+name+'\nNo. HP : '+phone+'\nAlamat : '+address+'\n'; if(state.shippingProvider==='rujakco'){ msg+='\nBiaya Pengantaran: '+fmt(summary.rawShippingCost)+' ('+summary.shippingLabel+')'; if(summary.lalamoveCost>0) msg+='\n  └ Tarif Kurir: '+fmt(summary.lalamoveCost); if(summary.shippingSubsidy>0) msg+='\n  └ Subsidi Rujak.Co: -'+fmt(summary.shippingSubsidy); msg+='\n  └ Total Bayar: '+fmt(summary.shippingCost); } msg+='\nSubtotal: '+fmt(summary.subtotal); if(summary.discount>0) msg+='\nDiskon Misi Jajan: -'+fmt(summary.discount); msg+='\n*Total Akhir: '+fmt(summary.total)+'*\n\n*Saya sudah transfer via QRIS, ini bukti transfernya:*\n*(sertakan foto)*'; window.open('https://wa.me/'+SYSTEM.WA_NUMBER+'?text='+encodeURIComponent(msg),'_blank'); },500); });
   }
 
   function saveCustomerData(){ try { localStorage.setItem('rujak_customer',JSON.stringify({ name:state.customerName,phone:state.customerPhone,address:state.customerAddress,isGift:state.isGift,giftSender:state.giftSender,giftMessage:state.giftMessage,hasShared:state.hasShared,shippingProvider:state.shippingProvider,vehicleType:state.vehicleType })); } catch(_) {} }
