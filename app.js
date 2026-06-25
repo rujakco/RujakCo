@@ -1187,8 +1187,15 @@
     state.isPriority = false;
     document.getElementById('priorityToggle').disabled = true;
     document.getElementById('priorityToggleMini').disabled = true;
-    document.querySelector('input[name="shippingProvider"][value="pembeli"]').checked = true;
-    document.querySelector('input[name="vehicle"][value="motor"]').checked = true;
+
+    // ========== ✅ PERBAIKAN DI SINI ==========
+    // Set default shipping provider via tombol (bukan radio yang udah ilang)
+    document.querySelectorAll('.ship-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.provider === 'pembeli');
+    });
+    document.querySelectorAll('.veh-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.vehicle === 'motor');
+    });
 
     updateUI(); detectLocation(); bindEvents();
 
