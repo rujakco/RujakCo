@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rujak.Co – Premium Indonesian Rujak Delivery</title>
   <meta name="description" content="Rujak premium dengan buah segar pilihan, sambal kacang original & mete, dikirim ke Jabodetabek. Pesan via WhatsApp." />
   <meta name="keywords" content="rujak, rujak premium, rujak delivery, rujak jabodetabek, rujak bekasi, rujak.co" />
@@ -10,6 +10,38 @@
   <meta name="theme-color" content="#0F4D37" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Rujak.Co – Premium Indonesian Rujak Delivery" />
+  <meta property="og:description" content="Rujak premium dengan buah segar pilihan, sambal kacang original & mete, dikirim ke Jabodetabek. Pesan via WhatsApp." />
+  <meta property="og:image" content="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" />
+  <meta property="og:url" content="https://rujakco.vercel.app" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Rujak.Co" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Rujak.Co – Premium Indonesian Rujak Delivery" />
+  <meta name="twitter:description" content="Rujak premium dengan buah segar pilihan, sambal kacang original & mete, dikirim ke Jabodetabek. Pesan via WhatsApp." />
+  <meta name="twitter:image" content="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" />
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://rujakco.vercel.app" />
+
+  <!-- Schema LD+JSON -->
+  <script type="application/ld+json">
+  {
+      "@context": "https://schema.org",
+      "@type": "Restaurant",
+      "name": "Rujak.Co",
+      "description": "Rujak premium dengan buah segar pilihan, sambal kacang original & mete, dikirim ke Jabodetabek. Pesan via WhatsApp.",
+      "url": "https://rujakco.vercel.app",
+      "servesCuisine": "Indonesian",
+      "areaServed": "Jabodetabek",
+      "telephone": "6289677161680"
+  }
+  </script>
+
   <link rel="manifest" href="/manifest.json" />
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="apple-touch-icon" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" />
@@ -17,9 +49,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-  <script defer src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script defer src="app.js"></script>
+  <script defer src="https://unpkg.com/lucide@0.383.0"></script>
 </head>
 <body>
   <div id="app">
@@ -140,7 +170,6 @@
         <span class="footer-brand-name">Rujak<span>.Co</span></span>
       </div>
       
-      <!-- ✅ WHATSAPP ICON EMAS BESAR DI KANAN -->
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
         <p class="footer-brand-desc" style="flex:1;margin:0;">Menghadirkan keberagaman rasa rujak Indonesia dalam satu pengalaman yang segar, modern, dan berkualitas.</p>
         <a href="whatsapp://send?phone=6289677161680" class="footer-wa-icon">
@@ -160,15 +189,12 @@
         <div class="footer-col">
           <h4>Ikuti Kami</h4>
           <div class="footer-social">
-            <!-- ✅ TIKTOK DEEP LINK -->
             <a href="tiktok://@rujakco" target="_blank" aria-label="TikTok" onclick="setTimeout(function(){ window.open('https://www.tiktok.com/@rujakco','_blank'); },500); return false;">
               <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Tiktok-icon.webp" alt="TikTok">
             </a>
-            <!-- ✅ INSTAGRAM DEEP LINK -->
             <a href="instagram://user?username=rujakco.id" target="_blank" aria-label="Instagram" onclick="setTimeout(function(){ window.open('https://www.instagram.com/rujakco.id','_blank'); },500); return false;">
               <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Instagram-icon.webp" alt="Instagram">
             </a>
-            <!-- ✅ THREADS DEEP LINK -->
             <a href="threads://user?username=rujakco.id" target="_blank" aria-label="Threads" onclick="setTimeout(function(){ window.open('https://www.threads.net/@rujakco.id','_blank'); },500); return false;">
               <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Thread-icon.webp" alt="Threads">
             </a>
@@ -181,7 +207,6 @@
     </div>
   </footer>
 
-  <!-- Bottom Bar -->
   <div id="bottom-bar">
     <button class="close-bottom-bar" id="closeBottomBar" aria-label="Tutup keranjang">✕</button>
     <div class="progress-container" id="progressContainer" style="display:none;">
@@ -235,7 +260,6 @@
   </div>
   <div id="toast" role="alert" aria-live="polite"></div>
 
-  <!-- MODAL PROMO -->
   <div class="modal-overlay" id="promoModal">
     <div class="modal-content" style="max-width: 350px;">
       <div class="modal-header">
@@ -255,14 +279,11 @@
         <button type="button" class="share-btn" id="shareBtnModal" style="width:100%; justify-content:center; margin-top:12px;">
           <i data-lucide="share-2" class="w-4 h-4"></i> Bagikan Sekarang
         </button>
-        <p style="font-size:11px; color:var(--gray-400); margin-top:10px; text-align:center;">
-          ✅ Misi yang sudah tercapai akan otomatis tercentang.
-        </p>
+        <p style="font-size:11px; color:var(--gray-400); margin-top:10px; text-align:center;">✅ Misi yang sudah tercapai akan otomatis tercentang.</p>
       </div>
     </div>
   </div>
 
-  <!-- MODAL PRODUK -->
   <div class="modal-overlay" id="productModal">
     <div class="modal-content">
       <div class="modal-header">
@@ -308,7 +329,6 @@
     </div>
   </div>
 
-  <!-- MODAL KERANJANG 3-STEP -->
   <div class="modal-overlay" id="miniCartModal">
     <div class="modal-content" style="max-width:420px;">
       <div class="modal-header">
@@ -326,37 +346,18 @@
           <span class="step-line"></span>
           <span class="step" data-step="3" onclick="goToStep(3)">3</span>
         </div>
-        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray-400);margin:-4px 0 16px;">
-          <span>Review</span><span>Pengiriman</span><span>Bayar</span>
-        </div>
-
-        <!-- STEP 1: REVIEW -->
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray-400);margin:-4px 0 16px;"><span>Review</span><span>Pengiriman</span><span>Bayar</span></div>
         <div class="cart-step active" id="cartStep1">
           <div id="miniCartList"></div>
-          <div class="cart-subtotal">
-            <span>Subtotal</span>
-            <span id="cartSubtotalDisplay">Rp0</span>
-          </div>
+          <div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotalDisplay">Rp0</span></div>
           <div id="step1Progress"></div>
           <button class="btn-step primary" id="step1Next" style="width:100%;justify-content:center;">Lanjut ke Pengiriman →</button>
         </div>
-
-        <!-- STEP 2: PENGIRIMAN -->
         <div class="cart-step" id="cartStep2">
-          <div class="form-section">
-            <label class="form-label">Nama Penerima</label>
-            <input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name">
-          </div>
-          <div class="form-section">
-            <label class="form-label">Nomor HP</label>
-            <input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" autocomplete="tel">
-          </div>
-          <div class="form-section">
-            <label class="form-label">Alamat</label>
-            <textarea id="customerAddress" placeholder="Alamat lengkap" rows="2"></textarea>
-          </div>
-          <div class="form-section">
-            <label class="form-label">Opsi Kurir</label>
+          <div class="form-section"><label class="form-label">Nama Penerima</label><input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name"></div>
+          <div class="form-section"><label class="form-label">Nomor HP</label><input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" autocomplete="tel"></div>
+          <div class="form-section"><label class="form-label">Alamat</label><textarea id="customerAddress" placeholder="Alamat lengkap" rows="2"></textarea></div>
+          <div class="form-section"><label class="form-label">Opsi Kurir</label>
             <div class="shipping-options">
               <button class="ship-btn active" data-provider="pembeli">🛵 Kurir Saya</button>
               <button class="ship-btn" data-provider="rujakco">📦 Kurir Rujak.Co</button>
@@ -367,24 +368,11 @@
               <button class="veh-btn active" data-vehicle="motor">🛵 Motor</button>
               <button class="veh-btn" data-vehicle="mobil">🚗 Mobil</button>
             </div>
-            <div class="priority-toggle">
-              <span>⚡ Prioritas</span>
-              <label class="switch"><input type="checkbox" id="priorityToggleMini"><span class="slider round"></span></label>
-            </div>
+            <div class="priority-toggle"><span>⚡ Prioritas</span><label class="switch"><input type="checkbox" id="priorityToggleMini"><span class="slider round"></span></label></div>
           </div>
-          <div style="background:var(--gray-100);border-radius:10px;padding:10px 14px;margin-top:10px;">
-            <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:600;">
-              <span>🛵 Perkiraan Ongkir</span>
-              <span style="color:var(--red);font-weight:800;" id="step2ShippingCost">Rp0</span>
-            </div>
-            <div style="font-size:11px;color:var(--gray-500);margin-top:2px;">
-              Jarak: <span id="step2Distance">-</span>
-            </div>
-          </div>
+          <div style="background:var(--gray-100);border-radius:10px;padding:10px 14px;margin-top:10px;"><div style="display:flex;justify-content:space-between;font-size:14px;font-weight:600;"><span>🛵 Perkiraan Ongkir</span><span style="color:var(--red);font-weight:800;" id="step2ShippingCost">Rp0</span></div><div style="font-size:11px;color:var(--gray-500);margin-top:2px;">Jarak: <span id="step2Distance">-</span></div></div>
           <button class="btn-step primary" id="step2Next" style="width:100%;margin-top:12px;">Lanjut ke Bayar →</button>
         </div>
-
-        <!-- STEP 3: BAYAR -->
         <div class="cart-step" id="cartStep3">
           <div class="final-summary">
             <div class="final-row"><span>Subtotal</span><span id="finalSubtotal">Rp0</span></div>
@@ -392,16 +380,9 @@
             <div class="final-row"><span>Ongkir</span><span id="finalShipping">Rp0</span></div>
             <div class="final-row total"><span>Total</span><span id="finalTotal">Rp0</span></div>
           </div>
-          <div class="form-section">
-            <label class="form-label">Catatan (Opsional)</label>
-            <textarea id="orderNotes" placeholder="Contoh: Sambal dipisah" rows="2"></textarea>
-          </div>
-          <div class="gift-section">
-            <label><input type="checkbox" id="giftToggle"> 🎁 Kirim sebagai Kado</label>
-            <div id="giftFields" style="display:none;margin-top:8px;">
-              <input type="text" id="giftSender" placeholder="Nama pengirim" style="width:100%;padding:8px 12px;border:1px solid var(--gray-300);border-radius:8px;margin-bottom:6px;">
-              <textarea id="giftMessage" placeholder="Pesan kado" rows="2" style="width:100%;padding:8px 12px;border:1px solid var(--gray-300);border-radius:8px;"></textarea>
-            </div>
+          <div class="form-section"><label class="form-label">Catatan (Opsional)</label><textarea id="orderNotes" placeholder="Contoh: Sambal dipisah" rows="2"></textarea></div>
+          <div class="gift-section"><label><input type="checkbox" id="giftToggle"> 🎁 Kirim sebagai Kado</label>
+            <div id="giftFields" style="display:none;margin-top:8px;"><input type="text" id="giftSender" placeholder="Nama pengirim"><textarea id="giftMessage" placeholder="Pesan kado" rows="2"></textarea></div>
           </div>
           <button class="btn-step primary" id="btnOpenPayment" style="width:100%;justify-content:center;margin-top:12px;">💳 Bayar Via QRIS</button>
         </div>
@@ -409,36 +390,23 @@
     </div>
   </div>
 
-  <!-- MODAL PEMBAYARAN QRIS -->
   <div class="modal-overlay" id="paymentModal">
     <div class="modal-content">
-      <div class="modal-header">
-        <span class="modal-header-title">Pembayaran QRIS</span>
-        <button class="modal-close" id="paymentClose" aria-label="Tutup">&times;</button>
-      </div>
+      <div class="modal-header"><span class="modal-header-title">Pembayaran QRIS</span><button class="modal-close" id="paymentClose" aria-label="Tutup">&times;</button></div>
       <div class="modal-body" style="text-align:center;">
-        <div style="position: relative; display: block; width: 100%;">
-          <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" id="qrisImagePayment" style="width:100%; height:auto; aspect-ratio: 1/1; object-fit:contain; border-radius:10px; background:white; display: block;" />
-        </div>
-        <!-- ✅ TEKS QRIS BARU -->
+        <div style="position: relative; display: block; width: 100%;"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" id="qrisImagePayment" style="width:100%; height:auto; aspect-ratio: 1/1; object-fit:contain; border-radius:10px; background:white; display: block;" /></div>
         <p style="font-size: 12px; color: var(--green); margin-top: 8px; font-weight: 700;">📱 Ketuk untuk perbesar QRIS</p>
-        <div style="margin-top: 12px;">
-          <button type="button" class="download-btn" id="downloadQrisBtnPayment" style="display:inline-flex; align-items:center; gap:6px; background:white; color:var(--green); padding:8px 16px; border-radius:10px; font-size:13px; font-weight:700; border:1px solid var(--green); cursor:pointer;">
-            <i data-lucide="download" class="w-4 h-4"></i> Unduh QRIS
-          </button>
-        </div>
+        <div style="margin-top: 12px;"><button type="button" class="download-btn" id="downloadQrisBtnPayment" style="display:inline-flex; align-items:center; gap:6px; background:white; color:var(--green); padding:8px 16px; border-radius:10px; font-size:13px; font-weight:700; border:1px solid var(--green); cursor:pointer;"><i data-lucide="download" class="w-4 h-4"></i> Unduh QRIS</button></div>
       </div>
       <div class="modal-footer" style="flex-direction: column; align-items: stretch; gap: 10px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; background: var(--red); color: white; border-radius: 12px; padding: 12px 16px; font-weight: 700;">
-          <span style="font-size: 14px;">Total Tagihan</span>
-          <span id="paymentTotalDisplay" style="font-size: 20px; font-weight: 800;">Rp0</span>
-        </div>
-        <button type="button" class="modal-add" data-action="confirm-wa" style="justify-content:center; gap:8px; margin-top: 0;">
-          <i data-lucide="send" class="w-5 h-5"></i> Kirim Bukti Transfer
-        </button>
+        <div style="display: flex; align-items: center; justify-content: space-between; background: var(--red); color: white; border-radius: 12px; padding: 12px 16px; font-weight: 700;"><span style="font-size: 14px;">Total Tagihan</span><span id="paymentTotalDisplay" style="font-size: 20px; font-weight: 800;">Rp0</span></div>
+        <button type="button" class="modal-add" data-action="confirm-wa" style="justify-content:center; gap:8px; margin-top: 0;"><i data-lucide="send" class="w-5 h-5"></i> Kirim Bukti Transfer</button>
       </div>
     </div>
   </div>
 
+  <!-- Scripts -->
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="app.js"></script>
 </body>
 </html>
