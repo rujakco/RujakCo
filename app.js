@@ -198,7 +198,7 @@
     const shippingSubsidy=calculateSubsidy(subtotal,shipping.zone,rawShippingCost);
     const shippingCost=state.shippingProvider==='pembeli'?0:Math.max(0,rawShippingCost-shippingSubsidy);
     const total=subtotal-discount+shippingCost;
-    return {items,totalQty,subtotal,discount,shippingCost,shippingSubsidy,rawShippingCost,lalamoveCost:shipping.lalamoveCost,baseLalamoveCost:shipping.baseLalamoveCost,surgeMultiplier:shipping.surgeMultiplier,isSurge:shipping.isSurge,shippingLabel:shipping.label,shippingDistance:shipping.distance,shippingZone:shipping.zone,total,isOutOfRange:shipping.zone==='E'};
+    return {items,totalQty,subtotal,discount,shippingCost,shippingSubsidy,rawShippingCost,lalamoveCost:shipping.lalamoveCost,baseLalamoveCost:shipping.baseLalamoveCost,surgeMultiplier:shipping.surgeMultiplier,isSurge:shipping.isSurge,shippingLabel:shipping.label,shippingDistance:shipping.distance,shippingZone:shipping.zone,total,isOutOfRange:shipping.zone==='E',shippingProvider:state.shippingProvider,vehicleType:state.vehicleType};
   }
 
   function renderMenu() {
