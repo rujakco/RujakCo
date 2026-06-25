@@ -124,7 +124,8 @@
     isPriority: false, orderNotes: '', isCartMinimized: false, customerName: '',
     customerPhone: '', customerAddress: '', isGift: false, giftSender: '',
     giftMessage: '', useManualDistrict: false, selectedDistrict: '',
-    hasShared: false
+    hasShared: false,
+    deliveryType: 'segera', deliveryDate: '', deliveryTime: '', courierData: { cost: 0, name: '' }
   };
 
   // ===================== FUNGSI UTILITY =====================
@@ -141,6 +142,23 @@
   
   function debounce(fn, delay) { let t; return function(...args) { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), delay); }; }
 
+  // ===================== OSRM API =====================
+  async function fetchOSRMDistance(originLat, originLng, destLat, destLng) {
+    try {
+      const url = `https://router.project-osrm.org/route/v1/driving/${originLng},${originLat};${destLng},${destLat}?overview=false`;
+      const response = await fetch(url);
+      const data = await response.json();
+      if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+        // Konversi meter ke kilometer, bulatkan 1 desimal
+        return Math.round((data.routes[0].distance / 1000) * 10) / 10;
+      }
+      return null;
+    } catch (e) {
+      console.warn('Gagal mengambil jarak OSRM:', e);
+      return null;
+    }
+  }
+
   // ===================== FUNGSI DISKON MISI JAJAN =====================
   function calculateDiscount(subtotal) {
     let discount = 0;
@@ -149,18 +167,17 @@
     return discount;
   }
 
-  // ===================== FUNGSI ONGKIR & LOKASI =====================
-  function calculateShipping(d, priority) {
-    const rawDistance = (d === null || d === undefined || isNaN(d)) ? SYSTEM.DEFAULT_DISTANCE : d;
-    const dist = rawDistance * 1.3;
-    const rounded = Math.ceil(dist);
-    if (rounded > SYSTEM.MAX_DISTANCE) return { cost: Infinity, label: 'Luar jangkauan', distance: rawDistance };
-    let base, perKm, label;
-    if (priority) { base = 15000; perKm = 3000; label = 'Prioritas'; }
-    else { base = 10000; perKm = 2000; label = 'Reguler'; }
-    const extraKm = Math.max(0, rounded - 3);
-    const cost = base + extraKm * perKm;
-    return { cost, label: label + ' (' + Math.ceil(rawDistance) + ' km)', distance: rawDistance };
+  // ===================== FUNGSI ONGKIR (KURIR) =====================
+  function getCourierRates(distance) {
+    if (distance > SYSTEM.MAX_DISTANCE) return [];
+    const distKm = Math.ceil(distance);
+    const extraKm = Math.max(0, distKm - 4);
+    return [
+      { id: 'borzo', name: 'Borzo (Sameday)', cost: 11000 + (extraKm * 2000) },
+      { id: 'grab', name: 'GrabExpress (Instan)', cost: 13000 + (extraKm * 2500) },
+      { id: 'gojek', name: 'GoSend (Instan)', cost: 14000 + (extraKm * 2500) },
+      { id: 'lalamove', name: 'Lalamove Mobil', cost: 20000 + (extraKm * 4000) }
+    ];
   }
 
   function getLocationFallback() {
@@ -178,72 +195,107 @@
     });
   }
 
-  function updateShippingUI(distance, isPriority) {
-    const r = calculateShipping(distance, isPriority);
-    const out = distance > SYSTEM.MAX_DISTANCE;
-    document.getElementById('shippingDistance').textContent = '~' + Math.ceil(distance) + ' km';
+  function updateShippingUI(distance) {
     const costEl = document.getElementById('shippingCost');
-    if (out) { costEl.textContent = '❌'; costEl.style.color = 'var(--red)'; document.getElementById('outOfRange').style.display = 'block'; }
-    else { costEl.textContent = 'Rp' + r.cost.toLocaleString('id-ID'); costEl.style.color = 'var(--red)'; document.getElementById('outOfRange').style.display = 'none'; }
+    document.getElementById('shippingDistance').textContent = '~' + Math.ceil(distance) + ' km';
+    const courierSection = document.getElementById('courierSection');
+    const selectEl = document.getElementById('courierSelect');
+
+    if (distance > SYSTEM.MAX_DISTANCE) {
+      costEl.textContent = '❌';
+      document.getElementById('outOfRange').style.display = 'block';
+      if (courierSection) courierSection.style.display = 'none';
+      state.courierData = { cost: 0, name: '' };
+    } else {
+      document.getElementById('outOfRange').style.display = 'none';
+      if (courierSection) courierSection.style.display = 'block';
+      
+      const couriers = getCourierRates(distance);
+      let html = '';
+      couriers.forEach(c => {
+        const isSelected = (state.courierData.name === c.name) ? 'selected' : '';
+        html += `<option value="${c.cost}|${c.name}" ${isSelected}>${c.name} — Rp${c.cost.toLocaleString('id-ID')}</option>`;
+      });
+      
+      selectEl.innerHTML = html;
+      if (!state.courierData.name || !couriers.find(c => c.name === state.courierData.name)) {
+        state.courierData = { cost: couriers[0].cost, name: couriers[0].name };
+      }
+      costEl.textContent = 'Cek Kurir';
+    }
     if (document.getElementById('miniCartModal').classList.contains('active')) renderMiniCart();
   }
 
-  function detectLocation() {
+  async function detectLocation() {
     const STORE_LAT = -6.2333, STORE_LNG = 107.0;
     document.getElementById('shippingCost').textContent = '⏳';
+    
     if (state.useManualDistrict && state.selectedDistrict) {
       const dist = DISTRICT_MAP[state.selectedDistrict] || SYSTEM.DEFAULT_DISTANCE;
       state.userDistance = dist;
       const distName = state.selectedDistrict.replace(/\b\w/g, l => l.toUpperCase());
       document.getElementById('locationDisplay').textContent = distName + ' ▾';
-      updateShippingUI(dist, state.isPriority);
+      updateShippingUI(dist);
       return;
     }
+    
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(pos => {
+      navigator.geolocation.getCurrentPosition(async pos => {
         const lat = pos.coords.latitude, lng = pos.coords.longitude;
-        const R = 6371; const dLat = (lat - STORE_LAT) * Math.PI / 180; const dLon = (lng - STORE_LNG) * Math.PI / 180;
-        const a = Math.sin(dLat/2)**2 + Math.cos(STORE_LAT * Math.PI/180) * Math.cos(lat * Math.PI/180) * Math.sin(dLon/2)**2;
-        const distance = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=10&accept-language=id`).then(r => r.json()).then(data => {
+        
+        // Ambil jarak dari OSRM
+        document.getElementById('shippingCost').textContent = '🛣️ Menghitung rute...';
+        const roadDistance = await fetchOSRMDistance(STORE_LAT, STORE_LNG, lat, lng);
+        
+        if (roadDistance !== null) {
+          state.userDistance = roadDistance;
+        } else {
+          // Fallback ke Haversine jika OSRM gagal
+          const R = 6371; const dLat = (lat - STORE_LAT) * Math.PI / 180; const dLon = (lng - STORE_LNG) * Math.PI / 180;
+          const a = Math.sin(dLat/2)**2 + Math.cos(STORE_LAT * Math.PI/180) * Math.cos(lat * Math.PI/180) * Math.sin(dLon/2)**2;
+          state.userDistance = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        }
+        
+        // Ambil nama kota
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=10&accept-language=id`);
+          const data = await res.json();
           const city = data.address?.city || data.address?.town || 'Lokasi Anda';
-          state.userDistance = distance; document.getElementById('locationDisplay').textContent = city + ' ▾'; updateShippingUI(distance, state.isPriority);
-        }).catch(() => { state.userDistance = distance; document.getElementById('locationDisplay').textContent = 'Lokasi Anda ▾'; updateShippingUI(distance, state.isPriority); });
-      }, () => {
-        getLocationFallback().then(({ city, distance }) => { state.userDistance = distance; document.getElementById('locationDisplay').textContent = city + ' ▾'; updateShippingUI(distance, state.isPriority); });
+          document.getElementById('locationDisplay').textContent = city + ' ▾';
+        } catch (_) {
+          document.getElementById('locationDisplay').textContent = 'Lokasi Anda ▾';
+        }
+        
+        updateShippingUI(state.userDistance);
+      }, async () => {
+        const fallback = await getLocationFallback();
+        state.userDistance = fallback.distance;
+        document.getElementById('locationDisplay').textContent = fallback.city + ' ▾';
+        updateShippingUI(fallback.distance);
       }, { enableHighAccuracy: true, timeout: 10000 });
     } else {
-      getLocationFallback().then(({ city, distance }) => { state.userDistance = distance; document.getElementById('locationDisplay').textContent = city + ' ▾'; updateShippingUI(distance, state.isPriority); });
+      const fallback = await getLocationFallback();
+      state.userDistance = fallback.distance;
+      document.getElementById('locationDisplay').textContent = fallback.city + ' ▾';
+      updateShippingUI(fallback.distance);
     }
   }
 
   // ===================== CART ENGINE =====================
   function getCartSummary() {
-    const items = [];
-    let subtotal = 0;
-    let totalQty = 0;
+    const items = []; let subtotal = 0; let totalQty = 0;
     Object.keys(state.cart).forEach(id => {
-      const entry = state.cart[id];
-      const item = getItemById(id);
+      const entry = state.cart[id]; const item = getItemById(id);
       if (item && entry && entry.qty > 0) {
-        const lineTotal = item.price * entry.qty;
-        subtotal += lineTotal;
-        totalQty += entry.qty;
+        const lineTotal = item.price * entry.qty; subtotal += lineTotal; totalQty += entry.qty;
         items.push({ id, name: item.name, price: item.price, qty: entry.qty, spice: entry.spice || null, lineTotal });
-      } else {
-        delete state.cart[id];
-      }
+      } else { delete state.cart[id]; }
     });
     const discount = calculateDiscount(subtotal);
     const distance = state.userDistance !== null ? state.userDistance : SYSTEM.DEFAULT_DISTANCE;
-    const shipping = calculateShipping(distance, state.isPriority);
-    const shippingCost = shipping.cost === Infinity ? 0 : shipping.cost;
+    const shippingCost = state.courierData.cost || 0;
     const total = subtotal - discount + shippingCost;
-    return {
-      items, totalQty, subtotal, discount, shippingCost,
-      shippingLabel: shipping.label, shippingDistance: shipping.distance,
-      total, isOutOfRange: distance > SYSTEM.MAX_DISTANCE
-    };
+    return { items, totalQty, subtotal, discount, shippingCost, shippingDistance: distance, total, isOutOfRange: distance > SYSTEM.MAX_DISTANCE };
   }
 
   // ===================== UI RENDER =====================
@@ -374,22 +426,20 @@
 
   function renderMiniCart() {
     const summary = getCartSummary();
-    const list = document.getElementById('miniCartList'), shippingRow = document.getElementById('miniCartShipping');
-    const shippingAmt = document.getElementById('miniCartShippingAmount'), finalTotal = document.getElementById('miniCartFinalTotal');
+    const list = document.getElementById('miniCartList');
+    const finalTotal = document.getElementById('miniCartFinalTotal');
 
     document.getElementById('orderNotes').value = state.orderNotes;
     document.getElementById('customerName').value = state.customerName;
     document.getElementById('customerPhone').value = state.customerPhone;
     document.getElementById('customerAddress').value = state.customerAddress;
     document.getElementById('giftToggle').checked = state.isGift;
-    document.getElementById('giftSender').value = state.giftSender;
-    document.getElementById('giftMessage').value = state.giftMessage;
     document.getElementById('giftFields').style.display = state.isGift ? 'block' : 'none';
 
     let html = '';
     if (summary.items.length === 0) {
       html = '<p style="color:var(--gray-500);text-align:center;padding:20px 0;">Keranjang kosong</p>';
-      shippingRow.style.display = 'none'; finalTotal.textContent = 'Rp0';
+      finalTotal.textContent = 'Rp0';
     } else {
       summary.items.forEach(item => {
         const spiceText = item.spice ? ' (Level ' + item.spice + ')' : '';
@@ -403,7 +453,6 @@
           </div>
         `;
       });
-      shippingRow.style.display = 'flex'; shippingAmt.textContent = 'Ongkir: ' + fmt(summary.shippingCost);
       finalTotal.textContent = fmt(summary.total);
     }
     list.innerHTML = html;
@@ -509,6 +558,12 @@
           const spiceText = item.spice ? ' (Level ' + item.spice + ')' : '';
           msg += '• ' + item.name + spiceText + ' (x' + item.qty + ') — ' + fmt(item.lineTotal) + '\n';
         });
+        
+        let timeStr = state.deliveryType === 'po' 
+          ? `Terjadwal (PO) - Tanggal: ${state.deliveryDate || '-'}, Jam: ${state.deliveryTime || '-'}` 
+          : 'Kirim Segera (Hari Ini)';
+        msg += '\n*Jadwal:* ' + timeStr + '\n';
+
         if (state.orderNotes) msg += '\n*Catatan Pesanan:*\n' + state.orderNotes + '\n';
         if (state.isGift) {
           msg += '\n🎁 *PESANAN KADO*\n';
@@ -516,10 +571,11 @@
           if (state.giftMessage) msg += 'Ucapan: ' + state.giftMessage + '\n';
         }
         msg += '\n*Data Pengiriman:*\nNama : ' + name + '\nNo. HP : ' + phone + '\nAlamat : ' + address + '\n';
-        msg += '\nOngkir: ' + fmt(summary.shippingCost) + ' (' + summary.shippingLabel + ')';
+        msg += '\nOngkir: ' + fmt(summary.shippingCost) + ' (' + (state.courierData.name || 'Menunggu Info') + ')';
         msg += '\nSubtotal: ' + fmt(summary.subtotal);
         if (summary.discount > 0) msg += '\nDiskon Misi Jajan: -' + fmt(summary.discount);
-        msg += '\n*Total Akhir: ' + fmt(summary.total) + '*\n\n*Saya sudah transfer via QRIS, ini bukti transfernya:*\n*(sertakan foto)*';
+        msg += '\n*Total Akhir: ' + fmt(summary.total) + '*\n\n*Saya sudah transfer via QRIS, ini bukti transfernya:*';
+        
         window.location.href = 'https://wa.me/' + SYSTEM.WA_NUMBER + '?text=' + encodeURIComponent(msg);
       });
   }
@@ -557,12 +613,6 @@
   }
   function expandCart() { state.isCartMinimized = false; localStorage.setItem('rujak_cart_minimized', 'false'); updateFloatingButton(); renderCart(); }
 
-  function handlePriorityToggle(checked) {
-    state.isPriority = checked; document.getElementById('priorityToggle').checked = checked;
-    document.getElementById('priorityToggleMini').checked = checked;
-    if (state.userDistance !== null) updateShippingUI(state.userDistance, checked);
-  }
-
   function updateStoreStatus() { document.getElementById('storeStatusText').textContent = 'Buka'; document.getElementById('storeStatus')?.classList.remove('closed'); }
   function shareToWhatsApp() { window.location.href = 'https://wa.me/?text=' + encodeURIComponent('Hai! Cobain Rujak.Co yuk — rujak premium dengan buah segar pilihan dan sambal khas Indonesia. Lihat menu dan pesan langsung di sini:\n' + window.location.href); }
 
@@ -586,9 +636,6 @@
       }
     });
 
-    document.getElementById('priorityToggle').addEventListener('change', function() { handlePriorityToggle(this.checked); });
-    document.getElementById('priorityToggleMini').addEventListener('change', function() { handlePriorityToggle(this.checked); });
-
     document.getElementById('btnAutoDetect').addEventListener('click', function() {
       state.useManualDistrict = false; state.selectedDistrict = '';
       this.classList.add('active'); document.getElementById('btnManualDistrict').classList.remove('active');
@@ -601,6 +648,41 @@
     document.getElementById('districtSelect').addEventListener('change', function() {
       state.selectedDistrict = this.value; if (state.selectedDistrict) detectLocation();
     });
+
+    const btnSekarang = document.getElementById('btnWaktuSekarang');
+    const btnPO = document.getElementById('btnWaktuPO');
+    const poWrap = document.getElementById('poScheduleWrap');
+    if (btnSekarang && btnPO && poWrap) {
+      btnSekarang.addEventListener('click', function() {
+        state.deliveryType = 'segera';
+        this.classList.add('active'); btnPO.classList.remove('active');
+        poWrap.style.display = 'none';
+      });
+      btnPO.addEventListener('click', function() {
+        state.deliveryType = 'po';
+        this.classList.add('active'); btnSekarang.classList.remove('active');
+        poWrap.style.display = 'flex';
+        if (!state.deliveryDate) {
+          let tmr = new Date(); tmr.setDate(tmr.getDate() + 1);
+          const dateStr = tmr.toISOString().split('T')[0];
+          document.getElementById('poDate').value = dateStr;
+          state.deliveryDate = dateStr;
+        }
+      });
+      document.getElementById('poDate').addEventListener('change', e => state.deliveryDate = e.target.value);
+      document.getElementById('poTime').addEventListener('change', e => state.deliveryTime = e.target.value);
+    }
+
+    const courierSel = document.getElementById('courierSelect');
+    if (courierSel) {
+      courierSel.addEventListener('change', function() {
+        const parts = this.value.split('|');
+        if (parts.length === 2) {
+          state.courierData = { cost: parseInt(parts[0], 10), name: parts[1] };
+          renderMiniCart();
+        }
+      });
+    }
 
     document.getElementById('shareBtnModal').addEventListener('click', function() {
       state.hasShared = true; saveCustomerData(); updateUI(); showToast('Diskon Rp5.000 berhasil diaktifkan!'); shareToWhatsApp();
@@ -720,7 +802,6 @@
     document.getElementById('giftFields').style.display = state.isGift ? 'block' : 'none';
     updateUI(); detectLocation(); bindEvents();
 
-    // ===== LISTENER SERVICE WORKER UPDATE =====
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.addEventListener('message', event => {
         if (event.data && event.data.type === 'SW_UPDATED') {
