@@ -165,6 +165,13 @@
     return subsidy;
   }
 
+  // ===================== NORMALISASI NOMOR HP =====================
+  function normalizePhone(phone) {
+    phone = phone.replace(/\D/g, '');
+    if (phone.startsWith('08')) phone = '62' + phone.slice(1);
+    return phone;
+  }
+
   // ===================== LOCATION =====================
   function getLocationFallback() {
     return new Promise(resolve => {
@@ -346,7 +353,6 @@
   function openProductModal(id) {
     const product=PRODUCTS.find(p=>p.id===id); if(!product) return; currentProductId=id;
     
-    // ✅ FIX: Hapus node lama sebelum tambah baru
     const oldRitual = document.querySelector('.ritual-box');
     if (oldRitual) oldRitual.remove();
     const oldHarga = document.querySelector('.harga-box');
@@ -377,25 +383,44 @@
 
   async function saveOrderToDatabase(orderItems,total,subtotal,shippingCost,discount) {
     const client=getSupabase(); if(!client){ console.warn('⚠️ Supabase belum siap'); return false; }
-    try { const payload={ customer_name:state.customerName||'Guest',customer_phone:state.customerPhone||'',customer_address:state.customerAddress||'',items:orderItems,subtotal,shipping_cost:shippingCost,discount,total,status:'pending',is_gift:state.isGift,gift_sender:state.giftSender||null,gift_message:state.giftMessage||null,mission_shared:state.hasShared,shipping_provider:state.shippingProvider,vehicle:state.vehicleType,priority:state.isPriority }; const {error}=await client.from('orders').insert([payload]); if(error) throw error; return true; } catch(err){ console.error('Supabase error:',err); return false; }
+    try { const payload={ customer_name:state.customerName.substring(0,50)||'Guest',customer_phone:state.customerPhone||'',customer_address:state.customerAddress.substring(0,500)||'',items:orderItems,subtotal,shipping_cost:shippingCost,discount,total,status:'pending',is_gift:state.isGift,gift_sender:(state.giftSender||'').substring(0,50),gift_message:(state.giftMessage||'').substring(0,300),mission_shared:state.hasShared,shipping_provider:state.shippingProvider,vehicle:state.vehicleType,priority:state.isPriority }; const {error}=await client.from('orders').insert([payload]); if(error) throw error; return true; } catch(err){ console.error('Supabase error:',err); return false; }
   }
 
   function handleCheckout() {
-    // ✅ FIX: Anti spam order
     if (checkoutLocked) return showToast('⏳ Pesanan sedang diproses...');
     
+    // ✅ ANTI SPAM 30 DETIK
+    const lastOrderTime = localStorage.getItem('last_order');
+    if (lastOrderTime && Date.now() - parseInt(lastOrderTime) < 30000) {
+      return showToast('⏳ Tunggu 30 detik sebelum order lagi');
+    }
+    
     const summary=getCartSummary(); if(summary.isOutOfRange) return showToast('Maaf, area Anda di luar jangkauan. Admin akan menghubungi.');
-    const name=state.customerName.trim(),phone=state.customerPhone.trim(),address=state.customerAddress.trim();
+    let name=state.customerName.trim(),phone=state.customerPhone.trim(),address=state.customerAddress.trim();
+    
+    // ✅ VALIDASI INPUT LENGTH
     if(!name||name.length<2) return showToast('❌ Nama penerima tidak valid'),document.getElementById('customerName').focus();
+    if(name.length>50) return showToast('❌ Nama maksimal 50 karakter'),document.getElementById('customerName').focus();
+    
     const phoneRegex=/^(08\d{8,11}|\+628\d{8,10}|628\d{8,10})$/; const cleanedPhone=phone.replace(/[\s\-\(\)]/g,'');
     if(!cleanedPhone) return showToast('❌ Nomor HP wajib diisi'),document.getElementById('customerPhone').focus();
     if(!phoneRegex.test(cleanedPhone)){ if(cleanedPhone.startsWith('0')&&cleanedPhone.length<10) return showToast('❌ Nomor HP terlalu pendek (min 10 digit)'),document.getElementById('customerPhone').focus(); if(cleanedPhone.startsWith('0')&&cleanedPhone.length>13) return showToast('❌ Nomor HP terlalu panjang (max 13 digit)'),document.getElementById('customerPhone').focus(); return showToast('❌ Format: 08xx, +628xx, atau 628xx'),document.getElementById('customerPhone').focus(); }
+    
+    // ✅ NORMALISASI NOMOR HP
+    const normalizedPhone = normalizePhone(cleanedPhone);
+    
     if(!address||address.length<5) return showToast('❌ Alamat pengiriman tidak valid'),document.getElementById('customerAddress').focus();
+    if(address.length>500) return showToast('❌ Alamat maksimal 500 karakter'),document.getElementById('customerAddress').focus();
+    if(state.giftMessage && state.giftMessage.length>300) return showToast('❌ Pesan kado maksimal 300 karakter');
     if(summary.items.length===0) return showToast('Keranjang kosong');
     
+    // Simpan nomor yang sudah dinormalisasi
+    state.customerPhone = normalizedPhone;
+    
+    localStorage.setItem('last_order', Date.now());
     checkoutLocked = true;
     const payBtn=document.querySelector('[data-action="confirm-wa"]'); if(payBtn){ payBtn.textContent='⏳ Menyimpan...'; payBtn.disabled=true; }
-    saveOrderToDatabase(summary.items,summary.total,summary.subtotal,summary.shippingCost,summary.discount).then((saved)=>{ showToast(saved?'✅ Pesanan tersimpan!':'⚠️ Lanjut WhatsApp tanpa simpan'); }).catch(()=>{ showToast('⚠️ Gagal menyimpan, lanjut WhatsApp'); }).finally(()=>{ setTimeout(()=>{ checkoutLocked = false; if(payBtn){ payBtn.textContent='💳 Kirim Bukti Transfer'; payBtn.disabled=false; } },3000); setTimeout(()=>{ let msg='Halo Rujak.Co! Saya ingin memesan:\n\n'; summary.items.forEach(item=>{ const spiceText=item.spice?' (Level '+item.spice+')':''; msg+='• '+item.name+spiceText+' (x'+item.qty+') — '+fmt(item.lineTotal)+'\n'; }); if(state.orderNotes) msg+='\n*Catatan Pesanan:*\n'+state.orderNotes+'\n'; if(state.isGift){ msg+='\n🎁 *PESANAN KADO*\n'; if(state.giftSender) msg+='Dari: '+state.giftSender+'\n'; if(state.giftMessage) msg+='Ucapan: '+state.giftMessage+'\n'; } msg+='\n*Pengiriman:* '+(state.shippingProvider==='pembeli'?'Kurir Saya':'Kurir Rujak.Co - '+state.vehicleType+(state.isPriority?' (Prioritas)':'')); msg+='\n*Data:*\nNama : '+name+'\nNo. HP : '+phone+'\nAlamat : '+address+'\n'; if(state.shippingProvider==='rujakco'){ msg+='\nBiaya Pengantaran: '+fmt(summary.rawShippingCost)+' ('+summary.shippingLabel+')'; if(summary.lalamoveCost>0) msg+='\n  └ Tarif Kurir: '+fmt(summary.lalamoveCost); if(summary.shippingSubsidy>0) msg+='\n  └ Subsidi Rujak.Co: -'+fmt(summary.shippingSubsidy); msg+='\n  └ Total Bayar: '+fmt(summary.shippingCost); } msg+='\nSubtotal: '+fmt(summary.subtotal); if(summary.discount>0) msg+='\nDiskon Misi Jajan: -'+fmt(summary.discount); msg+='\n*Total Akhir: '+fmt(summary.total)+'*\n\n*Saya sudah transfer via QRIS, ini bukti transfernya:*\n*(sertakan foto)*'; window.open('https://wa.me/'+SYSTEM.WA_NUMBER+'?text='+encodeURIComponent(msg),'_blank'); },500); });
+    saveOrderToDatabase(summary.items,summary.total,summary.subtotal,summary.shippingCost,summary.discount).then((saved)=>{ showToast(saved?'✅ Pesanan tersimpan!':'⚠️ Lanjut WhatsApp tanpa simpan'); }).catch(()=>{ showToast('⚠️ Gagal menyimpan, lanjut WhatsApp'); }).finally(()=>{ setTimeout(()=>{ checkoutLocked = false; if(payBtn){ payBtn.textContent='💳 Kirim Bukti Transfer'; payBtn.disabled=false; } },3000); setTimeout(()=>{ let msg='Halo Rujak.Co! Saya ingin memesan:\n\n'; summary.items.forEach(item=>{ const spiceText=item.spice?' (Level '+item.spice+')':''; msg+='• '+item.name+spiceText+' (x'+item.qty+') — '+fmt(item.lineTotal)+'\n'; }); if(state.orderNotes) msg+='\n*Catatan Pesanan:*\n'+state.orderNotes+'\n'; if(state.isGift){ msg+='\n🎁 *PESANAN KADO*\n'; if(state.giftSender) msg+='Dari: '+state.giftSender+'\n'; if(state.giftMessage) msg+='Ucapan: '+state.giftMessage+'\n'; } msg+='\n*Pengiriman:* '+(state.shippingProvider==='pembeli'?'Kurir Saya':'Kurir Rujak.Co - '+state.vehicleType+(state.isPriority?' (Prioritas)':'')); msg+='\n*Data:*\nNama : '+name+'\nNo. HP : '+normalizedPhone+'\nAlamat : '+address+'\n'; if(state.shippingProvider==='rujakco'){ msg+='\nBiaya Pengantaran: '+fmt(summary.rawShippingCost)+' ('+summary.shippingLabel+')'; if(summary.lalamoveCost>0) msg+='\n  └ Tarif Kurir: '+fmt(summary.lalamoveCost); if(summary.shippingSubsidy>0) msg+='\n  └ Subsidi Rujak.Co: -'+fmt(summary.shippingSubsidy); msg+='\n  └ Total Bayar: '+fmt(summary.shippingCost); } msg+='\nSubtotal: '+fmt(summary.subtotal); if(summary.discount>0) msg+='\nDiskon Misi Jajan: -'+fmt(summary.discount); msg+='\n*Total Akhir: '+fmt(summary.total)+'*\n\n*Saya sudah transfer via QRIS, ini bukti transfernya:*\n*(sertakan foto)*'; window.open('https://wa.me/'+SYSTEM.WA_NUMBER+'?text='+encodeURIComponent(msg),'_blank'); },500); });
   }
 
   function saveCustomerData(){ try { localStorage.setItem('rujak_customer',JSON.stringify({ name:state.customerName,phone:state.customerPhone,address:state.customerAddress,isGift:state.isGift,giftSender:state.giftSender,giftMessage:state.giftMessage,hasShared:state.hasShared,shippingProvider:state.shippingProvider,vehicleType:state.vehicleType })); } catch(_) {} }
