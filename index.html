@@ -18,11 +18,147 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
 
-  <!-- GANTI NAMA FILE CSS -->
-  <link rel="stylesheet" href="style-v2.css" />
+  <link rel="stylesheet" href="style.css?v=2025062503" />
   <script defer src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="app.js"></script>
+
+  <!-- ⚡ OVERRIDE CACHE — CSS Footer Langsung Ditanam -->
+  <style>
+    /* === FOOTER REDESIGN (OVERRIDE) === */
+    .footer-brand {
+      background: #0F4D37;
+      color: white;
+      width: 100%;
+    }
+    .footer-brand-inner {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 32px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .footer-brand-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .footer-brand-row img {
+      height: 44px;
+      width: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .footer-brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: white;
+      letter-spacing: -0.5px;
+    }
+    .footer-brand-name span {
+      color: #F4C430;
+    }
+    .footer-brand-desc {
+      font-size: 14px;
+      opacity: 0.8;
+      line-height: 1.7;
+      max-width: 300px;
+      font-weight: 400;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 12px;
+    }
+    .footer-col h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #F4C430;
+      margin-bottom: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+    .footer-col ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .footer-col ul li {
+      font-size: 13px;
+      opacity: 0.8;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer-social {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+      margin-bottom: 16px;
+    }
+    .footer-social a {
+      color: white;
+      background: rgba(255,255,255,0.1);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+    }
+    .footer-social a img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+    .footer-social a:hover {
+      background: #F4C430;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    }
+    .footer-wa {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #F4C430;
+      color: #0F4D37;
+      padding: 12px 20px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
+      width: fit-content;
+      margin-top: 4px;
+    }
+    .footer-wa img {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+    }
+    .footer-wa:hover {
+      background: #e0b51a;
+      color: #0a3a2a;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 16px;
+      text-align: center;
+      font-size: 11px;
+      opacity: 0.5;
+      margin-top: 8px;
+    }
+  </style>
 </head>
 <body>
   <div id="app">
@@ -62,7 +198,6 @@
         </div>
       </div>
 
-      <!-- PROMO MISI JAJAN dengan animasi sparkle -->
       <div class="promo-strip" id="promoTrigger" data-action="open-promo">
         <div class="promo-icon"><i data-lucide="gift" class="w-5 h-5 text-[#3d2b00]"></i></div>
         <div class="promo-text">
@@ -74,7 +209,6 @@
         </div>
       </div>
 
-      <!-- Tombol Ajak Teman Jajan (disembunyikan via JS) -->
       <div class="share-strip" id="shareStrip">
         <div class="share-strip-inner">
           <div class="share-left">
@@ -104,7 +238,6 @@
         <span class="reserve">Reserve – Buah premium, momen istimewa</span>
       </div></div>
     <div style="padding: 0 20px 12px; font-size: 13px; color: var(--green); font-weight: 600;"><i data-lucide="star" class="w-4 h-4 inline"></i> Pertama kali? Coba <strong>Rujak Segar</strong> — ringan & mudah disukai.</div>
-    <!-- Search toggle dipindahkan ke samping "Koleksi Rasa" -->
     <div class="sec-header" id="menuHeader">
       <span class="sec-title">Koleksi Rasa</span>
       <div class="search-toggle-wrap" id="searchToggleWrap">
