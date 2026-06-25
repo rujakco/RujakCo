@@ -50,7 +50,7 @@
 
   const state = {
     cart: {}, activeFilter: 'all', searchQuery: '', userDistance: null,
-    isPriority: false, orderNotes: '', isCartMinimized: false, customerName: '',
+    orderNotes: '', isCartMinimized: false, customerName: '',
     customerPhone: '', customerAddress: '', isGift: false, giftSender: '',
     giftMessage: '', hasShared: false, deliveryType: 'segera', deliveryDate: '', deliveryTime: '',
     selectedCourier: null, paymentMethod: 'bayar_kurir', courierRates: [],
@@ -82,6 +82,7 @@
     if (distance > SYSTEM.MAX_DISTANCE) return [];
     const distKm = Math.ceil(distance * 1.35); 
     const extraKm = Math.max(0, distKm - 4);
+    // Hanya 2 pilihan: Motor dan Mobil
     return [
       { id: 'instan_motor', name: 'Instan Motor', cost: 14000 + (extraKm * 2500) },
       { id: 'instan_mobil', name: 'Instan Mobil', cost: 20000 + (extraKm * 4000) }
@@ -106,33 +107,36 @@
 
     if (distance === null || distance === undefined) {
       costEl.textContent = '📍 Butuh GPS';
-      if (courierSection) courierSection.style.display = 'none';
       state.courierRates = []; state.selectedCourier = null; return;
     }
 
     document.getElementById('shippingDistance').textContent = '~' + Math.ceil(distance) + ' km';
 
-    if (distance > SYSTEM.MAX_DISTANCE) {
-      costEl.textContent = '❌';
-      document.getElementById('outOfRange').style.display = 'block';
-      if (courierSection) courierSection.style.display = 'none';
-      state.courierRates = []; state.selectedCourier = null;
+    if (state.orderedBy === 'pembeli') {
+        costEl.textContent = 'Pesan Sendiri';
+        if (courierSection) courierSection.style.display = 'none';
     } else {
-      document.getElementById('outOfRange').style.display = 'none';
-      if (courierSection) courierSection.style.display = 'block';
+        if (distance > SYSTEM.MAX_DISTANCE) {
+          costEl.textContent = '❌';
+          document.getElementById('outOfRange').style.display = 'block';
+          if (courierSection) courierSection.style.display = 'none';
+          state.courierRates = []; state.selectedCourier = null;
+        } else {
+          document.getElementById('outOfRange').style.display = 'none';
+          if (courierSection) courierSection.style.display = 'block';
 
-      const couriers = getCourierRates(distance);
-      state.courierRates = couriers;
-      let html = '';
-      couriers.forEach(c => {
-        const sel = (state.selectedCourier && state.selectedCourier.id === c.id) ? 'selected' : '';
-        html += `<option value="${c.id}" data-cost="${c.cost}" ${sel}>${c.name} — Rp${c.cost.toLocaleString('id-ID')}</option>`;
-      });
-      selectEl.innerHTML = html;
-      if (!state.selectedCourier || !couriers.find(c => c.id === state.selectedCourier.id)) { state.selectedCourier = couriers[0]; }
-      costEl.textContent = state.selectedCourier ? fmt(state.selectedCourier.cost) : 'Pilih Kurir';
+          const couriers = getCourierRates(distance);
+          state.courierRates = couriers;
+          let html = '';
+          couriers.forEach(c => {
+            const sel = (state.selectedCourier && state.selectedCourier.id === c.id) ? 'selected' : '';
+            html += `<option value="${c.id}" data-cost="${c.cost}" ${sel}>${c.name} — Rp${c.cost.toLocaleString('id-ID')}</option>`;
+          });
+          selectEl.innerHTML = html;
+          if (!state.selectedCourier || !couriers.find(c => c.id === state.selectedCourier.id)) { state.selectedCourier = couriers[0]; }
+          costEl.textContent = state.selectedCourier ? fmt(state.selectedCourier.cost) : 'Pilih Kurir';
+        }
     }
-    if (document.getElementById('miniCartModal').classList.contains('active')) renderMiniCart();
   }
 
   async function detectLocation() {
@@ -187,7 +191,10 @@
 
     const estimatedShippingCost = state.selectedCourier ? state.selectedCourier.cost : 0;
     let appliedShippingCost = 0;
-    if (state.orderedBy === 'rujakco' && state.paymentMethod === 'digabung_qris') { appliedShippingCost = estimatedShippingCost; }
+    // Logika harga ongkir masuk tagihan
+    if (state.orderedBy === 'rujakco' && state.paymentMethod === 'digabung_qris') { 
+        appliedShippingCost = estimatedShippingCost; 
+    }
 
     const qrisTotal = subtotal - discount + appliedShippingCost;
     return { items, totalQty, subtotal, discount, shippingCost: estimatedShippingCost, appliedShippingCost, shippingDistance: distance, qrisTotal, isOutOfRange };
@@ -198,11 +205,16 @@
     const text = document.getElementById('customerSummaryText');
     const icon = document.getElementById('customerSummaryIcon');
     if (!form || !text) return;
+    
     if (state.isCustomerFormOpen) {
-      form.style.display = 'block'; text.textContent = 'Lengkapi Data Pengiriman'; if(icon) icon.style.transform = 'rotate(180deg)';
+      form.style.display = 'block'; 
+      text.textContent = 'Isi Data Pengiriman'; 
+      if(icon) icon.style.transform = 'rotate(180deg)';
     } else {
-      form.style.display = 'none'; const name = state.customerName.trim();
-      text.textContent = name ? 'Penerima: ' + name : 'Data Belum Lengkap'; if(icon) icon.style.transform = 'rotate(0deg)';
+      form.style.display = 'none'; 
+      const name = state.customerName.trim();
+      text.textContent = name ? name : 'Data Belum Lengkap'; 
+      if(icon) icon.style.transform = 'rotate(0deg)';
     }
   }
 
@@ -262,7 +274,7 @@
   }
 
   function renderMiniCart() {
-    updateCustomerSummaryUI();
+    updateCustomerSummaryUI(); // Mengontrol tutup/buka Accordion
     const summary = getCartSummary();
     const list = document.getElementById('miniCartList'), finalTotal = document.getElementById('miniCartFinalTotal'), warningEl = document.getElementById('ongkirWarning');
 
@@ -338,9 +350,10 @@
         
         let timeStr = state.deliveryType === 'po' ? `Terjadwal (PO) - Tanggal: ${state.deliveryDate || '-'}, Jam: ${state.deliveryTime || '-'}` : 'Kirim Segera (Hari Ini)';
         msg += '\n*Jadwal:* ' + timeStr + '\n';
+        
         msg += '\n*Sistem Pengiriman:* ';
         if (state.orderedBy === 'pembeli') {
-            msg += 'Kurir Dipesan Pembeli\n_(Pembeli order ojek mandiri setelah dikonfirmasi)_';
+            msg += 'Kurir Dipesan Pembeli\n_(Pembeli order ojek mandiri setelah dikonfirmasi)_\n';
         } else {
             msg += 'Kurir Dipesan Rujak.Co\n';
             if (state.selectedCourier) msg += 'Layanan: ' + state.selectedCourier.name + ' — Estimasi: ' + fmt(state.selectedCourier.cost) + '\n';
@@ -348,13 +361,16 @@
             if (state.paymentMethod === 'bayar_kurir') msg += '⚠️ *Ongkir dibayar terpisah saat kurir sampai.*\n';
         }
 
-        if (state.orderNotes) msg += '\n\n*Catatan Pesanan:*\n' + state.orderNotes;
+        if (state.orderNotes) msg += '\n*Catatan Pesanan:*\n' + state.orderNotes;
         if (state.isGift) { msg += '\n\n🎁 *PESANAN KADO*\n'; if (state.giftSender) msg += 'Dari: ' + state.giftSender + '\n'; if (state.giftMessage) msg += 'Ucapan: ' + state.giftMessage; }
+        
         msg += '\n\n*Data Pengiriman:*\nNama : ' + name + '\nNo. HP : ' + phone + '\nAlamat : ' + address + '\n';
         msg += '\nSubtotal: ' + fmt(summary.subtotal);
         if (summary.discount > 0) msg += '\nDiskon Misi Jajan: -' + fmt(summary.discount);
         msg += '\n*Total Tagihan QRIS: ' + fmt(summary.qrisTotal) + '*\n\n';
+        
         if (state.orderedBy === 'rujakco' && state.paymentMethod === 'digabung_qris') msg += '_(Sudah termasuk ongkir: ' + fmt(summary.appliedShippingCost) + ')_\n\n';
+        
         msg += '*Saya sudah transfer via QRIS, ini bukti transfernya:*\n*(sertakan foto)*';
         window.location.href = 'https://wa.me/' + SYSTEM.WA_NUMBER + '?text=' + encodeURIComponent(msg);
       });
@@ -370,16 +386,17 @@
   let toastTimer; function showToast(msg) { const el = document.getElementById('toast'); el.textContent = msg; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), SYSTEM.TOAST_DURATION); }
 
   function bindEvents() {
+    // Event listener Accordion Data Pelanggan
     document.getElementById('customerSummaryToggle').addEventListener('click', function() { state.isCustomerFormOpen = !state.isCustomerFormOpen; updateCustomerSummaryUI(); });
     document.getElementById('btnSaveCustomer').addEventListener('click', function() {
       state.customerName = document.getElementById('customerName').value.trim(); state.customerPhone = document.getElementById('customerPhone').value.trim(); state.customerAddress = document.getElementById('customerAddress').value.trim(); state.orderNotes = document.getElementById('orderNotes').value;
-      if(state.customerName && state.customerPhone && state.customerAddress) { state.isCustomerFormOpen = false; saveCustomerData(); updateCustomerSummaryUI(); renderMiniCart(); } else { showToast('Harap lengkapi semua data'); if(!state.customerName) document.getElementById('customerName').focus(); else if(!state.customerPhone) document.getElementById('customerPhone').focus(); else document.getElementById('customerAddress').focus(); }
+      if(state.customerName && state.customerPhone && state.customerAddress) { state.isCustomerFormOpen = false; saveCustomerData(); updateCustomerSummaryUI(); renderMiniCart(); } else { showToast('Harap lengkapi nama, no HP, & alamat'); if(!state.customerName) document.getElementById('customerName').focus(); else if(!state.customerPhone) document.getElementById('customerPhone').focus(); else document.getElementById('customerAddress').focus(); }
     });
 
     const btnOrderPembeli = document.getElementById('btnOrderPembeli'), btnOrderRujakCo = document.getElementById('btnOrderRujakCo'), rujakCoWrap = document.getElementById('rujakCoShippingWrap'), pembeliWrap = document.getElementById('pembeliShippingWrap');
     if(btnOrderPembeli && btnOrderRujakCo) {
-        btnOrderPembeli.addEventListener('click', function() { state.orderedBy = 'pembeli'; this.classList.add('active'); btnOrderRujakCo.classList.remove('active'); rujakCoWrap.style.display = 'none'; pembeliWrap.style.display = 'block'; renderMiniCart(); });
-        btnOrderRujakCo.addEventListener('click', function() { state.orderedBy = 'rujakco'; this.classList.add('active'); btnOrderPembeli.classList.remove('active'); rujakCoWrap.style.display = 'block'; pembeliWrap.style.display = 'none'; renderMiniCart(); });
+        btnOrderPembeli.addEventListener('click', function() { state.orderedBy = 'pembeli'; this.classList.add('active'); btnOrderRujakCo.classList.remove('active'); rujakCoWrap.style.display = 'none'; pembeliWrap.style.display = 'block'; updateShippingUI(state.userDistance); renderMiniCart(); });
+        btnOrderRujakCo.addEventListener('click', function() { state.orderedBy = 'rujakco'; this.classList.add('active'); btnOrderPembeli.classList.remove('active'); rujakCoWrap.style.display = 'block'; pembeliWrap.style.display = 'none'; updateShippingUI(state.userDistance); renderMiniCart(); });
     }
 
     const btnSekarang = document.getElementById('btnWaktuSekarang'), btnPO = document.getElementById('btnWaktuPO'), poWrap = document.getElementById('poScheduleWrap');
@@ -391,6 +408,7 @@
 
     const courierSel = document.getElementById('courierSelect');
     if (courierSel) { courierSel.addEventListener('change', function() { const selectedId = this.value; const selected = state.courierRates.find(c => c.id === selectedId); if (selected) { state.selectedCourier = selected; document.getElementById('shippingCost').textContent = fmt(selected.cost); renderMiniCart(); } }); }
+    
     const radioBayarKurir = document.getElementById('payBayarKurir'), radioGabungQRIS = document.getElementById('payGabungQRIS');
     if (radioBayarKurir) { radioBayarKurir.addEventListener('change', function() { if (this.checked) { state.paymentMethod = 'bayar_kurir'; renderMiniCart(); } }); }
     if (radioGabungQRIS) { radioGabungQRIS.addEventListener('change', function() { if (this.checked) { state.paymentMethod = 'digabung_qris'; renderMiniCart(); } }); }
@@ -416,7 +434,7 @@
         if (getCartSummary().items.length === 0) return showToast('Keranjang kosong');
         if (state.userDistance === null) return showToast('Mohon tunggu, menghitung jarak pengiriman...');
         if (state.userDistance > SYSTEM.MAX_DISTANCE) return showToast('Maaf, pengiriman di luar jangkauan');
-        if (state.isCustomerFormOpen && !state.customerName.trim()) return showToast('Harap lengkapi & simpan data pengiriman');
+        if (state.isCustomerFormOpen && !state.customerName.trim()) { showToast('Harap "Simpan & Lipat" data pengiriman dulu'); document.getElementById('customerName').focus(); return; }
         document.getElementById('paymentTotalDisplay').textContent = document.getElementById('miniCartFinalTotal').textContent; closeMiniCart(); document.getElementById('paymentModal').classList.add('active'); document.body.style.overflow = 'hidden'; return;
       }
       const menuItem = e.target.closest('.menu-item'); if (menuItem && !e.target.closest('.add-btn') && !e.target.closest('.qty-btn')) return openProductModal(menuItem.dataset.id);
@@ -436,7 +454,11 @@
     loadCart(); loadCustomerData(); updateStoreStatus(); document.getElementById('shareStrip').style.display = 'none';
     try { const s = localStorage.getItem('rujak_cart_minimized'); if (s !== null) state.isCartMinimized = s === 'true'; } catch (_) {}
     document.getElementById('customerName').value = state.customerName; document.getElementById('customerPhone').value = state.customerPhone; document.getElementById('customerAddress').value = state.customerAddress; document.getElementById('giftToggle').checked = state.isGift; document.getElementById('giftSender').value = state.giftSender; document.getElementById('giftMessage').value = state.giftMessage; document.getElementById('giftFields').style.display = state.isGift ? 'block' : 'none';
-    state.paymentMethod = 'bayar_kurir'; state.orderedBy = 'pembeli';
+    
+    // Pastikan status kurir dire-set dengan benar saat halaman direfresh
+    state.orderedBy = 'pembeli'; 
+    state.paymentMethod = 'bayar_kurir';
+    
     updateUI(); detectLocation(); bindEvents();
     if ('serviceWorker' in navigator) { navigator.serviceWorker.addEventListener('message', event => { if (event.data && event.data.type === 'SW_UPDATED') { showToast('🔄 Versi baru tersedia! Segarkan halaman.'); } }); }
     if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons(); else { const int = setInterval(() => { if (typeof lucide !== 'undefined' && lucide.createIcons) { lucide.createIcons(); clearInterval(int); } }, 100); }
