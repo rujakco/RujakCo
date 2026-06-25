@@ -4,6 +4,7 @@
   // ===================== SUPABASE =====================
   const SUPABASE_URL = "https://ghhnnfrmftttptcejizp.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoaG5uZnJtZnR0dHB0Y2VqaXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNjA1ODksImV4cCI6MjA5NzgzNjU4OX0.FM-sPvJJzviX2kA0GEHnznOppivm4JNyC4IPFv_RkdE";
+
   let supabase = null;
   if (window.supabase && window.supabase.createClient) {
     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -11,8 +12,8 @@
     console.warn('Supabase client tidak tersedia.');
   }
 
-  // ===================== DATA LOKAL (FALLBACK) =====================
-  const PRODUCTS_LOCAL = [
+  // ===================== DATA PRODUK =====================
+  const PRODUCTS = [
     {
       id: 'p_m1', name: 'Rujak Segar',
       desc: 'Kombinasi buah pilihan dengan sambal original Rujak.Co. Ringan, segar, dan cocok untuk semua penikmat rujak.',
@@ -21,8 +22,7 @@
       buah: ['Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'],
       flavor: 'Segar & Autentik', flavorTag: null, defaultSpice: 3, portion: '1 Orang',
       thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp',
-      image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp',
-      isVIP: false
+      image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp'
     },
     {
       id: 'p_m2', name: 'Rujak Serut',
@@ -32,8 +32,7 @@
       buah: ['Mangga Muda', 'Bengkoang', 'Nanas', 'Ubi Merah'],
       flavor: 'Renyah Segar', flavorTag: 'Renyah', defaultSpice: 3, portion: '1 Orang',
       thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp',
-      image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp',
-      isVIP: false
+      image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp'
     },
     {
       id: 'p_m3', name: 'Rujak Gaco',
@@ -43,8 +42,7 @@
       buah: ['Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'],
       flavor: 'Gurih Mete Premium', flavorTag: null, defaultSpice: 3, portion: '1 Orang',
       thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-thumb.webp',
-      image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-hd.webp',
-      isVIP: false
+      image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-hd.webp'
     },
     {
       id: 'p_m4', name: 'Rujak Rama',
@@ -54,8 +52,7 @@
       buah: ['Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'],
       flavor: 'Gurih Mete Extra Pedas', flavorTag: null, defaultSpice: 4, portion: '2-3 Orang',
       thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-thumb.webp',
-      image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-hd.webp',
-      isVIP: false
+      image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-hd.webp'
     },
     {
       id: 'p_m5', name: 'Rujak Mahkota',
@@ -65,8 +62,7 @@
       buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'],
       flavor: 'Eksklusif & Premium', flavorTag: null, defaultSpice: 3, portion: '1-2 Orang',
       thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp',
-      image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp',
-      isVIP: false
+      image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp'
     },
     {
       id: 'p_m6', name: 'Tampah Nusantara',
@@ -76,35 +72,30 @@
       buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong', 'Ubi Merah'],
       flavor: 'Kemegahan Berbagai Rasa', flavorTag: null, defaultSpice: 3, portion: '8-10 Orang',
       thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-thumb.webp',
-      image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp',
-      isVIP: false
-    },
-    {
-      id: 'p_vip',
-      name: 'Mahkota VIP',
-      desc: 'Menu rahasia eksklusif dengan komposisi premium dan sambal spesial. Hanya untuk yang tahu.',
-      price: 125000,
-      cat: 'reserve',
-      tags: ['Eksklusif', 'VIP Only'],
-      badge: 'Menu Rahasia',
-      badgeColor: 'gold',
-      container: 'Box Premium + Paper Bag',
-      size: 'Porsi Eksklusif',
-      sambal: 'Sambal Mete Premium Spesial (2 Cup)',
-      buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga Harum Manis', 'Nanas Madu', 'Bengkoang', 'Strawberry'],
-      flavor: 'Premium & Misterius',
-      flavorTag: 'Limited',
-      defaultSpice: 2,
-      portion: '1-2 Orang',
-      thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp',
-      image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp',
-      isVIP: true
+      image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp'
     }
   ];
 
-  // Variabel produk yang akan digunakan (bisa dari server atau lokal)
-  let PRODUCTS = [...PRODUCTS_LOCAL];
-  let VIP_PRODUCT = PRODUCTS_LOCAL.find(p => p.isVIP) || PRODUCTS_LOCAL[PRODUCTS_LOCAL.length-1];
+  const VIP_PRODUCT = {
+    id: 'p_vip',
+    name: 'Mahkota VIP',
+    desc: 'Menu rahasia eksklusif dengan komposisi premium dan sambal spesial. Hanya untuk yang tahu.',
+    price: 125000,
+    cat: 'reserve',
+    tags: ['Eksklusif', 'VIP Only'],
+    badge: 'Menu Rahasia',
+    badgeColor: 'gold',
+    container: 'Box Premium + Paper Bag',
+    size: 'Porsi Eksklusif',
+    sambal: 'Sambal Mete Premium Spesial (2 Cup)',
+    buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga Harum Manis', 'Nanas Madu', 'Bengkoang', 'Strawberry'],
+    flavor: 'Premium & Misterius',
+    flavorTag: 'Limited',
+    defaultSpice: 2,
+    portion: '1-2 Orang',
+    thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp',
+    image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp'
+  };
 
   const ADDONS = [
     { id: 'a_sambal1', name: 'Sambal Original', price: 8000, icon: 'flame', iconColor: 'text-red-500', desc: 'Warisan rasa klasik.' },
@@ -136,58 +127,21 @@
     hasShared: false
   };
 
-  // ===================== UTILS =====================
+  // ===================== FUNGSI UTILITY =====================
   function fmt(num) { return 'Rp' + num.toLocaleString('id-ID'); }
   function loadCart() { try { const s = localStorage.getItem('rujak_cart'); if (s) { const p = JSON.parse(s); if (typeof p === 'object' && p !== null) state.cart = p; } } catch (_) { state.cart = {}; } }
   function saveCart() { try { localStorage.setItem('rujak_cart', JSON.stringify(state.cart)); } catch (_) {} }
+  
   function getItemById(id) {
     if (id === 'p_vip' || id.startsWith('p_vip_')) return VIP_PRODUCT;
     let item = PRODUCTS.find(p => p.id === id) || ADDONS.find(a => a.id === id);
     if (item) return item;
     return PRODUCTS.find(p => id.startsWith(p.id + '_'));
   }
+  
   function debounce(fn, delay) { let t; return function(...args) { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), delay); }; }
 
-  // ===================== SUPABASE DATA LOADER =====================
-  async function loadProducts() {
-    if (!supabase) return PRODUCTS_LOCAL;
-    try {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .eq('is_active', true);
-      if (error || !data || data.length === 0) {
-        console.warn('Gagal mengambil produk dari Supabase, menggunakan data lokal.');
-        return PRODUCTS_LOCAL;
-      }
-      return data.map(p => ({
-        id: p.id,
-        name: p.name,
-        desc: p.desc || p.description || '',
-        price: p.price,
-        cat: p.cat,
-        tags: p.tags || [],
-        badge: p.badge || null,
-        badgeColor: p.badge_color || null,
-        container: p.container || '',
-        size: p.size || '',
-        sambal: p.sambal || '',
-        buah: p.buah || [],
-        flavor: p.flavor || '',
-        flavorTag: p.flavor_tag || null,
-        defaultSpice: p.default_spice || 3,
-        portion: p.portion || '',
-        thumbnail: p.thumbnail || '',
-        image: p.image || '',
-        isVIP: p.is_vip || false
-      }));
-    } catch (err) {
-      console.error('Error loading products:', err);
-      return PRODUCTS_LOCAL;
-    }
-  }
-
-  // ===================== CART ENGINE =====================
+  // ===================== FUNGSI DISKON MISI JAJAN =====================
   function calculateDiscount(subtotal) {
     let discount = 0;
     if (subtotal >= SYSTEM.DISCOUNT_THRESHOLD) discount += 5000;
@@ -195,6 +149,7 @@
     return discount;
   }
 
+  // ===================== FUNGSI ONGKIR & LOKASI =====================
   function calculateShipping(d, priority) {
     const rawDistance = (d === null || d === undefined || isNaN(d)) ? SYSTEM.DEFAULT_DISTANCE : d;
     const dist = rawDistance * 1.3;
@@ -208,35 +163,6 @@
     return { cost, label: label + ' (' + Math.ceil(rawDistance) + ' km)', distance: rawDistance };
   }
 
-  function getCartSummary() {
-    const items = [];
-    let subtotal = 0;
-    let totalQty = 0;
-    Object.keys(state.cart).forEach(id => {
-      const entry = state.cart[id];
-      const item = getItemById(id);
-      if (item && entry && entry.qty > 0) {
-        const lineTotal = item.price * entry.qty;
-        subtotal += lineTotal;
-        totalQty += entry.qty;
-        items.push({ id, name: item.name, price: item.price, qty: entry.qty, spice: entry.spice || null, lineTotal });
-      } else {
-        delete state.cart[id];
-      }
-    });
-    const discount = calculateDiscount(subtotal);
-    const distance = state.userDistance !== null ? state.userDistance : SYSTEM.DEFAULT_DISTANCE;
-    const shipping = calculateShipping(distance, state.isPriority);
-    const shippingCost = shipping.cost === Infinity ? 0 : shipping.cost;
-    const total = subtotal - discount + shippingCost;
-    return {
-      items, totalQty, subtotal, discount, shippingCost,
-      shippingLabel: shipping.label, shippingDistance: shipping.distance,
-      total, isOutOfRange: distance > SYSTEM.MAX_DISTANCE
-    };
-  }
-
-  // ===================== LOKASI =====================
   function getLocationFallback() {
     return new Promise(resolve => {
       fetch('https://ipapi.co/json/').then(r => r.json()).then(data => {
@@ -253,16 +179,12 @@
   }
 
   function updateShippingUI(distance, isPriority) {
-    const ship = calculateShipping(distance, isPriority);
+    const r = calculateShipping(distance, isPriority);
+    const out = distance > SYSTEM.MAX_DISTANCE;
     document.getElementById('shippingDistance').textContent = '~' + Math.ceil(distance) + ' km';
     const costEl = document.getElementById('shippingCost');
-    if (ship.cost === Infinity) {
-      costEl.textContent = '❌';
-      document.getElementById('outOfRange').style.display = 'block';
-    } else {
-      costEl.textContent = 'Rp' + ship.cost.toLocaleString('id-ID');
-      document.getElementById('outOfRange').style.display = 'none';
-    }
+    if (out) { costEl.textContent = '❌'; costEl.style.color = 'var(--red)'; document.getElementById('outOfRange').style.display = 'block'; }
+    else { costEl.textContent = 'Rp' + r.cost.toLocaleString('id-ID'); costEl.style.color = 'var(--red)'; document.getElementById('outOfRange').style.display = 'none'; }
     if (document.getElementById('miniCartModal').classList.contains('active')) renderMiniCart();
   }
 
@@ -295,6 +217,35 @@
     }
   }
 
+  // ===================== CART ENGINE =====================
+  function getCartSummary() {
+    const items = [];
+    let subtotal = 0;
+    let totalQty = 0;
+    Object.keys(state.cart).forEach(id => {
+      const entry = state.cart[id];
+      const item = getItemById(id);
+      if (item && entry && entry.qty > 0) {
+        const lineTotal = item.price * entry.qty;
+        subtotal += lineTotal;
+        totalQty += entry.qty;
+        items.push({ id, name: item.name, price: item.price, qty: entry.qty, spice: entry.spice || null, lineTotal });
+      } else {
+        delete state.cart[id];
+      }
+    });
+    const discount = calculateDiscount(subtotal);
+    const distance = state.userDistance !== null ? state.userDistance : SYSTEM.DEFAULT_DISTANCE;
+    const shipping = calculateShipping(distance, state.isPriority);
+    const shippingCost = shipping.cost === Infinity ? 0 : shipping.cost;
+    const total = subtotal - discount + shippingCost;
+    return {
+      items, totalQty, subtotal, discount, shippingCost,
+      shippingLabel: shipping.label, shippingDistance: shipping.distance,
+      total, isOutOfRange: distance > SYSTEM.MAX_DISTANCE
+    };
+  }
+
   // ===================== UI RENDER =====================
   function renderMenu() {
     const container = document.getElementById('menuList');
@@ -305,16 +256,12 @@
     if (state.activeFilter === 'addon') { container.innerHTML = ''; empty.style.display = 'none'; return; }
 
     let filtered = PRODUCTS.filter(p => {
-      if (p.isVIP) return false; // VIP hanya muncul dengan keyword khusus
       const matchCat = (state.activeFilter === 'all' || p.cat === state.activeFilter);
       const q = state.searchQuery.toLowerCase();
       return matchCat && (p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
     });
     if (state.searchQuery.toLowerCase().includes('vip')) {
-      const vipProduct = PRODUCTS.find(p => p.isVIP);
-      if (vipProduct && !filtered.some(p => p.id === vipProduct.id)) {
-        filtered = [vipProduct, ...filtered];
-      }
+      if (!filtered.some(p => p.id === 'p_vip')) filtered = [VIP_PRODUCT, ...filtered];
     }
     if (!filtered.length) { empty.style.display = 'block'; container.innerHTML = ''; return; }
     empty.style.display = 'none';
@@ -760,12 +707,7 @@
   }
 
   // ===================== INIT =====================
-  async function init() {
-    // Muat produk dari Supabase (fallback ke lokal)
-    const serverProducts = await loadProducts();
-    PRODUCTS = serverProducts;
-    VIP_PRODUCT = serverProducts.find(p => p.isVIP) || PRODUCTS_LOCAL.find(p => p.isVIP);
-
+  function init() {
     loadCart(); loadCustomerData(); updateStoreStatus();
     document.getElementById('shareStrip').style.display = 'none';
     try { const s = localStorage.getItem('rujak_cart_minimized'); if (s !== null) state.isCartMinimized = s === 'true'; } catch (_) {}
@@ -777,23 +719,20 @@
     document.getElementById('giftMessage').value = state.giftMessage;
     document.getElementById('giftFields').style.display = state.isGift ? 'block' : 'none';
     updateUI(); detectLocation(); bindEvents();
+
+    // ===== LISTENER SERVICE WORKER UPDATE =====
     if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js')
-    .then(registration => console.log('Service Worker registered'))
-    .catch(err => console.log('Service Worker registration failed:', err));
-}
+      navigator.serviceWorker.addEventListener('message', event => {
+        if (event.data && event.data.type === 'SW_UPDATED') {
+          showToast('🔄 Versi baru tersedia! Segarkan halaman.');
+        }
+      });
+    }
+
     if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
     else { const int = setInterval(() => { if (typeof lucide !== 'undefined' && lucide.createIcons) { lucide.createIcons(); clearInterval(int); } }, 100); }
   }
 
-  // Mulai aplikasi
-  (async function start() {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', async () => {
-        await init();
-      });
-    } else {
-      await init();
-    }
-  })();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();
