@@ -31,7 +31,20 @@
     { id:'a_extra_muscat', name:'Extra Shine Muscat', price:15000, icon:'grape', iconColor:'text-purple-500', desc:'Tambahan anggur Shine Muscat impor' }
   ];
 
-  const SYSTEM = { DISCOUNT_THRESHOLD:100000, WA_NUMBER:'6289677161680', TOAST_DURATION:3000, MAX_DISTANCE:50, DEFAULT_DISTANCE:2 };
+  const SYSTEM = { 
+    DISCOUNT_THRESHOLD: 100000, 
+    WA_NUMBER: '6289677161680', 
+    TOAST_DURATION: 3000, 
+    MAX_DISTANCE: 50, 
+    DEFAULT_DISTANCE: 2,
+    SUBSIDY_TIER1: 75000,
+    SUBSIDY_TIER2: 125000,
+    SUBSIDY_TIER3: 200000,
+    SUBSIDY_AMOUNT1: 5000,
+    SUBSIDY_AMOUNT2: 10000,
+    PRIORITY_SURCHARGE: 8000
+  };
+
   const DISTRICT_MAP = { 'bekasi barat':3,'bekasi timur':5,'bekasi selatan':7,'bekasi utara':8,'rawalumbu':6,'jatiasih':9,'pondokgede':12,'cikarang':18,'jakarta pusat':18,'jakarta selatan':20,'jakarta timur':15,'jakarta barat':22,'jakarta utara':25,'depok':28,'bogor':35,'tangerang':30,'tangerang selatan':27 };
 
   const state = {
@@ -65,27 +78,69 @@
 
   function calculateDiscount(subtotal) { let discount=0; if(subtotal>=SYSTEM.DISCOUNT_THRESHOLD) discount+=5000; if(state.hasShared) discount+=5000; return discount; }
 
-  function calculateShipping(d,priority) {
-    const rawDistance=(d===null||d===undefined||isNaN(d))?SYSTEM.DEFAULT_DISTANCE:d;
-    const dist=rawDistance*1.3; const rounded=Math.ceil(dist);
-    if(rounded>SYSTEM.MAX_DISTANCE) return {cost:Infinity,label:'Luar jangkauan',distance:rawDistance};
-    let base,perKm,label;
-    if(priority){ base=15000; perKm=3000; label='Prioritas'; } else { base=10000; perKm=2000; label='Reguler'; }
-    const extraKm=Math.max(0,rounded-3); const cost=base+extraKm*perKm;
-    return {cost,label:label+' ('+Math.ceil(rawDistance)+' km)',distance:rawDistance};
+  // ===================== SISTEM ZONA ONGKIR =====================
+  function getShippingZone(distance) {
+    if (distance === null || distance === undefined || isNaN(distance)) return null;
+    if (distance <= 5) return { zone: 'A', label: 'Zona A (0-5 km)', cost: 10000 };
+    if (distance <= 10) return { zone: 'B', label: 'Zona B (5-10 km)', cost: 15000 };
+    if (distance <= 15) return { zone: 'C', label: 'Zona C (10-15 km)', cost: 20000 };
+    if (distance <= 20) return { zone: 'D', label: 'Zona D (15-20 km)', cost: 25000 };
+    return { zone: 'E', label: 'Zona E (>20 km)', cost: null };
+  }
+
+  function calculateShipping(distance, priority) {
+    if (state.shippingProvider === 'pembeli') return { cost: 0, label: 'Kurir Saya', distance, zone: null };
+    
+    const rawDistance = (distance === null || distance === undefined || isNaN(distance)) 
+      ? SYSTEM.DEFAULT_DISTANCE : distance;
+    
+    const zone = getShippingZone(rawDistance);
+    
+    if (!zone || !zone.cost) {
+      return { cost: null, label: 'Admin Konfirmasi', distance: rawDistance, zone: 'E' };
+    }
+    
+    const baseCost = priority ? zone.cost + SYSTEM.PRIORITY_SURCHARGE : zone.cost;
+    
+    return {
+      cost: baseCost,
+      label: zone.label + (priority ? ' • Prioritas' : ''),
+      distance: rawDistance,
+      zone: zone.zone
+    };
+  }
+
+  function calculateSubsidy(subtotal, shippingZone, rawShippingCost) {
+    if (shippingZone === 'E' || !rawShippingCost) return 0;
+    if (subtotal >= SYSTEM.SUBSIDY_TIER3 && ['A','B','C','D'].includes(shippingZone)) {
+      return rawShippingCost; // GRATIS ONGKIR
+    }
+    if (subtotal >= SYSTEM.SUBSIDY_TIER2) return SYSTEM.SUBSIDY_AMOUNT2;
+    if (subtotal >= SYSTEM.SUBSIDY_TIER1) return SYSTEM.SUBSIDY_AMOUNT1;
+    return 0;
   }
 
   function getLocationFallback() {
     return new Promise(resolve=>{ fetch('https://ipapi.co/json/').then(r=>r.json()).then(data=>{ const city=data.city||data.region||'Lokasi'; let distance=999; const c=city.toLowerCase(); if(c.includes('bekasi')) distance=2; else if(c.includes('jakarta')) distance=15; else if(c.includes('depok')) distance=20; else if(c.includes('tangerang')) distance=25; else if(c.includes('bogor')) distance=30; resolve({city,distance}); }).catch(()=>resolve({city:'Lokasi Tidak Diketahui',distance:999})); });
   }
 
-  function updateShippingUI(distance,isPriority) {
-    const r=calculateShipping(distance,isPriority); const out=distance>SYSTEM.MAX_DISTANCE;
-    document.getElementById('shippingDistance').textContent='~'+Math.ceil(distance)+' km';
-    const costEl=document.getElementById('shippingCost');
-    if(out){ costEl.textContent='❌'; costEl.style.color='var(--red)'; document.getElementById('outOfRange').style.display='block'; }
-    else { costEl.textContent='Rp'+r.cost.toLocaleString('id-ID'); costEl.style.color='var(--red)'; document.getElementById('outOfRange').style.display='none'; }
-    if(document.getElementById('miniCartModal').classList.contains('active')) renderMiniCart();
+  function updateShippingUI(distance, isPriority) {
+    const shipping = calculateShipping(distance, isPriority);
+    const distEl = document.getElementById('shippingDistance');
+    const costEl = document.getElementById('shippingCost');
+    const outEl = document.getElementById('outOfRange');
+    
+    if (distEl) distEl.textContent = '~' + Math.ceil(distance) + ' km';
+    
+    if (shipping.zone === 'E') {
+      if (costEl) { costEl.textContent = 'Konfirmasi'; costEl.style.color = 'var(--red)'; }
+      if (outEl) outEl.style.display = 'block';
+    } else {
+      if (costEl) { costEl.textContent = shipping.cost ? fmt(shipping.cost) : 'Gratis'; costEl.style.color = 'var(--red)'; }
+      if (outEl) outEl.style.display = 'none';
+    }
+    
+    if (document.getElementById('miniCartModal').classList.contains('active')) renderMiniCart();
   }
 
   function detectLocation() {
@@ -98,10 +153,14 @@
   function getCartSummary() {
     const items=[]; let subtotal=0,totalQty=0;
     Object.keys(state.cart).forEach(id=>{ const entry=state.cart[id]; const item=getItemById(id); if(item&&entry&&entry.qty>0){ const lineTotal=item.price*entry.qty; subtotal+=lineTotal; totalQty+=entry.qty; items.push({id,name:item.name,price:item.price,qty:entry.qty,spice:entry.spice||null,lineTotal}); } else { delete state.cart[id]; } });
-    const discount=calculateDiscount(subtotal); const distance=state.userDistance!==null?state.userDistance:SYSTEM.DEFAULT_DISTANCE;
-    const shipping=calculateShipping(distance,state.isPriority); const shippingCost=state.shippingProvider==='pembeli'?0:(shipping.cost===Infinity?0:shipping.cost);
+    const discount=calculateDiscount(subtotal);
+    const distance=state.userDistance!==null?state.userDistance:SYSTEM.DEFAULT_DISTANCE;
+    const shipping=calculateShipping(distance,state.isPriority);
+    const rawShippingCost=shipping.cost||0;
+    const shippingSubsidy=calculateSubsidy(subtotal,shipping.zone,rawShippingCost);
+    const shippingCost=state.shippingProvider==='pembeli'?0:Math.max(0,rawShippingCost-shippingSubsidy);
     const total=subtotal-discount+shippingCost;
-    return {items,totalQty,subtotal,discount,shippingCost,shippingLabel:shipping.label,shippingDistance:shipping.distance,total,isOutOfRange:distance>SYSTEM.MAX_DISTANCE};
+    return {items,totalQty,subtotal,discount,shippingCost,shippingSubsidy,rawShippingCost,shippingLabel:shipping.label,shippingDistance:shipping.distance,shippingZone:shipping.zone,total,isOutOfRange:shipping.zone==='E'};
   }
 
   function renderMenu() {
@@ -113,9 +172,7 @@
     empty.style.display='none';
     let html='';
     filtered.forEach(p=>{ let qty=0,firstCartKey=p.id; Object.keys(state.cart).forEach(k=>{ if(k===p.id||k.startsWith(p.id+'_')){ qty+=state.cart[k].qty; if(qty===state.cart[k].qty) firstCartKey=k; } }); const control=qty===0?`<button type="button" class="add-btn" data-action="open-modal" data-id="${p.id}"><i data-lucide="plus" class="w-4 h-4"></i></button>`:`<div class="qty-control"><button type="button" class="qty-btn" data-action="decrease" data-id="${firstCartKey}">−</button><span class="qty-num">${qty}</span><button type="button" class="qty-btn" data-action="increase" data-id="${firstCartKey}">+</button></div>`; const badgeRight=p.badge?`<span class="item-badge-right ${p.badgeColor}">${escapeHTML(p.badge)}</span>`:''; const flavorTag=p.flavorTag?`<span class="item-flavor-tag">${escapeHTML(p.flavorTag)}</span>`:'';
-    // ✅ PERUBAHAN #4: Pedas Meter visual
-    const defaultSpice = p.defaultSpice || 3;
-    const spiceIcons = Array(5).fill(null).map((_, i) => i < defaultSpice ? '🌶️' : '<span style="opacity:0.25">🌶️</span>').join('');
+    const defaultSpice=p.defaultSpice||3; const spiceIcons=Array(5).fill(null).map((_,i)=>i<defaultSpice?'🌶️':'<span style="opacity:0.25">🌶️</span>').join('');
     const buahChips=(p.buah||[]).slice(0,4).map(b=>`<span class="item-buah-chip">${escapeHTML(b)}</span>`).join(''); const moreChips=(p.buah||[]).length>4?`<span class="item-buah-chip">+${p.buah.length-4}</span>`:''; html+=`<div class="menu-item" data-id="${p.id}" tabindex="0" role="button" aria-label="Detail ${escapeHTML(p.name)}"><div class="item-img-wrap"><img src="${p.thumbnail}" alt="${escapeHTML(p.name)}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; this.nextElementSibling.textContent='${escapeHTML(p.name.substring(0,20))}'"><div class="fallback" style="display:none;">${escapeHTML(p.name.substring(0,20))}</div></div><div class="item-body"><div class="item-name-row"><span class="item-name">${escapeHTML(p.name)}</span>${badgeRight}</div><div class="item-flavor-row"><span class="item-flavor">${escapeHTML(p.flavor)}</span>${flavorTag}</div><div class="item-spice" style="display:flex;align-items:center;gap:4px;font-size:11px;"><span style="font-size:10px;color:var(--gray-500);">Pedas:</span>${spiceIcons}<span style="font-size:10px;color:var(--gray-400);">(bisa diatur)</span></div><p class="item-desc">${escapeHTML(p.desc)}</p><div class="item-buah-chips">${buahChips}${moreChips}</div><div class="item-footer"><div><span class="item-price">${fmt(p.price)}</span><span class="item-portion"> · ${p.portion}</span></div>${control}</div></div></div>`; });
     container.innerHTML=html;
   }
@@ -140,12 +197,56 @@
     const summary=getCartSummary(); const list=document.getElementById('miniCartList'); let html='';
     if(summary.items.length===0){ html='<p style="color:var(--gray-500);text-align:center;padding:20px 0;">Keranjang kosong</p>'; } else { summary.items.forEach(item=>{ const spiceText=item.spice?' (Level '+item.spice+')':''; html+=`<div class="mini-cart-item"><div class="mini-cart-info"><div class="mini-cart-name">${escapeHTML(item.name)}${spiceText}</div><div class="mini-cart-detail">${fmt(item.price)}</div></div><div class="mini-cart-qty"><button data-action="decrease" data-id="${item.id}">−</button><span>${item.qty}</span><button data-action="increase" data-id="${item.id}">+</button><button class="mini-cart-remove" data-action="remove" data-id="${item.id}">🗑️</button></div></div>`; }); }
     list.innerHTML=html; document.getElementById('cartSubtotalDisplay').textContent=fmt(summary.subtotal);
-    const sp=document.getElementById('step1Progress'); if(sp){ const remaining=SYSTEM.DISCOUNT_THRESHOLD-summary.subtotal; const pp=Math.min(100,Math.round((summary.subtotal/SYSTEM.DISCOUNT_THRESHOLD)*100)); sp.innerHTML=remaining>0?`<div style="background:white;border:1px solid var(--gray-200);border-radius:12px;padding:12px;"><div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;margin-bottom:6px;"><span>🎯 Tambah ${fmt(remaining)} lagi dapat potongan Rp5.000</span><span style="color:var(--green);">${pp}%</span></div><div style="width:100%;height:6px;background:var(--gray-200);border-radius:10px;overflow:hidden;"><div style="width:${pp}%;height:100%;background:${pp>=80?'var(--green)':'var(--red)'};border-radius:10px;transition:width 0.4s;"></div></div></div>`:`<div style="background:var(--green-pale);border:1px solid var(--green);border-radius:12px;padding:10px 12px;text-align:center;font-weight:700;color:var(--green);font-size:13px;">✅ Diskon Rp5.000 aktif!</div>`; }
-    const s2c=document.getElementById('step2ShippingCost'),s2d=document.getElementById('step2Distance'); if(s2c) s2c.textContent=summary.shippingCost===Infinity?'❌':fmt(summary.shippingCost); if(s2d) s2d.textContent='~'+Math.ceil(summary.shippingDistance)+' km';
-    document.getElementById('finalSubtotal').textContent=fmt(summary.subtotal); document.getElementById('finalDiscount').textContent=summary.discount>0?'-Rp'+summary.discount.toLocaleString('id-ID'):'Rp0'; document.getElementById('finalShipping').textContent=summary.shippingCost===Infinity?'❌':fmt(summary.shippingCost); document.getElementById('finalTotal').textContent=summary.isOutOfRange?'❌':fmt(summary.total);
+
+    // ===== STEP 1: PROGRESS + SUBSIDI + UPSELL =====
+    const step1Progress=document.getElementById('step1Progress');
+    if(step1Progress&&summary.items.length>0){
+      let progressHTML='';
+      const remaining=SYSTEM.DISCOUNT_THRESHOLD-summary.subtotal;
+      const progressPercent=Math.min(100,Math.round((summary.subtotal/SYSTEM.DISCOUNT_THRESHOLD)*100));
+      if(remaining>0){ progressHTML+=`<div style="background:white;border:1px solid var(--gray-200);border-radius:12px;padding:12px;margin-bottom:8px;"><div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;margin-bottom:6px;"><span>🎯 Tambah ${fmt(remaining)} lagi dapat potongan Rp5.000</span><span style="color:var(--green);">${progressPercent}%</span></div><div style="width:100%;height:6px;background:var(--gray-200);border-radius:10px;overflow:hidden;"><div style="width:${progressPercent}%;height:100%;background:${progressPercent>=80?'var(--green)':'var(--red)'};border-radius:10px;transition:width 0.4s;"></div></div></div>`; } else { progressHTML+=`<div style="background:var(--green-pale);border:1px solid var(--green);border-radius:12px;padding:10px 12px;text-align:center;font-weight:700;color:var(--green);font-size:13px;margin-bottom:8px;">✅ Diskon Rp5.000 aktif!</div>`; }
+      
+      if(summary.shippingProvider==='rujakco'&&!summary.isOutOfRange){
+        if(summary.subtotal>=SYSTEM.SUBSIDY_TIER3){ progressHTML+=`<div style="background:var(--green-pale);border:1px solid var(--green);border-radius:12px;padding:10px 12px;text-align:center;font-weight:700;color:var(--green);font-size:13px;">🚚 Gratis Pengiriman!</div>`; }
+        else if(summary.subtotal>=SYSTEM.SUBSIDY_TIER2){ progressHTML+=`<div style="background:var(--green-pale);border:1px solid var(--green);border-radius:12px;padding:10px 12px;text-align:center;font-weight:700;color:var(--green);font-size:13px;">✅ Subsidi Pengiriman Rp10.000 aktif!</div>`; }
+        else if(summary.subtotal>=SYSTEM.SUBSIDY_TIER1){ const toNext=SYSTEM.SUBSIDY_TIER2-summary.subtotal; progressHTML+=`<div style="background:white;border:1px solid var(--gold);border-radius:12px;padding:10px 12px;text-align:center;font-size:12px;font-weight:600;color:#92400e;">🚀 Tambah ${fmt(toNext)} lagi → Subsidi Rp10.000</div>`; }
+        else { const toSubsidy=SYSTEM.SUBSIDY_TIER1-summary.subtotal; progressHTML+=`<div style="background:white;border:1px solid var(--gray-200);border-radius:12px;padding:10px 12px;text-align:center;font-size:12px;font-weight:600;color:var(--gray-500);">📦 Tambah ${fmt(toSubsidy)} lagi → Subsidi Rp5.000</div>`; }
+      }
+      step1Progress.innerHTML=progressHTML;
+    }
+
+    // ===== UPSELL =====
+    const upsellDiv=document.getElementById('step1Upsell');
+    if(upsellDiv&&summary.items.length>0){
+      const hasGaco=summary.items.some(i=>i.id.startsWith('p_m3'));
+      const hasMahkota=summary.items.some(i=>i.id.startsWith('p_m5'));
+      const hasRama=summary.items.some(i=>i.id.startsWith('p_m4'));
+      const hasTampah=summary.items.some(i=>i.id.startsWith('p_m6'));
+      let upsellHTML='';
+      if(hasGaco&&!hasRama&&!hasMahkota){ const diff=48000-40000; upsellHTML=`<div style="background:#fff3cd;border:1px solid #F4C430;border-radius:10px;padding:10px 12px;margin-top:8px;text-align:center;font-size:12px;font-weight:600;color:#3d2b00;">✨ Tambah ${fmt(diff)} lagi → Upgrade ke <strong>Rujak Rama</strong> (porsi 2-3 orang)</div>`; }
+      else if(hasRama&&!hasMahkota&&!hasTampah){ const diff=85000-48000; upsellHTML=`<div style="background:#fff3cd;border:1px solid #F4C430;border-radius:10px;padding:10px 12px;margin-top:8px;text-align:center;font-size:12px;font-weight:600;color:#3d2b00;">👑 Tambah ${fmt(diff)} lagi → Upgrade ke <strong>Rujak Mahkota</strong> (premium)</div>`; }
+      else if(hasMahkota&&!hasTampah){ upsellHTML=`<div style="background:#fff3cd;border:1px solid #F4C430;border-radius:10px;padding:10px 12px;margin-top:8px;text-align:center;font-size:12px;font-weight:600;color:#3d2b00;">🎉 Butuh untuk acara? <strong>Tampah Nusantara</strong> (8-10 orang) — Gratis Ongkir!</div>`; }
+      upsellDiv.innerHTML=upsellHTML;
+    }
+
+    // ===== STEP 2: ONGKIR + ZONA + SUBSIDI =====
+    const s2c=document.getElementById('step2ShippingCost'),s2d=document.getElementById('step2Distance'),s2z=document.getElementById('step2Zone'),s2s=document.getElementById('step2Subsidy');
+    if(s2c&&summary.shippingProvider==='rujakco'){
+      if(summary.isOutOfRange){ s2c.textContent='Konfirmasi Admin'; if(s2z) s2z.textContent=summary.shippingLabel; if(s2s) s2s.style.display='none'; }
+      else { s2c.textContent=fmt(summary.shippingCost); if(s2z) s2z.textContent=summary.shippingLabel; if(s2s&&summary.shippingSubsidy>0){ s2s.style.display='block'; s2s.innerHTML=`💰 Subsidi Rujak.Co: <strong style="color:var(--green);">-${fmt(summary.shippingSubsidy)}</strong>`; } else if(s2s){ s2s.style.display='none'; } }
+    } else if(s2c){ s2c.textContent='Gratis'; if(s2z) s2z.textContent='Kurir Saya'; if(s2s) s2s.style.display='none'; }
+    if(s2d) s2d.textContent='~'+Math.ceil(summary.shippingDistance)+' km';
+
+    // Step 3
+    document.getElementById('finalSubtotal').textContent=fmt(summary.subtotal);
+    document.getElementById('finalDiscount').textContent=summary.discount>0?'-Rp'+summary.discount.toLocaleString('id-ID'):'Rp0';
+    document.getElementById('finalShipping').textContent=summary.isOutOfRange?'Konfirmasi Admin':fmt(summary.shippingCost);
+    const fs=document.getElementById('finalSubsidy'); if(fs&&summary.shippingSubsidy>0){ fs.style.display='flex'; fs.innerHTML=`<span>Subsidi Pengiriman</span><span style="color:var(--green);">-${fmt(summary.shippingSubsidy)}</span>`; } else if(fs){ fs.style.display='none'; }
+    document.getElementById('finalTotal').textContent=summary.isOutOfRange?'Konfirmasi':fmt(summary.total);
+
     document.getElementById('orderNotes').value=state.orderNotes; document.getElementById('customerName').value=state.customerName; document.getElementById('customerPhone').value=state.customerPhone; document.getElementById('customerAddress').value=state.customerAddress; document.getElementById('giftToggle').checked=state.isGift; document.getElementById('giftSender').value=state.giftSender; document.getElementById('giftMessage').value=state.giftMessage; document.getElementById('giftFields').style.display=state.isGift?'block':'none';
     document.querySelectorAll('.ship-btn').forEach(b=>b.classList.toggle('active',b.dataset.provider===state.shippingProvider)); const ro=document.getElementById('rujakcoOptions'); if(ro) ro.style.display=state.shippingProvider==='rujakco'?'block':'none'; document.querySelectorAll('.veh-btn').forEach(b=>b.classList.toggle('active',b.dataset.vehicle===state.vehicleType));
-    const bp=document.getElementById('btnOpenPayment'); if(state.userDistance===null){ bp.disabled=true; bp.textContent='⏳ Mencari lokasi...'; } else if(summary.isOutOfRange){ bp.disabled=true; bp.textContent='Di luar jangkauan'; } else if(summary.items.length===0){ bp.disabled=true; bp.textContent='Keranjang kosong'; } else { bp.disabled=false; bp.textContent='💳 Bayar Via QRIS'; }
+    const bp=document.getElementById('btnOpenPayment'); if(state.userDistance===null){ bp.disabled=true; bp.textContent='⏳ Mencari lokasi...'; } else if(summary.isOutOfRange){ bp.disabled=true; bp.textContent='Admin Konfirmasi'; } else if(summary.items.length===0){ bp.disabled=true; bp.textContent='Keranjang kosong'; } else { bp.disabled=false; bp.textContent='💳 Bayar Via QRIS'; }
     if(typeof lucide!=='undefined'&&lucide.createIcons) lucide.createIcons();
   }
 
@@ -164,21 +265,8 @@
     document.getElementById('modalContainer').textContent=product.container||'-'; document.getElementById('modalSize').textContent=product.size||'-'; document.getElementById('modalSambal').textContent=product.sambal||'-';
     document.getElementById('modalBuahText').textContent=(product.buah||[]).join(', ');
     document.getElementById('modalTags').innerHTML=(product.tags||[]).map(t=>`<span class="modal-tag">${escapeHTML(t)}</span>`).join('');
-
-    // ✅ PERUBAHAN #5a: Ritual Nikmat
-    const ritualDiv = document.createElement('div');
-    ritualDiv.style.cssText = 'background:var(--ivory);border:1px solid var(--green-pale);border-radius:10px;padding:10px 12px;margin:8px 0;';
-    ritualDiv.innerHTML = `<div style="font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.05em;">🎯 Ritual Nikmat</div><div style="font-size:11px;color:var(--gray-700);margin-top:4px;line-height:1.6;"><span style="color:var(--green);font-weight:700;">①</span> Tuang sambal ke wadah<br><span style="color:var(--green);font-weight:700;">②</span> Aduk rata & nikmati tiap gigitan<br><span style="color:var(--green);font-weight:700;">③</span> Tambah level pedas sesuai selera</div>`;
-    document.getElementById('modalTags').after(ritualDiv);
-
-    // ✅ PERUBAHAN #5b: Justifikasi Harga
-    const breakdown = product.price <= 30000 ? `${(product.buah||[]).length} jenis buah segar • sambal homemade • wadah food grade` : product.price <= 85000 ? `${(product.buah||[]).length} jenis buah premium • sambal spesial • wadah jumbo` : `${(product.buah||[]).length}+ jenis buah • tampah bambu • sambal variant`;
-    const hargaDiv = document.createElement('div');
-    hargaDiv.style.cssText = 'font-size:10px;color:var(--gray-500);margin:4px 0 6px;line-height:1.4;text-align:center;';
-    hargaDiv.innerHTML = `💰 <strong>${fmt(product.price)}</strong> sudah termasuk:<br>${breakdown}`;
-    const detailGrid = document.getElementById('modalDetailGrid');
-    if (detailGrid) detailGrid.after(hargaDiv);
-
+    const ritualDiv=document.createElement('div'); ritualDiv.style.cssText='background:var(--ivory);border:1px solid var(--green-pale);border-radius:10px;padding:10px 12px;margin:8px 0;'; ritualDiv.innerHTML=`<div style="font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.05em;">🎯 Ritual Nikmat</div><div style="font-size:11px;color:var(--gray-700);margin-top:4px;line-height:1.6;"><span style="color:var(--green);font-weight:700;">①</span> Tuang sambal ke wadah<br><span style="color:var(--green);font-weight:700;">②</span> Aduk rata & nikmati tiap gigitan<br><span style="color:var(--green);font-weight:700;">③</span> Tambah level pedas sesuai selera</div>`; document.getElementById('modalTags').after(ritualDiv);
+    const breakdown=product.price<=30000?`${(product.buah||[]).length} jenis buah segar • sambal homemade • wadah food grade`:product.price<=85000?`${(product.buah||[]).length} jenis buah premium • sambal spesial • wadah jumbo`:`${(product.buah||[]).length}+ jenis buah • tampah bambu • sambal variant`; const hargaDiv=document.createElement('div'); hargaDiv.style.cssText='font-size:10px;color:var(--gray-500);margin:4px 0 6px;line-height:1.4;text-align:center;'; hargaDiv.innerHTML=`💰 <strong>${fmt(product.price)}</strong> sudah termasuk:<br>${breakdown}`; const detailGrid=document.getElementById('modalDetailGrid'); if(detailGrid) detailGrid.after(hargaDiv);
     document.getElementById('btnPrice').textContent=fmt(product.price); document.getElementById('modalAdd').dataset.id=product.id;
     const sel=document.getElementById('spiceSelect'); const dv=product.defaultSpice||3; sel.value=dv; updateSpiceHighlight(dv); sel.onchange=function(){ updateSpiceHighlight(parseInt(this.value,10)); };
     productModal.classList.add('active'); document.body.style.overflow='hidden';
@@ -197,7 +285,7 @@
   }
 
   function handleCheckout() {
-    const summary=getCartSummary(); if(summary.isOutOfRange) return showToast('Maaf, pengiriman hanya tersedia untuk Jabodetabek');
+    const summary=getCartSummary(); if(summary.isOutOfRange) return showToast('Maaf, area Anda di luar jangkauan. Admin akan menghubungi.');
     const name=state.customerName.trim(),phone=state.customerPhone.trim(),address=state.customerAddress.trim();
     if(!name||name.length<2) return showToast('❌ Nama penerima tidak valid'),document.getElementById('customerName').focus();
     const phoneRegex=/^(08\d{8,11}|\+628\d{8,10}|628\d{8,10})$/; const cleanedPhone=phone.replace(/[\s\-\(\)]/g,'');
@@ -206,7 +294,7 @@
     if(!address||address.length<5) return showToast('❌ Alamat pengiriman tidak valid'),document.getElementById('customerAddress').focus();
     if(summary.items.length===0) return showToast('Keranjang kosong');
     const payBtn=document.querySelector('[data-action="confirm-wa"]'); if(payBtn){ payBtn.textContent='⏳ Menyimpan...'; payBtn.disabled=true; }
-    saveOrderToDatabase(summary.items,summary.total,summary.subtotal,summary.shippingCost,summary.discount).then((saved)=>{ showToast(saved?'✅ Pesanan tersimpan!':'⚠️ Lanjut WhatsApp tanpa simpan'); }).catch(()=>{ showToast('⚠️ Gagal menyimpan, lanjut WhatsApp'); }).finally(()=>{ setTimeout(()=>{ if(payBtn){ payBtn.textContent='💳 Kirim Bukti Transfer'; payBtn.disabled=false; } },1000); setTimeout(()=>{ let msg='Halo Rujak.Co! Saya ingin memesan:\n\n'; summary.items.forEach(item=>{ const spiceText=item.spice?' (Level '+item.spice+')':''; msg+='• '+item.name+spiceText+' (x'+item.qty+') — '+fmt(item.lineTotal)+'\n'; }); if(state.orderNotes) msg+='\n*Catatan Pesanan:*\n'+state.orderNotes+'\n'; if(state.isGift){ msg+='\n🎁 *PESANAN KADO*\n'; if(state.giftSender) msg+='Dari: '+state.giftSender+'\n'; if(state.giftMessage) msg+='Ucapan: '+state.giftMessage+'\n'; } msg+='\n*Pengiriman:* '+(state.shippingProvider==='pembeli'?'Kurir Saya':'Kurir Rujak.Co - '+state.vehicleType+(state.isPriority?' (Prioritas)':'')); msg+='\n*Data:*\nNama : '+name+'\nNo. HP : '+phone+'\nAlamat : '+address+'\n'; if(state.shippingProvider==='rujakco') msg+='\nOngkir: '+fmt(summary.shippingCost)+' ('+summary.shippingLabel+')'; msg+='\nSubtotal: '+fmt(summary.subtotal); if(summary.discount>0) msg+='\nDiskon Misi Jajan: -'+fmt(summary.discount); msg+='\n*Total Akhir: '+fmt(summary.total)+'*\n\n*Saya sudah transfer via QRIS, ini bukti transfernya:*\n*(sertakan foto)*'; window.open('https://wa.me/'+SYSTEM.WA_NUMBER+'?text='+encodeURIComponent(msg),'_blank'); },500); });
+    saveOrderToDatabase(summary.items,summary.total,summary.subtotal,summary.shippingCost,summary.discount).then((saved)=>{ showToast(saved?'✅ Pesanan tersimpan!':'⚠️ Lanjut WhatsApp tanpa simpan'); }).catch(()=>{ showToast('⚠️ Gagal menyimpan, lanjut WhatsApp'); }).finally(()=>{ setTimeout(()=>{ if(payBtn){ payBtn.textContent='💳 Kirim Bukti Transfer'; payBtn.disabled=false; } },1000); setTimeout(()=>{ let msg='Halo Rujak.Co! Saya ingin memesan:\n\n'; summary.items.forEach(item=>{ const spiceText=item.spice?' (Level '+item.spice+')':''; msg+='• '+item.name+spiceText+' (x'+item.qty+') — '+fmt(item.lineTotal)+'\n'; }); if(state.orderNotes) msg+='\n*Catatan Pesanan:*\n'+state.orderNotes+'\n'; if(state.isGift){ msg+='\n🎁 *PESANAN KADO*\n'; if(state.giftSender) msg+='Dari: '+state.giftSender+'\n'; if(state.giftMessage) msg+='Ucapan: '+state.giftMessage+'\n'; } msg+='\n*Pengiriman:* '+(state.shippingProvider==='pembeli'?'Kurir Saya':'Kurir Rujak.Co - '+state.vehicleType+(state.isPriority?' (Prioritas)':'')); msg+='\n*Data:*\nNama : '+name+'\nNo. HP : '+phone+'\nAlamat : '+address+'\n'; if(state.shippingProvider==='rujakco'){ msg+='\nBiaya Pengantaran: '+fmt(summary.rawShippingCost)+' ('+summary.shippingLabel+')'; if(summary.shippingSubsidy>0) msg+='\nSubsidi Rujak.Co: -'+fmt(summary.shippingSubsidy); msg+='\nTotal Pengantaran: '+fmt(summary.shippingCost); } msg+='\nSubtotal: '+fmt(summary.subtotal); if(summary.discount>0) msg+='\nDiskon Misi Jajan: -'+fmt(summary.discount); msg+='\n*Total Akhir: '+fmt(summary.total)+'*\n\n*Saya sudah transfer via QRIS, ini bukti transfernya:*\n*(sertakan foto)*'; window.open('https://wa.me/'+SYSTEM.WA_NUMBER+'?text='+encodeURIComponent(msg),'_blank'); },500); });
   }
 
   function saveCustomerData(){ try { localStorage.setItem('rujak_customer',JSON.stringify({ name:state.customerName,phone:state.customerPhone,address:state.customerAddress,isGift:state.isGift,giftSender:state.giftSender,giftMessage:state.giftMessage,hasShared:state.hasShared,shippingProvider:state.shippingProvider,vehicleType:state.vehicleType })); } catch(_) {} }
