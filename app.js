@@ -837,50 +837,62 @@
 
   // ===================== EVENT BINDING =====================
   function bindEvents() {
-    // Tambah produk
-    document.getElementById('modalAdd').addEventListener('click', function() {
-      const baseId = this.dataset.id;
-      if (baseId) {
-        const spice = parseInt(document.getElementById('spiceSelect').value, 10) || 3;
-        const cartKey = baseId + '_' + spice;
-        const entry = state.cart[cartKey] || { qty: 0, spice: spice };
-        entry.qty += 1; entry.spice = spice; state.cart[cartKey] = entry;
-        updateUI(); showToast('Berhasil ditambahkan ✓'); closeProductModal();
-      }
-    });
+    // Tambah produk — PAKAI ID #modalAdd (sudah ada di HTML)
+    const modalAdd = document.getElementById('modalAdd');
+    if (modalAdd) {
+      modalAdd.addEventListener('click', function() {
+        const baseId = this.dataset.id;
+        if (baseId) {
+          const spice = parseInt(document.getElementById('spiceSelect').value, 10) || 3;
+          const cartKey = baseId + '_' + spice;
+          const entry = state.cart[cartKey] || { qty: 0, spice: spice };
+          entry.qty += 1; entry.spice = spice; state.cart[cartKey] = entry;
+          updateUI(); showToast('Berhasil ditambahkan ✓'); closeProductModal();
+        }
+      });
+    }
 
     // Customer data: Ubah
-    document.getElementById('editCustomerBtn').addEventListener('click', function() {
-      state.isEditingCustomer = true;
-      renderMiniCart();
-    });
+    const editCustomerBtn = document.getElementById('editCustomerBtn');
+    if (editCustomerBtn) {
+      editCustomerBtn.addEventListener('click', function() {
+        state.isEditingCustomer = true;
+        renderMiniCart();
+      });
+    }
 
     // Customer data: Simpan
-    document.getElementById('saveCustomerBtn').addEventListener('click', function() {
-      state.customerName = document.getElementById('customerName').value.trim();
-      state.customerPhone = document.getElementById('customerPhone').value.trim();
-      state.customerAddress = document.getElementById('customerAddress').value.trim();
-      state.isEditingCustomer = false;
-      saveCustomerData();
-      renderMiniCart();
-      showToast('Data penerima disimpan ✓');
-    });
-
-    // Auto-collapse saat blur di alamat
-    document.getElementById('customerAddress').addEventListener('blur', function() {
-      const name = document.getElementById('customerName').value.trim();
-      const phone = document.getElementById('customerPhone').value.trim();
-      const address = this.value.trim();
-      if (name && phone && address) {
-        state.customerName = name;
-        state.customerPhone = phone;
-        state.customerAddress = address;
+    const saveCustomerBtn = document.getElementById('saveCustomerBtn');
+    if (saveCustomerBtn) {
+      saveCustomerBtn.addEventListener('click', function() {
+        state.customerName = document.getElementById('customerName').value.trim();
+        state.customerPhone = document.getElementById('customerPhone').value.trim();
+        state.customerAddress = document.getElementById('customerAddress').value.trim();
         state.isEditingCustomer = false;
         saveCustomerData();
         renderMiniCart();
-        showToast('Data penerima tersimpan ✓');
-      }
-    });
+        showToast('Data penerima disimpan ✓');
+      });
+    }
+
+    // Auto-collapse saat blur di alamat
+    const customerAddress = document.getElementById('customerAddress');
+    if (customerAddress) {
+      customerAddress.addEventListener('blur', function() {
+        const name = document.getElementById('customerName').value.trim();
+        const phone = document.getElementById('customerPhone').value.trim();
+        const address = this.value.trim();
+        if (name && phone && address) {
+          state.customerName = name;
+          state.customerPhone = phone;
+          state.customerAddress = address;
+          state.isEditingCustomer = false;
+          saveCustomerData();
+          renderMiniCart();
+          showToast('Data penerima tersimpan ✓');
+        }
+      });
+    }
 
     // Shipping provider radio (kompatibilitas)
     document.querySelectorAll('input[name="shippingProvider"]').forEach(radio => {
@@ -937,16 +949,27 @@
     }
 
     // Promo & share
-    document.getElementById('shareBtnModal').addEventListener('click', function() {
-      state.hasShared = true; saveCustomerData(); updateUI(); showToast('Diskon Rp5.000 berhasil diaktifkan!'); shareToWhatsApp();
-    });
-    document.getElementById('promoTrigger').addEventListener('click', openPromoModal);
-    document.getElementById('promoClose').addEventListener('click', closePromoModal);
-    promoModal.addEventListener('click', function(e) { if (e.target === promoModal) closePromoModal(); });
+    const shareBtnModal = document.getElementById('shareBtnModal');
+    if (shareBtnModal) {
+      shareBtnModal.addEventListener('click', function() {
+        state.hasShared = true; saveCustomerData(); updateUI(); showToast('Diskon Rp5.000 berhasil diaktifkan!'); shareToWhatsApp();
+      });
+    }
+    const promoTrigger = document.getElementById('promoTrigger');
+    if (promoTrigger) promoTrigger.addEventListener('click', openPromoModal);
+    const promoClose = document.getElementById('promoClose');
+    if (promoClose) promoClose.addEventListener('click', closePromoModal);
+    if (promoModal) {
+      promoModal.addEventListener('click', function(e) { if (e.target === promoModal) closePromoModal(); });
+    }
 
     // Bottom bar
-    document.getElementById('closeBottomBar').addEventListener('click', e => { e.stopPropagation(); minimizeCart(); });
-    document.getElementById('floatingCartBtn').addEventListener('click', expandCart);
+    const closeBottomBar = document.getElementById('closeBottomBar');
+    if (closeBottomBar) {
+      closeBottomBar.addEventListener('click', e => { e.stopPropagation(); minimizeCart(); });
+    }
+    const floatingCartBtn = document.getElementById('floatingCartBtn');
+    if (floatingCartBtn) floatingCartBtn.addEventListener('click', expandCart);
 
     // Search
     const searchToggleWrap = document.getElementById('searchToggleWrap');
@@ -1175,21 +1198,33 @@
     loadCart(); loadCustomerData(); updateStoreStatus();
     document.getElementById('shareStrip').style.display = 'none';
     try { const s = localStorage.getItem('rujak_cart_minimized'); if (s !== null) state.isCartMinimized = s === 'true'; } catch (_) {}
-    document.getElementById('customerName').value = state.customerName;
-    document.getElementById('customerPhone').value = state.customerPhone;
-    document.getElementById('customerAddress').value = state.customerAddress;
-    document.getElementById('giftToggle').checked = state.isGift;
-    document.getElementById('giftSender').value = state.giftSender;
-    document.getElementById('giftMessage').value = state.giftMessage;
-    document.getElementById('giftFields').style.display = state.isGift ? 'block' : 'none';
+    
+    // Load data customer ke form
+    const customerName = document.getElementById('customerName');
+    const customerPhone = document.getElementById('customerPhone');
+    const customerAddress = document.getElementById('customerAddress');
+    const giftToggle = document.getElementById('giftToggle');
+    const giftSender = document.getElementById('giftSender');
+    const giftMessage = document.getElementById('giftMessage');
+    const giftFields = document.getElementById('giftFields');
+    
+    if (customerName) customerName.value = state.customerName;
+    if (customerPhone) customerPhone.value = state.customerPhone;
+    if (customerAddress) customerAddress.value = state.customerAddress;
+    if (giftToggle) giftToggle.checked = state.isGift;
+    if (giftSender) giftSender.value = state.giftSender;
+    if (giftMessage) giftMessage.value = state.giftMessage;
+    if (giftFields) giftFields.style.display = state.isGift ? 'block' : 'none';
 
     state.shippingProvider = 'pembeli';
     state.isPriority = false;
-    document.getElementById('priorityToggle').disabled = true;
-    document.getElementById('priorityToggleMini').disabled = true;
+    
+    const priorityToggle = document.getElementById('priorityToggle');
+    const priorityToggleMini = document.getElementById('priorityToggleMini');
+    if (priorityToggle) priorityToggle.disabled = true;
+    if (priorityToggleMini) priorityToggleMini.disabled = true;
 
-    // ========== ✅ PERBAIKAN DI SINI ==========
-    // Set default shipping provider via tombol (bukan radio yang udah ilang)
+    // ✅ Set default shipping & vehicle via tombol (bukan radio)
     document.querySelectorAll('.ship-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.provider === 'pembeli');
     });
