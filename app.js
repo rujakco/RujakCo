@@ -13,7 +13,6 @@
   }
 
   // ===================== DATA PRODUK =====================
-  // Data dari products.js (satu sumber)
   const PRODUCTS = typeof PRODUCTS_DATA !== 'undefined' ? PRODUCTS_DATA : [];
   const VIP_PRODUCT = typeof VIP_PRODUCT_DATA !== 'undefined' ? VIP_PRODUCT_DATA : null;
 
@@ -334,7 +333,8 @@
   function goToStep(step) {
     currentStep = step;
     document.querySelectorAll('.cart-step').forEach(el => el.style.display = 'none');
-    document.getElementById(`cartStep${step}`).style.display = 'block';
+    const target = document.getElementById('cartStep' + step);
+    if (target) target.style.display = 'block';
     
     document.querySelectorAll('.step').forEach((el, i) => {
       el.classList.toggle('active', i+1 <= step);
@@ -434,22 +434,84 @@
   function closeProductModal() { productModal.classList.remove('active'); document.body.style.overflow = ''; currentProductId = null; }
 
   const miniCartModal = document.getElementById('miniCartModal');
+
+  // ===================== OPEN MINI CART (LENGKAP) =====================
   function openMiniCart() {
+    // Load data customer ke form
+    const nameEl = document.getElementById('customerName');
+    const phoneEl = document.getElementById('customerPhone');
+    const addressEl = document.getElementById('customerAddress');
+    const notesEl = document.getElementById('orderNotes');
+    const giftToggleEl = document.getElementById('giftToggle');
+    const giftFieldsEl = document.getElementById('giftFields');
+    const giftSenderEl = document.getElementById('giftSender');
+    const giftMessageEl = document.getElementById('giftMessage');
+    
+    if (nameEl) nameEl.value = state.customerName || '';
+    if (phoneEl) phoneEl.value = state.customerPhone || '';
+    if (addressEl) addressEl.value = state.customerAddress || '';
+    if (notesEl) notesEl.value = state.orderNotes || '';
+    if (giftToggleEl) {
+      giftToggleEl.checked = state.isGift || false;
+      if (giftFieldsEl) {
+        giftFieldsEl.style.display = state.isGift ? 'block' : 'none';
+      }
+    }
+    if (giftSenderEl) giftSenderEl.value = state.giftSender || '';
+    if (giftMessageEl) giftMessageEl.value = state.giftMessage || '';
+    
+    // Set shipping provider buttons
+    document.querySelectorAll('.ship-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.provider === state.shippingProvider);
+    });
+    
+    const rujakcoOptions = document.getElementById('rujakcoOptions');
+    if (rujakcoOptions) {
+      rujakcoOptions.style.display = state.shippingProvider === 'rujakco' ? 'block' : 'none';
+    }
+    
+    // Set vehicle buttons
+    document.querySelectorAll('.veh-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.vehicle === state.selectedVehicle);
+    });
+    
+    // Set priority toggle
+    const priorityToggleMini = document.getElementById('priorityToggleMini');
+    if (priorityToggleMini) {
+      priorityToggleMini.checked = state.isPriority || false;
+      priorityToggleMini.disabled = state.shippingProvider !== 'rujakco';
+    }
+    
     renderMiniCart();
     goToStep(1);
     miniCartModal.classList.add('active');
     document.body.style.overflow = 'hidden';
   }
+
+  // ===================== CLOSE MINI CART (LENGKAP) =====================
   function closeMiniCart() {
-    state.orderNotes = document.getElementById('orderNotes').value;
-    state.customerName = document.getElementById('customerName').value.trim();
-    state.customerPhone = document.getElementById('customerPhone').value.trim();
-    state.customerAddress = document.getElementById('customerAddress').value.trim();
-    state.isGift = document.getElementById('giftToggle').checked;
-    state.giftSender = document.getElementById('giftSender').value.trim();
-    state.giftMessage = document.getElementById('giftMessage').value.trim();
-    miniCartModal.classList.remove('active'); document.body.style.overflow = ''; saveCustomerData();
+    // Simpan semua data dari form
+    const nameEl = document.getElementById('customerName');
+    const phoneEl = document.getElementById('customerPhone');
+    const addressEl = document.getElementById('customerAddress');
+    const notesEl = document.getElementById('orderNotes');
+    const giftToggleEl = document.getElementById('giftToggle');
+    const giftSenderEl = document.getElementById('giftSender');
+    const giftMessageEl = document.getElementById('giftMessage');
+    
+    if (notesEl) state.orderNotes = notesEl.value;
+    if (nameEl) state.customerName = nameEl.value.trim();
+    if (phoneEl) state.customerPhone = phoneEl.value.trim();
+    if (addressEl) state.customerAddress = addressEl.value.trim();
+    if (giftToggleEl) state.isGift = giftToggleEl.checked;
+    if (giftSenderEl) state.giftSender = giftSenderEl.value.trim();
+    if (giftMessageEl) state.giftMessage = giftMessageEl.value.trim();
+    
+    saveCustomerData();
+    miniCartModal.classList.remove('active');
+    document.body.style.overflow = '';
   }
+
   function clearCart() {
     if (Object.keys(state.cart).length === 0) return showToast('Keranjang sudah kosong');
     if (confirm('Yakin ingin mengosongkan keranjang?')) {
@@ -679,7 +741,7 @@
       }
     });
 
-    // Shipping provider radio (untuk kompatibilitas dengan modal lama, namun tidak digunakan di modal baru)
+    // Shipping provider radio (kompatibilitas)
     document.querySelectorAll('input[name="shippingProvider"]').forEach(radio => {
       radio.addEventListener('change', function() {
         state.shippingProvider = this.value;
@@ -711,7 +773,7 @@
       });
     });
 
-    // Toggle prioritas (sinkronisasi antara dua toggle)
+    // Toggle prioritas
     const priorityToggle = document.getElementById('priorityToggle');
     const priorityToggleMini = document.getElementById('priorityToggleMini');
     if (priorityToggle) {
@@ -756,15 +818,29 @@
 
     // Input fields
     ['customerName', 'customerPhone', 'customerAddress', 'giftSender', 'giftMessage'].forEach(id => {
-      document.getElementById(id).addEventListener('input', function() { state[id] = this.value.trim(); saveCustomerData(); });
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', function() { state[id] = this.value.trim(); saveCustomerData(); });
+      }
     });
-    document.getElementById('orderNotes').addEventListener('input', function() { state.orderNotes = this.value; });
-    document.getElementById('giftToggle').addEventListener('change', function() {
-      state.isGift = this.checked; document.getElementById('giftFields').style.display = this.checked ? 'block' : 'none'; saveCustomerData();
-    });
+    const orderNotes = document.getElementById('orderNotes');
+    if (orderNotes) {
+      orderNotes.addEventListener('input', function() { state.orderNotes = this.value; });
+    }
+    const giftToggle = document.getElementById('giftToggle');
+    if (giftToggle) {
+      giftToggle.addEventListener('change', function() {
+        state.isGift = this.checked;
+        const giftFields = document.getElementById('giftFields');
+        if (giftFields) giftFields.style.display = this.checked ? 'block' : 'none';
+        saveCustomerData();
+      });
+    }
 
-    searchInput.addEventListener('input', debounce(function() { state.searchQuery = this.value; updateUI(); updateClearButton(); }, 300));
-    searchInput.addEventListener('keyup', updateClearButton);
+    if (searchInput) {
+      searchInput.addEventListener('input', debounce(function() { state.searchQuery = this.value; updateUI(); updateClearButton(); }, 300));
+      searchInput.addEventListener('keyup', updateClearButton);
+    }
 
     // ===================== STEP NAVIGATION =====================
     const step1Next = document.getElementById('step1Next');
@@ -772,17 +848,41 @@
     const step2Next = document.getElementById('step2Next');
     const step3Back = document.getElementById('step3Back');
 
-    if (step1Next) step1Next.addEventListener('click', () => goToStep(2));
+    if (step1Next) {
+      step1Next.addEventListener('click', function() {
+        const summary = getCartSummary();
+        if (summary.items.length === 0) {
+          showToast('❌ Keranjang kosong, tambahkan menu dulu');
+          return;
+        }
+        goToStep(2);
+      });
+    }
+
     if (step2Back) step2Back.addEventListener('click', () => goToStep(1));
+
     if (step2Next) {
-      step2Next.addEventListener('click', () => {
+      step2Next.addEventListener('click', function() {
         const name = document.getElementById('customerName').value.trim();
         const phone = document.getElementById('customerPhone').value.trim();
         const address = document.getElementById('customerAddress').value.trim();
-        if (!name || !phone || !address) {
-          showToast('❌ Lengkapi data penerima dulu');
+        
+        if (!name || name.length < 2) {
+          showToast('❌ Masukkan nama penerima (min. 2 huruf)');
+          document.getElementById('customerName').focus();
           return;
         }
+        if (!phone || phone.length < 10 || phone.length > 15) {
+          showToast('❌ Masukkan nomor HP yang valid (10-15 digit)');
+          document.getElementById('customerPhone').focus();
+          return;
+        }
+        if (!address || address.length < 5) {
+          showToast('❌ Masukkan alamat lengkap (min. 5 huruf)');
+          document.getElementById('customerAddress').focus();
+          return;
+        }
+        
         state.customerName = name;
         state.customerPhone = phone;
         state.customerAddress = address;
@@ -790,6 +890,7 @@
         goToStep(3);
       });
     }
+
     if (step3Back) step3Back.addEventListener('click', () => goToStep(2));
 
     // ===================== SHIPPING OPTIONS (Tombol) =====================
@@ -836,12 +937,41 @@
         if (action === 'open-promo') return openPromoModal();
       }
 
+      // ===================== BUTTON BAYAR QRIS =====================
       if (e.target.closest('#btnOpenPayment')) {
-        if (getCartSummary().items.length === 0) return showToast('Keranjang kosong');
-        if (state.userDistance === null) return showToast('Mohon tunggu, menghitung jarak pengiriman...');
-        if (state.userDistance > SYSTEM.MAX_DISTANCE) return showToast('Maaf, pengiriman di luar jangkauan');
-        document.getElementById('paymentTotalDisplay').textContent = document.getElementById('finalTotal').textContent;
-        closeMiniCart(); document.getElementById('paymentModal').classList.add('active'); document.body.style.overflow = 'hidden'; return;
+        const summary = getCartSummary();
+        
+        if (summary.items.length === 0) {
+          showToast('❌ Keranjang kosong');
+          return;
+        }
+        
+        if (state.userDistance === null) {
+          showToast('📍 Mohon tunggu, menghitung jarak pengiriman...');
+          return;
+        }
+        
+        if (state.userDistance > SYSTEM.MAX_DISTANCE) {
+          showToast('⚠️ Maaf, pengiriman di luar jangkauan (maks. 50 km)');
+          return;
+        }
+        
+        const name = state.customerName.trim();
+        const phone = state.customerPhone.trim();
+        const address = state.customerAddress.trim();
+        
+        if (!name || !phone || !address) {
+          showToast('❌ Lengkapi data penerima di step sebelumnya');
+          goToStep(2);
+          return;
+        }
+        
+        document.getElementById('paymentTotalDisplay').textContent = 
+          document.getElementById('finalTotal').textContent;
+        closeMiniCart();
+        document.getElementById('paymentModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+        return;
       }
 
       const menuItem = e.target.closest('.menu-item');
