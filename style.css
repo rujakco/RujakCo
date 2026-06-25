@@ -203,20 +203,25 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 .footer-brand-row img{height:44px;width:44px;border-radius:50%;object-fit:cover}
 .footer-brand-name{font-family:'Playfair Display',serif;font-size:24px;font-weight:800;color:white;letter-spacing:-0.5px}
 .footer-brand-name span{color:var(--gold)}
-.footer-brand-desc{font-size:14px;opacity:.85;line-height:1.6;max-width:300px}
+.footer-brand-desc{font-size:14px;opacity:.85;line-height:1.6;flex:1;margin:0}
 .footer-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:12px}
 .footer-col h4{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:12px;letter-spacing:.06em;text-transform:uppercase;opacity:.9}
 .footer-col ul{list-style:none;padding:0;margin:0}
 .footer-col ul li{font-size:13px;opacity:.8;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .footer-col ul li svg{color:var(--gold);width:16px;height:16px}
 .footer-social{display:flex;gap:14px;flex-wrap:wrap;margin-top:6px;margin-bottom:16px}
-.footer-social a{color:white;background:rgba(255,255,255,.12);width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s;text-decoration:none}
-.footer-social a img{width:24px!important;height:24px!important;object-fit:contain}
+.footer-social a{color:white;background:rgba(255,255,255,.12);width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s;text-decoration:none}
+.footer-social a img{width:32px!important;height:32px!important;object-fit:contain}
 .footer-social a:hover{background:var(--gold);transform:translateY(-3px)}
 .footer-wa{display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:var(--green);padding:12px 20px;border-radius:50px;font-weight:700;font-size:14px;text-decoration:none;transition:background .2s,transform .2s;width:fit-content;border:none;margin-top:12px!important}
 .footer-wa img{width:18px;height:18px;object-fit:contain}
 .footer-wa:hover{background:#e0b51a;color:var(--green-dark);transform:translateY(-2px)}
 .footer-bottom{border-top:1px solid rgba(255,255,255,.12);padding-top:16px;text-align:center;font-size:11px;opacity:.5;margin-top:8px}
+
+/* ✅ WhatsApp icon emas di footer */
+.footer-wa-icon{background:var(--gold);width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform 0.2s;box-shadow:0 4px 16px rgba(244,196,48,0.4)}
+.footer-wa-icon:hover{transform:scale(1.15)}
+.footer-wa-icon img{width:36px;height:36px;object-fit:contain}
 
 /* Bottom Bar & Floating Cart */
 #bottom-bar{position:fixed;bottom:0;width:100%;max-width:480px;background:var(--ivory);border-top:1px solid rgba(15,77,55,.1);padding:12px 20px 20px;z-index:200;box-shadow:0 -10px 30px rgba(15,77,55,.05);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);transform:translateY(100%)}
@@ -248,7 +253,7 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 .form-section input:focus,.form-section textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(15,77,55,.1)}
 .form-section textarea{min-height:70px}
 
-/* Switch & Slider (HANYA SATU) */
+/* Switch & Slider */
 .switch{position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0}
 .switch input{opacity:0;width:0;height:0}
 .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#ccc;transition:.3s;border-radius:34px}
@@ -306,7 +311,7 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 .spice-row select{padding:6px 32px 6px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:14px;font-weight:600;color:var(--gray-900);background:white;font-family:inherit;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;background-size:14px;cursor:pointer;flex:1;min-width:100px}
 .spice-row select:focus{outline:2px solid var(--green);border-color:transparent}
 
-/* Mini Cart Item (HANYA SATU - VERSI FINAL) */
+/* Mini Cart Item */
 .mini-cart-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--gray-200)}
 .mini-cart-item:last-child{border-bottom:none}
 .mini-cart-info{flex:1}
@@ -351,6 +356,12 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 .step-line{width:40px;height:2px;background:var(--gray-200);transition:all 0.3s ease}
 .step-line.active{background:var(--green)}
 
+/* ✅ Step indicator clickable */
+.step-indicator .step{cursor:pointer;transition:all 0.2s ease}
+.step-indicator .step:hover{transform:scale(1.15)}
+.step-indicator .step.active:hover{transform:scale(1)}
+.step-indicator .step.done:hover{transform:scale(1.1)}
+
 /* Subtotal */
 .cart-subtotal{display:flex;justify-content:space-between;font-weight:700;font-size:16px;padding:12px 0;border-top:1px solid var(--gray-200);margin-top:8px}
 .cart-subtotal span:last-child{color:var(--green)}
@@ -361,6 +372,9 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 .btn-step.primary{background:var(--green);color:white}
 .btn-step.primary:hover{background:var(--green-dark)}
 .btn-step.primary:disabled{opacity:0.5;cursor:not-allowed}
+
+/* ✅ Tombol kembali dihapus */
+#step2Back,#step3Back{display:none}
 
 /* Shipping Options */
 .shipping-options,.vehicle-options{display:flex;gap:8px}
@@ -404,6 +418,10 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
   .step{width:24px;height:24px;font-size:11px}
   .step-line{width:20px}
   .btn-step{font-size:13px;padding:12px}
+  .footer-social a{width:48px;height:48px}
+  .footer-social a img{width:28px!important;height:28px!important}
+  .footer-wa-icon{width:52px;height:52px}
+  .footer-wa-icon img{width:28px;height:28px}
 }
 
 /* Reduced motion */
