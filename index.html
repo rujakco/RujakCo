@@ -114,35 +114,6 @@
       border: 1px solid #4CAF50 !important;
       transition: all 0.3s ease;
     }
-
-    /* === RUNNING TESTIMONI === */
-    .testi-marquee {
-      background: #FFFDF5;
-      border-top: 1px solid #F0E6C0;
-      border-bottom: 1px solid #F0E6C0;
-      padding: 10px 0;
-      margin: 0 0 16px 0;
-      overflow: hidden;
-      white-space: nowrap;
-    }
-    .testi-track {
-      display: inline-block;
-      animation: scrollTesti 50s linear infinite;
-    }
-    .testi-track span {
-      display: inline-block;
-      margin-right: 40px;
-      font-size: 12px;
-      color: #5D4E37;
-      font-style: italic;
-    }
-    @keyframes scrollTesti {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-    .testi-marquee:hover .testi-track {
-      animation-play-state: paused;
-    }
   </style>
 </head>
 <body>
@@ -212,24 +183,6 @@
         <span>🍍 Manis segar nanas & bengkuang</span>
         <span>📦 Sambal terpisah — tetap renyah</span>
       </div></div>
-
-      <!-- ============================================ -->
-      <!-- RUNNING TEXT TESTIMONI                        -->
-      <!-- ============================================ -->
-      <div class="testi-marquee">
-        <div class="testi-track">
-          <span>⭐️⭐️⭐️⭐️⭐️ "Buset ini rujak bukan kaleng-kaleng. Sambel metenya berasa banget, nggak pelit." – Dina, Bekasi</span>
-          <span>⭐️⭐️⭐️⭐️⭐️ "Ngidam rujak pas hamil, ini satu-satunya yang nggak ngecewain. Asem pedesnya pas." – Rina, Jakarta Timur</span>
-          <span>⭐️⭐️⭐️⭐️⭐️ "Gue kira overhype, ternyata emang enak. Buahnya seger, nggak kayak yang udah dipotong lama." – Aldo, Depok</span>
-          <span>⭐️⭐️⭐️⭐️⭐️ "Akhirnya ada rujak delivery yang sambalnya dipisah. Sampe rumah masih renyah buahnya." – Sari, Tangerang</span>
-          <span>⭐️⭐️⭐️⭐️⭐️ "Pesen buat kantor, abis semua 15 menit. Bos sampe nanyain beli di mana." – Hendra, Cikarang</span>
-          <span>⭐️⭐️⭐️⭐️⭐️ "Biasanya males beli rujak online karena suka benyek. Ini aman. Recommend banget." – Putri, Bekasi</span>
-          <span>⭐️⭐️⭐️⭐️⭐️ "Mete aslinya kerasa, bukan cuma kacang doang. Worth it lah buat harga segini." – Dimas, Jakarta Selatan</span>
-          <span>⭐️⭐️⭐️⭐️⭐️ "Dari tampilannya aja udah beda, bukan rujak biasa. Packagingnya proper." – Maya, Bogor</span>
-          <span>⭐️⭐️⭐️⭐️⭐️ "Pertama nyoba yang Classic, eh besoknya langsung repeat order. Nagih." – Yoga, Bintaro</span>
-          <span>⭐️⭐️⭐️⭐️⭐️ "Level pedasnya bisa diatur ya? Mantep. Gue yang doyan pedes puas banget." – Fajar, Cibubur</span>
-        </div>
-      </div>
       
       <div style="padding: 0 20px 12px; font-size: 13px; color: var(--green); font-weight: 600;"><i data-lucide="star" class="w-4 h-4 inline"></i> Pertama kali? Coba <strong>Rujak Segar</strong> — asem manis ringan, mudah disukai.</div>
       
@@ -256,6 +209,163 @@
         <span style="font-size: 11px; color: var(--gray-500); font-weight: 500; white-space: nowrap;">Opsional — Sambal ekstra, buah tambahan, dll.</span>
       </div>
       <div class="addon-grid" id="addonList"></div>
+
+      <!-- ============================================ -->
+      <!-- TESTIMONI FLIP-CARD                           -->
+      <!-- ============================================ -->
+      <div class="divider"></div>
+      <div class="sec-header"><span class="sec-title">Apa Kata Mereka?</span></div>
+
+      <div class="testi-flip-container" id="testiFlipContainer" style="position:relative; overflow:hidden; height:130px; margin:0 20px 16px; background:#FFFDF5; border:1px solid #F0E6C0; border-radius:14px; padding:16px 20px; touch-action:pan-y; user-select:none; cursor:pointer;">
+        
+        <div class="testi-card active" data-index="0" style="position:absolute; top:0; left:0; right:0; padding:16px 20px; transition:transform 0.6s cubic-bezier(0.4,0,0.2,1),opacity 0.6s; transform:translateY(0); opacity:1;">
+          <div style="font-size:22px; margin-bottom:4px; letter-spacing:2px;">⭐️⭐️⭐️⭐️⭐️</div>
+          <p style="font-size:15px; color:#3d2b00; font-weight:600; margin:0 0 6px; line-height:1.4;">"Buset ini rujak bukan kaleng-kaleng. Sambel metenya berasa banget, nggak pelit sama sekali."</p>
+          <span style="font-size:12px; color:#8B7355;">— Dina, Bekasi</span>
+        </div>
+
+        <div class="testi-card" data-index="1" style="position:absolute; top:0; left:0; right:0; padding:16px 20px; transition:transform 0.6s cubic-bezier(0.4,0,0.2,1),opacity 0.6s; transform:translateY(100%); opacity:0;">
+          <div style="font-size:22px; margin-bottom:4px; letter-spacing:2px;">⭐️⭐️⭐️⭐️⭐️</div>
+          <p style="font-size:15px; color:#3d2b00; font-weight:600; margin:0 0 6px; line-height:1.4;">"Ngidam rujak pas hamil, ini satu-satunya yang nggak ngecewain. Asem pedesnya pas banget."</p>
+          <span style="font-size:12px; color:#8B7355;">— Rina, Jakarta Timur</span>
+        </div>
+
+        <div class="testi-card" data-index="2" style="position:absolute; top:0; left:0; right:0; padding:16px 20px; transition:transform 0.6s cubic-bezier(0.4,0,0.2,1),opacity 0.6s; transform:translateY(100%); opacity:0;">
+          <div style="font-size:22px; margin-bottom:4px; letter-spacing:2px;">⭐️⭐️⭐️⭐️⭐️</div>
+          <p style="font-size:15px; color:#3d2b00; font-weight:600; margin:0 0 6px; line-height:1.4;">"Gue kira overhype, ternyata emang enak. Buahnya masih seger, nggak kayak yang udah dipotong lama."</p>
+          <span style="font-size:12px; color:#8B7355;">— Aldo, Depok</span>
+        </div>
+
+        <div class="testi-card" data-index="3" style="position:absolute; top:0; left:0; right:0; padding:16px 20px; transition:transform 0.6s cubic-bezier(0.4,0,0.2,1),opacity 0.6s; transform:translateY(100%); opacity:0;">
+          <div style="font-size:22px; margin-bottom:4px; letter-spacing:2px;">⭐️⭐️⭐️⭐️⭐️</div>
+          <p style="font-size:15px; color:#3d2b00; font-weight:600; margin:0 0 6px; line-height:1.4;">"Akhirnya ada rujak delivery yang sambalnya dipisah. Sampe rumah masih renyah buahnya. Top!"</p>
+          <span style="font-size:12px; color:#8B7355;">— Sari, Tangerang</span>
+        </div>
+
+        <div class="testi-card" data-index="4" style="position:absolute; top:0; left:0; right:0; padding:16px 20px; transition:transform 0.6s cubic-bezier(0.4,0,0.2,1),opacity 0.6s; transform:translateY(100%); opacity:0;">
+          <div style="font-size:22px; margin-bottom:4px; letter-spacing:2px;">⭐️⭐️⭐️⭐️⭐️</div>
+          <p style="font-size:15px; color:#3d2b00; font-weight:600; margin:0 0 6px; line-height:1.4;">"Pesen buat kantor, abis semua 15 menit. Bos sampe nanyain beli di mana. Auto repeat!"</p>
+          <span style="font-size:12px; color:#8B7355;">— Hendra, Cikarang</span>
+        </div>
+
+        <div class="testi-card" data-index="5" style="position:absolute; top:0; left:0; right:0; padding:16px 20px; transition:transform 0.6s cubic-bezier(0.4,0,0.2,1),opacity 0.6s; transform:translateY(100%); opacity:0;">
+          <div style="font-size:22px; margin-bottom:4px; letter-spacing:2px;">⭐️⭐️⭐️⭐️⭐️</div>
+          <p style="font-size:15px; color:#3d2b00; font-weight:600; margin:0 0 6px; line-height:1.4;">"Mete aslinya kerasa, bukan cuma kacang doang. Worth it banget buat harga segini."</p>
+          <span style="font-size:12px; color:#8B7355;">— Dimas, Jakarta Selatan</span>
+        </div>
+
+        <!-- Dot indikator -->
+        <div style="position:absolute; bottom:8px; left:50%; transform:translateX(-50%); display:flex; gap:6px; z-index:2;">
+          <div class="testi-dot active" data-dot="0" style="width:16px;height:6px;border-radius:10px;background:#0F4D37;transition:all 0.3s;"></div>
+          <div class="testi-dot" data-dot="1" style="width:6px;height:6px;border-radius:50%;background:#D4C9A8;transition:all 0.3s;"></div>
+          <div class="testi-dot" data-dot="2" style="width:6px;height:6px;border-radius:50%;background:#D4C9A8;transition:all 0.3s;"></div>
+          <div class="testi-dot" data-dot="3" style="width:6px;height:6px;border-radius:50%;background:#D4C9A8;transition:all 0.3s;"></div>
+          <div class="testi-dot" data-dot="4" style="width:6px;height:6px;border-radius:50%;background:#D4C9A8;transition:all 0.3s;"></div>
+          <div class="testi-dot" data-dot="5" style="width:6px;height:6px;border-radius:50%;background:#D4C9A8;transition:all 0.3s;"></div>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TESTIMONI FLIP SCRIPT                         -->
+      <!-- ============================================ -->
+      <script>
+      (function() {
+        var cards = document.querySelectorAll('.testi-card');
+        var dots = document.querySelectorAll('.testi-dot');
+        var container = document.getElementById('testiFlipContainer');
+        var currentIndex = 0;
+        var totalCards = cards.length;
+        var interval = null;
+        var paused = false;
+        var PAUSE_DURATION = 4000;
+
+        function showCard(index) {
+          cards.forEach(function(card, i) {
+            if (i === index) {
+              card.style.transform = 'translateY(0)';
+              card.style.opacity = '1';
+            } else if (i < index || (index === 0 && i === totalCards - 1)) {
+              card.style.transform = 'translateY(-100%)';
+              card.style.opacity = '0';
+            } else {
+              card.style.transform = 'translateY(100%)';
+              card.style.opacity = '0';
+            }
+          });
+
+          dots.forEach(function(dot, i) {
+            if (i === index) {
+              dot.style.background = '#0F4D37';
+              dot.style.width = '16px';
+              dot.style.borderRadius = '10px';
+            } else {
+              dot.style.background = '#D4C9A8';
+              dot.style.width = '6px';
+              dot.style.borderRadius = '50%';
+            }
+          });
+
+          currentIndex = index;
+        }
+
+        function nextCard() {
+          if (paused) return;
+          var next = (currentIndex + 1) % totalCards;
+          showCard(next);
+        }
+
+        function startFlip() {
+          if (interval) clearInterval(interval);
+          interval = setInterval(nextCard, PAUSE_DURATION);
+        }
+
+        function stopFlip() {
+          if (interval) clearInterval(interval);
+          interval = null;
+          paused = true;
+        }
+
+        function resumeFlip() {
+          paused = false;
+          startFlip();
+        }
+
+        if (container) {
+          container.addEventListener('touchstart', function(e) {
+            stopFlip();
+          });
+
+          container.addEventListener('touchend', function(e) {
+            setTimeout(resumeFlip, 2000);
+          });
+
+          container.addEventListener('mousedown', function(e) {
+            stopFlip();
+          });
+
+          container.addEventListener('mouseup', function(e) {
+            setTimeout(resumeFlip, 2000);
+          });
+
+          container.addEventListener('mouseleave', function(e) {
+            if (paused) resumeFlip();
+          });
+        }
+
+        dots.forEach(function(dot) {
+          dot.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var idx = parseInt(this.getAttribute('data-dot'));
+            showCard(idx);
+            stopFlip();
+            setTimeout(resumeFlip, 3000);
+          });
+        });
+
+        showCard(0);
+        startFlip();
+      })();
+      </script>
       
       <div class="divider"></div>
       <div class="sec-header" style="margin-top:16px"><span class="sec-title">Kenapa Rujak.Co Bikin Ngiler?</span></div>
@@ -430,7 +540,7 @@
   <div class="modal-overlay" id="paymentModal"><div class="modal-content"><div class="modal-header"><span class="modal-header-title">Pembayaran QRIS</span><button class="modal-close" id="paymentClose" aria-label="Tutup">&times;</button></div><div class="modal-body" style="text-align:center;"><div style="position: relative; display: block; width: 100%;"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" id="qrisImagePayment" style="width:100%; height:auto; aspect-ratio: 1/1; object-fit:contain; border-radius:10px; background:white; display: block;" /></div><p style="font-size: 12px; color: var(--green); margin-top: 8px; font-weight: 700;">📱 Ketuk untuk perbesar QRIS</p><div style="margin-top: 12px;"><button type="button" class="download-btn" id="downloadQrisBtnPayment" style="display:inline-flex; align-items:center; gap:6px; background:white; color:var(--green); padding:8px 16px; border-radius:10px; font-size:13px; font-weight:700; border:1px solid var(--green); cursor:pointer;"><i data-lucide="download" class="w-4 h-4"></i> Unduh QRIS</button></div></div><div class="modal-footer" style="flex-direction: column; align-items: stretch; gap: 10px;"><div style="display: flex; align-items: center; justify-content: space-between; background: var(--red); color: white; border-radius: 12px; padding: 12px 16px; font-weight: 700;"><span style="font-size: 14px;">Total Tagihan</span><span id="paymentTotalDisplay" style="font-size: 20px; font-weight: 800;">Rp0</span></div><button type="button" class="modal-add" data-action="confirm-wa" style="justify-content:center; gap:8px; margin-top: 0;"><i data-lucide="send" class="w-5 h-5"></i> Kirim Bukti Transfer</button></div></div></div>
 
   <!-- ============================================ -->
-  <!-- SUBSIDI POP-UP (TANPA CLASS MODAL-OVERLAY)   -->
+  <!-- SUBSIDI POP-UP                               -->
   <!-- ============================================ -->
   <div id="subsidiPopup">
     <div class="popup-inner">
@@ -490,7 +600,7 @@
   <script defer src="app.js"></script>
   
   <!-- ============================================ -->
-  <!-- SUBSIDI POP-UP JAVASCRIPT (FINAL + INDIKATOR) -->
+  <!-- SUBSIDI POP-UP JAVASCRIPT                     -->
   <!-- ============================================ -->
   <script>
   (function() {
@@ -544,10 +654,7 @@
     function setStorage(key, value) {
       try {
         var k = getStorageKey(key);
-        localStorage.setItem(k, JSON.stringify({
-          value: value,
-          timestamp: Date.now()
-        }));
+        localStorage.setItem(k, JSON.stringify({ value: value, timestamp: Date.now() }));
       } catch (e) {}
     }
   
@@ -557,33 +664,23 @@
         var data = localStorage.getItem(k);
         if (!data) return null;
         return JSON.parse(data);
-      } catch (e) {
-        return null;
-      }
+      } catch (e) { return null; }
     }
   
     function removeStorage(key) {
-      try {
-        var k = getStorageKey(key);
-        localStorage.removeItem(k);
-      } catch (e) {}
+      try { var k = getStorageKey(key); localStorage.removeItem(k); } catch (e) {}
     }
   
     async function canShowPopup() {
       await getFingerprint();
       var cooldownData = getStorage('cooldown');
       if (!cooldownData) return true;
-      var now = Date.now();
-      if (now >= cooldownData.value) {
-        removeStorage('cooldown');
-        return true;
-      }
+      if (Date.now() >= cooldownData.value) { removeStorage('cooldown'); return true; }
       return false;
     }
   
     function setCooldown() {
-      var cooldownUntil = Date.now() + (COOLDOWN_HOURS * 60 * 60 * 1000);
-      setStorage('cooldown', cooldownUntil);
+      setStorage('cooldown', Date.now() + (COOLDOWN_HOURS * 60 * 60 * 1000));
     }
   
     function updateCountdownDisplay() {
@@ -593,11 +690,9 @@
       minutesEl.textContent = String(mins).padStart(2, '0');
       secondsEl.textContent = String(secs).padStart(2, '0');
       if (secondsRemaining <= 300) {
-        minutesEl.style.color = '#FF4444';
-        secondsEl.style.color = '#FF4444';
+        minutesEl.style.color = '#FF4444'; secondsEl.style.color = '#FF4444';
       } else if (secondsRemaining <= 600) {
-        minutesEl.style.color = '#FF8C00';
-        secondsEl.style.color = '#FF8C00';
+        minutesEl.style.color = '#FF8C00'; secondsEl.style.color = '#FF8C00';
       }
     }
   
@@ -616,136 +711,68 @@
       }, 1000);
     }
   
-    function showPopup() {
-      if (!popup) return;
-      popup.classList.add('popup-show');
-      popupActive = true;
-    }
-  
-    function hidePopup() {
-      if (!popup) return;
-      popup.classList.remove('popup-show');
-      popupActive = false;
-    }
+    function showPopup() { if (!popup) return; popup.classList.add('popup-show'); popupActive = true; }
+    function hidePopup() { if (!popup) return; popup.classList.remove('popup-show'); popupActive = false; }
   
     function updateSubsidyIndicator() {
       var statusText = document.getElementById('subsidyStatusText');
       var checkIcon = document.getElementById('subsidyCheck');
       var subsidyBar = document.getElementById('shippingSubsidy');
       var step2Claimed = document.getElementById('step2SubsidyClaimed');
-      
-      if (statusText) {
-        statusText.textContent = '✅ Subsidi ongkir Rp10.000 sudah diklaim!';
-        statusText.style.color = '#0a3d2a';
-      }
-      if (checkIcon) {
-        checkIcon.style.display = 'inline-block';
-      }
-      if (subsidyBar) {
-        subsidyBar.classList.add('subsidi-claimed');
-      }
+      if (statusText) { statusText.textContent = '✅ Subsidi ongkir Rp10.000 sudah diklaim!'; statusText.style.color = '#0a3d2a'; }
+      if (checkIcon) { checkIcon.style.display = 'inline-block'; }
+      if (subsidyBar) { subsidyBar.classList.add('subsidi-claimed'); }
       if (step2Claimed) {
         step2Claimed.innerHTML = '<i data-lucide="check-circle" class="w-3 h-3 inline"></i> ✅ Subsidi ongkir Rp10.000 sudah diklaim!';
-        step2Claimed.style.background = '#C8E6C9';
-        step2Claimed.style.color = '#0a3d2a';
-        step2Claimed.style.fontWeight = '700';
+        step2Claimed.style.background = '#C8E6C9'; step2Claimed.style.color = '#0a3d2a'; step2Claimed.style.fontWeight = '700';
       }
-      if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-      }
+      if (typeof lucide !== 'undefined') { lucide.createIcons(); }
     }
   
     async function openPopup() {
-      if (popupActive) return;
-      if (!popup) return;
-      var canShow = await canShowPopup();
-      if (!canShow) return;
-      showPopup();
-      startCountdown();
+      if (popupActive || !popup) return;
+      if (!(await canShowPopup())) return;
+      showPopup(); startCountdown();
       if (minutesEl) minutesEl.style.color = '#F4C430';
       if (secondsEl) secondsEl.style.color = '#F4C430';
     }
   
-    function closePopup() {
-      hidePopup();
-      if (countdownInterval) {
-        clearInterval(countdownInterval);
-        countdownInterval = null;
-      }
-    }
-  
-    function closePopupAndCooldown() {
-      closePopup();
-      setCooldown();
-      setStorage('countdown_expired', true);
-    }
+    function closePopup() { hidePopup(); if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; } }
+    function closePopupAndCooldown() { closePopup(); setCooldown(); setStorage('countdown_expired', true); }
   
     function handleScroll() {
       if (popupActive) return;
       var scrollPercent = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight;
-      if (scrollPercent > SCROLL_TRIGGER) {
-        window.removeEventListener('scroll', handleScroll);
-        openPopup();
-      }
+      if (scrollPercent > SCROLL_TRIGGER) { window.removeEventListener('scroll', handleScroll); openPopup(); }
     }
   
-    function initScrollListener() {
-      window.addEventListener('scroll', handleScroll, { passive: true });
-    }
+    function initScrollListener() { window.addEventListener('scroll', handleScroll, { passive: true }); }
   
     if (claimBtn) {
       claimBtn.addEventListener('click', function() {
-        closePopup();
-        updateSubsidyIndicator();
-        setStorage('subsidi_claimed', true);
+        closePopup(); updateSubsidyIndicator(); setStorage('subsidi_claimed', true);
         var menuEl = document.getElementById('menuList') || document.getElementById('catScroll');
-        if (menuEl) {
-          menuEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        if (menuEl) { menuEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
       });
     }
   
-    if (closeBtn) {
-      closeBtn.addEventListener('click', function() {
-        closePopupAndCooldown();
-      });
-    }
-  
-    if (popup) {
-      popup.addEventListener('click', function(e) {
-        if (e.target === popup) {
-          closePopupAndCooldown();
-        }
-      });
-    }
+    if (closeBtn) { closeBtn.addEventListener('click', closePopupAndCooldown); }
+    if (popup) { popup.addEventListener('click', function(e) { if (e.target === popup) closePopupAndCooldown(); }); }
   
     async function init() {
       if (initialized) return;
       initialized = true;
-      
       await getFingerprint();
-      
       var claimed = getStorage('subsidi_claimed');
-      if (claimed && claimed.value === true) {
-        updateSubsidyIndicator();
-      }
-      
+      if (claimed && claimed.value === true) { updateSubsidyIndicator(); }
       var cooldownData = getStorage('cooldown');
-      
       if (cooldownData && Date.now() >= cooldownData.value) {
-        removeStorage('cooldown');
-        removeStorage('countdown_expired');
-        removeStorage('subsidi_claimed');
+        removeStorage('cooldown'); removeStorage('countdown_expired'); removeStorage('subsidi_claimed');
       }
-      
-      var currentCooldown = getStorage('cooldown');
-      if (!currentCooldown) {
-        initScrollListener();
-      }
+      if (!getStorage('cooldown')) { initScrollListener(); }
     }
   
     setTimeout(init, 2000);
-  
   })();
   </script>
 </body>
