@@ -7,9 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   
-  <!-- ✅ SATU SUMBER DATA PRODUK -->
-  <script src="/products.js"></script>
-  
   <style>
     :root {
       --g: #0F4D37; --gd: #0a3a2a; --gl: #1a6b4e; --gp: #EAF2EE;
@@ -146,22 +143,69 @@
 
 <script>
   (function() {
-    // ✅ AMBIL DATA DARI products.js (SATU SUMBER)
-    const PRODUCTS = typeof PRODUCTS_DATA !== 'undefined' ? PRODUCTS_DATA : [];
-    
-    // Kalau produk kosong, kasih tau
-    if (PRODUCTS.length === 0) {
-      console.warn('⚠️ products.js tidak ditemukan atau kosong. Studio tidak bisa berjalan.');
-      document.getElementById('pgrid').innerHTML = `
-        <div style="grid-column:1/-1;text-align:center;padding:20px;color:#D62828;font-weight:700;">
-          ⚠️ Data produk tidak ditemukan. Pastikan products.js sudah di-load.
-        </div>
-      `;
-    }
-
-    const IMAGE_PROXY = "https://ghhnnfrmftttptcejizp.supabase.co/functions/v1/smart-api";
-    function proxyUrl(url) { return IMAGE_PROXY + "?url=" + encodeURIComponent(url); }
-
+    // ===================== DATA PRODUK (LANGSUNG DI SINI) =====================
+    const PRODUCTS = [
+      {
+        id: 'p_m1', name: 'Rujak Segar', price: 28000, cat: 'classic',
+        buah: ['Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'],
+        sambal: 'Sambal Original',
+        desc: 'Ringan, segar, dan cocok untuk semua penikmat rujak.',
+        portion: '1 Orang',
+        thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp',
+        image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp',
+        badge: null, badgeColor: null
+      },
+      {
+        id: 'p_m2', name: 'Rujak Serut', price: 26000, cat: 'classic',
+        buah: ['Mangga Muda', 'Bengkoang', 'Nanas', 'Ubi Merah'],
+        sambal: 'Sambal Original',
+        desc: 'Buah diserut halus, menyatu sempurna di setiap suapan.',
+        portion: '1 Orang',
+        thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp',
+        image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp',
+        badge: null, badgeColor: null
+      },
+      {
+        id: 'p_m3', name: 'Rujak Gaco', price: 40000, cat: 'signature',
+        buah: ['Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'],
+        sambal: 'Sambal Mete Premium',
+        desc: 'Favorit pelanggan. Enam buah pilihan, sambal mete yang kaya rasa.',
+        portion: '1 Orang',
+        thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-thumb.webp',
+        image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-hd.webp',
+        badge: 'Koleksi Favorit', badgeColor: 'r'
+      },
+      {
+        id: 'p_m4', name: 'Rujak Rama', price: 48000, cat: 'signature',
+        buah: ['Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'],
+        sambal: 'Sambal Mete Premium',
+        desc: 'Porsi melimpah untuk dua hingga tiga orang.',
+        portion: '2–3 Orang',
+        thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-thumb.webp',
+        image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-hd.webp',
+        badge: 'Untuk Dibagi', badgeColor: 'r'
+      },
+      {
+        id: 'p_m5', name: 'Rujak Mahkota', price: 85000, cat: 'reserve',
+        buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'],
+        sambal: 'Sambal Mete Premium',
+        desc: 'Koleksi premium dengan Shine Muscat untuk momen istimewa.',
+        portion: '1–2 Orang',
+        thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp',
+        image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp',
+        badge: 'Reserve Collection', badgeColor: 'g'
+      },
+      {
+        id: 'p_m6', name: 'Tampah Nusantara', price: 200000, cat: 'reserve',
+        buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga Muda', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong', 'Ubi Merah'],
+        sambal: 'Sambal Original & Mete',
+        desc: 'Sajian kebersamaan dalam tampah bambu untuk momen yang tak terlupakan.',
+        portion: '8–10 Orang',
+        thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-thumb.webp',
+        image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp',
+        badge: '8–10 Orang', badgeColor: 'g'
+      }
+    ];
     const LOGO = 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp';
     const fmt = n => 'Rp' + n.toLocaleString('id-ID');
 
@@ -220,16 +264,7 @@
 
     // ─── RENDER PRODUK ──────────────────────────────────────
     function renderProducts() {
-      const container = document.getElementById('pgrid');
-      if (PRODUCTS.length === 0) {
-        container.innerHTML = `
-          <div style="grid-column:1/-1;text-align:center;padding:20px;color:#D62828;font-weight:700;">
-            ⚠️ Data produk tidak ditemukan.
-          </div>
-        `;
-        return;
-      }
-      container.innerHTML = PRODUCTS.map(p => `
+      document.getElementById('pgrid').innerHTML = PRODUCTS.map(p => `
         <button class="pcard${S.pid===p.id?' sel':''}" onclick="selProd('${p.id}')">
           ${p.badge?`<div class="pcard-badge b${p.badgeColor}">${p.badge}</div>`:''}
           <div class="pcard-chk">✓</div>
@@ -245,7 +280,7 @@
       btn.disabled = !S.pid; txt.textContent = S.pid ? 'Buat Visual Konten' : 'Pilih produk dulu';
     }
 
-    // ─── KONTROL GAMBAR (IMG ZOOM STABIL) ────────────────
+    // ─── KONTROL GAMBAR ─────────────────────────────────────
     function showImgControls() {
       document.getElementById('imgControls').style.display = S.pid ? 'block' : 'none';
       if (S.pid) updateLivePreview();
@@ -256,7 +291,7 @@
       const px = 50 + S.imgX;
       const py = 50 + S.imgY;
       return `<div style="position:absolute;width:${w}px;height:${h}px;overflow:hidden;">
-        <img src="${proxyUrl(url)}" crossorigin="anonymous" style="width:${z}%;height:${z}%;object-fit:cover;object-position:${px}% ${py}%;" onerror="this.onerror=null;this.src='${url}';">
+        <img src="${url}" crossorigin="anonymous" style="width:${z}%;height:${z}%;object-fit:cover;object-position:${px}% ${py}%;" onerror="this.onerror=null;this.src='${url}';">
       </div>`;
     }
 
