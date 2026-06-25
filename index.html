@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rujak.Co – Premium Indonesian Rujak Delivery</title>
-  <meta name="description" content="Rujak premium dengan buah segar pilihan, sambal kacang original & mete, dikirim ke Jabodetabek. Pesan via WhatsApp." />
-  <meta name="keywords" content="rujak, rujak premium, rujak delivery, rujak jabodetabek, rujak bekasi, rujak.co" />
+  <title>Rujak.Co – Premium Indonesian Rujak</title>
+  <meta name="description" content="Rujak Indonesia diracik ulang untuk generasi baru. Buah segar pilihan, sambal premium, dikirim dalam kemasan food-grade. Pesan sekarang." />
+  <meta name="keywords" content="rujak premium, rujak indonesia, rujak delivery, rujak jabodetabek, rujak bekasi, rujak.co" />
   <meta name="author" content="masngu" />
   <meta name="theme-color" content="#0F4D37" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta property="og:title" content="Rujak.Co – Premium Indonesian Rujak Delivery" />
-  <meta property="og:description" content="Rujak premium dengan buah segar pilihan, sambal kacang original & mete, dikirim ke Jabodetabek. Pesan via WhatsApp." />
+  <meta property="og:title" content="Rujak.Co – Rujak Indonesia, Diracik Ulang" />
+  <meta property="og:description" content="Rujak Indonesia diracik ulang untuk generasi baru. Buah segar pilihan, sambal premium, dalam kemasan food-grade." />
   <meta property="og:image" content="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" />
   <meta property="og:url" content="https://rujakco.vercel.app" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Rujak.Co" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Rujak.Co – Premium Indonesian Rujak Delivery" />
-  <meta name="twitter:description" content="Rujak premium dengan buah segar pilihan, sambal kacang original & mete, dikirim ke Jabodetabek. Pesan via WhatsApp." />
+  <meta name="twitter:title" content="Rujak.Co – Rujak Indonesia, Diracik Ulang" />
+  <meta name="twitter:description" content="Rujak Indonesia diracik ulang untuk generasi baru." />
   <meta name="twitter:image" content="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" />
   <link rel="canonical" href="https://rujakco.vercel.app" />
   <script type="application/ld+json">
@@ -26,7 +26,7 @@
       "@context": "https://schema.org",
       "@type": "Restaurant",
       "name": "Rujak.Co",
-      "description": "Rujak premium dengan buah segar pilihan, sambal kacang original & mete, dikirim ke Jabodetabek. Pesan via WhatsApp.",
+      "description": "Rujak Indonesia diracik ulang untuk generasi baru. Buah segar pilihan, sambal premium, dalam kemasan food-grade.",
       "url": "https://rujakco.vercel.app",
       "servesCuisine": "Indonesian",
       "areaServed": "Jabodetabek",
@@ -39,18 +39,8 @@
           "addressCountry": "ID"
       },
       "openingHoursSpecification": [
-          {
-              "@type": "OpeningHoursSpecification",
-              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-              "opens": "10:00",
-              "closes": "20:00"
-          },
-          {
-              "@type": "OpeningHoursSpecification",
-              "dayOfWeek": ["Saturday", "Sunday"],
-              "opens": "09:00",
-              "closes": "18:00"
-          }
+          { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "10:00", "closes": "20:00" },
+          { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday","Sunday"], "opens": "09:00", "closes": "18:00" }
       ]
   }
   </script>
@@ -95,21 +85,27 @@
           <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Rujak Premium" fetchpriority="high" width="1260" height="540" onerror="this.style.display='none'" />
           <div class="hero-grad"></div>
           <div class="hero-content">
-            <h2 class="hero-title">Indonesia<br>Dalam Satu<br>Wadah</h2>
-            <p class="hero-sub">Pengalaman rujak Indonesia yang dikurasi dalam satu wadah premium.</p>
+            <h2 class="hero-title" style="font-size:26px;line-height:1.1;">Rujak Indonesia,<br>Diracik Ulang</h2>
+            <p class="hero-sub" style="font-size:13px;">Untuk generasi baru. Dalam kemasan premium.</p>
           </div>
         </div>
       </div>
 
-      <div class="promo-strip" id="promoTrigger" data-action="open-promo">
-        <div class="promo-icon"><i data-lucide="gift" class="w-5 h-5 text-[#3d2b00]"></i></div>
+      <!-- PROMO: Keuntungan Pelanggan -->
+      <div class="promo-strip" id="promoTrigger" data-action="open-promo" style="background:var(--ivory);border:1px solid var(--green-pale);">
+        <div class="promo-icon" style="background:var(--green);"><i data-lucide="crown" style="color:var(--gold);width:20px;height:20px;"></i></div>
         <div class="promo-text">
-          <div class="promo-title">🎁 Klaim Diskon s/d Rp10.000!</div>
-          <div class="promo-sub">Selesaikan misi jajan di sini.</div>
+          <div class="promo-title" style="color:var(--green);">✨ Keuntungan Pelanggan</div>
+          <div class="promo-sub" style="color:var(--gray-500);">Benefit untuk setiap pesanan Rujak.Co</div>
         </div>
-        <div class="promo-anim">
-          <i data-lucide="sparkles" class="w-6 h-6 text-[#F4C430] promo-sparkle"></i>
-        </div>
+      </div>
+
+      <!-- TRUST BAR -->
+      <div style="margin:0 20px 16px;display:flex;gap:6px;flex-wrap:wrap;">
+        <div style="background:white;border:1px solid var(--green-pale);border-radius:20px;padding:5px 12px;font-size:10px;font-weight:600;color:var(--green);display:flex;align-items:center;gap:3px;">✓ Buah dipilih harian</div>
+        <div style="background:white;border:1px solid var(--green-pale);border-radius:20px;padding:5px 12px;font-size:10px;font-weight:600;color:var(--green);display:flex;align-items:center;gap:3px;">✓ Sambal diracik terpisah</div>
+        <div style="background:white;border:1px solid var(--green-pale);border-radius:20px;padding:5px 12px;font-size:10px;font-weight:600;color:var(--green);display:flex;align-items:center;gap:3px;">✓ Kemasan food-grade</div>
+        <div style="background:white;border:1px solid var(--green-pale);border-radius:20px;padding:5px 12px;font-size:10px;font-weight:600;color:var(--green);display:flex;align-items:center;gap:3px;">✓ Dibuat setelah dipesan</div>
       </div>
 
       <nav class="cat-scroll no-sb" id="catScroll" aria-label="Kategori Menu">
@@ -119,58 +115,89 @@
         <button type="button" class="cat-pill" data-cat="reserve">Reserve</button>
         <button type="button" class="cat-pill" data-cat="addon">Tambahan</button>
       </nav>
-      
-      <div class="legend-marquee"><div class="legend-track">
-        <span class="classic">Classic – Segar, ringan, mudah dinikmati</span>
-        <span class="signature">Signature – Gurih mete, favorit semua</span>
-        <span class="reserve">Reserve – Buah premium, momen istimewa</span>
-        <span class="classic">Classic – Segar, ringan, mudah dinikmati</span>
-        <span class="signature">Signature – Gurih mete, favorit semua</span>
-        <span class="reserve">Reserve – Buah premium, momen istimewa</span>
-      </div></div>
-      
-      <div style="padding: 0 20px 12px; font-size: 13px; color: var(--green); font-weight: 600;"><i data-lucide="star" class="w-4 h-4 inline"></i> Pertama kali? Coba <strong>Rujak Segar</strong> — ringan & mudah disukai.</div>
-      
+
+      <!-- FIRST-TIMER: Gaco -->
+      <div style="margin:0 20px 16px;background:var(--green-pale);border:1px solid var(--green);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
+        <div style="background:var(--green);color:white;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;">⭐</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--green);">Paling Banyak Dicoba</div>
+          <div style="font-size:12px;color:var(--gray-500);"><strong>Rujak Gaco</strong> — 6 buah pilihan + sambal mete premium. Cocok untuk pengalaman pertama.</div>
+        </div>
+      </div>
+
       <div class="sec-header" id="menuHeader">
         <span class="sec-title">Koleksi Rasa</span>
         <div class="search-toggle-wrap" id="searchToggleWrap">
-          <button class="search-icon-btn" id="searchIconBtn" aria-label="Cari">
-            <i data-lucide="search" class="w-5 h-5"></i>
-          </button>
+          <button class="search-icon-btn" id="searchIconBtn" aria-label="Cari"><i data-lucide="search" class="w-5 h-5"></i></button>
           <div class="search-input-wrap" id="searchInputWrap">
             <input type="text" id="searchInput" placeholder="Cari menu..." autocomplete="off" />
             <button type="button" class="clear-search" id="clearSearchBtn" aria-label="Hapus">✕</button>
           </div>
         </div>
       </div>
-      
+
       <div class="empty-state" id="emptyState">Menu tidak ditemukan.</div>
       <div id="skeletonContainer" style="padding:0 20px;"><div class="skeleton-item"><div class="skeleton-img skeleton"></div><div class="skeleton-body"><div class="skeleton-line skeleton"></div><div class="skeleton-line skeleton medium"></div><div class="skeleton-line skeleton short"></div></div></div><div class="skeleton-item"><div class="skeleton-img skeleton"></div><div class="skeleton-body"><div class="skeleton-line skeleton"></div><div class="skeleton-line skeleton medium"></div><div class="skeleton-line skeleton short"></div></div></div></div>
       <div class="menu-list" id="menuList" style="display:none;"></div>
-      
+
       <div class="divider" id="addonDivider"></div>
-      <div class="sec-header" id="addonHeader" style="align-items: baseline; gap: 8px;">
+      <div class="sec-header" id="addonHeader" style="align-items:baseline;gap:8px;">
         <span class="sec-title">Tambahan</span>
-        <span style="font-size: 11px; color: var(--gray-500); font-weight: 500; white-space: nowrap;">Opsional — Sambal ekstra, buah tambahan, dll.</span>
+        <span style="font-size:11px;color:var(--gray-500);font-weight:500;white-space:nowrap;">Opsional — Sambal ekstra, buah tambahan</span>
       </div>
       <div class="addon-grid" id="addonList"></div>
-      
+
+      <!-- BENEFIT SECTION -->
       <div class="divider"></div>
-      <div class="sec-header" style="margin-top:16px"><span class="sec-title">Kenapa Memilih Rujak.Co?</span></div>
+      <div class="sec-header" style="margin-top:16px"><span class="sec-title">Kenapa Rujak.Co</span></div>
       <div class="edu-container">
-        <div class="edu-card"><div class="edu-icon-wrap" style="background: var(--green-pale); color: var(--green);"><i data-lucide="check-circle" class="w-5 h-5"></i></div><div><h4 class="edu-title">Buah Dipilih Setiap Hari</h4><p class="edu-desc">Hanya buah yang memenuhi standar kualitas Rujak.Co.</p></div></div>
-        <div class="edu-card"><div class="edu-icon-wrap" style="background: rgba(214, 40, 40, 0.1); color: var(--red);"><i data-lucide="box" class="w-5 h-5"></i></div><div><h4 class="edu-title">Sambal Diracik Terpisah</h4><p class="edu-desc">Sambal dikemas terpisah dalam cup sealed. Buah tetap segar, tidak layu, tidak tumpah selama pengiriman.</p><div style="margin-top:6px;background:var(--gray-100);border-radius:8px;padding:6px 8px;font-size:10px;color:var(--green);font-weight:600;text-align:center;">📸 Sambal + buah terpisah rapi → tetap segar sampai tujuan</div></div></div>
-        <div class="edu-card"><div class="edu-icon-wrap" style="background: rgba(244, 196, 48, 0.2); color: #b58d10;"><i data-lucide="lock" class="w-5 h-5"></i></div><div><h4 class="edu-title">Fresh-Lock System™</h4><p class="edu-desc">Dirancang agar rasa dan tekstur tetap optimal hingga diterima pelanggan.</p></div></div>
-        <div class="edu-card"><div class="edu-icon-wrap" style="background: var(--green-pale); color: var(--green);"><i data-lucide="map" class="w-5 h-5"></i></div><div><h4 class="edu-title">Indonesia Dalam Satu Wadah</h4><p class="edu-desc">Mengangkat keberagaman rasa rujak Indonesia dalam pengalaman yang modern.</p></div></div>
+        <div class="edu-card">
+          <div class="edu-icon-wrap" style="background:var(--green-pale);color:var(--green);"><i data-lucide="droplets" class="w-5 h-5"></i></div>
+          <div><h4 class="edu-title">Buah Tetap Renyah</h4><p class="edu-desc">Karena sambal dikemas terpisah dalam cup tersegel.</p></div>
+        </div>
+        <div class="edu-card">
+          <div class="edu-icon-wrap" style="background:rgba(214,40,40,0.1);color:var(--red);"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
+          <div><h4 class="edu-title">Sambal Tidak Tumpah</h4><p class="edu-desc">Dikemas sealed, aman selama pengiriman.</p></div>
+        </div>
+        <div class="edu-card">
+          <div class="edu-icon-wrap" style="background:rgba(244,196,48,0.2);color:#b58d10;"><i data-lucide="chef-hat" class="w-5 h-5"></i></div>
+          <div><h4 class="edu-title">Rasa Tetap Seimbang</h4><p class="edu-desc">Racikan sambal dibuat dengan standar yang sama setiap hari.</p></div>
+        </div>
+        <div class="edu-card">
+          <div class="edu-icon-wrap" style="background:var(--green-pale);color:var(--green);"><i data-lucide="map" class="w-5 h-5"></i></div>
+          <div><h4 class="edu-title">Inspirasi Nusantara</h4><p class="edu-desc">Terinspirasi dari berbagai tradisi rujak di seluruh Indonesia.</p></div>
+        </div>
       </div>
-      
+
+      <!-- SOCIAL PROOF -->
+      <div class="divider"></div>
+      <div class="sec-header"><span class="sec-title">Apa Kata Mereka</span></div>
+      <div style="padding:0 20px 16px;display:flex;gap:10px;overflow-x:auto;">
+        <div style="background:white;border:1px solid var(--gray-200);border-radius:12px;padding:14px;min-width:240px;flex-shrink:0;">
+          <div style="color:var(--gold);font-size:14px;">⭐⭐⭐⭐⭐</div>
+          <div style="font-size:12px;color:var(--gray-700);margin:6px 0;">"Pertama kali pesan rujak online. Gak nyangka sebagus ini. Buahnya segar, sambalnya beda."</div>
+          <div style="font-size:10px;color:var(--gray-500);">— Sarah, Bekasi • via WhatsApp</div>
+        </div>
+        <div style="background:white;border:1px solid var(--gray-200);border-radius:12px;padding:14px;min-width:240px;flex-shrink:0;">
+          <div style="color:var(--gold);font-size:14px;">⭐⭐⭐⭐⭐</div>
+          <div style="font-size:12px;color:var(--gray-700);margin:6px 0;">"Pesen Tampah buat acara kantor. Packaging rapi, semua pada nanya beli di mana."</div>
+          <div style="font-size:10px;color:var(--gray-500);">— Andi, Jakarta • via Google</div>
+        </div>
+        <div style="background:white;border:1px solid var(--gray-200);border-radius:12px;padding:14px;min-width:240px;flex-shrink:0;">
+          <div style="color:var(--gold);font-size:14px;">⭐⭐⭐⭐⭐</div>
+          <div style="font-size:12px;color:var(--gray-700);margin:6px 0;">"Sambal metenya juara. Nagih banget. Udah repeat order 3x."</div>
+          <div style="font-size:10px;color:var(--gray-500);">— Rina, Tangerang • via WhatsApp</div>
+        </div>
+      </div>
+
+      <!-- FAQ -->
       <div class="divider"></div>
       <div class="sec-header"><span class="sec-title">Pertanyaan Umum</span></div>
       <div class="faq-container" id="faqContainer">
         <div class="faq-item open"><div class="faq-question" data-toggle="faq"><span>Kenapa sambal dipisahkan?</span><i data-lucide="chevron-down" class="w-4 h-4"></i></div><div class="faq-answer">Agar buah tetap segar dan renyah saat diterima.</div></div>
         <div class="faq-item"><div class="faq-question" data-toggle="faq"><span>Berapa lama rujak bertahan?</span><i data-lucide="chevron-down" class="w-4 h-4"></i></div><div class="faq-answer">Terbaik dikonsumsi pada hari yang sama.</div></div>
-        <div class="faq-item"><div class="faq-question" data-toggle="faq"><span>Apa itu Fresh-Lock System™?</span><i data-lucide="chevron-down" class="w-4 h-4"></i></div><div class="faq-answer">Metode penyajian dan pengemasan khas Rujak.Co untuk menjaga kualitas produk.</div></div>
-        <div class="faq-item"><div class="faq-question" data-toggle="faq"><span>Apakah tersedia untuk acara?</span><i data-lucide="chevron-down" class="w-4 h-4"></i></div><div class="faq-answer">Ya, tersedia paket sharing dan Tampah Nusantara untuk berbagai acara.</div></div>
+        <div class="faq-item"><div class="faq-question" data-toggle="faq"><span>Apakah bisa untuk acara?</span><i data-lucide="chevron-down" class="w-4 h-4"></i></div><div class="faq-answer">Ya, Tampah Nusantara cocok untuk 8-10 orang. Bisa pre-order.</div></div>
+        <div class="faq-item"><div class="faq-question" data-toggle="faq"><span>Bagaimana kualitas buahnya?</span><i data-lucide="chevron-down" class="w-4 h-4"></i></div><div class="faq-answer">Buah dipilih setiap hari. Hanya yang memenuhi standar Rujak.Co yang digunakan.</div></div>
       </div>
     </div>
   </div>
@@ -195,92 +222,59 @@
           <a href="threads://user?username=rujakco.id" target="_blank" aria-label="Threads" onclick="setTimeout(function(){ window.open('https://www.threads.net/@rujakco.id','_blank'); },500); return false;"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Thread-icon.webp" alt="Threads"></a>
         </div></div>
       </div>
-      <div class="footer-bottom">&copy; 2026 Rujak.Co — Premium Rujak Experience. All rights reserved.</div>
+      <div class="footer-bottom">&copy; 2026 Rujak.Co — Premium Indonesian Rujak. All rights reserved.</div>
     </div>
   </footer>
 
   <div id="bottom-bar">
     <button class="close-bottom-bar" id="closeBottomBar" aria-label="Tutup keranjang">✕</button>
-    <div class="progress-container" id="progressContainer" style="display:none;"><div class="progress-text"><span id="progressLabel">Tambah Rp20.000 lagi untuk diskon</span><span id="progressPercent">0%</span></div><div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 0%;"></div></div></div>
-    <div class="shipping-estimate" id="shippingEstimate" style="margin: 0 0 10px 0; border-radius: 12px;">
-      <div class="shipping-left"><i data-lucide="truck"></i><span>Ongkir:</span><span class="shipping-cost" id="shippingCost">⏳</span><span class="shipping-distance" id="shippingDistance"></span></div>
-      <!-- ✅ PRIORITAS BARU: Bottom Bar -->
-      <div class="shipping-toggle">
-        <input type="checkbox" id="priorityToggle" />
-        <label for="priorityToggle" class="toggle-label" style="cursor:pointer;">
-          <i data-lucide="zap"></i>
-          <span class="badge-priority">Prioritas</span>
-        </label>
-        <span style="font-size:9px;color:var(--gray-400);margin-left:4px;">🚀 Lebih cepat</span>
-      </div>
-    </div>
-    <div class="shipping-out-of-range" id="outOfRange" style="margin: 0 0 10px 0; border-radius: 12px;">⚠️ Pengiriman hanya tersedia untuk wilayah Jabodetabek (maks. 50 km)</div>
-    <div class="cart-summary" id="cartSummary" tabindex="0" role="button" aria-label="Buka keranjang"><span class="cart-items-preview" id="cartPreview">0 item</span><div class="cart-total-wrap"><span id="discountLabel" class="cart-discount-label" style="display: none;">-Rp10.000</span><span class="cart-total" id="cartTotalDisplay">Rp0</span></div></div>
+    <div class="progress-container" id="progressContainer" style="display:none;"><div class="progress-text"><span id="progressLabel">Tambah Rp20.000 lagi untuk diskon</span><span id="progressPercent">0%</span></div><div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div></div>
+    <div class="shipping-estimate" id="shippingEstimate" style="margin:0 0 10px 0;border-radius:12px;"><div class="shipping-left"><i data-lucide="truck"></i><span>Ongkir:</span><span class="shipping-cost" id="shippingCost">⏳</span><span class="shipping-distance" id="shippingDistance"></span></div><div class="shipping-toggle"><input type="checkbox" id="priorityToggle" /><label for="priorityToggle" class="toggle-label" style="cursor:pointer;"><i data-lucide="zap"></i><span class="badge-priority">Prioritas</span></label><span style="font-size:9px;color:var(--gray-400);margin-left:4px;">🚀 Lebih cepat</span></div></div>
+    <div class="shipping-out-of-range" id="outOfRange" style="margin:0 0 10px 0;border-radius:12px;">⚠️ Pengiriman hanya tersedia untuk wilayah Jabodetabek (maks. 50 km)</div>
+    <div class="cart-summary" id="cartSummary" tabindex="0" role="button" aria-label="Buka keranjang"><span class="cart-items-preview" id="cartPreview">0 item</span><div class="cart-total-wrap"><span id="discountLabel" class="cart-discount-label" style="display:none;">-Rp10.000</span><span class="cart-total" id="cartTotalDisplay">Rp0</span></div></div>
     <button type="button" class="wa-btn" data-action="open-cart"><div class="wa-btn-left"><span class="wa-btn-sub">Detail Pesanan</span><span>Cek Keranjang</span></div><div class="wa-badge"><i data-lucide="shopping-bag" class="w-4 h-4"></i> Buka</div></button>
   </div>
 
-  <div id="floatingCartBtn" aria-label="Buka keranjang"><i data-lucide="shopping-bag" style="width: 24px; height: 24px;"></i><span class="badge-cart" id="floatingBadge">0</span></div>
+  <div id="floatingCartBtn" aria-label="Buka keranjang"><i data-lucide="shopping-bag" style="width:24px;height:24px;"></i><span class="badge-cart" id="floatingBadge">0</span></div>
   <div id="toast" role="alert" aria-live="polite"></div>
 
-  <div class="modal-overlay" id="promoModal"><div class="modal-content" style="max-width: 350px;"><div class="modal-header"><span class="modal-header-title">🎯 Misi Jajan</span><button class="modal-close" id="promoClose" aria-label="Tutup">&times;</button></div><div class="modal-body"><p style="margin:0 0 16px; font-size:13px; color:var(--gray-500);">Selesaikan misi untuk klaim diskonmu!</p><div class="mission-item"><input type="checkbox" id="missionSpend" disabled /><span>Belanja min. Rp100.000 <b>(Potong Rp5.000)</b></span></div><div class="mission-item"><input type="checkbox" id="checkShare" disabled /><span>Bagikan ke teman <b>(Potong Rp5.000)</b></span></div><button type="button" class="share-btn" id="shareBtnModal" style="width:100%; justify-content:center; margin-top:12px;"><i data-lucide="share-2" class="w-4 h-4"></i> Bagikan Sekarang</button><p style="font-size:11px; color:var(--gray-400); margin-top:10px; text-align:center;">✅ Misi yang sudah tercapai akan otomatis tercentang.</p></div></div></div>
+  <!-- MODAL PROMO -->
+  <div class="modal-overlay" id="promoModal"><div class="modal-content" style="max-width:350px;"><div class="modal-header"><span class="modal-header-title">✨ Keuntungan Pelanggan</span><button class="modal-close" id="promoClose" aria-label="Tutup">&times;</button></div><div class="modal-body">
+    <p style="margin:0 0 16px;font-size:13px;color:var(--gray-500);">Benefit untuk setiap pesanan Rujak.Co:</p>
+    <div style="font-size:13px;color:var(--gray-700);line-height:1.8;margin-bottom:16px;">
+      ✅ Gratis subsidi pengiriman pada nominal tertentu<br>
+      ✅ Bonus benefit pelanggan setia<br>
+      ✅ Reward berbagi Rujak.Co
+    </div>
+    <div class="mission-item"><input type="checkbox" id="missionSpend" disabled /><span>Belanja min. Rp100.000 <b>(Potong Rp5.000)</b></span></div>
+    <div class="mission-item"><input type="checkbox" id="checkShare" disabled /><span>Bagikan ke teman <b>(Potong Rp5.000)</b></span></div>
+    <button type="button" class="share-btn" id="shareBtnModal" style="width:100%;justify-content:center;margin-top:12px;"><i data-lucide="share-2" class="w-4 h-4"></i> Bagikan Sekarang</button>
+    <p style="font-size:11px;color:var(--gray-400);margin-top:10px;text-align:center;">✅ Misi yang sudah tercapai akan otomatis tercentang.</p>
+  </div></div></div>
 
+  <!-- MODAL PRODUK -->
   <div class="modal-overlay" id="productModal"><div class="modal-content"><div class="modal-header"><span class="modal-header-title">Detail Produk</span><button class="modal-close" id="modalClose" aria-label="Tutup">&times;</button></div><div class="modal-body" id="modalBody"><div class="modal-img" id="modalImg"></div><div class="modal-title-wrap"><h2 class="modal-title" id="modalTitle">Nama Produk</h2><span class="modal-badge-eyebrow" id="modalBadge" style="display:none;">Badge</span></div><p class="modal-desc" id="modalDesc">Deskripsi produk</p>
-  <div class="modal-detail-grid" id="modalDetailGrid"><div class="detail-row"><span class="label">Wadah</span><span class="value" id="modalContainer">-</span></div><div class="detail-row"><span class="label">Ukuran</span><span class="value" id="modalSize">-</span></div><div class="detail-row"><span class="label">Sambal</span><span class="value" id="modalSambal">-</span></div></div><div id="modalBuahContainer"><div style="font-size:12px; font-weight:600; color:var(--gray-500); text-transform:uppercase; letter-spacing:.03em; margin-bottom:2px;">Buah-buahan</div><div class="modal-buah-text" id="modalBuahText"></div></div><div class="modal-tags" id="modalTags"></div><div class="spice-row"><span class="spice-icon"><i data-lucide="flame"></i></span><span class="spice-label">Level Pedas</span><span class="spice-value" id="modalSpiceLabel">3 - Pedas</span><select id="spiceSelect"><option value="1">1 - Mild</option><option value="2">2 - Sedang</option><option value="3" selected>3 - Pedas</option><option value="4">4 - Extra Pedas</option><option value="5">5 - Very Hot</option></select></div></div><div class="modal-footer"><button class="modal-add" id="modalAdd"><span>Tambah ke Keranjang</span><span id="btnPrice">Rp0</span></button></div></div></div>
+  <div class="modal-detail-grid" id="modalDetailGrid"><div class="detail-row"><span class="label">Wadah</span><span class="value" id="modalContainer">-</span></div><div class="detail-row"><span class="label">Ukuran</span><span class="value" id="modalSize">-</span></div><div class="detail-row"><span class="label">Sambal</span><span class="value" id="modalSambal">-</span></div></div><div id="modalBuahContainer"><div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px;">Buah-buahan</div><div class="modal-buah-text" id="modalBuahText"></div></div><div class="modal-tags" id="modalTags"></div><div class="spice-row"><span class="spice-icon"><i data-lucide="flame"></i></span><span class="spice-label">Level Pedas</span><span class="spice-value" id="modalSpiceLabel">3 - Pedas</span><select id="spiceSelect"><option value="1">1 - Mild</option><option value="2">2 - Sedang</option><option value="3" selected>3 - Pedas</option><option value="4">4 - Extra Pedas</option><option value="5">5 - Very Hot</option></select></div></div><div class="modal-footer"><button class="modal-add" id="modalAdd"><span>Tambah ke Keranjang</span><span id="btnPrice">Rp0</span></button></div></div></div>
 
+  <!-- MODAL KERANJANG 3-STEP -->
   <div class="modal-overlay" id="miniCartModal"><div class="modal-content" style="max-width:420px;"><div class="modal-header"><span class="modal-header-title">🛒 Keranjang</span><div class="modal-header-actions"><button class="clear-cart-btn" id="clearCartBtn"><i data-lucide="trash" class="w-4 h-4"></i> Kosongkan</button><button class="modal-close" id="miniCartClose">&times;</button></div></div><div class="modal-body" style="padding:16px 20px;"><div class="step-indicator"><span class="step active" data-step="1" onclick="goToStep(1)">1</span><span class="step-line"></span><span class="step" data-step="2" onclick="goToStep(2)">2</span><span class="step-line"></span><span class="step" data-step="3" onclick="goToStep(3)">3</span></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray-400);margin:-4px 0 16px;"><span>Review</span><span>Pengiriman</span><span>Bayar</span></div>
   
-  <div class="cart-step active" id="cartStep1">
-    <div id="miniCartList"></div>
-    <div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotalDisplay">Rp0</span></div>
-    <div id="step1Progress"></div>
-    <div id="step1Upsell"></div>
-    <button class="btn-step primary" id="step1Next" style="width:100%;justify-content:center;">Lanjut ke Pengiriman →</button>
-  </div>
+  <div class="cart-step active" id="cartStep1"><div id="miniCartList"></div><div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotalDisplay">Rp0</span></div><div id="step1Progress"></div><div id="step1Upsell"></div><button class="btn-step primary" id="step1Next" style="width:100%;justify-content:center;">Lanjut ke Pengiriman →</button></div>
 
   <div class="cart-step" id="cartStep2">
-    <div class="form-section"><label class="form-label">Nama Penerima</label><input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name"></div>
-    <div class="form-section"><label class="form-label">Nomor HP</label><input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" autocomplete="tel"></div>
-    <div class="form-section"><label class="form-label">Alamat</label><textarea id="customerAddress" placeholder="Alamat lengkap" rows="2"></textarea></div>
+    <div class="form-section"><label class="form-label" for="customerName">Nama Penerima</label><input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name"></div>
+    <div class="form-section"><label class="form-label" for="customerPhone">Nomor HP</label><input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" autocomplete="tel"></div>
+    <div class="form-section"><label class="form-label" for="customerAddress">Alamat</label><textarea id="customerAddress" placeholder="Alamat lengkap" rows="2"></textarea></div>
     <div class="form-section"><label class="form-label">Opsi Kurir</label><div class="shipping-options"><button class="ship-btn active" data-provider="rujakco">📦 Kurir Rujak.Co</button><button class="ship-btn" data-provider="pembeli">🛵 Kurir Saya</button></div></div>
-    <div id="rujakcoOptions" style="display:block;"><div class="vehicle-options"><button class="veh-btn active" data-vehicle="motor">🛵 Motor</button><button class="veh-btn" data-vehicle="mobil">🚗 Mobil</button></div>
-      <!-- ✅ PRIORITAS BARU: Step 2 -->
-      <div class="priority-toggle" style="flex-direction:column;align-items:flex-start;gap:4px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
-          <span style="font-weight:600;font-size:13px;">⚡ Pengiriman Prioritas</span>
-          <label class="switch"><input type="checkbox" id="priorityToggleMini"><span class="slider round"></span></label>
-        </div>
-        <span style="font-size:10px;color:var(--gray-400);">🚀 Pesanan kamu didahulukan — estimasi tiba 15-25 menit lebih cepat</span>
-      </div>
-    </div>
-    <div style="background:var(--gray-100);border-radius:10px;padding:10px 14px;margin-top:10px;">
-      <div style="font-size:10px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">Biaya Pengantaran</div>
-      <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:600;margin-top:4px;">
-        <span id="step2Zone">-</span>
-        <span style="color:var(--red);font-weight:800;" id="step2ShippingCost">Rp0</span>
-      </div>
-      <div id="step2Subsidy" style="font-size:11px;color:var(--green);margin-top:2px;display:none;"></div>
-      <div id="step2BaseCost" style="font-size:11px;color:var(--gray-500);margin-top:2px;display:none;"></div>
-      <div style="font-size:11px;color:var(--gray-500);margin-top:2px;">Jarak: <span id="step2Distance">-</span></div>
-      <div style="font-size:12px;color:var(--gray-500);margin-top:6px;text-align:center;border-top:1px dashed var(--gray-200);padding-top:6px;">🕐 Estimasi tiba: <strong style="color:var(--green);">30-45 menit</strong> setelah konfirmasi</div>
-    </div>
+    <div id="rujakcoOptions" style="display:block;"><div class="vehicle-options"><button class="veh-btn active" data-vehicle="motor">🛵 Motor</button><button class="veh-btn" data-vehicle="mobil">🚗 Mobil</button></div><div class="priority-toggle" style="flex-direction:column;align-items:flex-start;gap:4px;"><div style="display:flex;align-items:center;justify-content:space-between;width:100%;"><span style="font-weight:600;font-size:13px;">⚡ Pengiriman Prioritas</span><label class="switch"><input type="checkbox" id="priorityToggleMini"><span class="slider round"></span></label></div><span style="font-size:10px;color:var(--gray-400);">🚀 Pesanan kamu didahulukan — estimasi tiba 15-25 menit lebih cepat</span></div></div>
+    <div style="background:var(--gray-100);border-radius:10px;padding:10px 14px;margin-top:10px;"><div style="font-size:10px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">Biaya Pengantaran</div><div style="display:flex;justify-content:space-between;font-size:14px;font-weight:600;margin-top:4px;"><span id="step2Zone">-</span><span style="color:var(--red);font-weight:800;" id="step2ShippingCost">Rp0</span></div><div id="step2Subsidy" style="font-size:11px;color:var(--green);margin-top:2px;display:none;"></div><div id="step2BaseCost" style="font-size:11px;color:var(--gray-500);margin-top:2px;display:none;"></div><div style="font-size:11px;color:var(--gray-500);margin-top:2px;">Jarak: <span id="step2Distance">-</span></div><div style="font-size:12px;color:var(--gray-500);margin-top:6px;text-align:center;border-top:1px dashed var(--gray-200);padding-top:6px;">🕐 Estimasi tiba: <strong style="color:var(--green);">30-45 menit</strong> setelah konfirmasi</div></div>
     <button class="btn-step primary" id="step2Next" style="width:100%;margin-top:12px;">Lanjut ke Bayar →</button>
   </div>
 
-  <div class="cart-step" id="cartStep3">
-    <div class="final-summary">
-      <div class="final-row"><span>Subtotal</span><span id="finalSubtotal">Rp0</span></div>
-      <div class="final-row discount"><span>Diskon</span><span id="finalDiscount">-Rp0</span></div>
-      <div class="final-row"><span>Biaya Pengantaran</span><span id="finalShipping">Rp0</span></div>
-      <div class="final-row" id="finalSubsidy" style="display:none;color:var(--green);font-weight:600;"><span>Subsidi Pengiriman</span><span>-Rp0</span></div>
-      <div class="final-row total"><span>Total</span><span id="finalTotal">Rp0</span></div>
-    </div>
-    <div class="form-section"><label class="form-label">Catatan (Opsional)</label><textarea id="orderNotes" placeholder="Contoh: Sambal dipisah" rows="2"></textarea></div>
-    <div class="gift-section"><label><input type="checkbox" id="giftToggle"> 🎁 Kirim sebagai Kado</label><div id="giftFields" style="display:none;margin-top:8px;"><input type="text" id="giftSender" placeholder="Nama pengirim"><textarea id="giftMessage" placeholder="Pesan kado" rows="2"></textarea></div></div>
-    <button class="btn-step primary" id="btnOpenPayment" style="width:100%;justify-content:center;margin-top:12px;">💳 Bayar Via QRIS</button>
-  </div>
+  <div class="cart-step" id="cartStep3"><div class="final-summary"><div class="final-row"><span>Subtotal</span><span id="finalSubtotal">Rp0</span></div><div class="final-row discount"><span>Diskon</span><span id="finalDiscount">-Rp0</span></div><div class="final-row"><span>Biaya Pengantaran</span><span id="finalShipping">Rp0</span></div><div class="final-row" id="finalSubsidy" style="display:none;color:var(--green);font-weight:600;"><span>Subsidi Pengiriman</span><span>-Rp0</span></div><div class="final-row total"><span>Total</span><span id="finalTotal">Rp0</span></div></div><div class="form-section"><label class="form-label" for="orderNotes">Catatan (Opsional)</label><textarea id="orderNotes" placeholder="Contoh: Sambal dipisah" rows="2"></textarea></div><div class="gift-section"><label><input type="checkbox" id="giftToggle"> 🎁 Kirim sebagai Kado</label><div id="giftFields" style="display:none;margin-top:8px;"><input type="text" id="giftSender" placeholder="Nama pengirim"><textarea id="giftMessage" placeholder="Pesan kado" rows="2"></textarea></div></div><button class="btn-step primary" id="btnOpenPayment" style="width:100%;justify-content:center;margin-top:12px;">💳 Bayar Via QRIS</button></div>
   </div></div></div>
 
-  <div class="modal-overlay" id="paymentModal"><div class="modal-content"><div class="modal-header"><span class="modal-header-title">Pembayaran QRIS</span><button class="modal-close" id="paymentClose" aria-label="Tutup">&times;</button></div><div class="modal-body" style="text-align:center;"><div style="position: relative; display: block; width: 100%;"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" id="qrisImagePayment" style="width:100%; height:auto; aspect-ratio: 1/1; object-fit:contain; border-radius:10px; background:white; display: block;" /></div><p style="font-size: 12px; color: var(--green); margin-top: 8px; font-weight: 700;">📱 Ketuk untuk perbesar QRIS</p><div style="margin-top: 12px;"><button type="button" class="download-btn" id="downloadQrisBtnPayment" style="display:inline-flex; align-items:center; gap:6px; background:white; color:var(--green); padding:8px 16px; border-radius:10px; font-size:13px; font-weight:700; border:1px solid var(--green); cursor:pointer;"><i data-lucide="download" class="w-4 h-4"></i> Unduh QRIS</button></div></div><div class="modal-footer" style="flex-direction: column; align-items: stretch; gap: 10px;"><div style="display: flex; align-items: center; justify-content: space-between; background: var(--red); color: white; border-radius: 12px; padding: 12px 16px; font-weight: 700;"><span style="font-size: 14px;">Total Tagihan</span><span id="paymentTotalDisplay" style="font-size: 20px; font-weight: 800;">Rp0</span></div><button type="button" class="modal-add" data-action="confirm-wa" style="justify-content:center; gap:8px; margin-top: 0;"><i data-lucide="send" class="w-5 h-5"></i> Kirim Bukti Transfer</button></div></div></div>
+  <div class="modal-overlay" id="paymentModal"><div class="modal-content"><div class="modal-header"><span class="modal-header-title">Pembayaran QRIS</span><button class="modal-close" id="paymentClose" aria-label="Tutup">&times;</button></div><div class="modal-body" style="text-align:center;"><div style="position:relative;display:block;width:100%;"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" id="qrisImagePayment" style="width:100%;height:auto;aspect-ratio:1/1;object-fit:contain;border-radius:10px;background:white;display:block;" /></div><p style="font-size:12px;color:var(--green);margin-top:8px;font-weight:700;">📱 Ketuk untuk perbesar QRIS</p><div style="margin-top:12px;"><button type="button" class="download-btn" id="downloadQrisBtnPayment" style="display:inline-flex;align-items:center;gap:6px;background:white;color:var(--green);padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;border:1px solid var(--green);cursor:pointer;"><i data-lucide="download" class="w-4 h-4"></i> Unduh QRIS</button></div></div><div class="modal-footer" style="flex-direction:column;align-items:stretch;gap:10px;"><div style="display:flex;align-items:center;justify-content:space-between;background:var(--red);color:white;border-radius:12px;padding:12px 16px;font-weight:700;"><span style="font-size:14px;">Total Tagihan</span><span id="paymentTotalDisplay" style="font-size:20px;font-weight:800;">Rp0</span></div><button type="button" class="modal-add" data-action="confirm-wa" style="justify-content:center;gap:8px;margin-top:0;"><i data-lucide="send" class="w-5 h-5"></i> Kirim Bukti Transfer</button></div></div></div>
 
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="app.js"></script>
