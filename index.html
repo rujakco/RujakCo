@@ -22,6 +22,191 @@
   <script defer src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="app.js"></script>
+
+  <style>
+    /* ===== STEP INDICATOR ===== */
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+      padding: 0 4px;
+    }
+    .step {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--gray-200, #e5e7eb);
+      color: var(--gray-500, #6b7280);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      transition: all 0.3s;
+      flex-shrink: 0;
+    }
+    .step.active {
+      background: var(--green, #0F4D37);
+      color: white;
+      box-shadow: 0 2px 8px rgba(15, 77, 55, 0.3);
+    }
+    .step.done {
+      background: var(--green, #0F4D37);
+      color: white;
+      opacity: 0.7;
+    }
+    .step-line {
+      flex: 1;
+      height: 2px;
+      background: var(--gray-200, #e5e7eb);
+      border-radius: 2px;
+    }
+    .step-line.done {
+      background: var(--green, #0F4D37);
+    }
+
+    /* ===== CART STEPS ===== */
+    .cart-step {
+      display: none;
+      animation: fadeStep 0.3s ease;
+    }
+    .cart-step.active {
+      display: block;
+    }
+    @keyframes fadeStep {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== BUTTON STEP ===== */
+    .btn-step {
+      background: var(--gray-200, #e5e7eb);
+      border: none;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-step:hover { opacity: 0.85; }
+    .btn-step.primary {
+      background: var(--green, #0F4D37);
+      color: white;
+    }
+    .btn-step.primary:hover { background: #0a3d2c; }
+
+    /* ===== SHIPPING OPTIONS ===== */
+    .shipping-options,
+    .vehicle-options {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .ship-btn,
+    .veh-btn {
+      padding: 6px 16px;
+      border: 2px solid var(--gray-200, #e5e7eb);
+      border-radius: 24px;
+      background: white;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .ship-btn:hover,
+    .veh-btn:hover { border-color: var(--gray-400, #9ca3af); }
+    .ship-btn.active,
+    .veh-btn.active {
+      border-color: var(--green, #0F4D37);
+      background: var(--green-pale, #e8f5ee);
+      color: var(--green, #0F4D37);
+    }
+
+    /* ===== PRIORITY TOGGLE ===== */
+    .priority-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--gray-200, #e5e7eb);
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    /* ===== FINAL SUMMARY ===== */
+    .final-summary {
+      background: var(--gray-50, #f9fafb);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+    .final-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      font-size: 14px;
+      color: var(--gray-700, #374151);
+    }
+    .final-row.discount { color: var(--red, #dc2626); }
+    .final-row.total {
+      font-weight: 700;
+      font-size: 18px;
+      border-top: 2px solid var(--gray-200, #e5e7eb);
+      padding-top: 10px;
+      margin-top: 6px;
+      color: var(--green, #0F4D37);
+    }
+
+    /* ===== GIFT SECTION ===== */
+    .gift-section {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--gray-200, #e5e7eb);
+    }
+    .gift-section label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .gift-section label input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--green, #0F4D37);
+      cursor: pointer;
+    }
+
+    /* ===== CART SUBTOTAL ===== */
+    .cart-subtotal {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      font-size: 16px;
+      padding: 12px 0 4px;
+      border-top: 1px solid var(--gray-200, #e5e7eb);
+      margin-top: 8px;
+    }
+    .cart-subtotal span:last-child {
+      color: var(--green, #0F4D37);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 480px) {
+      .step { width: 28px; height: 28px; font-size: 12px; }
+      .btn-step { font-size: 13px; padding: 8px 14px; }
+      .final-row.total { font-size: 16px; }
+      .modal-content { max-width: 100% !important; margin: 10px; }
+    }
+  </style>
 </head>
 <body>
   <div id="app">
@@ -312,151 +497,114 @@
   </div>
 </div>
 
-<!-- MODAL KERANJANG (MINI CART) - VERSI TERBARU -->
+<!-- ========================================================== -->
+<!-- MODAL KERANJANG (VERSI BARU - 3 STEP)                       -->
+<!-- ========================================================== -->
 <div class="modal-overlay" id="miniCartModal">
-  <div class="modal-content">
+  <div class="modal-content" style="max-width:420px;">
+    
+    <!-- HEADER -->
     <div class="modal-header">
       <span class="modal-header-title">🛒 Keranjang</span>
       <div class="modal-header-actions">
-        <button class="clear-cart-btn" id="clearCartBtn" aria-label="Kosongkan keranjang">
-          <i data-lucide="trash" class="w-4 h-4"></i> Kosongkan
-        </button>
-        <button class="modal-close" id="miniCartClose" aria-label="Tutup">&times;</button>
+        <button class="clear-cart-btn" id="clearCartBtn"><i data-lucide="trash" class="w-4 h-4"></i> Kosongkan</button>
+        <button class="modal-close" id="miniCartClose">&times;</button>
       </div>
     </div>
-    <div class="modal-body">
 
-      <!-- Daftar item keranjang -->
-      <div id="miniCartList"></div>
+    <!-- BODY -->
+    <div class="modal-body" style="padding:16px 20px;">
 
-      <!-- DATA PENERIMA (collapsible) -->
-      <div id="customerDataContainer" style="margin-top:16px;">
-        <!-- Ringkasan (muncul jika data sudah diisi) -->
-        <div id="customerDataSummary" style="display:none; background: var(--green-pale); border-radius: 12px; padding: 12px; margin-bottom: 12px;">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div>
-              <div style="font-weight:700; font-size:16px;" id="summaryName">-</div>
-              <div style="font-size:13px; color:var(--gray-600);">
-                <span id="summaryPhone">-</span> · <span id="summaryAddress">-</span>
-              </div>
-            </div>
-            <button type="button" id="editCustomerBtn" style="background:white; border:1px solid var(--green); border-radius:20px; padding:4px 12px; font-size:12px; font-weight:600; color:var(--green); cursor:pointer;">Ubah</button>
+      <!-- STEP INDICATOR -->
+      <div class="step-indicator">
+        <span class="step active" data-step="1">1</span>
+        <span class="step-line"></span>
+        <span class="step" data-step="2">2</span>
+        <span class="step-line"></span>
+        <span class="step" data-step="3">3</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray-400);margin:-4px 0 16px;">
+        <span>Review</span>
+        <span>Pengiriman</span>
+        <span>Bayar</span>
+      </div>
+
+      <!-- STEP 1: REVIEW ITEMS -->
+      <div class="cart-step active" id="cartStep1">
+        <div id="miniCartList"></div>
+        <div class="cart-subtotal">
+          <span>Subtotal</span>
+          <span id="cartSubtotalDisplay">Rp0</span>
+        </div>
+        <button class="btn-step primary" id="step1Next" style="width:100%;justify-content:center;">Lanjut ke Pengiriman →</button>
+      </div>
+
+      <!-- STEP 2: PENGIRIMAN & PENERIMA -->
+      <div class="cart-step" id="cartStep2" style="display:none;">
+        <div class="form-section">
+          <label class="form-label">Nama Penerima</label>
+          <input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name">
+        </div>
+        <div class="form-section">
+          <label class="form-label">Nomor HP</label>
+          <input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" autocomplete="tel">
+        </div>
+        <div class="form-section">
+          <label class="form-label">Alamat</label>
+          <textarea id="customerAddress" placeholder="Alamat lengkap" rows="2"></textarea>
+        </div>
+        <div class="form-section">
+          <label class="form-label">Opsi Kirim</label>
+          <div class="shipping-options">
+            <button class="ship-btn active" data-provider="pembeli">📦 Kirim Sendiri</button>
+            <button class="ship-btn" data-provider="rujakco">🛵 Kirim Rujak.Co</button>
           </div>
         </div>
-
-        <!-- Form input (muncul jika data kosong atau saat tombol Ubah diklik) -->
-        <div id="customerDataForm">
-          <div class="form-section">
-            <label class="form-label">Nama Penerima</label>
-            <input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name" />
+        <div id="rujakcoOptions" style="display:none;">
+          <div class="vehicle-options">
+            <button class="veh-btn active" data-vehicle="motor">🛵 Motor</button>
+            <button class="veh-btn" data-vehicle="mobil">🚗 Mobil</button>
           </div>
-          <div class="form-section">
-            <label class="form-label">Nomor HP</label>
-            <input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" autocomplete="tel" />
+          <div class="priority-toggle">
+            <span>⚡ Prioritas</span>
+            <label class="switch"><input type="checkbox" id="priorityToggleMini"><span class="slider round"></span></label>
           </div>
-          <div class="form-section">
-            <label class="form-label">Alamat Pengiriman</label>
-            <textarea id="customerAddress" placeholder="Alamat lengkap (jalan, kecamatan, kota)" rows="2" autocomplete="street-address"></textarea>
-          </div>
-          <button type="button" id="saveCustomerBtn" style="width:100%; background:var(--green); color:white; border:none; border-radius:10px; padding:8px; font-weight:700; cursor:pointer;">Simpan Data</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+          <button class="btn-step" id="step2Back">← Kembali</button>
+          <button class="btn-step primary" id="step2Next" style="flex:1;">Lanjut ke Bayar →</button>
         </div>
       </div>
 
-      <!-- Catatan Pesanan -->
-      <div class="form-section" style="margin-top:12px;">
-        <label class="form-label">Catatan Pesanan (Opsional)</label>
-        <textarea id="orderNotes" placeholder="Contoh: Sambal dipisah, untuk kado..." rows="2"></textarea>
-      </div>
-
-      <!-- PILIHAN PENGIRIMAN -->
-      <div class="form-section" id="courierSection" style="display:none; border-top:1px dashed var(--gray-200); padding-top:16px; margin-top:16px;">
-        <label class="form-label">Pilihan Pengiriman</label>
-        <div style="display:flex; gap:12px; margin-bottom:8px; flex-wrap:wrap;">
-          <label style="display:flex; align-items:center; gap:6px; font-weight:600; font-size:14px; cursor:pointer;">
-            <input type="radio" name="shippingProvider" value="pembeli" checked> Pesan Kurir Sendiri
-          </label>
-          <label style="display:flex; align-items:center; gap:6px; font-weight:600; font-size:14px; cursor:pointer;">
-            <input type="radio" name="shippingProvider" value="rujakco"> Pesan oleh Rujak.Co
-          </label>
+      <!-- STEP 3: KONFIRMASI & BAYAR -->
+      <div class="cart-step" id="cartStep3" style="display:none;">
+        <div class="final-summary">
+          <div class="final-row"><span>Subtotal</span><span id="finalSubtotal">Rp0</span></div>
+          <div class="final-row discount"><span>Diskon</span><span id="finalDiscount">-Rp0</span></div>
+          <div class="final-row"><span>Ongkir</span><span id="finalShipping">Rp0</span></div>
+          <div class="final-row total"><span>Total</span><span id="finalTotal">Rp0</span></div>
         </div>
-
-        <!-- Opsi kendaraan (muncul jika Rujak.Co yang pesan) -->
-        <div id="vehicleOptions" style="display:none; margin-top:8px; background:var(--green-pale); padding:12px; border-radius:12px;">
-          <div style="display:flex; flex-direction:column; gap:8px;">
-            <label style="display:flex; align-items:center; gap:8px; font-weight:600; font-size:14px; cursor:pointer; padding:4px 0;">
-              <input type="radio" name="vehicle" value="motor" checked> 🛵 Reguler Motor — <span id="motorPrice">Rp0</span>
-              <span style="font-size:11px; color:var(--gray-500); font-weight:400; margin-left:4px;">(25-45 menit)</span>
-            </label>
-            <label style="display:flex; align-items:center; gap:8px; font-weight:600; font-size:14px; cursor:pointer; padding:4px 0;">
-              <input type="radio" name="vehicle" value="mobil"> 🚗 Reguler Mobil — <span id="mobilPrice">Rp0</span>
-              <span style="font-size:11px; color:var(--gray-500); font-weight:400; margin-left:4px;">(45-90 menit)</span>
-            </label>
-          </div>
-
-          <!-- Opsi Prioritas -->
-          <div style="margin-top:10px; border-top:1px dashed var(--gray-300); padding-top:10px;">
-            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-              <span style="font-weight:600; font-size:14px;">⚡ Prioritas</span>
-              <label class="switch" style="margin:0;">
-                <input type="checkbox" id="priorityToggleMini" />
-                <span class="slider round"></span>
-              </label>
-              <span style="font-size:12px; color:var(--gray-500);">(lebih cepat, tarif per km)</span>
-            </div>
-            <div style="font-size:12px; color:var(--gray-500); margin-top:4px;">
-              * Motor: Rp2.700/km (≤20km) / Rp2.400/km (&gt;20km) &nbsp;·&nbsp; Mobil: Rp3.500/km (≤20km) / Rp3.000/km (&gt;20km)
-            </div>
+        <div class="form-section">
+          <label class="form-label">Catatan (Opsional)</label>
+          <textarea id="orderNotes" placeholder="Contoh: Sambal dipisah" rows="2"></textarea>
+        </div>
+        <div class="gift-section">
+          <label><input type="checkbox" id="giftToggle"> 🎁 Kirim sebagai Kado</label>
+          <div id="giftFields" style="display:none;margin-top:8px;">
+            <input type="text" id="giftSender" placeholder="Nama pengirim" style="width:100%;padding:8px 12px;border:1px solid var(--gray-300);border-radius:8px;margin-bottom:6px;">
+            <textarea id="giftMessage" placeholder="Pesan kado" rows="2" style="width:100%;padding:8px 12px;border:1px solid var(--gray-300);border-radius:8px;"></textarea>
           </div>
         </div>
-      </div>
-
-      <!-- Metode Pembayaran Ongkir -->
-      <div class="form-section" style="margin-top:16px; border-top:1px dashed var(--gray-200); padding-top:16px;">
-        <label class="form-label">Metode Pembayaran Ongkir</label>
-        <div style="display:flex; flex-direction:column; gap:8px;">
-          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; font-weight:600; color:var(--gray-700);">
-            <input type="radio" name="paymentMethod" id="payBayarKurir" checked /> 💵 Bayar ke Kurir (Di Tempat)
-          </label>
-          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; font-weight:600; color:var(--gray-700);">
-            <input type="radio" name="paymentMethod" id="payGabungQRIS" /> 📲 Digabung ke Tagihan QRIS
-          </label>
-        </div>
-        <div id="ongkirWarning" style="background:#fee2e2; color:#991b1b; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:600; margin-top:8px;">
-          ⚠️ Ongkir dibayar terpisah ke kurir. Total QRIS <strong>tidak termasuk</strong> ongkir.
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+          <button class="btn-step" id="step3Back">← Kembali</button>
+          <button class="btn-step primary" id="btnOpenPayment" style="flex:1;justify-content:center;">💳 Bayar Via QRIS</button>
         </div>
       </div>
-
-      <!-- Fitur Kado -->
-      <div class="form-section" style="margin-top:12px;">
-        <div class="gift-toggle-wrap">
-          <span class="gift-toggle-label"><i data-lucide="gift" class="w-4 h-4"></i> Kirim Sebagai Kado</span>
-          <label class="switch">
-            <input type="checkbox" id="giftToggle" />
-            <span class="slider round"></span>
-          </label>
-        </div>
-        <div id="giftFields" style="display:none; margin-top:12px;">
-          <div class="form-section">
-            <label class="form-label">Nama Pengirim</label>
-            <input type="text" id="giftSender" placeholder="Nama pengirim kado" />
-          </div>
-          <div class="form-section">
-            <label class="form-label">Ucapan Kado</label>
-            <textarea id="giftMessage" placeholder="Tulis pesan ucapan di sini..." rows="2"></textarea>
-          </div>
-        </div>
-      </div>
-
-      <!-- Total dan Tombol Bayar -->
-      <div class="mini-cart-total-final">
-        <span>Total Tagihan QRIS</span>
-        <span id="miniCartFinalTotal">Rp0</span>
-      </div>
-      <button type="button" class="wa-btn" id="btnOpenPayment" style="margin-top: 16px;">Bayar Via QRIS</button>
 
     </div>
   </div>
 </div>
+<!-- ========================================================== -->
 
 <!-- MODAL PEMBAYARAN QRIS -->
 <div class="modal-overlay" id="paymentModal">
