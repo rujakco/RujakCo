@@ -202,7 +202,18 @@
   <div id="bottom-bar">
     <button class="close-bottom-bar" id="closeBottomBar" aria-label="Tutup keranjang">✕</button>
     <div class="progress-container" id="progressContainer" style="display:none;"><div class="progress-text"><span id="progressLabel">Tambah Rp20.000 lagi untuk diskon</span><span id="progressPercent">0%</span></div><div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 0%;"></div></div></div>
-    <div class="shipping-estimate" id="shippingEstimate" style="margin: 0 0 10px 0; border-radius: 12px;"><div class="shipping-left"><i data-lucide="truck"></i><span>Ongkir:</span><span class="shipping-cost" id="shippingCost">⏳</span><span class="shipping-distance" id="shippingDistance"></span></div><div class="shipping-toggle"><input type="checkbox" id="priorityToggle" /><label for="priorityToggle" class="toggle-label"><i data-lucide="zap"></i><span class="badge-priority">Prioritas</span></label></div></div>
+    <div class="shipping-estimate" id="shippingEstimate" style="margin: 0 0 10px 0; border-radius: 12px;">
+      <div class="shipping-left"><i data-lucide="truck"></i><span>Ongkir:</span><span class="shipping-cost" id="shippingCost">⏳</span><span class="shipping-distance" id="shippingDistance"></span></div>
+      <!-- ✅ PRIORITAS BARU: Bottom Bar -->
+      <div class="shipping-toggle">
+        <input type="checkbox" id="priorityToggle" />
+        <label for="priorityToggle" class="toggle-label" style="cursor:pointer;">
+          <i data-lucide="zap"></i>
+          <span class="badge-priority">Prioritas</span>
+        </label>
+        <span style="font-size:9px;color:var(--gray-400);margin-left:4px;">🚀 Lebih cepat</span>
+      </div>
+    </div>
     <div class="shipping-out-of-range" id="outOfRange" style="margin: 0 0 10px 0; border-radius: 12px;">⚠️ Pengiriman hanya tersedia untuk wilayah Jabodetabek (maks. 50 km)</div>
     <div class="cart-summary" id="cartSummary" tabindex="0" role="button" aria-label="Buka keranjang"><span class="cart-items-preview" id="cartPreview">0 item</span><div class="cart-total-wrap"><span id="discountLabel" class="cart-discount-label" style="display: none;">-Rp10.000</span><span class="cart-total" id="cartTotalDisplay">Rp0</span></div></div>
     <button type="button" class="wa-btn" data-action="open-cart"><div class="wa-btn-left"><span class="wa-btn-sub">Detail Pesanan</span><span>Cek Keranjang</span></div><div class="wa-badge"><i data-lucide="shopping-bag" class="w-4 h-4"></i> Buka</div></button>
@@ -231,7 +242,16 @@
     <div class="form-section"><label class="form-label">Nomor HP</label><input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" autocomplete="tel"></div>
     <div class="form-section"><label class="form-label">Alamat</label><textarea id="customerAddress" placeholder="Alamat lengkap" rows="2"></textarea></div>
     <div class="form-section"><label class="form-label">Opsi Kurir</label><div class="shipping-options"><button class="ship-btn active" data-provider="rujakco">📦 Kurir Rujak.Co</button><button class="ship-btn" data-provider="pembeli">🛵 Kurir Saya</button></div></div>
-    <div id="rujakcoOptions" style="display:block;"><div class="vehicle-options"><button class="veh-btn active" data-vehicle="motor">🛵 Motor</button><button class="veh-btn" data-vehicle="mobil">🚗 Mobil</button></div><div class="priority-toggle"><span>⚡ Prioritas</span><label class="switch"><input type="checkbox" id="priorityToggleMini"><span class="slider round"></span></label></div></div>
+    <div id="rujakcoOptions" style="display:block;"><div class="vehicle-options"><button class="veh-btn active" data-vehicle="motor">🛵 Motor</button><button class="veh-btn" data-vehicle="mobil">🚗 Mobil</button></div>
+      <!-- ✅ PRIORITAS BARU: Step 2 -->
+      <div class="priority-toggle" style="flex-direction:column;align-items:flex-start;gap:4px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
+          <span style="font-weight:600;font-size:13px;">⚡ Pengiriman Prioritas</span>
+          <label class="switch"><input type="checkbox" id="priorityToggleMini"><span class="slider round"></span></label>
+        </div>
+        <span style="font-size:10px;color:var(--gray-400);">🚀 Pesanan kamu didahulukan — estimasi tiba 15-25 menit lebih cepat</span>
+      </div>
+    </div>
     <div style="background:var(--gray-100);border-radius:10px;padding:10px 14px;margin-top:10px;">
       <div style="font-size:10px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">Biaya Pengantaran</div>
       <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:600;margin-top:4px;">
