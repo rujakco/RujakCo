@@ -265,12 +265,30 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 .footer-col ul { list-style: none; padding: 0; margin: 0; }
 .footer-col ul li { font-size: 13px; opacity: .8; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
 .footer-col ul li svg { color: var(--gold); width: 16px; height: 16px; }
+
+/* Update Footer Social & WA Button */
 .footer-social { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
-.footer-social a { color: white; background: rgba(255,255,255,.12); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background .2s, transform .2s; text-decoration: none; }
-.footer-social a svg { width: 20px; height: 20px; }
-.footer-social a:hover { background: var(--gold); color: var(--green); transform: translateY(-2px); }
+.footer-social a { 
+  color: white; 
+  background: rgba(255,255,255,.12); 
+  width: 42px; 
+  height: 42px; 
+  border-radius: 50%; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  transition: background .2s, transform .2s; 
+  text-decoration: none; 
+}
+.footer-social a:hover { 
+  background: var(--gold); 
+  color: var(--green); 
+  transform: translateY(-2px); 
+}
+
 .footer-wa { display: inline-flex; align-items: center; gap: 8px; background: var(--gold); color: var(--green); padding: 10px 18px; border-radius: 50px; font-weight: 700; font-size: 14px; text-decoration: none; transition: background .2s, color .2s; width: fit-content; border: none; margin-top: 8px; }
-.footer-wa svg { width: 16px; height: 16px; } .footer-wa:hover { background: #dbaa1a; color: var(--green-dark); }
+.footer-wa:hover { background: #dbaa1a; color: var(--green-dark); }
+
 .footer-bottom { border-top: 1px solid rgba(255,255,255,.12); padding-top: 16px; text-align: center; font-size: 11px; opacity: .5; margin-top: 12px; }
 
 /* === BOTTOM BAR & FLOATING CART === */
