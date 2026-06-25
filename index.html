@@ -13,163 +13,13 @@
   <link rel="manifest" href="/manifest.json" />
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="apple-touch-icon" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" />
-
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
-
   <link rel="stylesheet" href="style.css" />
-  
-  <!-- ===== SCRIPTS ===== -->
   <script defer src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
-  <!-- ✅ APLIKASI UTAMA (data produk sudah di dalam) -->
   <script defer src="app.js"></script>
-
-  <style>
-    /* STEP INDICATOR */
-    .step-indicator {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 4px;
-      padding: 0 4px;
-    }
-    .step {
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      background: var(--gray-200, #e5e7eb);
-      color: var(--gray-500, #6b7280);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 14px;
-      transition: all 0.3s;
-      flex-shrink: 0;
-    }
-    .step.active { background: var(--green, #0F4D37); color: white; box-shadow: 0 2px 8px rgba(15,77,55,0.3); }
-    .step.done { background: var(--green, #0F4D37); color: white; opacity: 0.7; }
-    .step-line { flex: 1; height: 2px; background: var(--gray-200, #e5e7eb); border-radius: 2px; }
-    .step-line.done { background: var(--green, #0F4D37); }
-
-    .cart-step { display: none; animation: fadeStep 0.3s ease; }
-    .cart-step.active { display: block; }
-    @keyframes fadeStep { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-    .btn-step {
-      background: var(--gray-200, #e5e7eb);
-      border: none;
-      padding: 10px 18px;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-top: 12px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-family: inherit;
-    }
-    .btn-step:hover { opacity: 0.85; }
-    .btn-step.primary { background: var(--green, #0F4D37); color: white; }
-    .btn-step.primary:hover { background: #0a3d2c; }
-
-    .shipping-options, .vehicle-options {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .ship-btn, .veh-btn {
-      padding: 6px 16px;
-      border: 2px solid var(--gray-200, #e5e7eb);
-      border-radius: 24px;
-      background: white;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 13px;
-      transition: all 0.2s;
-      font-family: inherit;
-    }
-    .ship-btn:hover, .veh-btn:hover { border-color: var(--gray-400, #9ca3af); }
-    .ship-btn.active, .veh-btn.active {
-      border-color: var(--green, #0F4D37);
-      background: var(--green-pale, #e8f5ee);
-      color: var(--green, #0F4D37);
-    }
-
-    .priority-toggle {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px dashed var(--gray-200, #e5e7eb);
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    .final-summary {
-      background: var(--gray-50, #f9fafb);
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-bottom: 12px;
-    }
-    .final-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 4px 0;
-      font-size: 14px;
-      color: var(--gray-700, #374151);
-    }
-    .final-row.discount { color: var(--red, #dc2626); }
-    .final-row.total {
-      font-weight: 700;
-      font-size: 18px;
-      border-top: 2px solid var(--gray-200, #e5e7eb);
-      padding-top: 10px;
-      margin-top: 6px;
-      color: var(--green, #0F4D37);
-    }
-
-    .gift-section {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px dashed var(--gray-200, #e5e7eb);
-    }
-    .gift-section label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .gift-section label input[type="checkbox"] {
-      width: 18px; height: 18px;
-      accent-color: var(--green, #0F4D37);
-      cursor: pointer;
-    }
-
-    .cart-subtotal {
-      display: flex;
-      justify-content: space-between;
-      font-weight: 700;
-      font-size: 16px;
-      padding: 12px 0 4px;
-      border-top: 1px solid var(--gray-200, #e5e7eb);
-      margin-top: 8px;
-    }
-    .cart-subtotal span:last-child { color: var(--green, #0F4D37); }
-
-    @media (max-width: 480px) {
-      .step { width: 28px; height: 28px; font-size: 12px; }
-      .btn-step { font-size: 13px; padding: 8px 14px; }
-      .final-row.total { font-size: 16px; }
-      .modal-content { max-width: 100% !important; margin: 10px; }
-    }
-  </style>
 </head>
 <body>
   <div id="app">
@@ -227,6 +77,7 @@
         <button type="button" class="cat-pill" data-cat="reserve">Reserve</button>
         <button type="button" class="cat-pill" data-cat="addon">Tambahan</button>
       </nav>
+      
       <div class="legend-marquee"><div class="legend-track">
         <span class="classic">Classic – Segar, ringan, mudah dinikmati</span>
         <span class="signature">Signature – Gurih mete, favorit semua</span>
@@ -235,7 +86,9 @@
         <span class="signature">Signature – Gurih mete, favorit semua</span>
         <span class="reserve">Reserve – Buah premium, momen istimewa</span>
       </div></div>
+      
       <div style="padding: 0 20px 12px; font-size: 13px; color: var(--green); font-weight: 600;"><i data-lucide="star" class="w-4 h-4 inline"></i> Pertama kali? Coba <strong>Rujak Segar</strong> — ringan & mudah disukai.</div>
+      
       <div class="sec-header" id="menuHeader">
         <span class="sec-title">Koleksi Rasa</span>
         <div class="search-toggle-wrap" id="searchToggleWrap">
@@ -248,15 +101,18 @@
           </div>
         </div>
       </div>
+      
       <div class="empty-state" id="emptyState">Menu tidak ditemukan.</div>
       <div id="skeletonContainer" style="padding:0 20px;"><div class="skeleton-item"><div class="skeleton-img skeleton"></div><div class="skeleton-body"><div class="skeleton-line skeleton"></div><div class="skeleton-line skeleton medium"></div><div class="skeleton-line skeleton short"></div></div></div><div class="skeleton-item"><div class="skeleton-img skeleton"></div><div class="skeleton-body"><div class="skeleton-line skeleton"></div><div class="skeleton-line skeleton medium"></div><div class="skeleton-line skeleton short"></div></div></div></div>
       <div class="menu-list" id="menuList" style="display:none;"></div>
+      
       <div class="divider" id="addonDivider"></div>
       <div class="sec-header" id="addonHeader" style="align-items: baseline; gap: 8px;">
         <span class="sec-title">Tambahan</span>
         <span style="font-size: 11px; color: var(--gray-500); font-weight: 500; white-space: nowrap;">Opsional — Sambal ekstra, buah tambahan, dll.</span>
       </div>
       <div class="addon-grid" id="addonList"></div>
+      
       <div class="divider"></div>
       <div class="sec-header" style="margin-top:16px"><span class="sec-title">Kenapa Memilih Rujak.Co?</span></div>
       <div class="edu-container">
@@ -265,6 +121,7 @@
         <div class="edu-card"><div class="edu-icon-wrap" style="background: rgba(244, 196, 48, 0.2); color: #b58d10;"><i data-lucide="lock" class="w-5 h-5"></i></div><div><h4 class="edu-title">Fresh-Lock System™</h4><p class="edu-desc">Dirancang agar rasa dan tekstur tetap optimal hingga diterima pelanggan.</p></div></div>
         <div class="edu-card"><div class="edu-icon-wrap" style="background: var(--green-pale); color: var(--green);"><i data-lucide="map" class="w-5 h-5"></i></div><div><h4 class="edu-title">Indonesia Dalam Satu Wadah</h4><p class="edu-desc">Mengangkat keberagaman rasa rujak Indonesia dalam pengalaman yang modern.</p></div></div>
       </div>
+      
       <div class="divider"></div>
       <div class="sec-header"><span class="sec-title">Pertanyaan Umum</span></div>
       <div class="faq-container" id="faqContainer">
@@ -282,7 +139,15 @@
         <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" />
         <span class="footer-brand-name">Rujak<span>.Co</span></span>
       </div>
-      <p class="footer-brand-desc">Menghadirkan keberagaman rasa rujak Indonesia dalam satu pengalaman yang segar, modern, dan berkualitas.</p>
+      
+      <!-- ✅ WHATSAPP ICON EMAS BESAR DI KANAN -->
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <p class="footer-brand-desc" style="flex:1;margin:0;">Menghadirkan keberagaman rasa rujak Indonesia dalam satu pengalaman yang segar, modern, dan berkualitas.</p>
+        <a href="https://wa.me/6289677161680" target="_blank" class="footer-wa-icon">
+          <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Wa-icon.webp" alt="WhatsApp">
+        </a>
+      </div>
+      
       <div class="footer-grid">
         <div class="footer-col">
           <h4>Jam Operasional</h4>
@@ -305,9 +170,6 @@
               <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Thread-icon.webp" alt="Threads">
             </a>
           </div>
-          <a href="https://wa.me/6289677161680" target="_blank" class="footer-wa">
-            <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Wa-icon.webp" alt="WhatsApp"> Chat WhatsApp
-          </a>
         </div>
       </div>
       <div class="footer-bottom">
@@ -316,6 +178,7 @@
     </div>
   </footer>
 
+  <!-- Bottom Bar -->
   <div id="bottom-bar">
     <button class="close-bottom-bar" id="closeBottomBar" aria-label="Tutup keranjang">✕</button>
     <div class="progress-container" id="progressContainer" style="display:none;">
@@ -453,29 +316,32 @@
         </div>
       </div>
       <div class="modal-body" style="padding:16px 20px;">
+        <!-- ✅ STEP INDICATOR BISA DIKLIK -->
         <div class="step-indicator">
-          <span class="step active" data-step="1">1</span>
+          <span class="step active" data-step="1" onclick="goToStep(1)">1</span>
           <span class="step-line"></span>
-          <span class="step" data-step="2">2</span>
+          <span class="step" data-step="2" onclick="goToStep(2)">2</span>
           <span class="step-line"></span>
-          <span class="step" data-step="3">3</span>
+          <span class="step" data-step="3" onclick="goToStep(3)">3</span>
         </div>
         <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray-400);margin:-4px 0 16px;">
           <span>Review</span><span>Pengiriman</span><span>Bayar</span>
         </div>
 
-        <!-- STEP 1 -->
+        <!-- STEP 1: REVIEW -->
         <div class="cart-step active" id="cartStep1">
           <div id="miniCartList"></div>
           <div class="cart-subtotal">
             <span>Subtotal</span>
             <span id="cartSubtotalDisplay">Rp0</span>
           </div>
+          <!-- ✅ PROGRESS BAR DI STEP 1 -->
+          <div id="step1Progress"></div>
           <button class="btn-step primary" id="step1Next" style="width:100%;justify-content:center;">Lanjut ke Pengiriman →</button>
         </div>
 
-        <!-- STEP 2 -->
-        <div class="cart-step" id="cartStep2" style="display:none;">
+        <!-- STEP 2: PENGIRIMAN -->
+        <div class="cart-step" id="cartStep2">
           <div class="form-section">
             <label class="form-label">Nama Penerima</label>
             <input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name">
@@ -489,10 +355,10 @@
             <textarea id="customerAddress" placeholder="Alamat lengkap" rows="2"></textarea>
           </div>
           <div class="form-section">
-            <label class="form-label">Opsi Kirim</label>
+            <label class="form-label">Opsi Kurir</label>
             <div class="shipping-options">
-              <button class="ship-btn active" data-provider="pembeli">📦 Kirim Sendiri</button>
-              <button class="ship-btn" data-provider="rujakco">🛵 Kirim Rujak.Co</button>
+              <button class="ship-btn active" data-provider="pembeli">🛵 Kurir Saya</button>
+              <button class="ship-btn" data-provider="rujakco">📦 Kurir Rujak.Co</button>
             </div>
           </div>
           <div id="rujakcoOptions" style="display:none;">
@@ -505,14 +371,21 @@
               <label class="switch"><input type="checkbox" id="priorityToggleMini"><span class="slider round"></span></label>
             </div>
           </div>
-          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
-            <button class="btn-step" id="step2Back">← Kembali</button>
-            <button class="btn-step primary" id="step2Next" style="flex:1;">Lanjut ke Bayar →</button>
+          <!-- ✅ ONGKIR DI STEP 2 -->
+          <div style="background:var(--gray-100);border-radius:10px;padding:10px 14px;margin-top:10px;">
+            <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:600;">
+              <span>🛵 Perkiraan Ongkir</span>
+              <span style="color:var(--red);font-weight:800;" id="step2ShippingCost">Rp0</span>
+            </div>
+            <div style="font-size:11px;color:var(--gray-500);margin-top:2px;">
+              Jarak: <span id="step2Distance">-</span>
+            </div>
           </div>
+          <button class="btn-step primary" id="step2Next" style="width:100%;margin-top:12px;">Lanjut ke Bayar →</button>
         </div>
 
-        <!-- STEP 3 -->
-        <div class="cart-step" id="cartStep3" style="display:none;">
+        <!-- STEP 3: BAYAR -->
+        <div class="cart-step" id="cartStep3">
           <div class="final-summary">
             <div class="final-row"><span>Subtotal</span><span id="finalSubtotal">Rp0</span></div>
             <div class="final-row discount"><span>Diskon</span><span id="finalDiscount">-Rp0</span></div>
@@ -530,10 +403,7 @@
               <textarea id="giftMessage" placeholder="Pesan kado" rows="2" style="width:100%;padding:8px 12px;border:1px solid var(--gray-300);border-radius:8px;"></textarea>
             </div>
           </div>
-          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
-            <button class="btn-step" id="step3Back">← Kembali</button>
-            <button class="btn-step primary" id="btnOpenPayment" style="flex:1;justify-content:center;">💳 Bayar Via QRIS</button>
-          </div>
+          <button class="btn-step primary" id="btnOpenPayment" style="width:100%;justify-content:center;margin-top:12px;">💳 Bayar Via QRIS</button>
         </div>
       </div>
     </div>
@@ -549,12 +419,11 @@
       <div class="modal-body" style="text-align:center;">
         <div style="position: relative; display: block; width: 100%;">
           <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" id="qrisImagePayment" style="width:100%; height:auto; aspect-ratio: 1/1; object-fit:contain; border-radius:10px; background:white; display: block;" />
-          <span style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.5); color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 14px; pointer-events: none; z-index: 1;"><i data-lucide="zoom-in" style="width: 16px; height: 16px;"></i></span>
         </div>
-        <p style="font-size: 11px; color: var(--green); margin-top: 8px; font-weight: 700; font-style: italic;">Ketuk / Klik 2x untuk memperbesar QRIS</p>
+        <p style="font-size: 11px; color: var(--green); margin-top: 8px; font-weight: 700;">Ketuk 2x untuk memperbesar QRIS</p>
         <div style="margin-top: 12px;">
-          <button type="button" class="download-btn" id="downloadQrisBtnPayment" style="display:inline-flex; align-items:center; gap:6px; background:white; color:var(--green); padding:8px 16px; border-radius:10px; font-size:13px; font-weight:700; text-decoration:none; border:1px solid var(--green); cursor:pointer; transition:transform .2s;">
-            <i data-lucide="download" class="w-4 h-4"></i> Scan / Unduh QRIS
+          <button type="button" class="download-btn" id="downloadQrisBtnPayment" style="display:inline-flex; align-items:center; gap:6px; background:white; color:var(--green); padding:8px 16px; border-radius:10px; font-size:13px; font-weight:700; border:1px solid var(--green); cursor:pointer;">
+            <i data-lucide="download" class="w-4 h-4"></i> Unduh QRIS
           </button>
         </div>
       </div>
@@ -564,7 +433,7 @@
           <span id="paymentTotalDisplay" style="font-size: 20px; font-weight: 800;">Rp0</span>
         </div>
         <button type="button" class="modal-add" data-action="confirm-wa" style="justify-content:center; gap:8px; margin-top: 0;">
-          <i data-lucide="message-circle" class="w-5 h-5"></i> Kirim Bukti Transfer
+          <i data-lucide="send" class="w-5 h-5"></i> Kirim Bukti Transfer
         </button>
       </div>
     </div>
