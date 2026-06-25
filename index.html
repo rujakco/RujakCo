@@ -218,7 +218,6 @@
 
   <div class="modal-overlay" id="miniCartModal"><div class="modal-content" style="max-width:420px;"><div class="modal-header"><span class="modal-header-title">🛒 Keranjang</span><div class="modal-header-actions"><button class="clear-cart-btn" id="clearCartBtn"><i data-lucide="trash" class="w-4 h-4"></i> Kosongkan</button><button class="modal-close" id="miniCartClose">&times;</button></div></div><div class="modal-body" style="padding:16px 20px;"><div class="step-indicator"><span class="step active" data-step="1" onclick="goToStep(1)">1</span><span class="step-line"></span><span class="step" data-step="2" onclick="goToStep(2)">2</span><span class="step-line"></span><span class="step" data-step="3" onclick="goToStep(3)">3</span></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray-400);margin:-4px 0 16px;"><span>Review</span><span>Pengiriman</span><span>Bayar</span></div>
   
-  <!-- STEP 1: REVIEW -->
   <div class="cart-step active" id="cartStep1">
     <div id="miniCartList"></div>
     <div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotalDisplay">Rp0</span></div>
@@ -227,14 +226,12 @@
     <button class="btn-step primary" id="step1Next" style="width:100%;justify-content:center;">Lanjut ke Pengiriman →</button>
   </div>
 
-  <!-- STEP 2: PENGIRIMAN -->
   <div class="cart-step" id="cartStep2">
     <div class="form-section"><label class="form-label">Nama Penerima</label><input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name"></div>
     <div class="form-section"><label class="form-label">Nomor HP</label><input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" autocomplete="tel"></div>
     <div class="form-section"><label class="form-label">Alamat</label><textarea id="customerAddress" placeholder="Alamat lengkap" rows="2"></textarea></div>
-    <div class="form-section"><label class="form-label">Opsi Kurir</label><div class="shipping-options"><button class="ship-btn active" data-provider="pembeli">🛵 Kurir Saya</button><button class="ship-btn" data-provider="rujakco">📦 Kurir Rujak.Co</button></div></div>
-    <div id="rujakcoOptions" style="display:none;"><div class="vehicle-options"><button class="veh-btn active" data-vehicle="motor">🛵 Motor</button><button class="veh-btn" data-vehicle="mobil">🚗 Mobil</button></div><div class="priority-toggle"><span>⚡ Prioritas</span><label class="switch"><input type="checkbox" id="priorityToggleMini"><span class="slider round"></span></label></div></div>
-    <!-- BIAYA PENGANTARAN -->
+    <div class="form-section"><label class="form-label">Opsi Kurir</label><div class="shipping-options"><button class="ship-btn active" data-provider="rujakco">📦 Kurir Rujak.Co</button><button class="ship-btn" data-provider="pembeli">🛵 Kurir Saya</button></div></div>
+    <div id="rujakcoOptions" style="display:block;"><div class="vehicle-options"><button class="veh-btn active" data-vehicle="motor">🛵 Motor</button><button class="veh-btn" data-vehicle="mobil">🚗 Mobil</button></div><div class="priority-toggle"><span>⚡ Prioritas</span><label class="switch"><input type="checkbox" id="priorityToggleMini"><span class="slider round"></span></label></div></div>
     <div style="background:var(--gray-100);border-radius:10px;padding:10px 14px;margin-top:10px;">
       <div style="font-size:10px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">Biaya Pengantaran</div>
       <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:600;margin-top:4px;">
@@ -242,13 +239,13 @@
         <span style="color:var(--red);font-weight:800;" id="step2ShippingCost">Rp0</span>
       </div>
       <div id="step2Subsidy" style="font-size:11px;color:var(--green);margin-top:2px;display:none;"></div>
+      <div id="step2BaseCost" style="font-size:11px;color:var(--gray-500);margin-top:2px;display:none;"></div>
       <div style="font-size:11px;color:var(--gray-500);margin-top:2px;">Jarak: <span id="step2Distance">-</span></div>
       <div style="font-size:12px;color:var(--gray-500);margin-top:6px;text-align:center;border-top:1px dashed var(--gray-200);padding-top:6px;">🕐 Estimasi tiba: <strong style="color:var(--green);">30-45 menit</strong> setelah konfirmasi</div>
     </div>
     <button class="btn-step primary" id="step2Next" style="width:100%;margin-top:12px;">Lanjut ke Bayar →</button>
   </div>
 
-  <!-- STEP 3: BAYAR -->
   <div class="cart-step" id="cartStep3">
     <div class="final-summary">
       <div class="final-row"><span>Subtotal</span><span id="finalSubtotal">Rp0</span></div>
