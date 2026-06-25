@@ -29,12 +29,22 @@
       "@context": "https://schema.org",
       "@type": "Restaurant",
       "name": "Rujak.Co",
-      "description": "Rujak Indonesia diracik ulang untuk generasi baru.",
+      "description": "Rujak Indonesia diracik ulang untuk generasi baru. Buah segar pilihan, sambal premium.",
       "url": "https://rujakco.vercel.app",
       "servesCuisine": "Indonesian",
       "areaServed": "Jabodetabek",
       "telephone": "+6289677161680",
-      "priceRange": "Rp25.000 - Rp200.000"
+      "priceRange": "Rp25.000 - Rp200.000",
+      "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Bekasi",
+          "addressRegion": "Jawa Barat",
+          "addressCountry": "ID"
+      },
+      "openingHoursSpecification": [
+          { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "10:00", "closes": "20:00" },
+          { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday","Sunday"], "opens": "09:00", "closes": "18:00" }
+      ]
   }
   </script>
   
@@ -92,7 +102,7 @@
       </div>
 
       <!-- Keuntungan Pelanggan -->
-      <div class="promo-strip" id="promoTrigger" data-action="open-promo" style="background:#f0fdf4;border:1px solid #d1fae5;margin:0 20px 14px;">
+      <div class="promo-strip" id="promoTrigger" data-action="open-promo" style="background:#f0fdf4;border:1px solid #d1fae5;margin:0 20px 14px;cursor:pointer;">
         <div class="promo-icon" style="background:#065f46;"><i data-lucide="crown" style="color:#F4C430;width:20px;height:20px;"></i></div>
         <div class="promo-text">
           <div class="promo-title" style="color:#065f46;">✨ Keuntungan Pelanggan</div>
@@ -102,7 +112,7 @@
 
       <!-- First-Timer -->
       <div style="margin:0 20px 16px;background:#f0fdf4;border:1px solid #065f46;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
-        <div style="background:#065f46;color:white;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;">⭐</div>
+        <div style="background:#065f46;color:white;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">⭐</div>
         <div>
           <div style="font-size:14px;font-weight:700;color:#065f46;">Paling Banyak Dicoba</div>
           <div style="font-size:12px;color:#6B7280;"><strong>Rujak Gaco</strong> — 6 buah pilihan + sambal mete premium. Cocok untuk pengalaman pertama.</div>
@@ -119,7 +129,7 @@
       </nav>
 
       <!-- Search & Menu -->
-      <div class="sec-header">
+      <div class="sec-header" id="menuHeader">
         <span class="sec-title">Koleksi Rasa</span>
         <div class="search-toggle-wrap" id="searchToggleWrap">
           <button class="search-icon-btn" id="searchIconBtn" aria-label="Cari menu"><i data-lucide="search" class="w-5 h-5"></i></button>
@@ -130,10 +140,11 @@
         </div>
       </div>
 
-      <div id="menuList" class="menu-list"></div>
+      <div class="empty-state" id="emptyState" style="display:none;">Menu tidak ditemukan.</div>
+      <div class="menu-list" id="menuList"></div>
 
-      <div class="divider" id="addonDivider"></div>
-      <div class="sec-header" id="addonHeader" style="align-items:baseline;gap:8px;">
+      <div class="divider" id="addonDivider" style="display:none;"></div>
+      <div class="sec-header" id="addonHeader" style="display:none;align-items:baseline;gap:8px;">
         <span class="sec-title">Tambahan</span>
         <span style="font-size:11px;color:#6B7280;font-weight:500;">Opsional — Sambal ekstra, buah tambahan</span>
       </div>
@@ -226,10 +237,7 @@
       <span class="cart-total" id="cartTotalDisplay">Rp0</span>
     </div>
     <button type="button" class="wa-btn" data-action="open-cart">
-      <div class="wa-btn-left">
-        <span class="wa-btn-sub">Detail Pesanan</span>
-        <span>Checkout Sekarang</span>
-      </div>
+      <div class="wa-btn-left"><span class="wa-btn-sub">Detail Pesanan</span><span>Checkout Sekarang</span></div>
       <div class="wa-badge"><i data-lucide="shopping-bag" class="w-4 h-4"></i></div>
     </button>
   </div>
@@ -247,20 +255,34 @@
     <div class="mission-item"><input type="checkbox" id="missionSpend" disabled /><span>Belanja min. Rp100.000 <b>(Potong Rp5.000)</b></span></div>
     <div class="mission-item"><input type="checkbox" id="checkShare" disabled /><span>Bagikan ke teman <b>(Potong Rp5.000)</b></span></div>
     <button type="button" class="share-btn" id="shareBtnModal" style="width:100%;justify-content:center;margin-top:12px;"><i data-lucide="share-2" class="w-4 h-4"></i> Bagikan Sekarang</button>
+    <p style="font-size:11px;color:#6B7280;margin-top:10px;text-align:center;">✅ Misi yang sudah tercapai akan otomatis tercentang.</p>
   </div></div></div>
 
   <!-- MODAL PRODUK -->
   <div class="modal-overlay" id="productModal"><div class="modal-content"><div class="modal-header"><span class="modal-header-title">Detail Produk</span><button class="modal-close" id="modalClose" aria-label="Tutup">&times;</button></div><div class="modal-body" id="modalBody"><div class="modal-img" id="modalImg"></div><div class="modal-title-wrap"><h2 class="modal-title" id="modalTitle"></h2><span class="modal-badge-eyebrow" id="modalBadge" style="display:none;"></span></div><p class="modal-desc" id="modalDesc"></p><div class="modal-detail-grid" id="modalDetailGrid"><div class="detail-row"><span class="label">Wadah</span><span class="value" id="modalContainer"></span></div><div class="detail-row"><span class="label">Ukuran</span><span class="value" id="modalSize"></span></div><div class="detail-row"><span class="label">Sambal</span><span class="value" id="modalSambal"></span></div></div><div class="modal-buah-text" id="modalBuahText"></div><div class="modal-tags" id="modalTags"></div><div class="spice-row"><i data-lucide="flame"></i><span class="spice-label">Level Pedas</span><span class="spice-value" id="modalSpiceLabel"></span><select id="spiceSelect"><option value="1">1 - Mild</option><option value="2">2 - Sedang</option><option value="3" selected>3 - Pedas</option><option value="4">4 - Extra Pedas</option><option value="5">5 - Very Hot</option></select></div></div><div class="modal-footer"><button class="modal-add" id="modalAdd"><span>Tambah ke Keranjang</span><span id="btnPrice">Rp0</span></button></div></div></div>
 
-  <!-- MODAL KERANJANG -->
-  <div class="modal-overlay" id="miniCartModal"><div class="modal-content" style="max-width:420px;"><div class="modal-header"><span class="modal-header-title">🛒 Keranjang</span><div class="modal-header-actions"><button class="clear-cart-btn" id="clearCartBtn"><i data-lucide="trash" class="w-4 h-4"></i> Kosongkan</button><button class="modal-close" id="miniCartClose">&times;</button></div></div><div class="modal-body" style="padding:16px 20px;"><div class="step-indicator"><span class="step active" data-step="1" onclick="goToStep(1)">1</span><span class="step-line"></span><span class="step" data-step="2" onclick="goToStep(2)">2</span><span class="step-line"></span><span class="step" data-step="3" onclick="goToStep(3)">3</span></div>
-  <div class="cart-step active" id="cartStep1"><div id="miniCartList"></div><div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotalDisplay">Rp0</span></div><div id="step1Progress"></div><div id="step1Upsell"></div><button class="btn-step primary" id="step1Next">Lanjut ke Pengiriman →</button></div>
-  <div class="cart-step" id="cartStep2"><div class="form-section"><label class="form-label" for="customerName">Nama Penerima</label><input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name"></div><div class="form-section"><label class="form-label" for="customerPhone">Nomor HP</label><input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" autocomplete="tel"></div><div class="form-section"><label class="form-label" for="customerAddress">Alamat</label><textarea id="customerAddress" placeholder="Alamat lengkap" rows="2"></textarea></div><div class="form-section"><label class="form-label">Opsi Kurir</label><div class="shipping-options"><button class="ship-btn active" data-provider="rujakco">📦 Kurir Rujak.Co</button><button class="ship-btn" data-provider="pembeli">🛵 Kurir Saya</button></div></div><div id="rujakcoOptions" style="display:block;"><div class="vehicle-options"><button class="veh-btn active" data-vehicle="motor">🛵 Motor</button><button class="veh-btn" data-vehicle="mobil">🚗 Mobil</button></div><div class="priority-toggle" style="flex-direction:column;align-items:flex-start;gap:4px;"><div style="display:flex;align-items:center;justify-content:space-between;width:100%;"><span style="font-weight:600;font-size:13px;">⚡ Pengiriman Prioritas</span><label class="switch"><input type="checkbox" id="priorityToggleMini"><span class="slider round"></span></label></div><span style="font-size:10px;color:#6B7280;">🚀 Pesanan didahulukan — estimasi tiba 15-25 menit lebih cepat</span></div></div><div style="background:#f9fafb;border-radius:10px;padding:10px 14px;margin-top:10px;"><div style="font-size:10px;font-weight:700;color:#6B7280;text-transform:uppercase;">Biaya Pengantaran</div><div style="display:flex;justify-content:space-between;font-size:14px;font-weight:600;margin-top:4px;"><span id="step2Zone">-</span><span style="color:#DC2626;font-weight:800;" id="step2ShippingCost">Rp0</span></div><div id="step2Subsidy" style="font-size:11px;color:#065f46;margin-top:2px;display:none;"></div><div id="step2BaseCost" style="font-size:11px;color:#6B7280;margin-top:2px;display:none;"></div><div style="font-size:11px;color:#6B7280;margin-top:2px;">Jarak: <span id="step2Distance">-</span></div><div style="font-size:12px;color:#6B7280;margin-top:6px;text-align:center;border-top:1px dashed #E5E7EB;padding-top:6px;">🕐 Estimasi tiba: <strong style="color:#065f46;">30-45 menit</strong></div></div><button class="btn-step primary" id="step2Next">Lanjut ke Bayar →</button></div>
-  <div class="cart-step" id="cartStep3"><div class="final-summary"><div class="final-row"><span>Subtotal</span><span id="finalSubtotal">Rp0</span></div><div class="final-row discount"><span>Diskon</span><span id="finalDiscount">-Rp0</span></div><div class="final-row"><span>Biaya Pengantaran</span><span id="finalShipping">Rp0</span></div><div class="final-row" id="finalSubsidy" style="display:none;color:#065f46;font-weight:600;"><span>Subsidi Pengiriman</span><span>-Rp0</span></div><div class="final-row total"><span>Total</span><span id="finalTotal">Rp0</span></div></div><div class="form-section"><label class="form-label" for="orderNotes">Catatan (Opsional)</label><textarea id="orderNotes" placeholder="Contoh: Sambal dipisah" rows="2"></textarea></div><div class="gift-section"><label><input type="checkbox" id="giftToggle"> 🎁 Kirim sebagai Kado</label><div id="giftFields" style="display:none;margin-top:8px;"><input type="text" id="giftSender" placeholder="Nama pengirim"><textarea id="giftMessage" placeholder="Pesan kado" rows="2"></textarea></div></div><button class="btn-step primary" id="btnOpenPayment">💳 Bayar Via QRIS</button></div>
+  <!-- MODAL KERANJANG 3-STEP -->
+  <div class="modal-overlay" id="miniCartModal"><div class="modal-content" style="max-width:420px;"><div class="modal-header"><span class="modal-header-title">🛒 Keranjang</span><div class="modal-header-actions"><button class="clear-cart-btn" id="clearCartBtn"><i data-lucide="trash" class="w-4 h-4"></i> Kosongkan</button><button class="modal-close" id="miniCartClose">&times;</button></div></div><div class="modal-body" style="padding:16px 20px;"><div class="step-indicator"><span class="step active" data-step="1" onclick="goToStep(1)" style="cursor:pointer;">1</span><span class="step-line"></span><span class="step" data-step="2" onclick="goToStep(2)" style="cursor:pointer;">2</span><span class="step-line"></span><span class="step" data-step="3" onclick="goToStep(3)" style="cursor:pointer;">3</span></div><div style="display:flex;justify-content:space-between;font-size:11px;color:#6B7280;margin:-4px 0 16px;"><span>Review</span><span>Pengiriman</span><span>Bayar</span></div>
+  
+  <div class="cart-step active" id="cartStep1"><div id="miniCartList"></div><div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotalDisplay">Rp0</span></div><div id="step1Progress"></div><div id="step1Upsell"></div><button class="btn-step primary" id="step1Next" style="width:100%;justify-content:center;">Lanjut ke Pengiriman →</button></div>
+
+  <div class="cart-step" id="cartStep2">
+    <div class="form-section"><label class="form-label" for="customerName">Nama Penerima</label><input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name"></div>
+    <div class="form-section"><label class="form-label" for="customerPhone">Nomor HP</label><input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" autocomplete="tel"></div>
+    <div class="form-section"><label class="form-label" for="customerAddress">Alamat</label><textarea id="customerAddress" placeholder="Alamat lengkap" rows="2"></textarea></div>
+    <div class="form-section"><label class="form-label">Opsi Kurir</label><div class="shipping-options"><button class="ship-btn active" data-provider="rujakco">📦 Kurir Rujak.Co</button><button class="ship-btn" data-provider="pembeli">🛵 Kurir Saya</button></div></div>
+    <div id="rujakcoOptions" style="display:block;"><div class="vehicle-options"><button class="veh-btn active" data-vehicle="motor">🛵 Motor</button><button class="veh-btn" data-vehicle="mobil">🚗 Mobil</button></div>
+      <div class="priority-toggle" style="flex-direction:column;align-items:flex-start;gap:4px;"><div style="display:flex;align-items:center;justify-content:space-between;width:100%;"><span style="font-weight:600;font-size:13px;">⚡ Pengiriman Prioritas</span><label class="switch"><input type="checkbox" id="priorityToggleMini"><span class="slider round"></span></label></div><span style="font-size:10px;color:#6B7280;">🚀 Pesanan didahulukan — estimasi tiba 15-25 menit lebih cepat</span></div>
+    </div>
+    <div style="background:#f9fafb;border-radius:10px;padding:10px 14px;margin-top:10px;"><div style="font-size:10px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.05em;">Biaya Pengantaran</div><div style="display:flex;justify-content:space-between;font-size:14px;font-weight:600;margin-top:4px;"><span id="step2Zone">-</span><span style="color:#DC2626;font-weight:800;" id="step2ShippingCost">Rp0</span></div><div id="step2Subsidy" style="font-size:11px;color:#065f46;margin-top:2px;display:none;"></div><div id="step2BaseCost" style="font-size:11px;color:#6B7280;margin-top:2px;display:none;"></div><div style="font-size:11px;color:#6B7280;margin-top:2px;">Jarak: <span id="step2Distance">-</span></div><div style="font-size:12px;color:#6B7280;margin-top:6px;text-align:center;border-top:1px dashed #E5E7EB;padding-top:6px;">🕐 Estimasi tiba: <strong style="color:#065f46;">30-45 menit</strong></div></div>
+    <button class="btn-step primary" id="step2Next" style="width:100%;margin-top:12px;">Lanjut ke Bayar →</button>
+  </div>
+
+  <div class="cart-step" id="cartStep3"><div class="final-summary"><div class="final-row"><span>Subtotal</span><span id="finalSubtotal">Rp0</span></div><div class="final-row discount"><span>Diskon</span><span id="finalDiscount">-Rp0</span></div><div class="final-row"><span>Biaya Pengantaran</span><span id="finalShipping">Rp0</span></div><div class="final-row" id="finalSubsidy" style="display:none;color:#065f46;font-weight:600;"><span>Subsidi Pengiriman</span><span>-Rp0</span></div><div class="final-row total"><span>Total</span><span id="finalTotal">Rp0</span></div></div><div class="form-section"><label class="form-label" for="orderNotes">Catatan (Opsional)</label><textarea id="orderNotes" placeholder="Contoh: Sambal dipisah" rows="2"></textarea></div><div class="gift-section"><label><input type="checkbox" id="giftToggle"> 🎁 Kirim sebagai Kado</label><div id="giftFields" style="display:none;margin-top:8px;"><input type="text" id="giftSender" placeholder="Nama pengirim"><textarea id="giftMessage" placeholder="Pesan kado" rows="2"></textarea></div></div><button class="btn-step primary" id="btnOpenPayment" style="width:100%;justify-content:center;margin-top:12px;">💳 Bayar Via QRIS</button></div>
   </div></div></div>
 
   <!-- MODAL QRIS -->
-  <div class="modal-overlay" id="paymentModal"><div class="modal-content"><div class="modal-header"><span class="modal-header-title">Pembayaran QRIS</span><button class="modal-close" id="paymentClose" aria-label="Tutup">&times;</button></div><div class="modal-body" style="text-align:center;"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" id="qrisImagePayment" style="width:100%;aspect-ratio:1/1;object-fit:contain;border-radius:10px;" /><p style="font-size:12px;color:#065f46;margin-top:8px;font-weight:700;">📱 Ketuk untuk perbesar QRIS</p><button type="button" class="download-btn" id="downloadQrisBtnPayment" style="display:inline-flex;align-items:center;gap:6px;background:white;color:#065f46;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;border:1px solid #065f46;cursor:pointer;margin-top:12px;"><i data-lucide="download" class="w-4 h-4"></i> Unduh QRIS</button></div><div class="modal-footer" style="flex-direction:column;align-items:stretch;gap:10px;"><div style="display:flex;align-items:center;justify-content:space-between;background:#DC2626;color:white;border-radius:12px;padding:12px 16px;font-weight:700;"><span>Total Tagihan</span><span id="paymentTotalDisplay" style="font-size:20px;font-weight:800;">Rp0</span></div><button type="button" class="modal-add" data-action="confirm-wa"><i data-lucide="send" class="w-5 h-5"></i> Kirim Bukti Transfer</button></div></div></div>
+  <div class="modal-overlay" id="paymentModal"><div class="modal-content"><div class="modal-header"><span class="modal-header-title">Pembayaran QRIS</span><button class="modal-close" id="paymentClose" aria-label="Tutup">&times;</button></div><div class="modal-body" style="text-align:center;"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" id="qrisImagePayment" style="width:100%;aspect-ratio:1/1;object-fit:contain;border-radius:10px;" /><p style="font-size:12px;color:#065f46;margin-top:8px;font-weight:700;">📱 Ketuk untuk perbesar QRIS</p><button type="button" class="download-btn" id="downloadQrisBtnPayment" style="display:inline-flex;align-items:center;gap:6px;background:white;color:#065f46;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;border:1px solid #065f46;cursor:pointer;margin-top:12px;"><i data-lucide="download" class="w-4 h-4"></i> Unduh QRIS</button></div><div class="modal-footer" style="flex-direction:column;align-items:stretch;gap:10px;"><div style="display:flex;align-items:center;justify-content:space-between;background:#DC2626;color:white;border-radius:12px;padding:12px 16px;font-weight:700;"><span>Total Tagihan</span><span id="paymentTotalDisplay" style="font-size:20px;font-weight:800;">Rp0</span></div><button type="button" class="modal-add" data-action="confirm-wa" style="justify-content:center;gap:8px;"><i data-lucide="send" class="w-5 h-5"></i> Kirim Bukti Transfer</button></div></div></div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
