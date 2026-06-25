@@ -332,6 +332,7 @@
   function renderMiniCart() {
     const summary = getCartSummary();
     
+    // Step 1: Render daftar item
     const list = document.getElementById('miniCartList');
     if (list) {
       let html = '';
@@ -349,6 +350,7 @@
     const subtotalEl = document.getElementById('cartSubtotalDisplay');
     if (subtotalEl) subtotalEl.textContent = fmt(summary.subtotal);
 
+    // Step 3: Final summary
     const finalSubtotal = document.getElementById('finalSubtotal');
     const finalDiscount = document.getElementById('finalDiscount');
     const finalShipping = document.getElementById('finalShipping');
@@ -395,20 +397,59 @@
     if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
   }
 
-  // ===================== STEP NAVIGATION =====================
+  // ===================== ✅ STEP NAVIGATION (PERBAIKAN) =====================
   function goToStep(step) {
     state.currentStep = step;
-    document.querySelectorAll('.cart-step').forEach(el => el.classList.remove('active'));
-    const stepEl = document.getElementById(`cartStep${step}`);
-    if (stepEl) stepEl.classList.add('active');
     
+    // Sembunyikan semua step
+    document.querySelectorAll('.cart-step').forEach(el => {
+      el.style.display = 'none';
+      el.classList.remove('active');
+    });
+    
+    // Tampilkan step yang dipilih
+    const stepEl = document.getElementById(`cartStep${step}`);
+    if (stepEl) {
+      stepEl.style.display = 'block'; // ✅ FORCE display block
+      stepEl.classList.add('active');
+    }
+    
+    // Update step indicator
     document.querySelectorAll('.step').forEach((el, i) => {
       el.classList.remove('active', 'done');
       if (i + 1 === step) el.classList.add('active');
       else if (i + 1 < step) el.classList.add('done');
     });
     
-    if (step === 3) renderMiniCart();
+    // ✅ Render ulang mini cart untuk memastikan data terbaru
+    renderMiniCart();
+    
+    // ✅ Set data customer dari state ke form
+    setTimeout(() => {
+      const nameEl = document.getElementById('customerName');
+      const phoneEl = document.getElementById('customerPhone');
+      const addressEl = document.getElementById('customerAddress');
+      const giftToggle = document.getElementById('giftToggle');
+      const giftFields = document.getElementById('giftFields');
+      
+      if (nameEl) nameEl.value = state.customerName || '';
+      if (phoneEl) phoneEl.value = state.customerPhone || '';
+      if (addressEl) addressEl.value = state.customerAddress || '';
+      if (giftToggle) {
+        giftToggle.checked = state.isGift;
+        if (giftFields) giftFields.style.display = state.isGift ? 'block' : 'none';
+      }
+      
+      const rujakOpts = document.getElementById('rujakcoOptions');
+      if (rujakOpts) rujakOpts.style.display = state.shippingProvider === 'rujakco' ? 'block' : 'none';
+      
+      document.querySelectorAll('.ship-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.provider === state.shippingProvider);
+      });
+      document.querySelectorAll('.veh-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.vehicle === state.vehicleType);
+      });
+    }, 50);
   }
 
   // ===================== MODALS =====================
@@ -484,8 +525,7 @@
 
   const miniCartModal = document.getElementById('miniCartModal');
   function openMiniCart() {
-    goToStep(1);
-    renderMiniCart();
+    goToStep(1); // ✅ Ini akan handle display step 1
     if (miniCartModal) {
       miniCartModal.classList.add('active');
       document.body.style.overflow = 'hidden';
@@ -493,27 +533,36 @@
   }
   
   function closeMiniCart() {
-    const notesEl = document.getElementById('orderNotes');
+    // Simpan data dari form ke state
     const nameEl = document.getElementById('customerName');
     const phoneEl = document.getElementById('customerPhone');
     const addressEl = document.getElementById('customerAddress');
     const giftToggle = document.getElementById('giftToggle');
     const senderEl = document.getElementById('giftSender');
     const messageEl = document.getElementById('giftMessage');
+    const notesEl = document.getElementById('orderNotes');
     
-    state.orderNotes = sanitize(notesEl?.value || '');
     state.customerName = sanitize(nameEl?.value || '');
     state.customerPhone = sanitize(phoneEl?.value || '');
     state.customerAddress = sanitize(addressEl?.value || '');
     state.isGift = giftToggle?.checked || false;
     state.giftSender = sanitize(senderEl?.value || '');
     state.giftMessage = sanitize(messageEl?.value || '');
+    state.orderNotes = sanitize(notesEl?.value || '');
+    
+    // Simpan shipping provider
+    const shipBtn = document.querySelector('.ship-btn.active');
+    if (shipBtn) state.shippingProvider = shipBtn.dataset.provider;
+    
+    const vehBtn = document.querySelector('.veh-btn.active');
+    if (vehBtn) state.vehicleType = vehBtn.dataset.vehicle;
     
     if (miniCartModal) {
       miniCartModal.classList.remove('active'); 
       document.body.style.overflow = ''; 
     }
     saveCustomerData();
+    updateUI();
   }
   
   function clearCart() {
@@ -574,14 +623,25 @@
     
     if (summary.isOutOfRange) return showToast('Maaf, pengiriman di luar jangkauan');
     
-    const name = sanitize(state.customerName);
-    const phone = sanitize(state.customerPhone);
-    const address = sanitize(state.customerAddress);
+    // Ambil nilai terbaru dari form
+    const nameEl = document.getElementById('customerName');
+    const phoneEl = document.getElementById('customerPhone');
+    const addressEl = document.getElementById('customerAddress');
     
-    if (!validateName(name)) return showToast('❌ Nama minimal 2 karakter'), document.getElementById('customerName')?.focus();
-    if (!validatePhone(phone)) return showToast('❌ Nomor HP tidak valid (08xx)'), document.getElementById('customerPhone')?.focus();
-    if (!validateAddress(address)) return showToast('❌ Alamat minimal 5 karakter'), document.getElementById('customerAddress')?.focus();
+    const name = sanitize(nameEl?.value || state.customerName);
+    const phone = sanitize(phoneEl?.value || state.customerPhone);
+    const address = sanitize(addressEl?.value || state.customerAddress);
+    
+    if (!validateName(name)) return showToast('❌ Nama minimal 2 karakter'), nameEl?.focus();
+    if (!validatePhone(phone)) return showToast('❌ Nomor HP tidak valid (08xx)'), phoneEl?.focus();
+    if (!validateAddress(address)) return showToast('❌ Alamat minimal 5 karakter'), addressEl?.focus();
     if (summary.items.length === 0) return showToast('Keranjang kosong');
+
+    // Update state
+    state.customerName = name;
+    state.customerPhone = phone;
+    state.customerAddress = address;
+    saveCustomerData();
 
     const payBtn = document.querySelector('[data-action="confirm-wa"]');
     if (payBtn) {
@@ -632,7 +692,9 @@
         isGift: state.isGift, 
         giftSender: sanitize(state.giftSender), 
         giftMessage: sanitize(state.giftMessage), 
-        hasShared: state.hasShared 
+        hasShared: state.hasShared,
+        shippingProvider: state.shippingProvider,
+        vehicleType: state.vehicleType
       })); 
     } catch (e) {
       console.warn('⚠️ Gagal menyimpan data pelanggan');
@@ -650,7 +712,9 @@
         state.isGift = data.isGift || false; 
         state.giftSender = sanitize(data.giftSender || ''); 
         state.giftMessage = sanitize(data.giftMessage || ''); 
-        state.hasShared = data.hasShared || false; 
+        state.hasShared = data.hasShared || false;
+        if (data.shippingProvider) state.shippingProvider = data.shippingProvider;
+        if (data.vehicleType) state.vehicleType = data.vehicleType;
       } 
     } catch (_) {} 
   }
@@ -848,7 +912,18 @@
 
     document.getElementById('step1Next')?.addEventListener('click', () => { goToStep(2); });
     document.getElementById('step2Back')?.addEventListener('click', () => { goToStep(1); });
-    document.getElementById('step2Next')?.addEventListener('click', () => { goToStep(3); renderMiniCart(); });
+    document.getElementById('step2Next')?.addEventListener('click', () => {
+      // Simpan data step 2 sebelum lanjut
+      const nameEl = document.getElementById('customerName');
+      const phoneEl = document.getElementById('customerPhone');
+      const addressEl = document.getElementById('customerAddress');
+      
+      state.customerName = sanitize(nameEl?.value || '');
+      state.customerPhone = sanitize(phoneEl?.value || '');
+      state.customerAddress = sanitize(addressEl?.value || '');
+      
+      goToStep(3);
+    });
     document.getElementById('step3Back')?.addEventListener('click', () => { goToStep(2); });
 
     document.querySelectorAll('.ship-btn').forEach(btn => {
@@ -1041,7 +1116,6 @@
         }
       }
       
-      // FAQ toggle
       const faqQuestion = e.target.closest('[data-toggle="faq"]');
       if (faqQuestion) {
         const faqItem = faqQuestion.closest('.faq-item');
@@ -1049,7 +1123,6 @@
       }
     });
     
-    // QRIS zoom
     const qrisImg = document.getElementById('qrisImagePayment');
     if (qrisImg) {
       qrisImg.addEventListener('click', function() {
@@ -1068,28 +1141,6 @@
       const s = localStorage.getItem('rujak_cart_minimized'); 
       if (s !== null) state.isCartMinimized = s === 'true'; 
     } catch (_) {}
-    
-    const nameEl = document.getElementById('customerName');
-    const phoneEl = document.getElementById('customerPhone');
-    const addressEl = document.getElementById('customerAddress');
-    const giftToggle = document.getElementById('giftToggle');
-    const senderEl = document.getElementById('giftSender');
-    const messageEl = document.getElementById('giftMessage');
-    const giftFields = document.getElementById('giftFields');
-    
-    if (nameEl) nameEl.value = sanitize(state.customerName);
-    if (phoneEl) phoneEl.value = sanitize(state.customerPhone);
-    if (addressEl) addressEl.value = sanitize(state.customerAddress);
-    if (giftToggle) giftToggle.checked = state.isGift;
-    if (senderEl) senderEl.value = sanitize(state.giftSender);
-    if (messageEl) messageEl.value = sanitize(state.giftMessage);
-    if (giftFields) giftFields.style.display = state.isGift ? 'block' : 'none';
-    
-    state.shippingProvider = 'pembeli'; 
-    state.isPriority = false;
-    
-    document.querySelectorAll('.ship-btn').forEach(b => b.classList.toggle('active', b.dataset.provider === 'pembeli'));
-    document.querySelectorAll('.veh-btn').forEach(b => b.classList.toggle('active', b.dataset.vehicle === 'motor'));
     
     updateUI(); 
     detectLocation(); 
