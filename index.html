@@ -38,7 +38,28 @@
       "url": "https://rujakco.vercel.app",
       "servesCuisine": "Indonesian",
       "areaServed": "Jabodetabek",
-      "telephone": "6289677161680"
+      "telephone": "+6289677161680",
+      "priceRange": "Rp25.000 - Rp200.000",
+      "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Bekasi",
+          "addressRegion": "Jawa Barat",
+          "addressCountry": "ID"
+      },
+      "openingHoursSpecification": [
+          {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+              "opens": "10:00",
+              "closes": "20:00"
+          },
+          {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Saturday", "Sunday"],
+              "opens": "09:00",
+              "closes": "18:00"
+          }
+      ]
   }
   </script>
 
@@ -56,10 +77,10 @@
     <header id="header">
       <div class="header-top">
         <div class="header-left">
-          <a href="#" class="brand-logo" onclick="return false;">
+          <button type="button" class="brand-logo" style="background:none;border:none;padding:0;cursor:default;display:flex;align-items:center;gap:6px;">
             <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" />
             <span class="brand-name">Rujak<span>.Co</span></span>
-          </a>
+          </button>
         </div>
         <div class="header-right">
           <div class="store-status" id="storeStatus" title="Jam operasional">
@@ -80,7 +101,7 @@
     <div class="content-wrapper">
       <div class="hero-wrap">
         <div class="hero">
-          <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Rujak Premium" fetchpriority="high" onerror="this.style.display='none'" />
+          <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Rujak Premium" fetchpriority="high" width="1260" height="540" onerror="this.style.display='none'" />
           <div class="hero-grad"></div>
           <div class="hero-content">
             <h2 class="hero-title">Indonesia<br>Dalam Satu<br>Wadah</h2>
@@ -405,7 +426,6 @@
     </div>
   </div>
 
-  <!-- Scripts -->
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="app.js"></script>
 </body>
