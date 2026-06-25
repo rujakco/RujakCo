@@ -18,7 +18,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
 
-  <!-- Kembalikan ke file CSS eksternal, tanpa query string -->
   <link rel="stylesheet" href="style.css" />
   <script defer src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -208,7 +207,7 @@
     <div class="shipping-toggle">
       <input type="checkbox" id="priorityToggle" />
       <label for="priorityToggle" class="toggle-label">
-        <i data-lucide="rocket"></i>
+        <i data-lucide="zap"></i>
         <span class="badge-priority">Prioritas</span>
       </label>
     </div>
@@ -329,36 +328,6 @@
       <div id="miniCartList"></div>
 
       <div class="form-section">
-        <label class="form-label">Metode Pengiriman</label>
-        <div class="shipping-method-row">
-          <button type="button" class="method-btn active" id="btnAutoDetect">📍 Deteksi Otomatis</button>
-          <button type="button" class="method-btn" id="btnManualDistrict">📋 Pilih Kecamatan</button>
-        </div>
-        <div class="district-select-wrap" id="districtSelectWrap" style="display:none;">
-          <select id="districtSelect">
-            <option value="">-- Pilih Kecamatan --</option>
-            <option value="bekasi barat">Bekasi Barat</option>
-            <option value="bekasi timur">Bekasi Timur</option>
-            <option value="bekasi selatan">Bekasi Selatan</option>
-            <option value="bekasi utara">Bekasi Utara</option>
-            <option value="rawalumbu">Rawalumbu</option>
-            <option value="jatiasih">Jatiasih</option>
-            <option value="pondokgede">Pondok Gede</option>
-            <option value="cikarang">Cikarang</option>
-            <option value="jakarta pusat">Jakarta Pusat</option>
-            <option value="jakarta selatan">Jakarta Selatan</option>
-            <option value="jakarta timur">Jakarta Timur</option>
-            <option value="jakarta barat">Jakarta Barat</option>
-            <option value="jakarta utara">Jakarta Utara</option>
-            <option value="depok">Depok</option>
-            <option value="bogor">Bogor</option>
-            <option value="tangerang">Tangerang</option>
-            <option value="tangerang selatan">Tangerang Selatan</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-section">
         <label class="form-label">Nama Penerima</label>
         <input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name" />
       </div>
@@ -374,6 +343,46 @@
       <div class="form-section">
         <label class="form-label">Catatan Pesanan (Opsional)</label>
         <textarea id="orderNotes" placeholder="Contoh: Sambal dipisah, untuk kado..." rows="2"></textarea>
+      </div>
+
+      <!-- Waktu Pengiriman -->
+      <div class="form-section" style="margin-top: 16px; border-top: 1px dashed var(--gray-200); padding-top: 16px;">
+        <label class="form-label">Waktu Pengiriman</label>
+        <div class="shipping-method-row">
+          <button type="button" class="method-btn active" id="btnWaktuSekarang">Kirim Segera</button>
+          <button type="button" class="method-btn" id="btnWaktuPO">Terjadwal (PO)</button>
+        </div>
+        <div id="poScheduleWrap" style="display:none; margin-top:8px; gap:8px;">
+          <input type="date" id="poDate" style="flex:1; padding: 8px; border-radius: 8px; border: 1px solid var(--gray-200);" />
+          <input type="time" id="poTime" style="flex:1; padding: 8px; border-radius: 8px; border: 1px solid var(--gray-200);" />
+        </div>
+      </div>
+
+      <!-- Pilih Kurir -->
+      <div class="form-section" id="courierSection" style="display:none;">
+        <label class="form-label">Estimasi Ongkir & Kurir</label>
+        <select id="courierSelect" style="font-weight:700; color:var(--green); cursor:pointer; background-color: var(--green-pale);">
+          <option value="">Menghitung jarak...</option>
+        </select>
+      </div>
+
+      <!-- Metode Pembayaran Ongkir -->
+      <div class="form-section" style="margin-top: 16px; border-top: 1px dashed var(--gray-200); padding-top: 16px;">
+        <label class="form-label">Metode Pembayaran Ongkir</label>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; font-weight:600; color:var(--gray-700);">
+            <input type="radio" name="paymentMethod" id="payBayarKurir" checked />
+            💵 Bayar ke Kurir (Di Tempat)
+          </label>
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; font-weight:600; color:var(--gray-700);">
+            <input type="radio" name="paymentMethod" id="payGabungQRIS" />
+            📲 Digabung ke Tagihan QRIS
+          </label>
+        </div>
+        <!-- Peringatan -->
+        <div id="ongkirWarning" style="background:#fee2e2; color:#991b1b; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:600; margin-top:8px;">
+          ⚠️ Ongkir dibayar terpisah ke kurir. Total QRIS <strong>tidak termasuk</strong> ongkir.
+        </div>
       </div>
 
       <div class="form-section">
@@ -396,18 +405,8 @@
         </div>
       </div>
 
-      <div id="miniCartShipping" class="mini-cart-shipping" style="display:none;">
-        <span class="shipping-amount" id="miniCartShippingAmount">Rp0</span>
-        <div class="shipping-toggle">
-          <input type="checkbox" id="priorityToggleMini" />
-          <label for="priorityToggleMini" class="toggle-label">
-            <i data-lucide="rocket"></i>
-            <span class="badge-priority">Prioritas</span>
-          </label>
-        </div>
-      </div>
       <div class="mini-cart-total-final">
-        <span>Total</span>
+        <span>Total Tagihan QRIS</span>
         <span id="miniCartFinalTotal">Rp0</span>
       </div>
       <button type="button" class="wa-btn" id="btnOpenPayment" style="margin-top: 16px;">Bayar Via QRIS</button>
