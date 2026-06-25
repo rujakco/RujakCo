@@ -13,13 +13,13 @@
     body { font-family: 'DM Sans', sans-serif; background: #f5f5f5; padding: 20px; }
     .container { max-width: 700px; margin: 0 auto; }
     h2 { color: #0F4D37; margin: 20px 0; display: flex; align-items: center; gap: 8px; }
-    .nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+    .nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
     .nav-tab { padding: 10px 20px; border: none; background: #e5e7eb; border-radius: 8px; cursor: pointer; font-weight: 600; }
     .nav-tab.active { background: #0F4D37; color: white; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
     .order, .product-item { background: white; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-    .order-header, .product-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .order-header, .product-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 4px; }
     .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; }
     .badge-pending { background: #fef3c7; color: #92400e; }
     .badge-active { background: #d1fae5; color: #065f46; }
@@ -39,17 +39,21 @@
     #productModal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center; padding:20px; }
     #productModal .modal-content { background:white; border-radius:16px; padding:24px; width:100%; max-width:500px; max-height:90vh; overflow-y:auto; }
     .studio-iframe { width: 100%; height: 80vh; border: 1px solid #e5e7eb; border-radius: 12px; }
-    /* Login form style */
     .login-box { max-width:400px; margin:100px auto; background:white; padding:40px; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.1); }
     .login-box h2 { color:#0F4D37; margin-bottom:8px; }
     .login-box p { color:#6B7280; font-size:14px; margin-bottom:24px; }
-    .login-box input { width:100%; padding:10px 12px; border:1px solid #D1D5DB; border-radius:8px; font-size:14px; }
+    .login-box input { width:100%; padding:10px 12px; border:1px solid #D1D5DB; border-radius:8px; font-size:14px; margin-bottom:12px; }
     .login-box button { width:100%; background:#0F4D37; color:white; border:none; padding:12px; border-radius:8px; font-weight:700; font-size:16px; cursor:pointer; }
+    .login-box button:hover { background: #0a3a2a; }
     .login-box .error { color:#D62828; font-size:13px; margin-top:12px; display:none; }
+    @media (max-width: 480px) {
+      .two-col { grid-template-columns: 1fr; }
+      .nav-tabs { gap: 6px; }
+      .nav-tab { font-size: 12px; padding: 8px 14px; }
+    }
   </style>
 </head>
 <body>
-  <!-- Kontainer utama akan diisi oleh JS setelah login -->
   <div id="appContainer"></div>
   <div class="toast" id="toastNotif">🔔 Pesanan baru masuk!</div>
 
@@ -57,7 +61,6 @@
   <script>
     (function() {
       const SUPABASE_URL = "https://ghhnnfrmftttptcejizp.supabase.co";
-      // ✅ ANON KEY (sama seperti app.js)
       const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoaG5uZnJtZnR0dHB0Y2VqaXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNjA1ODksImV4cCI6MjA5NzgzNjU4OX0.FM-sPvJJzviX2kA0GEHnznOppivm4JNyC4IPFv_RkdE";
       const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -87,14 +90,10 @@
             <h2>🔐 Admin Login</h2>
             <p>Masuk untuk mengelola pesanan & produk.</p>
             <form id="adminLoginForm">
-              <div style="margin-bottom:16px;">
-                <label style="display:block;font-weight:600;font-size:13px;margin-bottom:4px;">Email</label>
-                <input type="email" id="loginEmail" placeholder="admin@rujakco.com" required>
-              </div>
-              <div style="margin-bottom:20px;">
-                <label style="display:block;font-weight:600;font-size:13px;margin-bottom:4px;">Password</label>
-                <input type="password" id="loginPassword" placeholder="••••••••" required>
-              </div>
+              <label style="display:block;font-weight:600;font-size:13px;margin-bottom:4px;">Email</label>
+              <input type="email" id="loginEmail" placeholder="admin@rujakco.com" required>
+              <label style="display:block;font-weight:600;font-size:13px;margin-bottom:4px;">Password</label>
+              <input type="password" id="loginPassword" placeholder="••••••••" required>
               <button type="submit">🔓 Masuk</button>
               <div id="loginError" class="error"></div>
             </form>
@@ -152,7 +151,7 @@
             </div>
 
             <div id="tab-products" class="tab-content">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:8px;">
                 <strong>Daftar Produk</strong>
                 <button class="btn btn-primary" onclick="showProductForm()">+ Tambah Produk</button>
               </div>
@@ -160,8 +159,7 @@
             </div>
 
             <div id="tab-studio" class="tab-content">
-              <!-- ✅ PATH STUDIO DIPERBARUI -->
-              <iframe src="/studio/studio.html" class="studio-iframe" title="Studio"></iframe>
+              <iframe src="/studio.html" class="studio-iframe" title="Studio"></iframe>
             </div>
 
             <div id="productModal">
@@ -185,7 +183,7 @@
                   <div class="form-group"><label>Porsi</label><input type="text" id="prodPortion"></div>
                   <div class="form-group"><label>Thumbnail URL</label><input type="text" id="prodThumb"></div>
                   <div class="form-group"><label>Image URL</label><input type="text" id="prodImage"></div>
-                  <div style="display:flex; gap:8px; margin-top:16px;">
+                  <div style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;">
                     <button type="submit" class="btn btn-primary">Simpan</button>
                     <button type="button" class="btn" onclick="closeProductForm()">Batal</button>
                   </div>
@@ -220,18 +218,22 @@
             }
             container.innerHTML = data.map(o => `
               <div class="order">
-                <div class="order-header"><span class="order-name">${escapeHtml(o.customer_name)}</span><span class="order-date">${new Date(o.created_at).toLocaleString('id-ID')}</span></div>
-                <div>${(o.items || []).map(i => `<div class="order-item"><span>${escapeHtml(i.name)} x${i.qty}</span><span>Rp${i.price.toLocaleString('id-ID')}</span></div>`).join('')}</div>
-                <div class="contact">📱 ${escapeHtml(o.customer_phone)} | 📍 ${escapeHtml(o.customer_address)}</div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-                  <span class="badge badge-pending">${o.status || 'pending'}</span>
-                  <span style="font-size:13px; color:#6b7280;">Diskon: Rp${(o.discount||0).toLocaleString('id-ID')} | Ongkir: Rp${(o.shipping_cost||0).toLocaleString('id-ID')}</span>
+                <div class="order-header">
+                  <span class="order-name"><strong>${escapeHtml(o.customer_name)}</strong></span>
+                  <span class="order-date" style="font-size:12px;color:#6b7280;">${new Date(o.created_at).toLocaleString('id-ID')}</span>
                 </div>
-                <div class="order-total">Rp${o.total.toLocaleString('id-ID')}</div>
+                <div style="font-size:14px;color:#374151;margin:4px 0;">${(o.items || []).map(i => `<span>${escapeHtml(i.name)} x${i.qty}</span>`).join(' • ')}</div>
+                <div style="font-size:13px;color:#6b7280;">📱 ${escapeHtml(o.customer_phone)} | 📍 ${escapeHtml(o.customer_address)}</div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; flex-wrap:wrap; gap:4px;">
+                  <span class="badge badge-pending">${o.status || 'pending'}</span>
+                  <span style="font-size:12px; color:#6b7280;">Diskon: Rp${(o.discount||0).toLocaleString('id-ID')} | Ongkir: Rp${(o.shipping_cost||0).toLocaleString('id-ID')}</span>
+                </div>
+                <div style="font-size:18px;font-weight:800;color:#0F4D37;margin-top:4px;">Rp${o.total.toLocaleString('id-ID')}</div>
               </div>
             `).join('');
           } catch (err) {
             container.innerHTML = '<div class="empty">❌ Gagal memuat data.</div>';
+            console.error(err);
           }
         };
 
@@ -251,7 +253,7 @@
                   <span><strong>${escapeHtml(p.name)}</strong> (${p.cat}) — Rp${p.price.toLocaleString('id-ID')}</span>
                   <span class="badge ${p.is_active ? 'badge-active' : 'badge-inactive'}">${p.is_active ? 'Aktif' : 'Nonaktif'}</span>
                 </div>
-                <div style="display:flex; gap:8px; margin-top:8px;">
+                <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
                   <button class="btn btn-edit" onclick="editProduct('${p.id}')">✏️ Edit</button>
                   <button class="btn btn-danger" onclick="deleteProduct('${p.id}')">🗑️ Hapus</button>
                 </div>
@@ -259,6 +261,7 @@
             `).join('');
           } catch (err) {
             container.innerHTML = '<div class="empty">❌ Gagal memuat produk.</div>';
+            console.error(err);
           }
         };
 
@@ -355,7 +358,6 @@
 
         if (Notification.permission !== "denied") Notification.requestPermission();
 
-        // Load data awal
         window.loadOrders();
         window.loadProducts();
       }
