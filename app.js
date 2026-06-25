@@ -112,20 +112,16 @@
     DEFAULT_DISTANCE: 2
   };
 
-  const DISTRICT_MAP = {
-    'bekasi barat': 3, 'bekasi timur': 5, 'bekasi selatan': 7, 'bekasi utara': 8,
-    'rawalumbu': 6, 'jatiasih': 9, 'pondokgede': 12, 'cikarang': 18,
-    'jakarta pusat': 18, 'jakarta selatan': 20, 'jakarta timur': 15, 'jakarta barat': 22, 'jakarta utara': 25,
-    'depok': 28, 'bogor': 35, 'tangerang': 30, 'tangerang selatan': 27
-  };
-
   const state = {
     cart: {}, activeFilter: 'all', searchQuery: '', userDistance: null,
     isPriority: false, orderNotes: '', isCartMinimized: false, customerName: '',
     customerPhone: '', customerAddress: '', isGift: false, giftSender: '',
-    giftMessage: '', useManualDistrict: false, selectedDistrict: '',
-    hasShared: false,
-    deliveryType: 'segera', deliveryDate: '', deliveryTime: '', courierData: { cost: 0, name: '' }
+    giftMessage: '', hasShared: false,
+    // Fitur baru
+    deliveryType: 'segera', deliveryDate: '', deliveryTime: '',
+    selectedCourier: null,
+    paymentMethod: 'bayar_kurir', // 'bayar_kurir' | 'digabung_qris'
+    courierRates: []
   };
 
   // ===================== FUNGSI UTILITY =====================
@@ -149,7 +145,6 @@
       const response = await fetch(url);
       const data = await response.json();
       if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
-        // Konversi meter ke kilometer, bulatkan 1 desimal
         return Math.round((data.routes[0].distance / 1000) * 10) / 10;
       }
       return null;
@@ -167,16 +162,19 @@
     return discount;
   }
 
-  // ===================== FUNGSI ONGKIR (KURIR) =====================
+  // ===================== SIMULASI TARIF KURIR =====================
   function getCourierRates(distance) {
     if (distance > SYSTEM.MAX_DISTANCE) return [];
     const distKm = Math.ceil(distance);
-    const extraKm = Math.max(0, distKm - 4);
+    const extraKm = Math.max(0, distKm - 3);
+    const priority = state.isPriority;
+    const base = priority ? 8000 : 0; // prioritas menambah Rp8.000
+
     return [
-      { id: 'borzo', name: 'Borzo (Sameday)', cost: 11000 + (extraKm * 2000) },
-      { id: 'grab', name: 'GrabExpress (Instan)', cost: 13000 + (extraKm * 2500) },
-      { id: 'gojek', name: 'GoSend (Instan)', cost: 14000 + (extraKm * 2500) },
-      { id: 'lalamove', name: 'Lalamove Mobil', cost: 20000 + (extraKm * 4000) }
+      { id: 'borzo', name: 'Borzo (Sameday)', cost: base + 11000 + (extraKm * 2000) },
+      { id: 'grab', name: 'GrabExpress (Instan)', cost: base + 13000 + (extraKm * 2500) },
+      { id: 'gojek', name: 'GoSend (Instan)', cost: base + 14000 + (extraKm * 2500) },
+      { id: 'lalamove', name: 'Lalamove Mobil', cost: base + 20000 + (extraKm * 4000) }
     ];
   }
 
@@ -197,66 +195,88 @@
 
   function updateShippingUI(distance) {
     const costEl = document.getElementById('shippingCost');
-    document.getElementById('shippingDistance').textContent = '~' + Math.ceil(distance) + ' km';
     const courierSection = document.getElementById('courierSection');
     const selectEl = document.getElementById('courierSelect');
+
+    if (distance === null || distance === undefined) {
+      costEl.textContent = '📍 Butuh GPS';
+      if (courierSection) courierSection.style.display = 'none';
+      state.courierRates = [];
+      state.selectedCourier = null;
+      return;
+    }
+
+    document.getElementById('shippingDistance').textContent = '~' + Math.ceil(distance) + ' km';
 
     if (distance > SYSTEM.MAX_DISTANCE) {
       costEl.textContent = '❌';
       document.getElementById('outOfRange').style.display = 'block';
+      document.getElementById('outOfRange').textContent = '⚠️ Pengiriman hanya tersedia untuk wilayah Jabodetabek (maks. 50 km)';
       if (courierSection) courierSection.style.display = 'none';
-      state.courierData = { cost: 0, name: '' };
+      state.courierRates = [];
+      state.selectedCourier = null;
     } else {
       document.getElementById('outOfRange').style.display = 'none';
       if (courierSection) courierSection.style.display = 'block';
-      
+
       const couriers = getCourierRates(distance);
+      state.courierRates = couriers;
+
       let html = '';
       couriers.forEach(c => {
-        const isSelected = (state.courierData.name === c.name) ? 'selected' : '';
-        html += `<option value="${c.cost}|${c.name}" ${isSelected}>${c.name} — Rp${c.cost.toLocaleString('id-ID')}</option>`;
+        const sel = (state.selectedCourier && state.selectedCourier.id === c.id) ? 'selected' : '';
+        html += `<option value="${c.id}" data-cost="${c.cost}" ${sel}>${c.name} — Rp${c.cost.toLocaleString('id-ID')}</option>`;
       });
-      
+
       selectEl.innerHTML = html;
-      if (!state.courierData.name || !couriers.find(c => c.name === state.courierData.name)) {
-        state.courierData = { cost: couriers[0].cost, name: couriers[0].name };
+
+      // Set default jika belum dipilih
+      if (!state.selectedCourier || !couriers.find(c => c.id === state.selectedCourier.id)) {
+        state.selectedCourier = couriers[0];
       }
-      costEl.textContent = 'Cek Kurir';
+
+      // Tampilkan estimasi ongkir
+      const est = state.selectedCourier ? fmt(state.selectedCourier.cost) : 'Pilih Kurir';
+      costEl.textContent = est;
     }
+
     if (document.getElementById('miniCartModal').classList.contains('active')) renderMiniCart();
   }
 
   async function detectLocation() {
     const STORE_LAT = -6.2333, STORE_LNG = 107.0;
-    document.getElementById('shippingCost').textContent = '⏳';
-    
-    if (state.useManualDistrict && state.selectedDistrict) {
-      const dist = DISTRICT_MAP[state.selectedDistrict] || SYSTEM.DEFAULT_DISTANCE;
-      state.userDistance = dist;
-      const distName = state.selectedDistrict.replace(/\b\w/g, l => l.toUpperCase());
-      document.getElementById('locationDisplay').textContent = distName + ' ▾';
-      updateShippingUI(dist);
+    const costEl = document.getElementById('shippingCost');
+    const courierSection = document.getElementById('courierSection');
+
+    costEl.textContent = '📍 Butuh GPS';
+    if (courierSection) courierSection.style.display = 'none';
+    document.getElementById('outOfRange').style.display = 'none';
+
+    if (!navigator.geolocation) {
+      showToast('❌ GPS tidak tersedia di perangkat ini. Tidak dapat memesan.');
       return;
     }
-    
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async pos => {
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
         const lat = pos.coords.latitude, lng = pos.coords.longitude;
-        
-        // Ambil jarak dari OSRM
-        document.getElementById('shippingCost').textContent = '🛣️ Menghitung rute...';
+        costEl.textContent = '🛣️ Menghitung rute...';
+
         const roadDistance = await fetchOSRMDistance(STORE_LAT, STORE_LNG, lat, lng);
-        
+
         if (roadDistance !== null) {
           state.userDistance = roadDistance;
         } else {
-          // Fallback ke Haversine jika OSRM gagal
-          const R = 6371; const dLat = (lat - STORE_LAT) * Math.PI / 180; const dLon = (lng - STORE_LNG) * Math.PI / 180;
-          const a = Math.sin(dLat/2)**2 + Math.cos(STORE_LAT * Math.PI/180) * Math.cos(lat * Math.PI/180) * Math.sin(dLon/2)**2;
-          state.userDistance = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+          // Fallback Haversine * 1.35
+          const R = 6371;
+          const dLat = (lat - STORE_LAT) * Math.PI / 180;
+          const dLon = (lng - STORE_LNG) * Math.PI / 180;
+          const a = Math.sin(dLat / 2) ** 2 + Math.cos(STORE_LAT * Math.PI / 180) * Math.cos(lat * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+          const straight = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+          state.userDistance = Math.round(straight * 1.35 * 10) / 10;
+          console.warn('OSRM gagal, menggunakan fallback Haversine * 1.35');
         }
-        
-        // Ambil nama kota
+
         try {
           const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=10&accept-language=id`);
           const data = await res.json();
@@ -265,20 +285,18 @@
         } catch (_) {
           document.getElementById('locationDisplay').textContent = 'Lokasi Anda ▾';
         }
-        
+
         updateShippingUI(state.userDistance);
-      }, async () => {
-        const fallback = await getLocationFallback();
-        state.userDistance = fallback.distance;
-        document.getElementById('locationDisplay').textContent = fallback.city + ' ▾';
-        updateShippingUI(fallback.distance);
-      }, { enableHighAccuracy: true, timeout: 10000 });
-    } else {
-      const fallback = await getLocationFallback();
-      state.userDistance = fallback.distance;
-      document.getElementById('locationDisplay').textContent = fallback.city + ' ▾';
-      updateShippingUI(fallback.distance);
-    }
+      },
+      (err) => {
+        costEl.textContent = '❌ GPS wajib diaktifkan';
+        document.getElementById('outOfRange').style.display = 'block';
+        document.getElementById('outOfRange').textContent = '⚠️ GPS harus diaktifkan untuk memesan. Buka pengaturan browser/HP Anda.';
+        showToast('❌ GPS wajib diaktifkan! Tidak dapat memesan tanpa GPS.');
+        state.userDistance = null;
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
   }
 
   // ===================== CART ENGINE =====================
@@ -293,9 +311,15 @@
     });
     const discount = calculateDiscount(subtotal);
     const distance = state.userDistance !== null ? state.userDistance : SYSTEM.DEFAULT_DISTANCE;
-    const shippingCost = state.courierData.cost || 0;
-    const total = subtotal - discount + shippingCost;
-    return { items, totalQty, subtotal, discount, shippingCost, shippingDistance: distance, total, isOutOfRange: distance > SYSTEM.MAX_DISTANCE };
+    const shippingCost = state.selectedCourier ? state.selectedCourier.cost : 0;
+    const isOutOfRange = distance > SYSTEM.MAX_DISTANCE;
+
+    // Total untuk QRIS: jika bayar_kurir, ongkir tidak dijumlahkan
+    const qrisTotal = state.paymentMethod === 'digabung_qris'
+      ? subtotal - discount + shippingCost
+      : subtotal - discount;
+
+    return { items, totalQty, subtotal, discount, shippingCost, shippingDistance: distance, qrisTotal, isOutOfRange };
   }
 
   // ===================== UI RENDER =====================
@@ -329,7 +353,7 @@
         : `<div class="qty-control"><button type="button" class="qty-btn" data-action="decrease" data-id="${firstCartKey}">−</button><span class="qty-num">${qty}</span><button type="button" class="qty-btn" data-action="increase" data-id="${firstCartKey}">+</button></div>`;
       const badgeRight = p.badge ? `<span class="item-badge-right ${p.badgeColor}">${p.badge}</span>` : '';
       const flavorTag = p.flavorTag ? `<span class="item-flavor-tag">${p.flavorTag}</span>` : '';
-      const buahChips = (p.buah || []).slice(0,4).map(b => `<span class="item-buah-chip">${b}</span>`).join('');
+      const buahChips = (p.buah || []).slice(0, 4).map(b => `<span class="item-buah-chip">${b}</span>`).join('');
       const moreChips = (p.buah || []).length > 4 ? `<span class="item-buah-chip">+${p.buah.length - 4}</span>` : '';
       html += `
         <div class="menu-item" data-id="${p.id}" tabindex="0" role="button" aria-label="Detail ${p.name}">
@@ -403,11 +427,11 @@
     updateProgressBar(summary.subtotal); updateMissionCheckboxes(summary.subtotal);
     const bar = document.getElementById('bottom-bar');
     const discountLabel = document.getElementById('discountLabel'), totalEl = document.getElementById('cartTotalDisplay');
-    const footer = document.querySelector('.footer-brand');
+    const footerEl = document.querySelector('.footer-brand');
 
     if (summary.totalQty > 0 && !state.isCartMinimized) {
       bar.classList.add('visible');
-      if (footer) footer.style.paddingBottom = '180px';
+      if (footerEl) footerEl.style.paddingBottom = '180px';
       document.getElementById('cartPreview').textContent = summary.totalQty + ' item' + (summary.totalQty > 1 ? 's' : '');
       if (summary.discount > 0) {
         discountLabel.style.display = 'inline-block';
@@ -419,7 +443,7 @@
       }
     } else {
       bar.classList.remove('visible');
-      if (footer) footer.style.paddingBottom = '0';
+      if (footerEl) footerEl.style.paddingBottom = '0';
     }
     saveCart(); updateFloatingButton();
   }
@@ -428,6 +452,7 @@
     const summary = getCartSummary();
     const list = document.getElementById('miniCartList');
     const finalTotal = document.getElementById('miniCartFinalTotal');
+    const warningEl = document.getElementById('ongkirWarning');
 
     document.getElementById('orderNotes').value = state.orderNotes;
     document.getElementById('customerName').value = state.customerName;
@@ -436,10 +461,22 @@
     document.getElementById('giftToggle').checked = state.isGift;
     document.getElementById('giftFields').style.display = state.isGift ? 'block' : 'none';
 
+    // Update radio payment method
+    const radioBayarKurir = document.getElementById('payBayarKurir');
+    const radioGabungQRIS = document.getElementById('payGabungQRIS');
+    if (radioBayarKurir) radioBayarKurir.checked = (state.paymentMethod === 'bayar_kurir');
+    if (radioGabungQRIS) radioGabungQRIS.checked = (state.paymentMethod === 'digabung_qris');
+
+    // Peringatan
+    if (state.paymentMethod === 'bayar_kurir') {
+      if (warningEl) warningEl.style.display = 'block';
+    } else {
+      if (warningEl) warningEl.style.display = 'none';
+    }
+
     let html = '';
     if (summary.items.length === 0) {
       html = '<p style="color:var(--gray-500);text-align:center;padding:20px 0;">Keranjang kosong</p>';
-      finalTotal.textContent = 'Rp0';
     } else {
       summary.items.forEach(item => {
         const spiceText = item.spice ? ' (Level ' + item.spice + ')' : '';
@@ -453,15 +490,23 @@
           </div>
         `;
       });
-      finalTotal.textContent = fmt(summary.total);
     }
     list.innerHTML = html;
 
+    // Total tagihan QRIS
+    finalTotal.textContent = fmt(summary.qrisTotal);
+
     const btnPay = document.getElementById('btnOpenPayment');
-    if (state.userDistance === null) { btnPay.disabled = true; btnPay.style.opacity = '0.5'; btnPay.textContent = '⏳ Menghitung Jarak...'; }
-    else if (summary.isOutOfRange) { btnPay.disabled = true; btnPay.style.opacity = '0.5'; btnPay.textContent = 'Di luar jangkauan'; }
-    else if (summary.items.length === 0) { btnPay.disabled = true; btnPay.style.opacity = '0.5'; btnPay.textContent = 'Keranjang kosong'; }
-    else { btnPay.disabled = false; btnPay.style.opacity = '1'; btnPay.textContent = 'Bayar Via QRIS'; }
+    if (state.userDistance === null) {
+      btnPay.disabled = true; btnPay.style.opacity = '0.5'; btnPay.textContent = '📍 Butuh GPS untuk Checkout';
+    } else if (summary.isOutOfRange) {
+      btnPay.disabled = true; btnPay.style.opacity = '0.5'; btnPay.textContent = 'Di luar jangkauan';
+    } else if (summary.items.length === 0) {
+      btnPay.disabled = true; btnPay.style.opacity = '0.5'; btnPay.textContent = 'Keranjang kosong';
+    } else {
+      btnPay.disabled = false; btnPay.style.opacity = '1'; btnPay.textContent = 'Bayar Via QRIS';
+    }
+
     if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
   }
 
@@ -501,11 +546,15 @@
     productModal.classList.add('active'); document.body.style.overflow = 'hidden';
   }
 
-  function updateSpiceHighlight(level) { document.getElementById('modalSpiceLabel').textContent = level + ' - ' + (SPICE_NAMES[level-1] || 'Pedas'); }
+  function updateSpiceHighlight(level) { document.getElementById('modalSpiceLabel').textContent = level + ' - ' + (SPICE_NAMES[level - 1] || 'Pedas'); }
   function closeProductModal() { productModal.classList.remove('active'); document.body.style.overflow = ''; currentProductId = null; }
 
   const miniCartModal = document.getElementById('miniCartModal');
-  function openMiniCart() { renderMiniCart(); miniCartModal.classList.add('active'); document.body.style.overflow = 'hidden'; }
+  function openMiniCart() {
+    renderMiniCart();
+    miniCartModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
   function closeMiniCart() {
     state.orderNotes = document.getElementById('orderNotes').value;
     state.customerName = document.getElementById('customerName').value.trim();
@@ -532,7 +581,9 @@
         customer_name: state.customerName || 'Guest', customer_phone: state.customerPhone || '',
         customer_address: state.customerAddress || '', items: orderItems, subtotal, shipping_cost: shippingCost,
         discount, total, status: 'pending', is_gift: state.isGift, gift_sender: state.giftSender || null,
-        gift_message: state.giftMessage || null, mission_shared: state.hasShared
+        gift_message: state.giftMessage || null, mission_shared: state.hasShared,
+        delivery_type: state.deliveryType, delivery_date: state.deliveryDate, delivery_time: state.deliveryTime,
+        courier: state.selectedCourier ? state.selectedCourier.name : '', payment_method: state.paymentMethod
       };
       const { error } = await supabase.from('orders').insert([payload]);
       if (error) throw error; return true;
@@ -551,18 +602,27 @@
     const payBtn = document.querySelector('[data-action="confirm-wa"]');
     if (payBtn) payBtn.textContent = '⏳ Menyimpan...';
 
-    saveOrderToDatabase(summary.items, summary.total, summary.subtotal, summary.shippingCost, summary.discount)
+    saveOrderToDatabase(summary.items, summary.qrisTotal, summary.subtotal, summary.shippingCost, summary.discount)
       .finally(() => {
         let msg = 'Halo Rujak.Co! Saya ingin memesan:\n\n';
         summary.items.forEach(item => {
           const spiceText = item.spice ? ' (Level ' + item.spice + ')' : '';
           msg += '• ' + item.name + spiceText + ' (x' + item.qty + ') — ' + fmt(item.lineTotal) + '\n';
         });
-        
-        let timeStr = state.deliveryType === 'po' 
-          ? `Terjadwal (PO) - Tanggal: ${state.deliveryDate || '-'}, Jam: ${state.deliveryTime || '-'}` 
+
+        let timeStr = state.deliveryType === 'po'
+          ? `Terjadwal (PO) - Tanggal: ${state.deliveryDate || '-'}, Jam: ${state.deliveryTime || '-'}`
           : 'Kirim Segera (Hari Ini)';
         msg += '\n*Jadwal:* ' + timeStr + '\n';
+
+        if (state.selectedCourier) {
+          msg += '*Kurir:* ' + state.selectedCourier.name + ' — Estimasi: ' + fmt(state.selectedCourier.cost) + '\n';
+        }
+        msg += '*Metode Pembayaran Ongkir:* ' + (state.paymentMethod === 'bayar_kurir' ? 'Bayar ke Kurir (Di Tempat)' : 'Digabung ke QRIS') + '\n';
+
+        if (state.paymentMethod === 'bayar_kurir') {
+          msg += '\n⚠️ *Ongkir dibayar terpisah ke kurir.*\n';
+        }
 
         if (state.orderNotes) msg += '\n*Catatan Pesanan:*\n' + state.orderNotes + '\n';
         if (state.isGift) {
@@ -571,11 +631,14 @@
           if (state.giftMessage) msg += 'Ucapan: ' + state.giftMessage + '\n';
         }
         msg += '\n*Data Pengiriman:*\nNama : ' + name + '\nNo. HP : ' + phone + '\nAlamat : ' + address + '\n';
-        msg += '\nOngkir: ' + fmt(summary.shippingCost) + ' (' + (state.courierData.name || 'Menunggu Info') + ')';
         msg += '\nSubtotal: ' + fmt(summary.subtotal);
         if (summary.discount > 0) msg += '\nDiskon Misi Jajan: -' + fmt(summary.discount);
-        msg += '\n*Total Akhir: ' + fmt(summary.total) + '*\n\n*Saya sudah transfer via QRIS, ini bukti transfernya:*';
-        
+        msg += '\n*Total Tagihan QRIS: ' + fmt(summary.qrisTotal) + '*\n\n';
+        if (state.paymentMethod === 'digabung_qris') {
+          msg += 'Termasuk ongkir: ' + fmt(summary.shippingCost) + '\n';
+        }
+        msg += '*Saya sudah transfer via QRIS, ini bukti transfernya:*\n*(sertakan foto)*';
+
         window.location.href = 'https://wa.me/' + SYSTEM.WA_NUMBER + '?text=' + encodeURIComponent(msg);
       });
   }
@@ -609,9 +672,14 @@
   function minimizeCart() {
     state.isCartMinimized = true; localStorage.setItem('rujak_cart_minimized', 'true');
     document.getElementById('bottom-bar').classList.remove('visible'); updateFloatingButton();
-    const footer = document.querySelector('.footer-brand'); if (footer) footer.style.paddingBottom = '0';
+    const footerEl = document.querySelector('.footer-brand'); if (footerEl) footerEl.style.paddingBottom = '0';
   }
   function expandCart() { state.isCartMinimized = false; localStorage.setItem('rujak_cart_minimized', 'false'); updateFloatingButton(); renderCart(); }
+
+  function handlePriorityToggle(checked) {
+    state.isPriority = checked;
+    if (state.userDistance !== null) updateShippingUI(state.userDistance);
+  }
 
   function updateStoreStatus() { document.getElementById('storeStatusText').textContent = 'Buka'; document.getElementById('storeStatus')?.classList.remove('closed'); }
   function shareToWhatsApp() { window.location.href = 'https://wa.me/?text=' + encodeURIComponent('Hai! Cobain Rujak.Co yuk — rujak premium dengan buah segar pilihan dan sambal khas Indonesia. Lihat menu dan pesan langsung di sini:\n' + window.location.href); }
@@ -636,19 +704,13 @@
       }
     });
 
-    document.getElementById('btnAutoDetect').addEventListener('click', function() {
-      state.useManualDistrict = false; state.selectedDistrict = '';
-      this.classList.add('active'); document.getElementById('btnManualDistrict').classList.remove('active');
-      document.getElementById('districtSelectWrap').style.display = 'none'; detectLocation();
-    });
-    document.getElementById('btnManualDistrict').addEventListener('click', function() {
-      state.useManualDistrict = true; this.classList.add('active'); document.getElementById('btnAutoDetect').classList.remove('active');
-      document.getElementById('districtSelectWrap').style.display = 'block';
-    });
-    document.getElementById('districtSelect').addEventListener('change', function() {
-      state.selectedDistrict = this.value; if (state.selectedDistrict) detectLocation();
-    });
+    // Prioritas toggle
+    const priorityToggle = document.getElementById('priorityToggle');
+    const priorityToggleMini = document.getElementById('priorityToggleMini');
+    if (priorityToggle) priorityToggle.addEventListener('change', function() { handlePriorityToggle(this.checked); });
+    if (priorityToggleMini) priorityToggleMini.addEventListener('change', function() { handlePriorityToggle(this.checked); });
 
+    // Waktu Pengiriman
     const btnSekarang = document.getElementById('btnWaktuSekarang');
     const btnPO = document.getElementById('btnWaktuPO');
     const poWrap = document.getElementById('poScheduleWrap');
@@ -673,14 +735,31 @@
       document.getElementById('poTime').addEventListener('change', e => state.deliveryTime = e.target.value);
     }
 
+    // Kurir select
     const courierSel = document.getElementById('courierSelect');
     if (courierSel) {
       courierSel.addEventListener('change', function() {
-        const parts = this.value.split('|');
-        if (parts.length === 2) {
-          state.courierData = { cost: parseInt(parts[0], 10), name: parts[1] };
+        const selectedId = this.value;
+        const selected = state.courierRates.find(c => c.id === selectedId);
+        if (selected) {
+          state.selectedCourier = selected;
+          document.getElementById('shippingCost').textContent = fmt(selected.cost);
           renderMiniCart();
         }
+      });
+    }
+
+    // Metode Pembayaran Ongkir
+    const radioBayarKurir = document.getElementById('payBayarKurir');
+    const radioGabungQRIS = document.getElementById('payGabungQRIS');
+    if (radioBayarKurir) {
+      radioBayarKurir.addEventListener('change', function() {
+        if (this.checked) { state.paymentMethod = 'bayar_kurir'; renderMiniCart(); }
+      });
+    }
+    if (radioGabungQRIS) {
+      radioGabungQRIS.addEventListener('change', function() {
+        if (this.checked) { state.paymentMethod = 'digabung_qris'; renderMiniCart(); }
       });
     }
 
@@ -702,7 +781,7 @@
       document.addEventListener('click', (e) => { if (!searchToggleWrap.contains(e.target)) searchInputWrap.classList.remove('open'); });
     }
 
-    ['customerName','customerPhone','customerAddress','giftSender','giftMessage'].forEach(id => {
+    ['customerName', 'customerPhone', 'customerAddress', 'giftSender', 'giftMessage'].forEach(id => {
       document.getElementById(id).addEventListener('input', function() { state[id] = this.value.trim(); saveCustomerData(); });
     });
     document.getElementById('orderNotes').addEventListener('input', function() { state.orderNotes = this.value; });
@@ -719,7 +798,7 @@
         const { action, id } = actionBtn.dataset;
         if (action === 'open-modal' && id) return openProductModal(id);
         if (action === 'open-cart') return openMiniCart();
-        if (action === 'add-addon' && id) { state.cart[id] = state.cart[id] || { qty:0 }; state.cart[id].qty++; updateUI(); showToast('Berhasil ditambahkan ✓'); return; }
+        if (action === 'add-addon' && id) { state.cart[id] = state.cart[id] || { qty: 0 }; state.cart[id].qty++; updateUI(); showToast('Berhasil ditambahkan ✓'); return; }
         if (action === 'increase' && id && state.cart[id]) { state.cart[id].qty++; updateUI(); if (miniCartModal.classList.contains('active')) renderMiniCart(); return; }
         if (action === 'decrease' && id && state.cart[id]) { state.cart[id].qty--; if (state.cart[id].qty <= 0) delete state.cart[id]; updateUI(); if (miniCartModal.classList.contains('active')) renderMiniCart(); return; }
         if (action === 'remove' && id && state.cart[id]) { delete state.cart[id]; updateUI(); if (miniCartModal.classList.contains('active')) renderMiniCart(); showToast('Item dihapus'); return; }
@@ -800,6 +879,10 @@
     document.getElementById('giftSender').value = state.giftSender;
     document.getElementById('giftMessage').value = state.giftMessage;
     document.getElementById('giftFields').style.display = state.isGift ? 'block' : 'none';
+
+    // Default payment method = bayar_kurir
+    state.paymentMethod = 'bayar_kurir';
+
     updateUI(); detectLocation(); bindEvents();
 
     if ('serviceWorker' in navigator) {
