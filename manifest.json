@@ -1,21 +1,26 @@
 {
-  "name": "Rujak.Co",
+  "name": "Rujak.Co - Premium Rujak Delivery",
   "short_name": "Rujak.Co",
   "description": "Rujak premium dengan buah segar pilihan & sambal khas Indonesia",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FDFDF8",
   "theme_color": "#0F4D37",
+  "orientation": "portrait-primary",
+  "categories": ["food", "shopping"],
+  "lang": "id-ID",
   "icons": [
     {
       "src": "https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp",
       "sizes": "192x192",
-      "type": "image/webp"
+      "type": "image/webp",
+      "purpose": "any maskable"
     },
     {
       "src": "https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp",
       "sizes": "512x512",
-      "type": "image/webp"
+      "type": "image/webp",
+      "purpose": "any maskable"
     }
   ]
 }
