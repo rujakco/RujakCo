@@ -63,7 +63,7 @@
   <link rel="stylesheet" href="style.css" />
   <script defer src="https://unpkg.com/lucide@0.383.0"></script>
   <style>
-    /* === SUBSIDI POP-UP — BYPASS SEMUA OVERRIDE === */
+    /* === SUBSIDI POP-UP === */
     #subsidiPopup {
       display: none;
       position: fixed !important;
@@ -109,11 +109,39 @@
       font-variant-numeric: tabular-nums;
       transition: color 0.5s;
     }
-    /* Animasi subsidi bar setelah klaim */
     #shippingSubsidy.subsidi-claimed {
       background: #C8E6C9 !important;
       border: 1px solid #4CAF50 !important;
       transition: all 0.3s ease;
+    }
+
+    /* === RUNNING TESTIMONI === */
+    .testi-marquee {
+      background: #FFFDF5;
+      border-top: 1px solid #F0E6C0;
+      border-bottom: 1px solid #F0E6C0;
+      padding: 10px 0;
+      margin: 0 0 16px 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .testi-track {
+      display: inline-block;
+      animation: scrollTesti 50s linear infinite;
+    }
+    .testi-track span {
+      display: inline-block;
+      margin-right: 40px;
+      font-size: 12px;
+      color: #5D4E37;
+      font-style: italic;
+    }
+    @keyframes scrollTesti {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .testi-marquee:hover .testi-track {
+      animation-play-state: paused;
     }
   </style>
 </head>
@@ -184,6 +212,24 @@
         <span>🍍 Manis segar nanas & bengkuang</span>
         <span>📦 Sambal terpisah — tetap renyah</span>
       </div></div>
+
+      <!-- ============================================ -->
+      <!-- RUNNING TEXT TESTIMONI                        -->
+      <!-- ============================================ -->
+      <div class="testi-marquee">
+        <div class="testi-track">
+          <span>⭐️⭐️⭐️⭐️⭐️ "Buset ini rujak bukan kaleng-kaleng. Sambel metenya berasa banget, nggak pelit." – Dina, Bekasi</span>
+          <span>⭐️⭐️⭐️⭐️⭐️ "Ngidam rujak pas hamil, ini satu-satunya yang nggak ngecewain. Asem pedesnya pas." – Rina, Jakarta Timur</span>
+          <span>⭐️⭐️⭐️⭐️⭐️ "Gue kira overhype, ternyata emang enak. Buahnya seger, nggak kayak yang udah dipotong lama." – Aldo, Depok</span>
+          <span>⭐️⭐️⭐️⭐️⭐️ "Akhirnya ada rujak delivery yang sambalnya dipisah. Sampe rumah masih renyah buahnya." – Sari, Tangerang</span>
+          <span>⭐️⭐️⭐️⭐️⭐️ "Pesen buat kantor, abis semua 15 menit. Bos sampe nanyain beli di mana." – Hendra, Cikarang</span>
+          <span>⭐️⭐️⭐️⭐️⭐️ "Biasanya males beli rujak online karena suka benyek. Ini aman. Recommend banget." – Putri, Bekasi</span>
+          <span>⭐️⭐️⭐️⭐️⭐️ "Mete aslinya kerasa, bukan cuma kacang doang. Worth it lah buat harga segini." – Dimas, Jakarta Selatan</span>
+          <span>⭐️⭐️⭐️⭐️⭐️ "Dari tampilannya aja udah beda, bukan rujak biasa. Packagingnya proper." – Maya, Bogor</span>
+          <span>⭐️⭐️⭐️⭐️⭐️ "Pertama nyoba yang Classic, eh besoknya langsung repeat order. Nagih." – Yoga, Bintaro</span>
+          <span>⭐️⭐️⭐️⭐️⭐️ "Level pedasnya bisa diatur ya? Mantep. Gue yang doyan pedes puas banget." – Fajar, Cibubur</span>
+        </div>
+      </div>
       
       <div style="padding: 0 20px 12px; font-size: 13px; color: var(--green); font-weight: 600;"><i data-lucide="star" class="w-4 h-4 inline"></i> Pertama kali? Coba <strong>Rujak Segar</strong> — asem manis ringan, mudah disukai.</div>
       
@@ -302,7 +348,6 @@
         <span style="font-size:9px;color:var(--gray-400);margin-left:4px;">🚀 Lebih cepat</span>
       </div>
     </div>
-    <!-- SUBSIDI BAR — DENGAN INDIKATOR -->
     <div class="shipping-subsidy" id="shippingSubsidy" style="margin: 0 0 6px 0; border-radius: 12px; background: #E8F5E9; padding: 8px 12px; font-size: 11px; color: var(--green); font-weight: 600; display: flex; align-items: center; gap: 6px; transition: all 0.3s ease;">
       <i data-lucide="coins" class="w-4 h-4"></i>
       <span id="subsidyStatusText">Subsidi ongkir s/d Rp10.000 berlaku!</span>
@@ -583,7 +628,6 @@
       popupActive = false;
     }
   
-    // === UPDATE INDIKATOR SUBSIDI ===
     function updateSubsidyIndicator() {
       var statusText = document.getElementById('subsidyStatusText');
       var checkIcon = document.getElementById('subsidyCheck');
@@ -606,7 +650,6 @@
         step2Claimed.style.color = '#0a3d2a';
         step2Claimed.style.fontWeight = '700';
       }
-      // Re-init lucide icons untuk icon baru
       if (typeof lucide !== 'undefined') {
         lucide.createIcons();
       }
@@ -653,12 +696,8 @@
     if (claimBtn) {
       claimBtn.addEventListener('click', function() {
         closePopup();
-        
-        // Update indikator subsidi
         updateSubsidyIndicator();
         setStorage('subsidi_claimed', true);
-        
-        // Scroll ke menu
         var menuEl = document.getElementById('menuList') || document.getElementById('catScroll');
         if (menuEl) {
           menuEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -686,7 +725,6 @@
       
       await getFingerprint();
       
-      // Cek apakah user sudah klaim subsidi sebelumnya
       var claimed = getStorage('subsidi_claimed');
       if (claimed && claimed.value === true) {
         updateSubsidyIndicator();
