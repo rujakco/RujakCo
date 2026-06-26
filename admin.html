@@ -38,7 +38,7 @@
     .toast.show { opacity: 1; }
     #productModal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center; padding:20px; }
     #productModal .modal-content { background:white; border-radius:16px; padding:24px; width:100%; max-width:500px; max-height:90vh; overflow-y:auto; }
-    .studio-iframe, .buku-iframe { width: 100%; height: 80vh; border: 1px solid #e5e7eb; border-radius: 12px; }
+    .studio-iframe { width: 100%; height: 80vh; border: 1px solid #e5e7eb; border-radius: 12px; }
     .login-box { max-width:400px; margin:100px auto; background:white; padding:40px; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.1); }
     .login-box h2 { color:#0F4D37; margin-bottom:8px; }
     .login-box p { color:#6B7280; font-size:14px; margin-bottom:24px; }
@@ -200,7 +200,7 @@
           </div>
         `;
 
-        // Load Buku Master
+        // Panggil loader Buku Master
         loadBukuMaster();
 
         // ===== GLOBAL FUNCTIONS =====
@@ -359,30 +359,32 @@
           setTimeout(() => toastNotif.classList.remove('show'), 3000);
         }
 
-        // ===== LOAD BUKU MASTER =====
+        // ===== LOAD BUKU MASTER (FIX) =====
         async function loadBukuMaster() {
           const container = document.getElementById('bukuContainer');
-          const jsdelivrUrl = 'https://cdn.jsdelivr.net/gh/rujakco/RujakCo@9c9f8b8/assets/images/buku-master-rujakco.html';
-          
-          const iframe = document.createElement('iframe');
-          iframe.style.width = '100%';
-          iframe.style.height = '100%';
-          iframe.style.border = 'none';
-          iframe.title = 'Buku Master RujakCo';
-          iframe.src = jsdelivrUrl;
-          
-          container.innerHTML = '';
-          container.appendChild(iframe);
+          container.innerHTML = '<div class="loading">Memuat Buku Master...</div>';
 
-          iframe.onerror = async () => {
-            try {
-              const res = await fetch(jsdelivrUrl);
-              const html = await res.text();
-              iframe.srcdoc = html;
-            } catch (err) {
-              container.innerHTML = '<div class="empty">❌ Gagal memuat Buku Master. Periksa koneksi atau URL.</div>';
-            }
-          };
+          // URL raw dari jsDelivr (bisa juga dari raw.githubusercontent.com jika jsDelivr bermasalah)
+          const url = 'https://cdn.jsdelivr.net/gh/rujakco/RujakCo@9c9f8b8/assets/images/buku-master-rujakco.html';
+
+          try {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('Gagal mengambil data');
+            const html = await res.text();
+
+            const iframe = document.createElement('iframe');
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            iframe.style.border = 'none';
+            iframe.title = 'Buku Master RujakCo';
+            iframe.srcdoc = html;   // Render sebagai halaman, bukan kode
+
+            container.innerHTML = '';
+            container.appendChild(iframe);
+          } catch (err) {
+            container.innerHTML = '<div class="empty">❌ Gagal memuat Buku Master. Periksa koneksi atau URL.</div>';
+            console.error(err);
+          }
         }
 
         // ===== REALTIME =====
