@@ -164,7 +164,9 @@
             </div>
 
             <div id="tab-bukumas" class="tab-content">
-              <iframe src="https://raw.githubusercontent.com/rujakco/RujakCo/9c9f8b8f4ed260261f1d0f6dba9de68cb6f3fcee/assets/images/buku-master-rujakco.html" class="buku-iframe" title="Buku Master RujakCo"></iframe>
+              <div id="bukuContainer" style="width:100%; height:80vh; border:1px solid #e5e7eb; border-radius:12px; overflow:hidden;">
+                <div class="loading">Memuat Buku Master...</div>
+              </div>
             </div>
 
             <div id="productModal">
@@ -197,6 +199,9 @@
             </div>
           </div>
         `;
+
+        // Load Buku Master
+        loadBukuMaster();
 
         // ===== GLOBAL FUNCTIONS =====
         window.switchTab = function(tab) {
@@ -352,6 +357,32 @@
           toastNotif.textContent = msg;
           toastNotif.classList.add('show');
           setTimeout(() => toastNotif.classList.remove('show'), 3000);
+        }
+
+        // ===== LOAD BUKU MASTER =====
+        async function loadBukuMaster() {
+          const container = document.getElementById('bukuContainer');
+          const jsdelivrUrl = 'https://cdn.jsdelivr.net/gh/rujakco/RujakCo@9c9f8b8/assets/images/buku-master-rujakco.html';
+          
+          const iframe = document.createElement('iframe');
+          iframe.style.width = '100%';
+          iframe.style.height = '100%';
+          iframe.style.border = 'none';
+          iframe.title = 'Buku Master RujakCo';
+          iframe.src = jsdelivrUrl;
+          
+          container.innerHTML = '';
+          container.appendChild(iframe);
+
+          iframe.onerror = async () => {
+            try {
+              const res = await fetch(jsdelivrUrl);
+              const html = await res.text();
+              iframe.srcdoc = html;
+            } catch (err) {
+              container.innerHTML = '<div class="empty">❌ Gagal memuat Buku Master. Periksa koneksi atau URL.</div>';
+            }
+          };
         }
 
         // ===== REALTIME =====
