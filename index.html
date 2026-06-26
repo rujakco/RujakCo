@@ -260,10 +260,29 @@
     </div>
     <div class="shipping-subsidy" id="shippingSubsidy" style="margin:0 0 6px 0;border-radius:12px;background:#E8F5E9;padding:8px 12px;font-size:11px;color:var(--green);font-weight:600;display:flex;align-items:center;gap:6px;transition:all 0.3s ease;"><i data-lucide="coins" class="w-4 h-4"></i><span id="subsidyStatusText">Subsidi ongkir s/d Rp10.000 berlaku!</span><span id="subsidyCheck" style="display:none;margin-left:auto;background:var(--green);color:white;border-radius:50%;width:18px;height:18px;font-size:10px;text-align:center;line-height:18px;">✓</span></div>
     <div class="shipping-out-of-range" id="outOfRange" style="margin:0 0 10px 0;border-radius:12px;">⚠️ Pengiriman hanya tersedia untuk wilayah Jabodetabek (maks. 50 km)</div>
-    <div id="manualDistanceInput" style="display:none;margin:0 0 10px 0;">
-      <label for="manualZone" style="display:none;">Pilih zona pengiriman</label>
-      <select id="manualZone" data-action="manual-zone" aria-label="Pilih zona pengiriman" style="width:100%;padding:10px;border-radius:10px;border:1px solid #ddd;font-family:inherit;"><option value="">Pilih zona pengiriman...</option><option value="2">0-5 km (Gratis ongkir)</option><option value="8">5-10 km (Rp2.000)</option><option value="15">10-20 km (Rp8.000)</option><option value="25">20-30 km (Rp15.000)</option><option value="40">30-50 km (Rp25.000)</option></select>
+    <!-- PATCHED: elemen pemilihan zona manual ditambahkan -->
+    <div id="manualDistanceInput" style="display:none; margin:0 0 10px 0;">
+      <label for="manualZone" style="display:block;font-weight:600;margin-bottom:4px;">Pilih zona pengiriman</label>
+      <select id="manualZone" style="width:100%;padding:10px;border-radius:10px;border:1px solid #ddd;font-family:inherit;">
+        <option value="">Pilih zona pengiriman...</option>
+        <option value="2">0-5 km (Gratis ongkir)</option>
+        <option value="8">5-10 km (Rp2.000)</option>
+        <option value="15">10-20 km (Rp8.000)</option>
+        <option value="25">20-30 km (Rp15.000)</option>
+        <option value="40">30-50 km (Rp25.000)</option>
+      </select>
     </div>
+    <!-- PATCHED: wrapper untuk pilihan deteksi otomatis/manual -->
+    <div id="manualSelectWrapper" style="display:none; margin-bottom:10px;">
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <button type="button" id="btnAutoDetect" class="active" style="flex:1;padding:8px;border:1px solid var(--gray-200);border-radius:8px;background:white;">📍 Deteksi Otomatis</button>
+        <button type="button" id="btnManualDistrict" style="flex:1;padding:8px;border:1px solid var(--gray-200);border-radius:8px;background:white;">🗺️ Pilih Manual</button>
+      </div>
+      <select id="districtSelect" style="width:100%;padding:10px;border-radius:10px;border:1px solid #ddd;font-family:inherit;">
+        <option value="">Pilih kecamatan...</option>
+      </select>
+    </div>
+
     <div class="cart-summary" id="cartSummary" tabindex="0" role="button" aria-label="Buka keranjang"><span class="cart-items-preview" id="cartPreview">0 item</span><div class="cart-total-wrap"><span id="discountLabel" class="cart-discount-label" style="display:none;">-Rp10.000</span><span class="cart-total" id="cartTotalDisplay">Rp0</span></div></div>
     <button type="button" class="wa-btn" data-action="open-cart"><div class="wa-btn-left"><span class="wa-btn-sub">Ngiler?</span><span>Pesan Sekarang</span></div><div class="wa-badge"><i data-lucide="droplets" class="w-4 h-4"></i> Seger</div></button>
   </div>
