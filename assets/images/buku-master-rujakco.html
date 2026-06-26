@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📘 Buku Master Rujak.Co</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --green: #0F4D37;
+            --green-light: #E8F5E9;
+            --green-pale: #f0f7f2;
+            --red: #D62828;
+            --gold: #F4C430;
+            --ivory: #FFFDF5;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-700: #374151;
+            --gray-900: #111827;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            --radius: 12px;
+            --sidebar-width: 260px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8faf8;
+            color: var(--gray-900);
+            line-height: 1.6;
+            display: flex;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            background: var(--green);
+            color: white;
+            padding: 24px 16px;
+            overflow-y: auto;
+            flex-shrink: 0;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-brand {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-brand span {
+            color: var(--gold);
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 4px;
+        }
+
+        .sidebar-nav a {
+            display: block;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.75);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .sidebar-nav a.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border-left-color: var(--gold);
+        }
+
+        .sidebar-badge {
+            font-size: 10px;
+            background: var(--red);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        /* MAIN CONTENT */
+        .main {
+            flex: 1;
+            padding: 40px 48px 60px;
+            max-width: calc(100% - var(--sidebar-width));
+            min-width: 0;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--gray-200);
+            padding-bottom: 20px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--green);
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-header h1 small {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-500);
+            background: var(--gray-100);
+            padding: 4px 12px;
+            border-radius: 20px;
+            letter-spacing: 0;
+        }
+
+        .page-header .sub {
+            color: var(--gray-500);
+            font-size: 15px;
+            margin-top: 4px;
+        }
+
+        .section {
+            margin-bottom: 48px;
+            scroll-margin-top: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .section-header .badge-section {
+            background: var(--green);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 12px;
+            border-radius: 20px;
+            letter-spacing: 0.3px;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px 28px;
+            margin-bottom: 20px;
+            border: 1px solid var(--gray-200);
+            transition: box-shadow 0.2s;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+        }
+
+        .usp-item {
+            background: var(--green-pale);
+            padding: 16px 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--green);
+        }
+        .usp-item h4 {
+            color: var(--green);
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+        .usp-item p {
+            color: var(--gray-700);
+            font-size: 13px;
+            margin: 0;
+        }
+
+        /* TABLE */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        table th {
+            background: var(--green);
+            color: white;
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--gray-200);
+            vertical-align: top;
+        }
+
+        table tr:hover td {
+            background: #fafcfa;
+        }
+
+        .badge-cat {
+            display: inline-block;
+            background: var(--gray-100);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 20px;
+            color: var(--gray-700);
+            text-transform: uppercase;
+        }
+        .badge-cat.signature {
+            background: #fce4ec;
+            color: #c62828;
+        }
+        .badge-cat.classic {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        .badge-cat.reserve {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .tag-buah {
+            display: inline-block;
+            background: var(--gray-100);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin: 2px 2px 2px 0;
+        }
+
+        /* ACCORDION / DETAILS */
+        details {
+            margin-bottom: 8px;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        details summary {
+            padding: 14px 18px;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--gray-100);
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            list-style: none;
+        }
+
+        details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details summary::after {
+            content: "▸";
+            font-size: 18px;
+            color: var(--gray-400);
+            transition: transform 0.2s;
+        }
+
+        details[open] summary {
+            background: var(--green-light);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        details[open] summary::after {
+            transform: rotate(90deg);
+        }
+
+        details .detail-body {
+            padding: 18px 20px;
+            background: white;
+        }
+
+        .copy-block {
+            background: #fafcfa;
+            border-left: 3px solid var(--gold);
+            padding: 12px 16px;
+            margin: 8px 0;
+            border-radius: 4px;
+            font-size: 14px;
+            color: var(--gray-700);
+        }
+
+        .copy-block strong {
+            color: var(--green);
+        }
+
+        .testi-block {
+            background: var(--ivory);
+            border: 1px solid #f0e6c0;
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 8px;
+        }
+        .testi-block .stars {
+            color: var(--gold);
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+        .testi-block .text {
+            font-style: italic;
+            font-size: 14px;
+            margin: 4px 0;
+        }
+        .testi-block .author {
+            font-size: 12px;
+            color: var(--gray-500);
+            font-weight: 600;
+        }
+
+        .glossary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+        .glossary-item {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 12px 16px;
+        }
+        .glossary-item .term {
+            font-weight: 700;
+            color: var(--green);
+            font-size: 13px;
+        }
+        .glossary-item .ex {
+            font-size: 12px;
+            color: var(--gray-500);
+            margin-top: 2px;
+            font-style: italic;
+        }
+
+        .tech-code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            margin-top: 8px;
+        }
+        .tech-code .key {
+            color: #fcd34d;
+        }
+        .tech-code .string {
+            color: #6ee7b7;
+        }
+
+        .footer-doc {
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 2px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--gray-500);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .grid-2,
+            .grid-3,
+            .glossary-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 16px;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .sidebar-brand {
+                margin-bottom: 16px;
+            }
+            .sidebar-nav {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+            .sidebar-nav li {
+                margin: 0;
+            }
+            .sidebar-nav a {
+                padding: 6px 12px;
+                font-size: 12px;
+                border-left: none;
+            }
+            .main {
+                padding: 20px 16px 40px;
+                max-width: 100%;
+            }
+            .grid-2,
+            .grid-3,
+            .glossary-grid {
+                grid-template-columns: 1fr;
+            }
+            .page-header h1 {
+                font-size: 24px;
+                flex-wrap: wrap;
+            }
+            .card {
+                padding: 16px;
+            }
+        }
+
+        @media print {
+            .sidebar {
+                display: none;
+            }
+            .main {
+                max-width: 100%;
+                padding: 20px;
+            }
+            .card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                break-inside: avoid;
+            }
+            details {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            📘 Rujak<span>.Co</span>
+            <span style="font-size:10px;background:rgba(255,255,255,0.15);padding:2px 8px;border-radius:20px;margin-left:auto;">v.1.0</span>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a href="#identitas" class="active">🏷️ Identitas Brand</a></li>
+            <li><a href="#copywriting">📝 Arsip Copywriting</a></li>
+            <li><a href="#katalog">📦 Katalog Produk</a></li>
+            <li><a href="#promo">💰 Promo & Subsidi</a></li>
+            <li><a href="#operasional">📍 Operasional</a></li>
+            <li><a href="#backend">⚙️ Backend & DB</a></li>
+            <li><a href="#glosarium">📚 Glosarium</a></li>
+        </ul>
+        <div style="margin-top:32px;font-size:11px;color:rgba(255,255,255,0.4);border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;">
+            Internal Use Only<br>
+            Terakhir diperbarui: 26 Juni 2026
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <!-- HEADER -->
+        <div class="page-header">
+            <h1>
+                📘 Buku Master Rujak.Co
+                <small>Dokumentasi Brand</small>
+            </h1>
+            <div class="sub">Panduan lengkap identitas, copywriting, produk, promo, & sistem operasional Rujak.Co</div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 1: IDENTITAS -->
+        <!-- ============================================================ -->
+        <section class="section" id="identitas">
+            <div class="section-header">
+                <h2>🏷️ Identitas & Jiwa Brand</h2>
+                <span class="badge-section">Brand Identity</span>
+            </div>
+
+            <div class="card">
+                <div class="card-title">🎯 Tagline & Positioning</div>
+                <div class="grid-2">
+                    <div>
+                        <strong style="color:var(--gray-500);font-size:12px;text-transform:uppercase;">Headline Utama</strong>
+                        <div style="font-size:20px;font-weight:800;color:var(--green);margin-top:2px;">"Asem, Pedes, Manis, Seger. Dalam Satu Gigitan."</div>
+                    </div>
+                    <div>
+                        <strong style="color:var(--gray-500);font-size:12px;text-transform:uppercase;">Sub-headline</strong>
+                        <div style="font-size:15px;font-weight:600;color:var(--gray-700);margin-top:2px;">"Rujak premium dengan sambal mete terpisah — tetap renyah sampai tujuan. Subsidi ongkir s/d Rp10.000."</div>
+                    </div>
+                </div>
+                <div style="margin-top:12px;border-top:1px solid var(--gray-200);padding-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div><strong style="color:var(--gray-500);font-size:12px;">Deskripsi Meta</strong><br><span style="font-size:14px;">"Rujak premium dengan sambal mete terpisah — tetap renyah sampai tujuan. Subsidi ongkir s/d Rp10.000. 45 menit sampai."</span></div>
+                    <div><strong style="color:var(--gray-500);font-size:12px;">Tagline Footer</strong><br><span style="font-size:14px;">"Menghadirkan keberagaman rasa rujak Indonesia dalam satu pengalaman yang segar, modern, dan berkualitas."</span></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">💎 Unique Selling Points (USP)</div>
+                <div class="grid-2">
+                    <div class="usp-item">
+                        <h4>🥗 Sambal Diracik Terpisah</h4>
+                        <p>"Sambal dikemas dalam cup sealed. Buah tetap segar, tidak layu, tidak tumpah selama pengiriman."</p>
+                    </div>
+                    <div class="usp-item">
+                        <h4>🔒 Fresh-Lock System™</h4>
+                        <p>"Dijamin tetap renyah sampai tujuan. Sampai benyek? Kami ganti."</p>
+                    </div>
+                    <div class="usp-item">
+                        <h4>🚀 Antar Cepat — 45 Menit</h4>
+                        <p>"Dari dapur kami ke tangan Anda. Buah masih dingin, sambal masih segar."</p>
+                    </div>
+                    <div class="usp-item">
+                        <h4>💰 Subsidi Ongkir s/d Rp10.000</h4>
+                        <p>"Kami bantu biaya pengiriman Anda. Makin dekat, makin hemat. Gratis ongkir radius 5 km."</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 2: COPYWRITING -->
+        <!-- ============================================================ -->
+        <section class="section" id="copywriting">
+            <div class="section-header">
+                <h2>📝 Arsip Copywriting Resmi</h2>
+                <span class="badge-section">Content</span>
+            </div>
+            <p style="color:var(--gray-500);margin-bottom:16px;">Kumpulan semua copywriting yang digunakan di website, modal, dan popup. Klik untuk buka/tutup.</p>
+
+            <!-- Hero -->
+            <details open>
+                <summary>🖼️ Hero Section (Banner)</summary>
+                <div class="detail-body">
+                    <div class="copy-block">
+                        <strong>Headline:</strong> "Asem, Pedes, Manis, Seger. Dalam Satu Gigitan."<br>
+                        <strong>Sub:</strong> "Rujak premium dengan sambal mete terpisah — tetap renyah sampai tujuan. Subsidi ongkir s/d Rp10.000."
+                    </div>
+                </div>
+            </details>
+
+            <!-- Promo Strip -->
+            <details>
+                <summary>🎁 Promo Strip</summary>
+                <div class="detail-body">
+                    <div class="copy-block">
+                        <strong>🤤 50 Box Pertama: Bonus Sambal Mete Ekstra!</strong><br>
+                        "Subsidi ongkir s/d Rp10.000 + upgrade pedas GRATIS + voucher Rp10.000."
+                    </div>
+                </div>
+            </details>
+
+            <!-- Flavor Tags -->
+            <details>
+                <summary>🏷️ Flavor Tags & Deskripsi Produk</summary>
+                <div class="detail-body">
+                    <div class="grid-2">
+                        <div><strong>Rujak Segar</strong><br><span style="color:var(--gray-500);">"Segar & Autentik"</span><br>"Kombinasi buah pilihan dengan sambal original Rujak.Co."</div>
+                        <div><strong>Rujak Serut</strong><br><span style="color:var(--gray-500);">"Renyah Segar"</span><br>"Buah diserut halus untuk pengalaman rasa yang lebih menyatu."</div>
+                        <div><strong>Rujak Gaco</strong><br><span style="color:var(--gray-500);">"Gurih Mete Premium"</span><br>"Enam buah pilihan dengan sambal mete premium."</div>
+                        <div><strong>Rujak Rama</strong><br><span style="color:var(--gray-500);">"Gurih Mete Extra Pedas"</span><br>"Porsi melimpah untuk dua hingga tiga orang."</div>
+                        <div><strong>Rujak Mahkota</strong><br><span style="color:var(--gray-500);">"Eksklusif & Premium"</span><br>"Koleksi premium dengan Shine Muscat."</div>
+                        <div><strong>Tampah Nusantara</strong><br><span style="color:var(--gray-500);">"Kemegahan Berbagai Rasa"</span><br>"Sajian kebersamaan dalam tampah bambu."</div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Testimoni -->
+            <details>
+                <summary>⭐ Testimoni Pelanggan</summary>
+                <div class="detail-body">
+                    <div class="testi-block">
+                        <div class="stars">⭐️⭐️⭐️⭐️⭐️</div>
+                        <div class="text">"Ngidam rujak pas hamil, ini satu-satunya yang nggak ngecewain. Asem pedesnya pas banget."</div>
+                        <div class="author">— Rina, Jakarta Timur</div>
+                    </div>
+                    <div class="testi-block">
+                        <div class="stars">⭐️⭐️⭐️⭐️⭐️</div>
+                        <div class="text">"Buset ini rujak bukan kaleng-kaleng. Sambel metenya berasa banget, nggak pelit sama sekali."</div>
+                        <div class="author">— Dina, Bekasi</div>
+                    </div>
+                    <div class="testi-block">
+                        <div class="stars">⭐️⭐️⭐️⭐️⭐️</div>
+                        <div class="text">"Gue kira overhype, ternyata emang enak. Buahnya masih seger, nggak kayak yang udah dipotong lama."</div>
+                        <div class="author">— Aldo, Depok</div>
+                    </div>
+                    <div class="testi-block">
+                        <div class="stars">⭐️⭐️⭐️⭐️⭐️</div>
+                        <div class="text">"Mete aslinya kerasa, bukan cuma kacang doang. Worth it banget buat harga segini."</div>
+                        <div class="author">— Dimas, Jakarta Selatan</div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- FAQ -->
+            <details>
+                <summary>❓ FAQ (Pertanyaan Umum)</summary>
+                <div class="detail-body">
+                    <div style="margin-bottom:12px;"><strong>Kenapa sambal dipisahkan?</strong><br><span style="color:var(--gray-700);">"Agar buah tetap segar dan renyah saat diterima. Tidak lembek. Tidak tumpah."</span></div>
+                    <div style="margin-bottom:12px;"><strong>Berapa lama pengiriman?</strong><br><span style="color:var(--gray-700);">"Estimasi 30–45 menit setelah konfirmasi. Prioritas lebih cepat 15–25 menit."</span></div>
+                    <div style="margin-bottom:12px;"><strong>Berapa biaya ongkirnya?</strong><br><span style="color:var(--gray-700);">"Kami subsidi ongkir s/d Rp10.000. Radius 0-5 km GRATIS. 5-10 km hanya Rp2.000. Makin jauh tetap kami bantu."</span></div>
+                    <div style="margin-bottom:12px;"><strong>Bagaimana kalau rujak sampai benyek?</strong><br><span style="color:var(--gray-700);">"Kami ganti. Tapi dengan Fresh-Lock System™, kecil kemungkinan itu terjadi."</span></div>
+                    <div><strong>Apakah tersedia untuk acara?</strong><br><span style="color:var(--gray-700);">"Ya, tersedia paket sharing dan Tampah Nusantara untuk berbagai acara."</span></div>
+                </div>
+            </details>
+
+            <!-- Popup Subsidy -->
+            <details>
+                <summary>⏱️ Popup Subsidi (Countdown)</summary>
+                <div class="detail-body">
+                    <div class="copy-block">
+                        <strong>⚡ SUBSIDI TERBATAS</strong><br>
+                        "Subsidi Ongkir s/d Rp10.000 — Klaim sekarang dan dapatkan potongan ongkir. Berlaku untuk pemesanan dalam 30 menit ke depan."<br><br>
+                        <span style="text-decoration:line-through;color:var(--gray-400);">Ongkir normal Rp20.000</span><br>
+                        <strong style="color:var(--green);">Anda bayar mulai Rp2.000*</strong><br>
+                        <span style="font-size:12px;color:var(--gray-500);">*Gratis ongkir radius 5 km. Makin jauh tetap kami bantu.</span><br><br>
+                        <span style="background:#1a1a1a;color:white;padding:4px 12px;border-radius:8px;">⏱️ Subsidi hilang dalam [30:00]</span><br>
+                        <span style="font-size:12px;color:var(--gray-500);">🔒 Klaim Subsidi & Pesan Sekarang</span>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Misi Jajan -->
+            <details>
+                <summary>🎯 Misi Jajan (Diskon Belanja)</summary>
+                <div class="detail-body">
+                    <div class="copy-block">
+                        <strong>"🎯 Misi Jajan — Diskon s/d Rp10.000"</strong><br>
+                        "Selesaikan misi untuk klaim diskonmu!"<br>
+                        ☐ "Belanja min. Rp100.000 <b>(Potong Rp5.000)</b>"<br>
+                        ☐ "Bagikan ke teman <b>(Potong Rp5.000)</b>"<br>
+                        <span style="font-size:12px;color:var(--gray-500);">✅ Misi tercapai = otomatis tercentang. Diskon muncul di keranjang.</span>
+                    </div>
+                </div>
+            </details>
+
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 3: KATALOG -->
+        <!-- ============================================================ -->
+        <section class="section" id="katalog">
+            <div class="section-header">
+                <h2>📦 Katalog Produk Lengkap</h2>
+                <span class="badge-section">Menu</span>
+            </div>
+
+            <div class="card">
+                <div class="card-title">🍽️ Daftar Menu Rujak.Co</div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:15%;">Nama</th>
+                                <th style="width:12%;">Harga</th>
+                                <th style="width:10%;">Kategori</th>
+                                <th style="width:15%;">Porsi</th>
+                                <th style="width:30%;">Buah-buahan</th>
+                                <th style="width:18%;">Sambal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Rujak Segar</strong></td><td>Rp28.000</td><td><span class="badge-cat classic">Classic</span></td><td>1 Orang</td><td><span class="tag-buah">Mangga Muda</span> <span class="tag-buah">Nanas</span> <span class="tag-buah">Bengkoang</span> <span class="tag-buah">Jambu Air</span> <span class="tag-buah">Kedondong</span></td><td>Sambal Original</td></tr>
+                            <tr><td><strong>Rujak Serut</strong></td><td>Rp26.000</td><td><span class="badge-cat classic">Classic</span></td><td>1 Orang</td><td><span class="tag-buah">Mangga Muda</span> <span class="tag-buah">Bengkoang</span> <span class="tag-buah">Nanas</span> <span class="tag-buah">Ubi Merah</span></td><td>Sambal Original</td></tr>
+                            <tr><td><strong>Rujak Gaco</strong></td><td>Rp40.000</td><td><span class="badge-cat signature">Signature</span></td><td>1 Orang</td><td><span class="tag-buah">Jambu Kristal</span> <span class="tag-buah">Mangga Muda</span> <span class="tag-buah">Nanas</span> <span class="tag-buah">Bengkoang</span> <span class="tag-buah">Jambu Air</span> <span class="tag-buah">Kedondong</span></td><td>Sambal Mete Premium</td></tr>
+                            <tr><td><strong>Rujak Rama</strong></td><td>Rp48.000</td><td><span class="badge-cat signature">Signature</span></td><td>2-3 Orang</td><td><span class="tag-buah">Jambu Kristal</span> <span class="tag-buah">Mangga Muda</span> <span class="tag-buah">Nanas</span> <span class="tag-buah">Bengkoang</span> <span class="tag-buah">Jambu Air</span> <span class="tag-buah">Kedondong</span></td><td>Sambal Mete Premium (2 Cup)</td></tr>
+                            <tr><td><strong>Rujak Mahkota</strong></td><td>Rp85.000</td><td><span class="badge-cat reserve">Reserve</span></td><td>1-2 Orang</td><td><span class="tag-buah">Shine Muscat</span> <span class="tag-buah">Jambu Kristal</span> <span class="tag-buah">Mangga Muda</span> <span class="tag-buah">Nanas</span> <span class="tag-buah">Bengkoang</span> <span class="tag-buah">Jambu Air</span> <span class="tag-buah">Kedondong</span></td><td>Sambal Mete Premium (2 Cup)</td></tr>
+                            <tr><td><strong>Tampah Nusantara</strong></td><td>Rp200.000</td><td><span class="badge-cat reserve">Reserve</span></td><td>8-10 Orang</td><td><span class="tag-buah">Shine Muscat</span> <span class="tag-buah">Jambu Kristal</span> <span class="tag-buah">Mangga Muda</span> <span class="tag-buah">Nanas</span> <span class="tag-buah">Bengkoang</span> <span class="tag-buah">Jambu Air</span> <span class="tag-buah">Kedondong</span> <span class="tag-buah">Ubi Merah</span></td><td>Varian Original & Mete (4 Cup)</td></tr>
+                            <tr style="background:#fafcfa;"><td><strong>Mahkota VIP</strong> <span style="font-size:10px;background:var(--gold);padding:2px 8px;border-radius:20px;">Hidden</span></td><td>Rp125.000</td><td><span class="badge-cat reserve">Reserve</span></td><td>1-2 Orang</td><td><span class="tag-buah">Shine Muscat</span> <span class="tag-buah">Jambu Kristal</span> <span class="tag-buah">Mangga Harum Manis</span> <span class="tag-buah">Nanas Madu</span> <span class="tag-buah">Bengkoang</span> <span class="tag-buah">Strawberry</span></td><td>Sambal Mete Premium Spesial</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">🧂 Tambahan (Add-Ons)</div>
+                <div class="grid-2">
+                    <div><strong>Sambal Original</strong> — Rp8.000 <span style="color:var(--gray-500);font-size:13px;">"Warisan rasa klasik."</span></div>
+                    <div><strong>Sambal Mete Premium</strong> — Rp12.000 <span style="color:var(--gray-500);font-size:13px;">"Lebih gurih dan kaya rasa."</span></div>
+                    <div><strong>Extra Jambu Kristal</strong> — Rp10.000 <span style="color:var(--gray-500);font-size:13px;">"Tambahan jambu kristal segar."</span></div>
+                    <div><strong>Extra Shine Muscat</strong> — Rp15.000 <span style="color:var(--gray-500);font-size:13px;">"Tambahan anggur Shine Muscat impor."</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 4: PROMO -->
+        <!-- ============================================================ -->
+        <section class="section" id="promo">
+            <div class="section-header">
+                <h2>💰 Mekanisme Promo & Subsidi</h2>
+                <span class="badge-section">Pricing</span>
+            </div>
+
+            <div class="card">
+                <div class="card-title">🎁 Diskon Belanja</div>
+                <div class="grid-2">
+                    <div><strong>Min. Belanja:</strong> Rp100.000</div>
+                    <div><strong>Potongan:</strong> Rp5.000</div>
+                    <div><strong>Syarat Tambahan:</strong> Bagikan ke teman → +Rp5.000</div>
+                    <div><strong>Total Maks Diskon:</strong> Rp10.000</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">🚚 Subsidi Ongkir (Tier System)</div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr><th>Minimal Belanja</th><th>Subsidi</th><th>Keterangan</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Rp75.000</td><td>Rp5.000</td><td>Tier 1</td></tr>
+                            <tr><td>Rp125.000</td><td>Rp10.000</td><td>Tier 2</td></tr>
+                            <tr><td>Rp200.000</td><td><strong style="color:var(--green);">Gratis Ongkir</strong></td><td>Maks. Subsidi Rp30.000</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">🗺️ Tarif Ongkir Berdasarkan Zona</div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr><th>Zona</th><th>Jarak</th><th>Biaya Normal</th><th>Setelah Subsidi (Tier 2)</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>A</strong></td><td>0-5 km</td><td>Gratis</td><td>Gratis</td></tr>
+                            <tr><td><strong>B</strong></td><td>5-10 km</td><td>Rp2.000</td><td>Gratis</td></tr>
+                            <tr><td><strong>C</strong></td><td>10-20 km</td><td>Rp8.000</td><td>Gratis (jika ≥ Rp125.000)</td></tr>
+                            <tr><td><strong>D</strong></td><td>20-30 km</td><td>Rp15.000</td><td>Rp5.000</td></tr>
+                            <tr><td><strong>E</strong></td><td>&gt;30 km</td><td colspan="2">Konfirmasi Admin</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">⚡ Tarif Kurir & Prioritas</div>
+                <ul style="list-style:none;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                    <li style="background:var(--gray-100);padding:8px 14px;border-radius:8px;"><strong>Motor:</strong> Rp8.000 (0-3 km) + Rp2.000/km (3-25 km) + Rp2.400/km (&gt;25 km)</li>
+                    <li style="background:var(--gray-100);padding:8px 14px;border-radius:8px;"><strong>Mobil:</strong> Rp24.000 (0-3 km) + Rp4.500/km (3-15 km) + Rp5.000/km (&gt;15 km)</li>
+                    <li style="background:var(--gray-100);padding:8px 14px;border-radius:8px;"><strong>Jam Sibuk:</strong> 1.3x (Sen-Jum: 11-13 & 16-19, Sab-Min: 11-13)</li>
+                    <li style="background:var(--gray-100);padding:8px 14px;border-radius:8px;"><strong>Prioritas:</strong> +Rp8.000 (Estimasi 15-25 menit lebih cepat)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 5: OPERASIONAL -->
+        <!-- ============================================================ -->
+        <section class="section" id="operasional">
+            <div class="section-header">
+                <h2>📍 Data Operasional</h2>
+                <span class="badge-section">Office</span>
+            </div>
+
+            <div class="card">
+                <div class="card-title">🏢 Toko & Lokasi</div>
+                <div class="grid-2">
+                    <div><strong>Nama Toko:</strong> Rujak.Co</div>
+                    <div><strong>Alamat:</strong> Bekasi, Jawa Barat</div>
+                    <div><strong>Jam Operasional:</strong><br>Sen–Jum: 10.00 – 20.00 WIB<br>Sab–Min: 09.00 – 18.00 WIB</div>
+                    <div><strong>Area Pengiriman:</strong> Jabodetabek (maks. 50 km)</div>
+                    <div><strong>Estimasi Tiba:</strong> 30–45 menit setelah konfirmasi</div>
+                    <div><strong>Koordinat Toko:</strong> -6.2347, 106.9895</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📱 Kontak & Pembayaran</div>
+                <div class="grid-2">
+                    <div><strong>WhatsApp:</strong> 089677161680 (Format: 6289677161680)</div>
+                    <div><strong>QRIS NMDI:</strong> ID1026537007688</div>
+                    <div><strong>Penyelenggara QRIS:</strong> <a href="http://www.aspir.qris.id" target="_blank">www.aspir.qris.id</a></div>
+                    <div>
+                        <strong>Social Media:</strong><br>
+                        TikTok: @rujakco<br>
+                        Instagram: @rujakco.id<br>
+                        Threads: @rujakco.id
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 6: BACKEND -->
+        <!-- ============================================================ -->
+        <section class="section" id="backend">
+            <div class="section-header">
+                <h2>⚙️ Backend & Database</h2>
+                <span class="badge-section">Tech</span>
+            </div>
+
+            <div class="card">
+                <div class="card-title">🧩 Teknologi</div>
+                <ul style="list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:12px;">
+                    <li style="background:var(--gray-100);padding:6px 16px;border-radius:20px;font-size:13px;">📦 Database: <strong>Supabase (PostgreSQL)</strong></li>
+                    <li style="background:var(--gray-100);padding:6px 16px;border-radius:20px;font-size:13px;">🔑 Autentikasi: <strong>Anon Key</strong></li>
+                    <li style="background:var(--gray-100);padding:6px 16px;border-radius:20px;font-size:13px;">📋 Tabel Utama: <strong>orders</strong></li>
+                </ul>
+                <div class="tech-code" style="margin-top:12px;">
+                    URL: <span class="string">https://ghhnnfrmftttptcejizp.supabase.co</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📊 Struktur Tabel <code>orders</code></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr><th style="width:20%;">Field</th><th style="width:20%;">Tipe</th><th>Keterangan</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>customer_name</code></td><td>String (50)</td><td>Nama penerima</td></tr>
+                            <tr><td><code>customer_phone</code></td><td>String</td><td>Nomor HP (diformat 62xx)</td></tr>
+                            <tr><td><code>customer_address</code></td><td>String (500)</td><td>Alamat lengkap</td></tr>
+                            <tr><td><code>items</code></td><td>JSON Array</td><td>Daftar produk + qty + spice level</td></tr>
+                            <tr><td><code>subtotal</code></td><td>Integer</td><td>Total sebelum diskon/ongkir</td></tr>
+                            <tr><td><code>shipping_cost</code></td><td>Integer</td><td>Biaya pengiriman final</td></tr>
+                            <tr><td><code>discount</code></td><td>Integer</td><td>Total diskon</td></tr>
+                            <tr><td><code>total</code></td><td>Integer</td><td>Grand total</td></tr>
+                            <tr><td><code>status</code></td><td>String</td><td>Default: 'pending'</td></tr>
+                            <tr><td><code>is_gift</code></td><td>Boolean</td><td>Kirim sebagai kado</td></tr>
+                            <tr><td><code>gift_sender</code></td><td>String (50)</td><td>Nama pengirim kado</td></tr>
+                            <tr><td><code>gift_message</code></td><td>String (300)</td><td>Pesan kado</td></tr>
+                            <tr><td><code>mission_shared</code></td><td>Boolean</td><td>Sudah bagikan ke teman</td></tr>
+                            <tr><td><code>shipping_provider</code></td><td>String</td><td>'rujakco' atau 'pembeli'</td></tr>
+                            <tr><td><code>vehicle</code></td><td>String</td><td>'motor' atau 'mobil'</td></tr>
+                            <tr><td><code>priority</code></td><td>Boolean</td><td>Pakai prioritas</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📍 Logika Deteksi Lokasi</div>
+                <ul style="list-style:none;padding:0;">
+                    <li style="padding:8px 0;border-bottom:1px solid var(--gray-200);">1. <strong>Utama:</strong> Geolocation API (GPS) → Hitung jarak haversine dari toko (Lat: -6.2347, Lng: 106.9895).</li>
+                    <li style="padding:8px 0;border-bottom:1px solid var(--gray-200);">2. <strong>Fallback:</strong> IP API (ipapi.co/json) → Estimasi kota.</li>
+                    <li style="padding:8px 0;">3. <strong>Manual:</strong> Pilihan kecamatan (Bekasi, Jakarta, Depok, Bogor, Tangerang).</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="card-title">⏱️ Logika Subsidi (Popup)</div>
+                <ul style="list-style:none;padding:0;">
+                    <li style="padding:4px 0;">✅ Wajib klaim di popup (tersimpan di localStorage dengan expiry 30 menit).</li>
+                    <li style="padding:4px 0;">❌ Cooldown 2 jam setelah subsidi habis/ditolak.</li>
+                    <li style="padding:4px 0;">🔒 FingerprintJS mencegah penyalahgunaan perangkat.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 7: GLOSARIUM -->
+        <!-- ============================================================ -->
+        <section class="section" id="glosarium">
+            <div class="section-header">
+                <h2>📚 Glosarium Copywriting (Tone of Voice)</h2>
+                <span class="badge-section">Content</span>
+            </div>
+            <p style="color:var(--gray-500);margin-bottom:16px;">Kata/frasa kunci untuk menjaga konsistensi tone of voice "Ngidam & Ngiler".</p>
+
+            <div class="glossary-grid">
+                <div class="glossary-item">
+                    <div class="term">🍭 Menggoda (Ngiler)</div>
+                    <div class="ex">"Air liur", "Netes", "Kebayang"</div>
+                    <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">Contoh: <em>"Air liur kamu pasti netes..."</em></div>
+                </div>
+                <div class="glossary-item">
+                    <div class="term">⏱️ Urgensi (Ngidam)</div>
+                    <div class="ex">"Sekarang", "Buruan", "Jangan ditahan"</div>
+                    <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">Contoh: <em>"Buruan sebelum subsidi habis!"</em></div>
+                </div>
+                <div class="glossary-item">
+                    <div class="term">🌿 Sensasi (Seger)</div>
+                    <div class="ex">"Kriuk", "Segar", "Asem", "Pedes"</div>
+                    <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">Contoh: <em>"Rasain kriuknya jambu kristal!"</em></div>
+                </div>
+                <div class="glossary-item">
+                    <div class="term">👑 Kualitas (Premium)</div>
+                    <div class="ex">"Homemade", "Fresh", "Mete Asli"</div>
+                    <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">Contoh: <em>"Sambal mete premium, bukan kalengan."</em></div>
+                </div>
+                <div class="glossary-item">
+                    <div class="term">🛡️ Solusi (Amanah)</div>
+                    <div class="ex">"Anti tumpah", "Fresh-Lock", "Kami ganti"</div>
+                    <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">Contoh: <em>"Sampai benyek? Kami ganti."</em></div>
+                </div>
+                <div class="glossary-item">
+                    <div class="term">🔥 Ajakan (CTA)</div>
+                    <div class="ex">"Pesan Sekarang", "Gaskeun", "Klik Bio"</div>
+                    <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">Contoh: <em>"Gaskeun! Klik link di bio."</em></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <div class="footer-doc">
+            <span>📘 Buku Master Rujak.Co — Internal Use Only</span>
+            <span>🖨️ Siap cetak | 🔄 Versi 1.0 | 📅 26 Juni 2026</span>
+        </div>
+
+    </main>
+
+    <!-- SCRIPT SIDEBAR ACTIVE HIGHLIGHT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const navLinks = document.querySelectorAll('.sidebar-nav a');
+
+            function updateActiveLink() {
+                let current = '';
+                sections.forEach(section => {
+                    const rect = section.getBoundingClientRect();
+                    if (rect.top <= 100) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', updateActiveLink);
+            updateActiveLink(); // Initial check
+        });
+    </script>
+
+</body>
+</html>
