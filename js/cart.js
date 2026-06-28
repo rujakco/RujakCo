@@ -2,58 +2,77 @@
 // ================ CART MANAGEMENT ============================
 // ============================================================
 
-function loadCart() {
+import { fmt, escapeHTML } from './utils.js';
+import { SYSTEM, calculateShipping, calculateSubsidy } from './shipping.js';
+
+// State reference
+export let stateRef = null;
+
+export function setStateRef(state) {
+  stateRef = state;
+}
+
+// Products reference
+export let productsRef = [];
+export let addonsRef = [];
+
+export function setProductsRef(products, addons) {
+  productsRef = products;
+  addonsRef = addons;
+}
+
+export function loadCart() {
   try {
-    var s = localStorage.getItem('rujak_cart');
+    const s = localStorage.getItem('rujak_cart');
     if (s) {
-      var p = JSON.parse(s);
-      if (typeof p === 'object' && p !== null) {
-        if (typeof state !== 'undefined') state.cart = p;
+      const p = JSON.parse(s);
+      if (typeof p === 'object' && p !== null && stateRef) {
+        stateRef.cart = p;
       }
     }
   } catch (_) {
-    if (typeof state !== 'undefined') state.cart = {};
+    if (stateRef) stateRef.cart = {};
   }
 }
 
-function saveCart() {
+export function saveCart() {
   try {
-    if (typeof state !== 'undefined') {
-      localStorage.setItem('rujak_cart', JSON.stringify(state.cart));
+    if (stateRef) {
+      localStorage.setItem('rujak_cart', JSON.stringify(stateRef.cart));
     }
   } catch (_) {}
 }
 
-function getItemById(id) {
-  if (typeof PRODUCTS === 'undefined' || typeof ADDONS === 'undefined') return null;
+export function getItemById(id) {
+  if (!productsRef || !addonsRef) return null;
   
-  var item = PRODUCTS.find(function(p) { return p.id === id; });
+  let item = productsRef.find(p => p.id === id);
   if (item) return item;
   
-  var spiceMatch = id.match(/^(.+)_spice(\d+)$/);
+  const spiceMatch = id.match(/^(.+)_spice(\d+)$/);
   if (spiceMatch) {
-    item = PRODUCTS.find(function(p) { return p.id === spiceMatch[1]; });
+    item = productsRef.find(p => p.id === spiceMatch[1]);
     if (item) return item;
   }
   
-  return ADDONS.find(function(a) { return a.id === id; }) || null;
+  return addonsRef.find(a => a.id === id) || null;
 }
 
-function getCartSummary() {
-  if (typeof state === 'undefined') {
+export function getCartSummary() {
+  if (!stateRef || !productsRef) {
     return { items: [], totalQty: 0, subtotal: 0, discount: 0, shippingCost: 0, shippingSubsidy: 0, rawShippingCost: 0, lalamoveCost: 0, baseLalamoveCost: 0, surgeMultiplier: 1, isSurge: false, shippingLabel: '', shippingDistance: 0, shippingZone: 'A', total: 0, isOutOfRange: false, shippingProvider: 'rujakco', vehicleType: 'motor' };
   }
   
-  var items = [];
-  var subtotal = 0;
-  var totalQty = 0;
-  var keysToDelete = [];
+  const items = [];
+  let subtotal = 0;
+  let totalQty = 0;
+  const keysToDelete = [];
   
-  Object.keys(state.cart).forEach(function(id) {
-    var entry = state.cart[id];
-    var item = getItemById(id);
+  Object.keys(stateRef.cart).forEach(id => {
+    const entry = stateRef.cart[id];
+    const item = getItemById(id);
     if (item && entry && entry.qty > 0) {
-      var lineTotal = item.price * entry.qty;
+      const lineTotal = item.price * entry.qty;
       subtotal += lineTotal;
       totalQty += entry.qty;
       items.push({
@@ -70,15 +89,15 @@ function getCartSummary() {
     }
   });
   
-  keysToDelete.forEach(function(id) { delete state.cart[id]; });
+  keysToDelete.forEach(id => delete stateRef.cart[id]);
   
-  var discount = calculateDiscount(subtotal);
-  var distance = state.userDistance !== null ? state.userDistance : SYSTEM.DEFAULT_DISTANCE;
-  var shipping = calculateShipping(distance, state.isPriority);
-  var rawShippingCost = shipping.cost || 0;
-  var shippingSubsidy = calculateSubsidy(subtotal, shipping.zone, rawShippingCost);
-  var shippingCost = state.shippingProvider === 'pembeli' ? 0 : (rawShippingCost === null ? 0 : Math.max(0, rawShippingCost - shippingSubsidy));
-  var total = subtotal - discount + shippingCost;
+  const discount = calculateDiscount(subtotal);
+  const distance = stateRef.userDistance !== null ? stateRef.userDistance : SYSTEM.DEFAULT_DISTANCE;
+  const shipping = calculateShipping(distance, stateRef.isPriority);
+  const rawShippingCost = shipping.cost || 0;
+  const shippingSubsidy = calculateSubsidy(subtotal, shipping.zone, rawShippingCost);
+  const shippingCost = stateRef.shippingProvider === 'pembeli' ? 0 : (rawShippingCost === null ? 0 : Math.max(0, rawShippingCost - shippingSubsidy));
+  const total = subtotal - discount + shippingCost;
   
   return {
     items: items,
@@ -97,27 +116,27 @@ function getCartSummary() {
     shippingZone: shipping.zone,
     total: total,
     isOutOfRange: shipping.zone === 'E',
-    shippingProvider: state.shippingProvider,
-    vehicleType: state.vehicleType
+    shippingProvider: stateRef.shippingProvider,
+    vehicleType: stateRef.vehicleType
   };
 }
 
-var cachedSummary = null;
-var cachedSummaryKey = '';
+let cachedSummary = null;
+let cachedSummaryKey = '';
 
-function getCartSummaryCached() {
-  if (typeof state === 'undefined') return getCartSummary();
+export function getCartSummaryCached() {
+  if (!stateRef) return getCartSummary();
   
-  var subsidClaimed = localStorage.getItem('rujak_subsidi_claimed') || 'false';
-  var subsidExpiry = localStorage.getItem('rujak_subsidi_expiry') || '0';
+  const subsidClaimed = localStorage.getItem('rujak_subsidi_claimed') || 'false';
+  const subsidExpiry = localStorage.getItem('rujak_subsidi_expiry') || '0';
   
-  var key = JSON.stringify(state.cart) + '|' +
-            state.shippingProvider + '|' +
-            state.userDistance + '|' +
-            state.isPriority + '|' +
-            state.hasShared + '|' +
-            state.vehicleType + '|' +
-            subsidClaimed + '|' + subsidExpiry;
+  const key = JSON.stringify(stateRef.cart) + '|' +
+              stateRef.shippingProvider + '|' +
+              stateRef.userDistance + '|' +
+              stateRef.isPriority + '|' +
+              stateRef.hasShared + '|' +
+              stateRef.vehicleType + '|' +
+              subsidClaimed + '|' + subsidExpiry;
   
   if (cachedSummary && cachedSummaryKey === key) return cachedSummary;
   cachedSummary = getCartSummary();
@@ -125,30 +144,30 @@ function getCartSummaryCached() {
   return cachedSummary;
 }
 
-function invalidateCache() {
+export function invalidateCache() {
   cachedSummary = null;
   cachedSummaryKey = '';
 }
 
-function calculateDiscount(subtotal) {
-  if (typeof state === 'undefined') return 0;
-  var discount = 0;
+export function calculateDiscount(subtotal) {
+  if (!stateRef) return 0;
+  let discount = 0;
   if (subtotal >= SYSTEM.DISCOUNT_THRESHOLD) discount += 5000;
-  if (state.hasShared) discount += 5000;
+  if (stateRef.hasShared) discount += 5000;
   return discount;
 }
 
-function recordOrderHistory(orderItems) {
-  if (typeof PRODUCTS === 'undefined') return;
+export function recordOrderHistory(orderItems) {
+  if (!productsRef) return;
   try {
-    var history = [];
-    var raw = localStorage.getItem('rujak_order_history');
+    let history = [];
+    const raw = localStorage.getItem('rujak_order_history');
     if (raw) history = JSON.parse(raw);
     
-    orderItems.forEach(function(item) {
-      var baseId = item.cartId ? item.cartId.split('_spice')[0] : null;
+    orderItems.forEach(item => {
+      const baseId = item.cartId ? item.cartId.split('_spice')[0] : null;
       if (baseId) {
-        var product = PRODUCTS.find(function(p) { return p.id === baseId; });
+        const product = productsRef.find(p => p.id === baseId);
         if (product) {
           history.push(baseId);
         }
@@ -163,41 +182,48 @@ function recordOrderHistory(orderItems) {
   } catch (_) { /* ignore */ }
 }
 
-function saveCustomerData() {
-  if (typeof state === 'undefined') return;
+export function saveCustomerData() {
+  if (!stateRef) return;
   try {
     localStorage.setItem('rujak_customer', JSON.stringify({
-      name: state.customerName,
-      phone: state.customerPhone,
-      address: state.customerAddress,
-      isGift: state.isGift,
-      giftSender: state.giftSender,
-      giftMessage: state.giftMessage,
-      hasShared: state.hasShared,
-      shippingProvider: state.shippingProvider,
-      vehicleType: state.vehicleType
+      name: stateRef.customerName,
+      phone: stateRef.customerPhone,
+      address: stateRef.customerAddress,
+      isGift: stateRef.isGift,
+      giftSender: stateRef.giftSender,
+      giftMessage: stateRef.giftMessage,
+      hasShared: stateRef.hasShared,
+      shippingProvider: stateRef.shippingProvider,
+      vehicleType: stateRef.vehicleType
     }));
-    localStorage.setItem('rujak_has_shared', state.hasShared ? 'true' : 'false');
+    localStorage.setItem('rujak_has_shared', stateRef.hasShared ? 'true' : 'false');
   } catch(_) {}
 }
 
-function loadCustomerData() {
-  if (typeof state === 'undefined') return;
+export function loadCustomerData() {
+  if (!stateRef) return;
   try {
-    var raw = localStorage.getItem('rujak_customer');
+    const raw = localStorage.getItem('rujak_customer');
     if (raw) {
-      var data = JSON.parse(raw);
-      state.customerName = data.name || '';
-      state.customerPhone = data.phone || '';
-      state.customerAddress = data.address || '';
-      state.isGift = data.isGift || false;
-      state.giftSender = data.giftSender || '';
-      state.giftMessage = data.giftMessage || '';
-      state.hasShared = data.hasShared || false;
-      if (data.shippingProvider) state.shippingProvider = data.shippingProvider;
-      if (data.vehicleType) state.vehicleType = data.vehicleType;
+      const data = JSON.parse(raw);
+      stateRef.customerName = data.name || '';
+      stateRef.customerPhone = data.phone || '';
+      stateRef.customerAddress = data.address || '';
+      stateRef.isGift = data.isGift || false;
+      stateRef.giftSender = data.giftSender || '';
+      stateRef.giftMessage = data.giftMessage || '';
+      stateRef.hasShared = data.hasShared || false;
+      if (data.shippingProvider) stateRef.shippingProvider = data.shippingProvider;
+      if (data.vehicleType) stateRef.vehicleType = data.vehicleType;
     }
-    var shared = localStorage.getItem('rujak_has_shared');
-    if (shared === 'true') state.hasShared = true;
+    const shared = localStorage.getItem('rujak_has_shared');
+    if (shared === 'true') stateRef.hasShared = true;
   } catch(_) {}
+}
+
+export function clearCart() {
+  if (!stateRef) return;
+  stateRef.cart = {};
+  invalidateCache();
+  saveCart();
 }
