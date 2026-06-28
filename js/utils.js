@@ -2,27 +2,23 @@
 // ================ UTILITY FUNCTIONS ==========================
 // ============================================================
 
-function escapeHTML(str) {
+export function escapeHTML(str) {
   return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 }
 
-function fmt(num) {
+export function fmt(num) {
   return 'Rp' + num.toLocaleString('id-ID');
 }
 
-function debounce(fn, delay) {
-  var timer;
-  return function() {
-    var args = arguments;
-    var context = this;
-    clearTimeout(timer);
-    timer = setTimeout(function() {
-      fn.apply(context, args);
-    }, delay);
+export function debounce(fn, delay) {
+  let t;
+  return function(...args) {
+    clearTimeout(t);
+    t = setTimeout(() => fn.apply(this, args), delay);
   };
 }
 
-function normalizePhone(phone) {
+export function normalizePhone(phone) {
   phone = phone.replace(/\D/g, '');
   if (phone.startsWith('62') && phone.length >= 10) return phone;
   if (phone.startsWith('0')) return '62' + phone.slice(1);
@@ -30,25 +26,25 @@ function normalizePhone(phone) {
   return '62' + phone;
 }
 
-function openWhatsApp(phone, message) {
-  var waUrl = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(message);
-  var a = document.createElement('a');
+export function openWhatsApp(phone, message) {
+  const waUrl = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(message);
+  const a = document.createElement('a');
   a.href = waUrl;
   a.target = '_blank';
   a.rel = 'noopener';
   a.style.display = 'none';
   document.body.appendChild(a);
   a.click();
-  setTimeout(function() {
+  setTimeout(() => {
     if (document.body.contains(a)) document.body.removeChild(a);
   }, 100);
 }
 
-function shareToWhatsApp() {
-  var shareText = 'Hai! Cobain Rujak.Co yuk — rujak premium dengan buah segar pilihan dan sambal khas Indonesia.';
-  var shareUrl = window.location.href;
+export function shareToWhatsApp() {
+  const shareText = 'Hai! Cobain Rujak.Co yuk — rujak premium dengan buah segar pilihan dan sambal khas Indonesia.';
+  const shareUrl = window.location.href;
   if (navigator.share) {
-    navigator.share({ title: 'Rujak.Co', text: shareText, url: shareUrl }).catch(function() {
+    navigator.share({ title: 'Rujak.Co', text: shareText, url: shareUrl }).catch(() => {
       copyShareLink(shareText, shareUrl);
     });
   } else {
@@ -56,17 +52,17 @@ function shareToWhatsApp() {
   }
 }
 
-function copyShareLink(text, url) {
-  var fullText = text + '\n' + url;
-  navigator.clipboard.writeText(fullText).then(function() {
+export function copyShareLink(text, url) {
+  const fullText = text + '\n' + url;
+  navigator.clipboard.writeText(fullText).then(() => {
     showToast('📋 Link berhasil disalin! Bagikan ke teman ya.');
-  }).catch(function() {
+  }).catch(() => {
     showToast('📋 Gagal menyalin. Bagikan manual: ' + url);
   });
 }
 
-function showConfirmModal(title, message, onConfirm) {
-  var modal = document.getElementById('customConfirmModal');
+export function showConfirmModal(title, message, onConfirm) {
+  let modal = document.getElementById('customConfirmModal');
   if (!modal) {
     modal = document.createElement('div');
     modal.id = 'customConfirmModal';
@@ -89,15 +85,17 @@ function showConfirmModal(title, message, onConfirm) {
   modal.style.display = 'flex';
 }
 
-function showToast(msg) {
-  var el = document.getElementById('toast');
+let toastTimer = null;
+
+export function showToast(msg) {
+  const el = document.getElementById('toast');
   if (!el) return;
   el.textContent = msg;
   el.classList.remove('show');
   void el.offsetWidth;
   el.classList.add('show');
-  clearTimeout(window._toastTimer);
-  window._toastTimer = setTimeout(function() {
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
     el.classList.remove('show');
   }, 3000);
 }
