@@ -466,13 +466,7 @@
   <script defer src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@4/dist/fp.min.js"></script>
   
   <!-- ==================== MODULAR JS ==================== -->
-  <script defer src="js/utils.js"></script>
-  <script defer src="js/shipping.js"></script>
-  <script defer src="js/cart.js"></script>
-  <script defer src="js/ai-engine.js"></script>
-  <script defer src="js/checkout.js"></script>
-  <script defer src="js/ui.js"></script>
-  <script defer src="js/app.js"></script>
+  <script type="module" src="js/app.js"></script>
   
   <!-- ==================== SUBSIDI POPUP SCRIPT ==================== -->
   <script>
@@ -508,14 +502,15 @@
         localStorage.setItem('rujak_subsidi_claimed', 'true');
         localStorage.setItem('rujak_subsidi_expiry', expiry.toString());
         setStorage('subsidi_claimed', true);
-        if (typeof invalidateCache === 'function') {
-          invalidateCache();
+        // Invalidate cache via window if available
+        if (typeof window.invalidateCache === 'function') {
+          window.invalidateCache();
         }
         var retries = 0;
         function tryRefreshUI() {
-          if (typeof renderCart === 'function' && typeof renderMiniCart === 'function') {
-            renderCart();
-            renderMiniCart();
+          if (typeof window.renderCart === 'function' && typeof window.renderMiniCart === 'function') {
+            window.renderCart();
+            window.renderMiniCart();
           } else if (retries < 25) {
             retries++;
             setTimeout(tryRefreshUI, 200);
