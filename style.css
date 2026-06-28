@@ -76,7 +76,6 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 .search-input-wrap input{border:none;outline:none;background:transparent;padding:6px 10px;font-family:inherit;font-size:13px;width:100%}
 .search-input-wrap .clear-search{background:none;border:none;color:var(--gray-400);cursor:pointer;padding:0 8px;font-size:16px;line-height:1}
 .clear-search:hover{color:var(--red)}
-/* === FIX S1: clear-search visible state === */
 .clear-search.visible{display:inline-block}
 
 .hero-wrap{padding:16px 20px}
@@ -233,14 +232,12 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 #floatingCartBtn.visible{display:flex}
 @media (max-width:480px){ #floatingCartBtn{bottom:120px} #bottom-bar.visible ~ #floatingCartBtn{display:none} }
 
-/* === FIX S2: Toast z-index di atas header === */
 #toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--green);color:white;font-size:14px;font-weight:600;padding:10px 20px;border-radius:var(--radius-pill);z-index:9999;opacity:0;pointer-events:none;transition:all .25s;max-width:90%;word-wrap:break-word;box-shadow:0 4px 16px rgba(15,77,55,.4)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .empty-state{padding:40px 20px;text-align:center;color:var(--gray-500);font-size:15px;display:none}
 
 .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:300;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease;padding:20px}
 .modal-overlay.active{opacity:1;pointer-events:auto}
-/* === FIX S3: Hapus user-select dari modal-content agar user bisa copy total tagihan === */
 .modal-content{background:white;border-radius:24px;max-width:400px;width:100%;max-height:90vh;min-height:200px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);transform:scale(0.95);transition:transform .3s ease}
 .modal-overlay.active .modal-content{transform:scale(1)}
 .modal-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px 8px;flex-shrink:0;border-bottom:1px solid var(--gray-200)}
@@ -350,7 +347,6 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 #subsidiPopup[role="dialog"]{display:none;position:fixed!important;top:0!important;left:0!important;width:100%!important;height:100%!important;z-index:99999!important;background:rgba(0,0,0,0.7)!important;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center!important;justify-content:center!important;flex-direction:column!important}
 #subsidiPopup.popup-show{display:flex!important}
 
-/* FIX: Styling popup-inner yang hilang */
 .popup-inner {
   background: white;
   border-radius: 24px;
@@ -394,7 +390,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
    ================ AI COMPONENTS STYLING =====================
    ============================================================ */
 
-/* --- AI Recommendation Card --- */
 #aiRecommendationContainer {
   animation: slideDownAI 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -425,7 +420,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
 }
 
-/* --- AI Upsell Card --- */
 [style*="AI Suggestion"] {
   animation: pulseGold 2s ease-in-out infinite;
 }
@@ -435,7 +429,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   50% { box-shadow: 0 4px 20px rgba(244, 196, 48, 0.4); }
 }
 
-/* --- AI Search Highlight --- */
 .ai-search-highlight {
   background: #F4C430;
   color: #0F4D37;
@@ -444,7 +437,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   font-weight: 700;
 }
 
-/* --- AI Badge --- */
 .ai-badge {
   display: inline-block;
   background: linear-gradient(135deg, #0F4D37, #1a7a55);
@@ -459,7 +451,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   vertical-align: middle;
 }
 
-/* --- AI Chat Floating --- */
 #aiChatFloat {
   z-index: 9999 !important;
 }
@@ -501,7 +492,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   box-shadow: 0 0 0 3px rgba(15, 77, 55, 0.15);
 }
 
-/* --- AI Chat Responsive --- */
 @media (max-width: 420px) {
   #aiChatBox {
     width: 300px;
