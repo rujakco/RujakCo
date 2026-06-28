@@ -76,6 +76,8 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 .search-input-wrap input{border:none;outline:none;background:transparent;padding:6px 10px;font-family:inherit;font-size:13px;width:100%}
 .search-input-wrap .clear-search{background:none;border:none;color:var(--gray-400);cursor:pointer;padding:0 8px;font-size:16px;line-height:1}
 .clear-search:hover{color:var(--red)}
+/* === FIX S1: clear-search visible state === */
+.clear-search.visible{display:inline-block}
 
 .hero-wrap{padding:16px 20px}
 .hero{width:100%;aspect-ratio:21/9;background:var(--green);border-radius:20px;overflow:hidden;position:relative}
@@ -231,32 +233,15 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 #floatingCartBtn.visible{display:flex}
 @media (max-width:480px){ #floatingCartBtn{bottom:120px} #bottom-bar.visible ~ #floatingCartBtn{display:none} }
 
-.form-section{margin-bottom:14px}
-.form-label{font-size:12px;font-weight:700;color:var(--gray-700);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.03em}
-.form-section input,.form-section textarea{width:100%;border:1px solid var(--gray-200);border-radius:10px;padding:10px 12px;font-size:14px;font-family:inherit;outline:none;background:white;transition:border-color .2s,box-shadow .2s;resize:vertical}
-.form-section input:focus,.form-section textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(15,77,55,.1)}
-.form-section textarea{min-height:70px}
-
-.switch{position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0}
-.switch input{opacity:0;width:0;height:0}
-.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#ccc;transition:.3s;border-radius:34px}
-.slider:before{position:absolute;content:"";height:16px;width:16px;left:3px;bottom:3px;background-color:white;transition:.3s;border-radius:50%}
-.switch input:checked+.slider{background-color:var(--green)}
-.switch input:checked+.slider:before{transform:translateX(18px)}
-.switch input:disabled+.slider{opacity:0.5;cursor:not-allowed}
-
-.mission-item{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:var(--gray-700)}
-.mission-item input[type="checkbox"]{width:18px;height:18px;accent-color:var(--green);flex-shrink:0}
-.mission-item b{color:var(--green)}
-#promoModal .modal-content{max-width:350px}
-
-#toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--green);color:white;font-size:14px;font-weight:600;padding:10px 20px;border-radius:var(--radius-pill);z-index:999;opacity:0;pointer-events:none;transition:all .25s;max-width:90%;word-wrap:break-word;box-shadow:0 4px 16px rgba(15,77,55,.4)}
+/* === FIX S2: Toast z-index di atas header === */
+#toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--green);color:white;font-size:14px;font-weight:600;padding:10px 20px;border-radius:var(--radius-pill);z-index:9999;opacity:0;pointer-events:none;transition:all .25s;max-width:90%;word-wrap:break-word;box-shadow:0 4px 16px rgba(15,77,55,.4)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .empty-state{padding:40px 20px;text-align:center;color:var(--gray-500);font-size:15px;display:none}
 
 .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:300;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease;padding:20px}
 .modal-overlay.active{opacity:1;pointer-events:auto}
-.modal-content{background:white;border-radius:24px;max-width:400px;width:100%;max-height:90vh;min-height:200px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);transform:scale(0.95);transition:transform .3s ease;user-select:none;-webkit-user-select:none}
+/* === FIX S3: Hapus user-select dari modal-content agar user bisa copy total tagihan === */
+.modal-content{background:white;border-radius:24px;max-width:400px;width:100%;max-height:90vh;min-height:200px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);transform:scale(0.95);transition:transform .3s ease}
 .modal-overlay.active .modal-content{transform:scale(1)}
 .modal-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px 8px;flex-shrink:0;border-bottom:1px solid var(--gray-200)}
 .modal-header-title{font-size:18px;font-weight:700;color:var(--gray-900)}
