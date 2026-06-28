@@ -85,7 +85,13 @@
         </div>
       </div>
 
-      <!-- ==================== AI RECOMMENDATION CONTAINER ==================== -->
+      <!-- Store Status Banner -->
+      <div id="storeStatusBanner" style="display:none;margin:0 20px 12px;padding:10px 14px;border-radius:12px;background:#FEE2E2;border:1px solid #FECACA;text-align:center;font-size:13px;font-weight:600;color:#991B1B;">
+        <i data-lucide="clock" class="w-4 h-4 inline" style="margin-right:4px;"></i>
+        <span id="storeStatusBannerText">Toko tutup. Buka jam 10.00 WIB.</span>
+      </div>
+
+      <!-- AI Recommendation Container -->
       <div id="aiRecommendationContainer" style="display:none;"></div>
 
       <div class="promo-strip" id="promoTrigger" data-action="open-promo">
@@ -185,7 +191,7 @@
         var totalCards = cards.length;
         var interval = null;
         var paused = false;
-        var PAUSE_DURATION = 4000;
+        var PAUSE_DURATION = 6000; // FIX: 6 detik (lebih lambat)
         function showCard(index) {
           cards.forEach(function(card, i) {
             if (i === index) { card.style.transform = 'translateY(0)'; card.style.opacity = '1'; }
@@ -208,6 +214,8 @@
           container.addEventListener('mousedown', function(e) { stopFlip(); });
           container.addEventListener('mouseup', function(e) { setTimeout(resumeFlip, 2000); });
           container.addEventListener('mouseleave', function(e) { if (paused) resumeFlip(); });
+          // FIX: Pause on hover
+          container.addEventListener('mouseenter', function(e) { stopFlip(); });
         }
         dots.forEach(function(dot) {
           dot.addEventListener('click', function(e) { e.stopPropagation(); var idx = parseInt(this.getAttribute('data-dot')); showCard(idx); stopFlip(); setTimeout(resumeFlip, 3000); });
@@ -295,16 +303,117 @@
 
   <div class="modal-overlay" id="productModal"><div class="modal-content"><div class="modal-header"><span class="modal-header-title">Detail Produk</span><button class="modal-close" id="modalClose" aria-label="Tutup">&times;</button></div><div class="modal-body" id="modalBody"><div class="modal-img" id="modalImg"></div><div class="modal-title-wrap"><h2 class="modal-title" id="modalTitle">Nama Produk</h2><span class="modal-badge-eyebrow" id="modalBadge" style="display:none;">Badge</span></div><p class="modal-desc" id="modalDesc">Deskripsi produk</p><div class="modal-detail-grid" id="modalDetailGrid"><div class="detail-row"><span class="label">Wadah</span><span class="value" id="modalContainer">-</span></div><div class="detail-row"><span class="label">Ukuran</span><span class="value" id="modalSize">-</span></div><div class="detail-row"><span class="label">Sambal</span><span class="value" id="modalSambal">-</span></div></div><div id="modalBuahContainer"><div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px;">Buah-buahan</div><div class="modal-buah-text" id="modalBuahText"></div></div><div class="modal-tags" id="modalTags"></div><div class="spice-row"><span class="spice-icon"><i data-lucide="flame"></i></span><span class="spice-label">Level Pedas</span><span class="spice-value" id="modalSpiceLabel">3 - Pedas</span><select id="spiceSelect"><option value="1">1 - Mild</option><option value="2">2 - Sedang</option><option value="3" selected>3 - Pedas</option><option value="4">4 - Extra Pedas</option><option value="5">5 - Very Hot</option></select></div></div><div class="modal-footer"><button class="modal-add" id="modalAdd"><span>Tambah ke Keranjang</span><span id="btnPrice">Rp0</span></button></div></div></div>
 
-  <div class="modal-overlay" id="miniCartModal"><div class="modal-content" style="max-width:420px;"><div class="modal-header"><span class="modal-header-title">🛒 Keranjang</span><div class="modal-header-actions"><button class="clear-cart-btn" id="clearCartBtn"><i data-lucide="trash" class="w-4 h-4"></i> Kosongkan</button><button class="modal-close" id="miniCartClose">&times;</button></div></div><div class="modal-body" style="padding:16px 20px;"><div class="step-indicator"><span class="step active" data-step="1" data-action="goto-step">1</span><span class="step-line"></span><span class="step" data-step="2" data-action="goto-step">2</span><span class="step-line"></span><span class="step" data-step="3" data-action="goto-step">3</span></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray-400);margin:-4px 0 16px;"><span>Review</span><span>Pengiriman</span><span>Bayar</span></div>
+  <div class="modal-overlay" id="miniCartModal"><div class="modal-content" style="max-width:420px;"><div class="modal-header"><span class="modal-header-title">🛒 Keranjang</span><div class="modal-header-actions"><button class="clear-cart-btn" id="clearCartBtn"><i data-lucide="trash" class="w-4 h-4"></i> Kosongkan</button><button class="modal-close" id="miniCartClose">&times;</button></div></div><div class="modal-body" style="padding:16px 20px;">
+    <div class="step-indicator">
+      <span class="step active" data-step="1" data-action="goto-step">1</span>
+      <span class="step-line"></span>
+      <span class="step" data-step="2" data-action="goto-step">2</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray-400);margin:-4px 0 16px;">
+      <span>Review Pesanan</span>
+      <span>Data & Bayar</span>
+    </div>
   
   <div class="cart-step active" id="cartStep1"><div id="miniCartList"></div><div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotalDisplay">Rp0</span></div><div id="step1Progress"></div><div id="step1Upsell"></div><button class="btn-step primary" id="step1Next" style="width:100%;justify-content:center;">Lanjut ke Pengiriman →</button></div>
 
-  <div class="cart-step" id="cartStep2"><div class="form-section"><label class="form-label">Nama Penerima</label><input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name"></div><div class="form-section"><label class="form-label">Nomor HP</label><input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" autocomplete="tel"></div><div class="form-section"><label class="form-label">Alamat</label><input type="text" id="customerAddress" placeholder="Alamat lengkap" autocomplete="street-address"></div><div class="form-section"><label class="form-label">Opsi Kurir</label><div class="shipping-options"><button class="ship-btn active" data-provider="rujakco">📦 Kurir Rujak.Co</button><button class="ship-btn" data-provider="pembeli">🛵 Kurir Saya</button></div></div><div id="rujakcoOptions" style="display:block;"><div class="vehicle-options"><button class="veh-btn active" data-vehicle="motor">🛵 Motor</button><button class="veh-btn" data-vehicle="mobil">🚗 Mobil</button></div><div class="priority-toggle" style="flex-direction:column;align-items:flex-start;gap:4px;"><div style="display:flex;align-items:center;justify-content:space-between;width:100%;"><span style="font-weight:600;font-size:13px;">⚡ Pengiriman Prioritas</span><label class="switch"><input type="checkbox" id="priorityToggleMini"><span class="slider round"></span></label></div><span style="font-size:10px;color:var(--gray-400);">🚀 Pesanan kamu didahulukan — estimasi tiba 15-25 menit lebih cepat</span></div></div><div style="background:var(--gray-100);border-radius:10px;padding:10px 14px;margin-top:10px;"><div style="font-size:10px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">Biaya Pengantaran</div><div style="display:flex;justify-content:space-between;font-size:14px;font-weight:600;margin-top:4px;"><span id="step2Zone">-</span><span style="color:var(--red);font-weight:800;" id="step2ShippingCost">Rp0</span></div><div id="step2Subsidy" style="font-size:11px;color:var(--green);margin-top:2px;display:none;"></div><div id="step2BaseCost" style="font-size:11px;color:var(--gray-500);margin-top:2px;display:none;"></div><div style="font-size:11px;color:var(--gray-500);margin-top:2px;">Jarak: <span id="step2Distance">-</span></div><div style="font-size:12px;color:var(--gray-500);margin-top:6px;text-align:center;border-top:1px dashed var(--gray-200);padding-top:6px;">🕐 Estimasi tiba: <strong style="color:var(--green);">30-45 menit</strong> setelah konfirmasi</div><div style="font-size:11px;color:var(--green);margin-top:6px;text-align:center;background:#E8F5E9;border-radius:6px;padding:6px;font-weight:600;" id="step2SubsidyClaimed"><i data-lucide="coins" class="w-3 h-3 inline"></i> Subsidi ongkir s/d Rp10.000 berlaku</div></div><button class="btn-step primary" id="step2Next" style="width:100%;margin-top:12px;">Lanjut ke Bayar →</button></div>
-
-  <div class="cart-step" id="cartStep3"><div class="final-summary"><div class="final-row"><span>Subtotal</span><span id="finalSubtotal">Rp0</span></div><div class="final-row discount"><span>Diskon</span><span id="finalDiscount">-Rp0</span></div><div class="final-row"><span>Biaya Pengantaran</span><span id="finalShipping">Rp0</span></div><div class="final-row" id="finalSubsidy" style="display:none;color:var(--green);font-weight:600;"><span>Subsidi Ongkir</span><span>-Rp0</span></div><div class="final-row total"><span>Total</span><span id="finalTotal">Rp0</span></div></div><div class="form-section"><label class="form-label">Catatan (Opsional)</label><textarea id="orderNotes" placeholder="Contoh: Sambal dipisah" rows="2"></textarea></div><div class="gift-section"><label><input type="checkbox" id="giftToggle"> 🎁 Kirim sebagai Kado</label><div id="giftFields" style="display:none;margin-top:8px;"><input type="text" id="giftSender" placeholder="Nama pengirim"><textarea id="giftMessage" placeholder="Pesan kado" rows="2"></textarea></div></div><button class="btn-step primary" id="btnOpenPayment" style="width:100%;justify-content:center;margin-top:12px;">💳 Bayar Via QRIS</button></div>
+  <!-- ===== STEP 2 + 3 GABUNGAN ===== -->
+  <div class="cart-step" id="cartStep2">
+    <div class="form-section">
+      <label class="form-label">Nama Penerima</label>
+      <input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name">
+    </div>
+    <div class="form-section">
+      <label class="form-label">Nomor HP</label>
+      <input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" autocomplete="tel">
+    </div>
+    <div class="form-section">
+      <label class="form-label">Alamat</label>
+      <input type="text" id="customerAddress" placeholder="Alamat lengkap" autocomplete="street-address">
+    </div>
+    <div class="form-section">
+      <label class="form-label">Catatan (Opsional)</label>
+      <textarea id="orderNotes" placeholder="Contoh: Sambal dipisah" rows="2"></textarea>
+    </div>
+    <div class="gift-section">
+      <label><input type="checkbox" id="giftToggle"> 🎁 Kirim sebagai Kado</label>
+      <div id="giftFields" style="display:none;margin-top:8px;">
+        <input type="text" id="giftSender" placeholder="Nama pengirim">
+        <textarea id="giftMessage" placeholder="Pesan kado" rows="2"></textarea>
+      </div>
+    </div>
+    <div class="final-summary" style="margin-top:12px;">
+      <div class="final-row"><span>Subtotal</span><span id="finalSubtotal">Rp0</span></div>
+      <div class="final-row discount"><span>Diskon</span><span id="finalDiscount">-Rp0</span></div>
+      <div class="final-row"><span>Biaya Pengantaran</span><span id="finalShipping">Rp0</span></div>
+      <div class="final-row" id="finalSubsidy" style="display:none;color:var(--green);font-weight:600;">
+        <span>Subsidi Ongkir</span><span>-Rp0</span>
+      </div>
+      <div class="final-row total"><span>Total</span><span id="finalTotal">Rp0</span></div>
+    </div>
+    <button class="btn-step primary" id="btnOpenPayment" style="width:100%;justify-content:center;margin-top:12px;font-size:16px;padding:16px;">
+      💳 Bayar Via QRIS
+    </button>
+    <div style="font-size:10px;color:var(--gray-400);text-align:center;margin-top:8px;">
+      🔒 Data aman. Pesanan langsung diproses setelah pembayaran.
+    </div>
+  </div>
   </div></div></div>
 
-  <div class="modal-overlay" id="paymentModal"><div class="modal-content"><div class="modal-header"><span class="modal-header-title">Pembayaran QRIS</span><button class="modal-close" id="paymentClose" aria-label="Tutup">&times;</button></div><div class="modal-body" style="text-align:center;"><div style="position:relative;display:block;width:100%;"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" id="qrisImagePayment" style="width:100%;height:auto;aspect-ratio:1/1;object-fit:contain;border-radius:10px;background:white;display:block;" /></div><p style="font-size:12px;color:var(--green);margin-top:8px;font-weight:700;">📱 Ketuk untuk perbesar QRIS</p><div style="margin-top:12px;"><button type="button" class="download-btn" id="downloadQrisBtnPayment" style="display:inline-flex;align-items:center;gap:6px;background:white;color:var(--green);padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;border:1px solid var(--green);cursor:pointer;"><i data-lucide="download" class="w-4 h-4"></i> Unduh QRIS</button></div></div><div class="modal-footer" style="flex-direction:column;align-items:stretch;gap:10px;"><div style="display:flex;align-items:center;justify-content:space-between;background:var(--red);color:white;border-radius:12px;padding:12px 16px;font-weight:700;"><span style="font-size:14px;">Total Tagihan</span><span id="paymentTotalDisplay" style="font-size:20px;font-weight:800;">Rp0</span></div><button type="button" class="modal-add" data-action="confirm-wa" style="justify-content:center;gap:8px;margin-top:0;"><i data-lucide="send" class="w-5 h-5"></i> Kirim Bukti Transfer</button></div></div></div>
+  <div class="modal-overlay" id="paymentModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="modal-header-title">💳 Pembayaran QRIS</span>
+        <button class="modal-close" id="paymentClose">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:16px 20px;">
+        
+        <!-- Step Indicator -->
+        <div style="display:flex;justify-content:center;gap:6px;margin-bottom:16px;padding:10px;background:#F5F5F5;border-radius:12px;">
+          <div style="display:flex;align-items:center;gap:4px;">
+            <span style="background:#0F4D37;color:white;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;">1</span>
+            <span style="font-size:11px;font-weight:600;color:#0F4D37;">Scan QR</span>
+          </div>
+          <span style="color:#ccc;font-size:12px;">→</span>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <span style="background:#0F4D37;color:white;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;">2</span>
+            <span style="font-size:11px;font-weight:600;color:#0F4D37;">Transfer</span>
+          </div>
+          <span style="color:#ccc;font-size:12px;">→</span>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <span style="background:#0F4D37;color:white;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;">3</span>
+            <span style="font-size:11px;font-weight:600;color:#0F4D37;">Kirim Bukti</span>
+          </div>
+        </div>
+
+        <!-- QRIS Image -->
+        <div style="position:relative;display:block;width:100%;max-width:280px;margin:0 auto;">
+          <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" id="qrisImagePayment" style="width:100%;height:auto;aspect-ratio:1/1;object-fit:contain;border-radius:12px;background:white;display:block;border:2px solid #E8E0D0;" />
+        </div>
+        
+        <!-- Total Tagihan -->
+        <div style="background:#0F4D37;color:white;border-radius:12px;padding:12px 16px;margin:12px 0;text-align:center;">
+          <div style="font-size:11px;opacity:0.7;">Total Tagihan</div>
+          <div style="font-size:24px;font-weight:800;" id="paymentTotalDisplay">Rp0</div>
+        </div>
+
+        <!-- Instruksi -->
+        <div style="background:#E8F5E9;border-radius:12px;padding:12px 14px;text-align:left;font-size:12px;color:#0F4D37;line-height:1.8;">
+          <div style="font-weight:700;margin-bottom:4px;">📝 Cara Bayar:</div>
+          <ol style="margin:0;padding-left:18px;">
+            <li>Scan QRIS pakai <strong>mBanking</strong> atau <strong>QRIS App</strong></li>
+            <li>Transfer <strong id="paymentTotalDisplay2">Rp0</strong> (sesuai tagihan)</li>
+            <li>Klik tombol <strong>"Kirim Bukti"</strong> di bawah</li>
+          </ol>
+        </div>
+      </div>
+      <div class="modal-footer" style="flex-direction:column;align-items:stretch;gap:8px;padding:12px 20px 16px;">
+        <button type="button" class="modal-add" data-action="confirm-wa" style="justify-content:center;gap:8px;margin-top:0;background:#0F4D37;padding:14px;font-size:15px;">
+          <i data-lucide="send" class="w-5 h-5"></i> Kirim Bukti Transfer
+        </button>
+        <button type="button" id="paymentLater" style="background:none;border:none;color:var(--gray-400);font-size:11px;cursor:pointer;padding:4px;">Nanti saja, saya bayar manual</button>
+      </div>
+    </div>
+  </div>
 
   <div id="subsidiPopup" role="dialog" aria-modal="true" aria-label="Subsidi Ongkir Terbatas">
     <div class="popup-inner">
@@ -321,11 +430,11 @@
   </div>
 
   <!-- ==================== AI CHAT FLOATING ==================== -->
-  <div id="aiChatFloat" style="position:fixed;bottom:100px;right:16px;z-index:999;">
+  <div id="aiChatFloat" style="position:fixed;bottom:170px;right:16px;z-index:9999;">
     <button id="aiChatToggle" style="background:#0F4D37;color:white;border:none;border-radius:50%;width:56px;height:56px;font-size:28px;cursor:pointer;box-shadow:0 4px 16px rgba(15,77,55,0.4);transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
       💬
     </button>
-    <div id="aiChatBox" style="display:none;position:absolute;bottom:70px;right:0;width:340px;max-height:420px;background:white;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.2);overflow:hidden;border:1px solid #E8E0D0;transition:all 0.3s ease;">
+    <div id="aiChatBox" style="display:none;position:absolute;bottom:70px;right:0;width:340px;max-height:420px;background:white;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.2);overflow:hidden;border:1px solid #E8E0D0;transition:all 0.3s ease;z-index:10000;">
       <div style="background:#0F4D37;color:white;padding:12px 16px;font-weight:700;font-size:14px;display:flex;justify-content:space-between;align-items:center;">
         <div style="display:flex;align-items:center;gap:8px;">
           <span style="font-size:20px;">🤖</span>
@@ -382,7 +491,37 @@
     function handleScroll(){ if(popupActive) return; var scrollPercent=(window.scrollY+window.innerHeight)/document.documentElement.scrollHeight; if(scrollPercent>SCROLL_TRIGGER){ window.removeEventListener('scroll',handleScroll); openPopup(); } }
     function initScrollListener(){ window.addEventListener('scroll',handleScroll,{passive:true}); }
     if(popup){ popup.addEventListener('keydown',function(e){ if(e.key==='Escape'){ closePopupAndCooldown(); return; } if(e.key==='Tab'){ var focusable=popup.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])'); var first=focusable[0],last=focusable[focusable.length-1]; if(e.shiftKey){ if(document.activeElement===first){ e.preventDefault(); last.focus(); } } else { if(document.activeElement===last){ e.preventDefault(); first.focus(); } } } }); }
-    if(claimBtn){ claimBtn.addEventListener('click',function(){ closePopup(); updateSubsidyIndicator(); var expiry=Date.now()+(COUNTDOWN_MINUTES*60*1000); localStorage.setItem('rujak_subsidi_claimed','true'); localStorage.setItem('rujak_subsidi_expiry',expiry.toString()); setStorage('subsidi_claimed',true); var retries=0; function tryRefreshUI(){ if(typeof renderCart==='function'&&typeof renderMiniCart==='function'){ renderCart(); renderMiniCart(); } else if(retries<25){ retries++; setTimeout(tryRefreshUI,200); } } tryRefreshUI(); var menuEl=document.getElementById('menuList')||document.getElementById('catScroll'); if(menuEl){ menuEl.scrollIntoView({behavior:'smooth',block:'start'}); } }); }
+    if(claimBtn){
+      claimBtn.addEventListener('click', function() {
+        closePopup();
+        updateSubsidyIndicator();
+        var expiry = Date.now() + (COUNTDOWN_MINUTES * 60 * 1000);
+        localStorage.setItem('rujak_subsidi_claimed', 'true');
+        localStorage.setItem('rujak_subsidi_expiry', expiry.toString());
+        setStorage('subsidi_claimed', true);
+        
+        // FIX: Invalidate cache sebelum refresh
+        if (typeof invalidateCache === 'function') {
+          invalidateCache();
+        }
+        
+        var retries = 0;
+        function tryRefreshUI() {
+          if (typeof renderCart === 'function' && typeof renderMiniCart === 'function') {
+            renderCart();
+            renderMiniCart();
+          } else if (retries < 25) {
+            retries++;
+            setTimeout(tryRefreshUI, 200);
+          }
+        }
+        tryRefreshUI();
+        var menuEl = document.getElementById('menuList') || document.getElementById('catScroll');
+        if(menuEl){
+          menuEl.scrollIntoView({behavior:'smooth',block:'start'});
+        }
+      });
+    }
     if(closeBtn){ closeBtn.addEventListener('click',closePopupAndCooldown); }
     if(popup){ popup.addEventListener('click',function(e){ if(e.target===popup) closePopupAndCooldown(); }); }
     async function init(){ if(initialized) return; initialized=true; await getFingerprint(); var claimed=getStorage('subsidi_claimed'); if(claimed&&claimed.value===true){ updateSubsidyIndicator(); } var cooldownData=getStorage('cooldown'); if(cooldownData&&Date.now()>=cooldownData.value){ removeStorage('cooldown'); removeStorage('countdown_expired'); removeStorage('subsidi_claimed'); } if(!getStorage('cooldown')){ initScrollListener(); } }
