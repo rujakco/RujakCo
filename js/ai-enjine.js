@@ -1,11 +1,6 @@
-// ============================================================
-// ================ AI ENGINE ==================================
-// ============================================================
-
 import { fmt, escapeHTML, showToast } from './utils.js';
 import { invalidateCache, getCartSummaryCached } from './cart.js';
 
-// State reference
 export let stateRef = null;
 export let productsRef = [];
 
@@ -15,23 +10,6 @@ export function setStateRef(state) {
 
 export function setProductsRef(products) {
   productsRef = products;
-}
-
-// Lock reference
-let addToCartLocked = false;
-export function setAddToCartLock(lockFn) {
-  addToCartLocked = false;
-  // Store lock function
-  window._lockAddToCart = lockFn;
-}
-
-function lockAddToCart() {
-  if (window._lockAddToCart) {
-    window._lockAddToCart();
-  } else {
-    addToCartLocked = true;
-    setTimeout(() => { addToCartLocked = false; }, 300);
-  }
 }
 
 export function getAIRecommendation() {
@@ -119,13 +97,9 @@ export function renderAIRecommendation() {
 
 window.addToCartAI = function(productId) {
   if (!stateRef || !productsRef) return;
-  
-  if (window._lockAddToCart) {
-    // Check if locked
-    if (window._isAddToCartLocked) return;
-    window._isAddToCartLocked = true;
-    setTimeout(() => { window._isAddToCartLocked = false; }, 300);
-  }
+  if (window._isAddToCartLocked) return;
+  window._isAddToCartLocked = true;
+  setTimeout(() => { window._isAddToCartLocked = false; }, 300);
   
   const product = productsRef.find(p => p.id === productId);
   if (!product) return;
