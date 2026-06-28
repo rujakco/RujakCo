@@ -1,20 +1,13 @@
-// ============================================================
-// ================ CART MANAGEMENT ============================
-// ============================================================
-
 import { fmt, escapeHTML } from './utils.js';
 import { SYSTEM, calculateShipping, calculateSubsidy } from './shipping.js';
 
-// State reference
 export let stateRef = null;
+export let productsRef = [];
+export let addonsRef = [];
 
 export function setStateRef(state) {
   stateRef = state;
 }
-
-// Products reference
-export let productsRef = [];
-export let addonsRef = [];
 
 export function setProductsRef(products, addons) {
   productsRef = products;
@@ -147,6 +140,7 @@ export function getCartSummaryCached() {
 export function invalidateCache() {
   cachedSummary = null;
   cachedSummaryKey = '';
+  window.invalidateCache = invalidateCache;
 }
 
 export function calculateDiscount(subtotal) {
