@@ -1,7 +1,3 @@
-// ============================================================
-// ================ SHIPPING CALCULATIONS ======================
-// ============================================================
-
 import { fmt } from './utils.js';
 
 export const SYSTEM = {
@@ -31,7 +27,6 @@ export const DISTRICT_MAP = {
   'bogor':35, 'tangerang':30, 'tangerang selatan':27
 };
 
-// State reference (akan di-set dari app.js)
 export let stateRef = null;
 
 export function setStateRef(state) {
