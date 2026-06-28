@@ -2,13 +2,49 @@
 // ================ SHIPPING CALCULATIONS ======================
 // ============================================================
 
-function calculateSubsidy(subtotal, shippingZone, rawShippingCost) {
+import { fmt } from './utils.js';
+
+export const SYSTEM = {
+  DISCOUNT_THRESHOLD: 100000,
+  WA_NUMBER: '6289677161680',
+  TOAST_DURATION: 3000,
+  MAX_DISTANCE: 50,
+  DEFAULT_DISTANCE: 2,
+  SUBSIDY_TIER1: 75000,
+  SUBSIDY_TIER2: 125000,
+  SUBSIDY_TIER3: 200000,
+  SUBSIDY_AMOUNT1: 5000,
+  SUBSIDY_AMOUNT2: 10000,
+  PRIORITY_SURCHARGE: 8000,
+  MAX_SUBSIDY: 30000,
+  STORE_LAT: -6.2347,
+  STORE_LNG: 106.9895,
+  LOCATION_TIMEOUT: 12000,
+  SUBSIDY_DURATION_MINUTES: 30
+};
+
+export const DISTRICT_MAP = {
+  'bekasi barat':3, 'bekasi timur':5, 'bekasi selatan':7, 'bekasi utara':8,
+  'rawalumbu':6, 'jatiasih':9, 'pondokgede':12, 'cikarang':18,
+  'jakarta pusat':18, 'jakarta selatan':20, 'jakarta timur':15,
+  'jakarta barat':22, 'jakarta utara':25, 'depok':28,
+  'bogor':35, 'tangerang':30, 'tangerang selatan':27
+};
+
+// State reference (akan di-set dari app.js)
+export let stateRef = null;
+
+export function setStateRef(state) {
+  stateRef = state;
+}
+
+export function calculateSubsidy(subtotal, shippingZone, rawShippingCost) {
   if (shippingZone === 'E' || !rawShippingCost) return 0;
-  var claimed = localStorage.getItem('rujak_subsidi_claimed');
-  var expiry = localStorage.getItem('rujak_subsidi_expiry');
+  const claimed = localStorage.getItem('rujak_subsidi_claimed');
+  const expiry = localStorage.getItem('rujak_subsidi_expiry');
   if (!claimed || (expiry && Date.now() > parseInt(expiry))) return 0;
   
-  var subsidy = 0;
+  let subsidy = 0;
   if (subtotal >= SYSTEM.SUBSIDY_TIER3 && ['A','B','C','D'].includes(shippingZone)) {
     subsidy = rawShippingCost;
   } else if (subtotal >= SYSTEM.SUBSIDY_TIER2) {
@@ -20,8 +56,8 @@ function calculateSubsidy(subtotal, shippingZone, rawShippingCost) {
   return subsidy;
 }
 
-function calculateLalamoveCost(distance, vehicleType) {
-  var dist = Math.ceil(distance);
+export function calculateLalamoveCost(distance, vehicleType) {
+  const dist = Math.ceil(distance);
   if (vehicleType === 'motor') {
     if (dist <= 3) return 8000;
     if (dist <= 25) return 8000 + ((dist - 3) * 2000);
@@ -35,7 +71,7 @@ function calculateLalamoveCost(distance, vehicleType) {
   return 0;
 }
 
-function getZoneLabel(distance) {
+export function getZoneLabel(distance) {
   if (distance <= 5) return 'Zona A (0-5 km)';
   if (distance <= 10) return 'Zona B (5-10 km)';
   if (distance <= 15) return 'Zona C (10-15 km)';
@@ -43,43 +79,55 @@ function getZoneLabel(distance) {
   return 'Zona E (>20 km)';
 }
 
-function isPeakHour() {
-  var now = new Date();
-  var hour = now.getHours();
-  var day = now.getDay();
+export function isPeakHour() {
+  const now = new Date();
+  const hour = now.getHours();
+  const day = now.getDay();
   if (day === 0 || day === 6) return (hour >= 11 && hour <= 13);
   return (hour >= 11 && hour <= 13) || (hour >= 16 && hour <= 19);
 }
 
-function getSurgeMultiplier() {
+export function getSurgeMultiplier() {
   if (!isPeakHour()) {
-    state.currentSurge = null;
+    if (stateRef) stateRef.currentSurge = null;
     return 1.0;
   }
-  if (state.currentSurge) return state.currentSurge;
-  state.currentSurge = 1.3;
-  return state.currentSurge;
+  if (stateRef && stateRef.currentSurge) return stateRef.currentSurge;
+  if (stateRef) stateRef.currentSurge = 1.3;
+  return 1.3;
 }
 
-function calculateShipping(distance, priority) {
-  if (state.shippingProvider === 'pembeli') {
+export function calculateShipping(distance, priority) {
+  if (!stateRef) {
+    return { cost: 0, label: 'Error', distance: distance, zone: null, surge: 1.0, isSurge: false, lalamoveCost: 0, baseLalamoveCost: 0 };
+  }
+  
+  if (stateRef.shippingProvider === 'pembeli') {
     return { cost: 0, label: 'Kurir Saya', distance: distance, zone: null, surge: 1.0, isSurge: false, lalamoveCost: 0, baseLalamoveCost: 0 };
   }
   
-  var rawDistance = (distance === null || distance === undefined || isNaN(distance)) ? SYSTEM.DEFAULT_DISTANCE : distance;
+  const rawDistance = (distance === null || distance === undefined || isNaN(distance)) ? SYSTEM.DEFAULT_DISTANCE : distance;
   
   if (rawDistance > SYSTEM.MAX_DISTANCE) {
     return { cost: null, label: 'Admin Konfirmasi', distance: rawDistance, zone: 'E', surge: 1.0, isSurge: false, lalamoveCost: 0, baseLalamoveCost: 0 };
   }
   
-  var surgeMultiplier = getSurgeMultiplier();
-  var isSurge = surgeMultiplier > 1.0;
-  var lalamoveCost = calculateLalamoveCost(rawDistance, state.vehicleType);
-  var surgedCost = Math.round(lalamoveCost * surgeMultiplier);
-  var priorityCost = priority ? SYSTEM.PRIORITY_SURCHARGE : 0;
-  var totalCost = surgedCost + priorityCost;
-  var zoneLabel = getZoneLabel(rawDistance);
-  var surgeLabel = isSurge ? ' ⚡Jam Sibuk' : '';
+  const surgeMultiplier = getSurgeMultiplier();
+  const isSurge = surgeMultiplier > 1.0;
+  const lalamoveCost = calculateLalamoveCost(rawDistance, stateRef.vehicleType);
+  const surgedCost = Math.round(lalamoveCost * surgeMultiplier);
+  const priorityCost = priority ? SYSTEM.PRIORITY_SURCHARGE : 0;
+  const totalCost = surgedCost + priorityCost;
+  const zoneLabel = getZoneLabel(rawDistance);
+  const surgeLabel = isSurge ? ' ⚡Jam Sibuk' : '';
+  
+  let zone = 'E';
+  if (rawDistance <= 20) {
+    if (rawDistance <= 5) zone = 'A';
+    else if (rawDistance <= 10) zone = 'B';
+    else if (rawDistance <= 15) zone = 'C';
+    else zone = 'D';
+  }
   
   return {
     cost: totalCost,
@@ -87,51 +135,51 @@ function calculateShipping(distance, priority) {
     baseLalamoveCost: lalamoveCost,
     surgeMultiplier: surgeMultiplier,
     isSurge: isSurge,
-    label: zoneLabel + ' • ' + (state.vehicleType === 'motor' ? 'Motor' : 'Mobil') + (priority ? ' • Prioritas' : '') + surgeLabel,
+    label: zoneLabel + ' • ' + (stateRef.vehicleType === 'motor' ? 'Motor' : 'Mobil') + (priority ? ' • Prioritas' : '') + surgeLabel,
     distance: rawDistance,
-    zone: rawDistance <= 20 ? (rawDistance <= 5 ? 'A' : rawDistance <= 10 ? 'B' : rawDistance <= 15 ? 'C' : 'D') : 'E'
+    zone: zone
   };
 }
 
-function getLocationFallback() {
-  return new Promise(function(resolve) {
-    var cached = localStorage.getItem('rujak_location');
+export function getLocationFallback() {
+  return new Promise((resolve) => {
+    const cached = localStorage.getItem('rujak_location');
     if (cached) {
       try {
-        var data = JSON.parse(cached);
+        const data = JSON.parse(cached);
         if (Date.now() - data.timestamp < 86400000 && data.distance < 900) {
           return resolve(data);
         }
       } catch(e) {}
     }
     fetch('https://ipapi.co/json/')
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        var city = data.city || data.region || 'Lokasi';
-        var distance = 999;
-        var c = city.toLowerCase();
+      .then(r => r.json())
+      .then(data => {
+        const city = data.city || data.region || 'Lokasi';
+        let distance = 999;
+        const c = city.toLowerCase();
         if (c.includes('bekasi')) distance = 2;
         else if (c.includes('jakarta')) distance = 15;
         else if (c.includes('depok')) distance = 20;
         else if (c.includes('tangerang')) distance = 25;
         else if (c.includes('bogor')) distance = 30;
-        var result = { city: city, distance: distance, timestamp: Date.now() };
+        const result = { city: city, distance: distance, timestamp: Date.now() };
         try {
           localStorage.setItem('rujak_location', JSON.stringify(result));
         } catch(e) {}
         resolve(result);
       })
-      .catch(function() {
+      .catch(() => {
         resolve({ city: 'Lokasi Tidak Diketahui', distance: 999 });
       });
   });
 }
 
-function updateShippingUI(distance, isPriority) {
-  var shipping = calculateShipping(distance, isPriority);
-  var distEl = document.getElementById('shippingDistance');
-  var costEl = document.getElementById('shippingCost');
-  var outEl = document.getElementById('outOfRange');
+export function updateShippingUI(distance, isPriority, state, renderMiniCart, invalidateCache) {
+  const shipping = calculateShipping(distance, isPriority);
+  const distEl = document.getElementById('shippingDistance');
+  const costEl = document.getElementById('shippingCost');
+  const outEl = document.getElementById('outOfRange');
   
   if (distEl) distEl.textContent = '~' + Math.ceil(distance) + ' km';
   
@@ -155,6 +203,8 @@ function updateShippingUI(distance, isPriority) {
     if (outEl) outEl.style.display = 'none';
   }
   
-  if (document.getElementById('miniCartModal')?.classList.contains('active')) renderMiniCart();
-  invalidateCache();
+  if (document.getElementById('miniCartModal') && document.getElementById('miniCartModal').classList.contains('active')) {
+    if (typeof renderMiniCart === 'function') renderMiniCart();
+  }
+  if (typeof invalidateCache === 'function') invalidateCache();
 }
