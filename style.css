@@ -195,22 +195,35 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 .footer-wa-icon:hover{transform:scale(1.15)}
 .footer-wa-icon img{width:36px;height:36px;object-fit:contain}
 
-#bottom-bar{position:fixed;bottom:0;width:100%;max-width:480px;background:var(--ivory);border-top:1px solid rgba(15,77,55,.1);padding:12px 20px max(20px,env(safe-area-inset-bottom,20px));z-index:200;box-shadow:0 -10px 30px rgba(15,77,55,.05);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);transform:translateY(100%)}
+#bottom-bar{position:fixed;bottom:0;width:100%;max-width:480px;background:rgba(255,253,248,0.96);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid rgba(15,77,55,.06);padding:6px 12px max(10px,env(safe-area-inset-bottom,10px));z-index:200;box-shadow:0 -10px 30px rgba(15,77,55,.05);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);transform:translateY(100%)}
 #bottom-bar.visible{transform:translateY(0)}
-.cart-summary{display:flex;align-items:center;background:white;border:1px solid rgba(15,77,55,.1);box-shadow:0 2px 10px rgba(15,77,55,.03);border-radius:14px;padding:10px 14px;margin-bottom:10px;gap:10px;cursor:pointer}
+
+.cart-summary{display:flex;align-items:center;background:white;border:1px solid rgba(15,77,55,.1);box-shadow:0 2px 10px rgba(15,77,55,.03);border-radius:10px;padding:6px 10px;margin-bottom:4px;gap:8px;cursor:pointer;min-height:40px}
 .cart-summary:focus-visible{outline:2px solid var(--green);outline-offset:2px}
-.cart-items-preview{flex:1;font-size:13px;font-weight:600;color:var(--gray-700)}
+.cart-items-preview{flex:1;font-size:12px;font-weight:600;color:var(--gray-700)}
 .cart-total-wrap{text-align:right}
-.cart-total{font-size:15px;font-weight:800;color:var(--green);display:block}
-.cart-discount-label{font-size:11px;font-weight:700;color:var(--red);background:#fef2f2;padding:2px 6px;border-radius:4px;margin-right:6px;display:inline-block}
-.wa-btn{width:100%;background:var(--green);color:white;border:none;border-radius:16px;padding:16px 20px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .18s}
+.cart-total{font-size:13px;font-weight:800;color:var(--green);display:block}
+.cart-discount-label{font-size:10px;font-weight:700;color:var(--red);background:#fef2f2;padding:2px 6px;border-radius:4px;margin-right:4px;display:inline-block}
+.wa-btn{width:100%;background:var(--green);color:white;border:none;border-radius:10px;padding:10px 14px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .18s}
 .wa-btn:focus-visible{outline:2px solid var(--green);outline-offset:2px}
 .wa-btn:active{transform:scale(.98)}
 .wa-btn-left{display:flex;flex-direction:column;text-align:left;gap:1px}
-.wa-btn-sub{font-size:11px;font-weight:500;opacity:.7;text-transform:uppercase;letter-spacing:.05em}
-.wa-badge{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);border-radius:10px;padding:6px 12px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
-.close-bottom-bar{position:absolute;top:8px;right:16px;background:none;border:none;color:var(--gray-500);font-size:20px;cursor:pointer;padding:4px;line-height:1;z-index:10}
+.wa-btn-sub{font-size:10px;font-weight:500;opacity:.7;text-transform:uppercase;letter-spacing:.05em}
+.wa-badge{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:6px}
+.close-bottom-bar{position:absolute;top:4px;right:8px;background:rgba(0,0,0,0.04);border:none;color:var(--gray-500);font-size:16px;cursor:pointer;padding:2px 6px;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;line-height:1;z-index:10}
 .close-bottom-bar:active{color:var(--red)}
+
+.shipping-estimate{padding:4px 10px;margin-bottom:4px !important;border-radius:20px;font-size:10px;min-height:28px}
+.shipping-subsidy{padding:3px 10px !important;margin-bottom:3px !important;font-size:10px !important;border-radius:20px !important;min-height:24px}
+.shipping-out-of-range{padding:4px 10px;margin-bottom:4px !important;font-size:10px !important;border-radius:20px !important;min-height:24px}
+.progress-container{padding:6px 10px !important;margin-bottom:4px !important;border-radius:10px !important}
+.progress-text{font-size:10px !important;margin-bottom:3px !important}
+.progress-bar{height:4px !important}
+.shipping-toggle{font-size:10px !important;gap:4px !important}
+.shipping-toggle input[type=checkbox]{width:30px !important;height:16px !important}
+.shipping-toggle input[type=checkbox]::after{width:12px !important;height:12px !important}
+.shipping-toggle input[type=checkbox]:checked::after{transform:translateX(14px) !important}
+.badge-priority{font-size:8px !important;padding:1px 4px !important}
 
 #floatingCartBtn{position:fixed;bottom:100px;right:20px;width:56px;height:56px;background:var(--green);color:white;border-radius:50%;box-shadow:0 6px 20px rgba(15,77,55,.4);display:none;align-items:center;justify-content:center;cursor:pointer;z-index:250;transition:transform 0.2s,box-shadow 0.2s}
 #floatingCartBtn:active{transform:scale(0.95);box-shadow:0 4px 12px rgba(15,77,55,.3)}
@@ -352,6 +365,27 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 #subsidiPopup[role="dialog"]{display:none;position:fixed!important;top:0!important;left:0!important;width:100%!important;height:100%!important;z-index:99999!important;background:rgba(0,0,0,0.7)!important;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center!important;justify-content:center!important;flex-direction:column!important}
 #subsidiPopup.popup-show{display:flex!important}
 
+/* FIX: Styling popup-inner yang hilang */
+.popup-inner {
+  background: white;
+  border-radius: 24px;
+  padding: 28px 24px 20px;
+  max-width: 380px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+@media (max-width: 420px) {
+  .popup-inner {
+    padding: 20px 16px 16px;
+    max-width: 340px;
+  }
+}
+
 @media (max-width:420px){
   .brand-name{font-size:17px}.location-value{font-size:11px}.footer-grid{grid-template-columns:1fr;gap:12px}
   .modal-footer{flex-direction:column;align-items:stretch;gap:8px}.modal-footer .modal-add{width:100%}
@@ -442,7 +476,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 
 /* --- AI Chat Floating --- */
 #aiChatFloat {
-  transition: transform 0.2s ease;
+  z-index: 9999 !important;
 }
 
 #aiChatFloat button#aiChatToggle {
@@ -454,6 +488,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 }
 
 #aiChatBox {
+  z-index: 10000 !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
