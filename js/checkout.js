@@ -1,12 +1,7 @@
-// ============================================================
-// ================ CHECKOUT & PAYMENT ========================
-// ============================================================
-
 import { fmt, normalizePhone, openWhatsApp, showToast } from './utils.js';
 import { SYSTEM } from './shipping.js';
 import { invalidateCache, getCartSummaryCached, saveCart, clearCart, recordOrderHistory } from './cart.js';
 
-// State reference
 export let stateRef = null;
 export let supabaseFn = null;
 export let updateUIFn = null;
