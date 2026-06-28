@@ -1,7 +1,3 @@
-// ============================================================
-// ================ APP ENTRY POINT ============================
-// ============================================================
-
 import { 
   escapeHTML, fmt, debounce, normalizePhone, openWhatsApp, 
   shareToWhatsApp, showToast, showConfirmModal 
@@ -127,7 +123,6 @@ const state = {
 // ================ SET REFERENCES =============================
 // ============================================================
 
-// Set references ke semua module
 setShippingStateRef(state);
 setCartStateRef(state);
 setCartProductsRef(PRODUCTS, ADDONS);
@@ -935,7 +930,6 @@ function bindEvents() {
       return;
     }
     if (e.target.closest('#paymentClose') || e.target === document.getElementById('paymentModal')) {
-      // Reset checkout lock
       if (window._checkoutLocked) window._checkoutLocked = false;
       const pmt = document.getElementById('paymentModal');
       if (pmt) {
