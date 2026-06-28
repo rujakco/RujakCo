@@ -1,13 +1,8 @@
-// ============================================================
-// ================ UI RENDER FUNCTIONS =======================
-// ============================================================
-
 import { fmt, escapeHTML } from './utils.js';
 import { SYSTEM } from './shipping.js';
 import { getCartSummaryCached, invalidateCache, saveCart } from './cart.js';
 import { aiSearch, renderAIUpsell, renderAIRecommendation } from './ai-engine.js';
 
-// State reference
 export let stateRef = null;
 export let productsRef = [];
 export let addonsRef = [];
@@ -390,7 +385,6 @@ export function renderMiniCart() {
     step1Upsell.innerHTML = renderAIUpsell(summary);
   }
   
-  // Update step 2 fields
   const s2c = document.getElementById('step2ShippingCost');
   const s2d = document.getElementById('step2Distance');
   const s2z = document.getElementById('step2Zone');
@@ -425,7 +419,6 @@ export function renderMiniCart() {
   }
   if (s2d) s2d.textContent = '~' + Math.ceil(summary.shippingDistance) + ' km';
   
-  // Final summary
   const fSub = document.getElementById('finalSubtotal');
   if (fSub) fSub.textContent = fmt(summary.subtotal);
   
@@ -446,7 +439,6 @@ export function renderMiniCart() {
   const fTotal = document.getElementById('finalTotal');
   if (fTotal) fTotal.textContent = summary.isOutOfRange ? 'Konfirmasi' : fmt(summary.total);
   
-  // Form fields
   const orderNotesEl = document.getElementById('orderNotes');
   if (orderNotesEl) orderNotesEl.value = stateRef.orderNotes;
   
@@ -471,7 +463,6 @@ export function renderMiniCart() {
   const giftFieldsEl = document.getElementById('giftFields');
   if (giftFieldsEl) giftFieldsEl.style.display = stateRef.isGift ? 'block' : 'none';
   
-  // Shipping options
   document.querySelectorAll('.ship-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.provider === stateRef.shippingProvider);
   });
@@ -521,3 +512,6 @@ export function updateUI() {
 }
 
 window.updateUI = updateUI;
+window.renderCart = renderCart;
+window.renderMiniCart = renderMiniCart;
+window.invalidateCache = invalidateCache;
