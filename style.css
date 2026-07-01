@@ -521,3 +521,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     font-size: 24px;
   }
 }
+.form-section{margin-bottom:14px}
+.form-label{display:block;font-size:13px;font-weight:700;color:var(--gray-700);margin-bottom:6px}
+.form-section input,.form-section textarea{width:100%;padding:12px 14px;border:2px solid var(--gray-200);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--gray-900);background:white;transition:border-color 0.2s;box-sizing:border-box}
+.form-section input:focus,.form-section textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(15,77,55,0.1)}
+.form-section input::placeholder,.form-section textarea::placeholder{color:var(--gray-400)}
+.form-section textarea{resize:vertical;min-height:60px}
