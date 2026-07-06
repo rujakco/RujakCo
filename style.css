@@ -11,7 +11,7 @@
 
 * {
   box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: transparent; /* Hapus highlight sentuh */
 }
 
 /* Utility */
@@ -108,13 +108,7 @@ body { display: flex; flex-direction: column; align-items: center; min-height: 1
 @keyframes pulse-gold { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.6; } 100% { transform: scale(1); opacity: 1; } }
 
 /* Category Scroll */
-.cat-scroll {
-  display: flex;
-  overflow-x: auto;
-  gap: 8px;
-  padding: 0 20px 12px;   /* dikurangi dari 16px */
-  -webkit-overflow-scrolling: touch;
-}
+.cat-scroll { display: flex; overflow-x: auto; gap: 8px; padding: 0 20px 12px; -webkit-overflow-scrolling: touch; }
 .cat-pill { flex-shrink: 0; border: 1px solid transparent; background: var(--green-pale); color: var(--green); font-family: inherit; font-size: 13px; font-weight: 600; padding: 8px 18px; border-radius: var(--radius-pill); cursor: pointer; transition: all .18s; white-space: nowrap; }
 .cat-pill:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
 .cat-pill:active { transform: scale(.96); }
@@ -372,7 +366,9 @@ button.add-btn.btn-add-unified i {
 
 /* QRIS */
 #qrisImagePayment { transition: transform 0.3s ease; cursor: pointer; }
-#qrisImagePayment.qr-zoomed { transform: scale(1.5); max-width: 100vw; max-height: 80vh; }
+#qrisImagePayment.qr-zoomed-1 { transform: scale(1.5); max-width: 100vw; max-height: 80vh; }
+#qrisImagePayment.qr-zoomed-2 { transform: scale(3); max-width: none; max-height: none; }
+#qrisImagePayment.qr-zoomed-3 { transform: scale(4.5); max-width: none; max-height: none; }
 
 /* Steps */
 .cart-step { display: none!important; }
@@ -440,6 +436,30 @@ button.add-btn.btn-add-unified i {
 .form-section input:focus, .form-section textarea:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(15,77,55,0.1); }
 .form-section input::placeholder, .form-section textarea::placeholder { color: var(--gray-400); }
 .form-section textarea { resize: vertical; min-height: 60px; }
+
+/* Dropdown Premium */
+select#deliveryTime {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid var(--gray-200);
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--gray-900);
+  background: white;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  transition: border-color 0.2s;
+  cursor: pointer;
+}
+select#deliveryTime:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(15,77,55,0.1);
+}
 
 /* Banner Fresh‑Prep */
 #freshBanner { animation: fadeInDown 0.5s ease; }
