@@ -2,7 +2,7 @@
   'use strict';
 
   // ============================================================
-  // CRITICAL FIXES v1.0.4 — FULL & FINAL
+  // CRITICAL FIXES v1.0.5 — FRESH-PREP + SUBSIDI SECURITY
   // ============================================================
 
   function safeGet(id) {
@@ -461,7 +461,7 @@
   }
 
   // ============================================================
-  // CHECKOUT FUNCTIONS
+  // CHECKOUT FUNCTIONS (DENGAN DELIVERY TIME)
   // ============================================================
   function showOrderConfirmation(waMessage) {
     const paymentModal = document.getElementById('paymentModal');
@@ -498,7 +498,7 @@
     setTimeout(() => { if (modal) modal.remove(); }, 15000);
   }
 
-  function saveOrderToDatabase(orderItems, total, subtotal, shippingCost, discount, orderNumber) {
+  function saveOrderToDatabase(orderItems, total, subtotal, shippingCost, discount, orderNumber, deliveryTime) {
     return getSupabase().then(client => {
       if (!client) {
         checkoutLocked = false; if (checkoutTimer) { clearTimeout(checkoutTimer); checkoutTimer = null; }
@@ -513,7 +513,8 @@
           subtotal, shipping_cost: shippingCost, discount, total, status: 'pending', is_gift: state.isGift || false,
           gift_sender: (state.giftSender || '').substring(0, 50), gift_message: (state.giftMessage || '').substring(0, 300),
           mission_shared: state.hasShared || false, shipping_provider: state.shippingProvider || 'rujakco',
-          vehicle: state.vehicleType || 'motor', priority: state.isPriority || false
+          vehicle: state.vehicleType || 'motor', priority: state.isPriority || false,
+          delivery_time: deliveryTime || '' // tambahan untuk Fresh-Prep
         };
         let retries = 0; const maxRetries = 2;
         function attemptInsert() {
@@ -544,6 +545,16 @@
     if (!cleanedPhone || !isValidPhone(cleanedPhone)) { showToast('❌ Format HP tidak valid. Contoh: 08123456789'); const el = document.getElementById('customerPhone'); if (el) el.focus(); return; }
     const normalizedPhone = normalizePhone(cleanedPhone);
     if (!address || address.length < 5) { showToast('❌ Alamat terlalu pendek. Tulis lebih lengkap ya'); const el = document.getElementById('customerAddress'); if (el) el.focus(); return; }
+
+    // Validasi jam pengiriman (Fresh-Prep)
+    const deliveryTimeEl = document.getElementById('deliveryTime');
+    const deliveryTime = deliveryTimeEl ? deliveryTimeEl.value : '';
+    if (!deliveryTime) {
+      showToast('❌ Mohon pilih jam pengiriman untuk besok');
+      if (deliveryTimeEl) deliveryTimeEl.focus();
+      return;
+    }
+
     if (summary.items.length === 0) { showToast('🛒 Keranjang masih kosong nih'); return; }
     state.customerPhone = normalizedPhone; state.customerName = name; state.customerAddress = address;
     localStorage.setItem('last_order', Date.now()); checkoutLocked = true;
@@ -551,7 +562,7 @@
     if (checkoutTimer) clearTimeout(checkoutTimer);
     checkoutTimer = setTimeout(() => { checkoutLocked = false; if (payBtn) { payBtn.textContent = '💳 Kirim Bukti Transfer'; payBtn.disabled = false; } checkoutTimer = null; }, 5000);
     const orderNumber = 'RJ' + Date.now().toString(36).slice(-6) + Math.random().toString(36).substring(2, 5).toUpperCase();
-    saveOrderToDatabase(summary.items, summary.total, summary.subtotal, summary.shippingCost, summary.discount, orderNumber).then(saved => {
+    saveOrderToDatabase(summary.items, summary.total, summary.subtotal, summary.shippingCost, summary.discount, orderNumber, deliveryTime).then(saved => {
       if (checkoutTimer) { clearTimeout(checkoutTimer); checkoutTimer = null; }
       checkoutLocked = false; if (payBtn) { payBtn.textContent = '💳 Kirim Bukti Transfer'; payBtn.disabled = false; }
       if (!saved) { showToast('⚠️ Gagal menyimpan. Coba lagi ya'); return; }
@@ -562,7 +573,7 @@
       summary.items.forEach(item => { waMsg += '• ' + item.name + (item.spice ? ' (Level ' + item.spice + ')' : '') + ' (x' + item.qty + ') — ' + fmt(item.lineTotal) + '\n'; });
       if (state.orderNotes) waMsg += '\n*Catatan:*\n' + state.orderNotes + '\n';
       if (state.isGift) { waMsg += '\n🎁 *KADO*\n'; if (state.giftSender) waMsg += 'Dari: ' + state.giftSender + '\n'; if (state.giftMessage) waMsg += 'Ucapan: ' + state.giftMessage + '\n'; }
-      waMsg += '\n*Data:*\nNama: ' + name + '\nNo. HP: ' + normalizedPhone + '\nAlamat: ' + address + '\n';
+      waMsg += '\n*Data:*\nNama: ' + name + '\nNo. HP: ' + normalizedPhone + '\nAlamat: ' + address + '\n📅 Jam Pengiriman: ' + deliveryTime + '\n';
       waMsg += '\n*Total: ' + fmt(summary.total) + '*\n\n*Saya sudah transfer via QRIS, ini buktinya:*\n*(sertakan foto)*';
       if (waMsg.length > 3500) waMsg = waMsg.substring(0, 3500);
       showOrderConfirmation(waMsg);
@@ -570,7 +581,7 @@
   }
 
   // ============================================================
-  // UI FUNCTIONS
+  // UI FUNCTIONS (sama seperti sebelumnya)
   // ============================================================
   function updateStoreStatus() {
     const el = document.getElementById('storeStatusText'); if (!el) return;
