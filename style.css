@@ -1,5 +1,5 @@
 /* ============================================================
-   Rujak.Co — Complete Style
+   Rujak.Co — Complete Style (Final)
    ============================================================ */
 
 :root {
@@ -620,6 +620,12 @@ body {
 @keyframes slideDownAI {
   from { opacity: 0; transform: translateY(-20px) scale(0.95); }
   to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* === FIX: Hapus border ganda pada inner div AI === */
+#aiRecommendationContainer > div {
+  /* border dihapus agar tidak bentrok dengan inline style dari JS */
+  /* backdrop-filter juga dipertahankan kalau ingin */
 }
 
 #aiChatToggle { transition: all 0.2s; }
