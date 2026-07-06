@@ -11,7 +11,7 @@
 
 * {
   box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent; /* Hapus highlight sentuh */
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Utility */
@@ -447,11 +447,11 @@ select#deliveryTime {
   font-size: 14px;
   color: var(--gray-900);
   background: white;
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 14px center !important;
   transition: border-color 0.2s;
   cursor: pointer;
 }
@@ -459,6 +459,17 @@ select#deliveryTime:focus {
   outline: none;
   border-color: var(--green);
   box-shadow: 0 0 0 3px rgba(15,77,55,0.1);
+}
+
+/* Sorotan merah lembut untuk field kosong */
+.input-error {
+  border-color: #fecaca !important;
+  background-color: #fff5f5 !important;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.2) !important;
+}
+select.input-error {
+  border-color: #fecaca !important;
+  background-color: #fff5f5 !important;
 }
 
 /* Banner Fresh‑Prep */
