@@ -410,7 +410,7 @@
   // ============================================================
   function getAIRecommendation() { const hour = new Date().getHours(); const day = new Date().getDay(); const isWeekend = (day === 0 || day === 6); let timeBased = 'p_m1'; if (hour >= 6 && hour < 10) timeBased = 'p_m2'; else if (hour >= 10 && hour < 14) timeBased = 'p_m3'; else if (hour >= 14 && hour < 17) timeBased = 'p_m1'; else if (hour >= 17 && hour < 22) timeBased = 'p_m4'; let history = []; try { const raw = localStorage.getItem('rujak_order_history'); if (raw) history = JSON.parse(raw); } catch (_) {} let favorite = null; if (history.length > 0) { const freq = {}; history.forEach(id => { freq[id] = (freq[id] || 0) + 1; }); const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]); favorite = sorted[0] ? sorted[0][0] : null; } let rec = favorite || timeBased; if (isWeekend && hour >= 17) { const found = ['p_m4', 'p_m6'].find(id => PRODUCTS.find(prod => prod.id === id && !prod.isHidden)); if (found) rec = found; } const inCart = Object.keys(state.cart); let product = PRODUCTS.find(p => !p.isHidden && !inCart.some(key => key.startsWith(p.id)) && p.id === rec); if (!product) { product = PRODUCTS.filter(p => !p.isHidden && !inCart.some(key => key.startsWith(p.id))).sort((a, b) => a.price - b.price)[0] || null; } return product; }
 
-  function renderAIRecommendation() { const container = document.getElementById('aiRecommendationContainer'); if (!container) return; const rec = getAIRecommendation(); if (!rec || Object.keys(state.cart).some(key => key.startsWith(rec.id))) { container.style.display = 'none'; return; } container.style.display = 'block'; container.innerHTML = '<div style="background:linear-gradient(135deg,#F8F5EE,#FFFDF5);border:1px solid #E8E0D0;border-radius:12px;padding:10px 14px;margin:0 20px 16px;display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">🤖</span><div style="flex:1;"><div style="font-size:9px;font-weight:600;color:#8B7355;">Rekomendasi AI</div><div style="font-weight:700;font-size:14px;color:#0F4D37;">' + escapeHTML(rec.name) + '</div><div style="font-size:11px;color:#666;">' + escapeHTML(rec.desc) + '</div></div><button onclick="window.addToCartAI(\'' + rec.id + '\')" style="background:#0F4D37;color:white;border:none;padding:4px 14px;border-radius:20px;font-weight:600;font-size:12px;cursor:pointer;">+ Tambah</button></div>'; }
+  function renderAIRecommendation() { const container = document.getElementById('aiRecommendationContainer'); if (!container) return; const rec = getAIRecommendation(); if (!rec || Object.keys(state.cart).some(key => key.startsWith(rec.id))) { container.style.display = 'none'; return; } container.style.display = 'block'; container.innerHTML = '<div style="background:linear-gradient(135deg,#F8F5EE,#FFFDF5);border:1px solid #E8E0D0;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">🤖</span><div style="flex:1;"><div style="font-size:9px;font-weight:600;color:#8B7355;">Rekomendasi AI</div><div style="font-weight:700;font-size:14px;color:#0F4D37;">' + escapeHTML(rec.name) + '</div><div style="font-size:11px;color:#666;">' + escapeHTML(rec.desc) + '</div></div><button onclick="window.addToCartAI(\'' + rec.id + '\')" class="btn-add-unified">+ Tambah</button></div>'; }
 
   window.addToCartAI = function(productId) { if (addToCartLocked) return; lockAddToCart(); const product = PRODUCTS.find(p => p.id === productId); if (!product) return; const spice = product.defaultSpice || 3; const cartKey = productId + '_spice' + spice; const entry = state.cart[cartKey] || { qty: 0, spice: spice }; entry.qty += 1; entry.spice = spice; state.cart[cartKey] = entry; invalidateCache(); updateUI(); showToast('✅ ' + product.name + ' ditambahkan!'); const container = document.getElementById('aiRecommendationContainer'); if (container) container.style.display = 'none'; };
 
@@ -446,7 +446,7 @@
       '<div style="font-size:10px;font-weight:600;color:#92400e;">🧠 AI Suggestion</div>' +
       '<div style="font-size:14px;font-weight:700;color:#3d2b00;margin:2px 0;">Tambah ' + addCostText + ' → <strong>' + escapeHTML(bestProduct.name) + '</strong></div>' +
       '<div style="font-size:11px;color:#795548;margin-bottom:6px;">' + escapeHTML(bestProduct.desc) + '</div>' +
-      '<button onclick="window.addToCartAI(\'' + bestProduct.id + '\')" style="background:#0F4D37;color:white;border:none;padding:6px 20px;border-radius:20px;font-weight:600;font-size:12px;cursor:pointer;">+ Tambah</button>' +
+      '<button onclick="window.addToCartAI(\'' + bestProduct.id + '\')" class="btn-add-unified">+ Tambah</button>' +
       '</div>';
   }
 
@@ -617,7 +617,7 @@
         const q = state.searchQuery.toLowerCase(), nl = p.name.toLowerCase();
         if (nl.includes(q)) { const idx = nl.indexOf(q); displayName = p.name.substring(0, idx) + '<span class="ai-search-highlight">' + p.name.substring(idx, idx + q.length) + '</span>' + p.name.substring(idx + q.length); }
       }
-      const control = qty === 0 ? '<button type="button" class="add-btn" data-action="open-modal" data-id="' + p.id + '"><i data-lucide="plus" class="w-4 h-4"></i></button>' :
+      const control = qty === 0 ? '<button type="button" class="add-btn btn-add-unified" data-action="open-modal" data-id="' + p.id + '"><i data-lucide="plus" class="w-4 h-4"></i></button>' :
         '<div class="qty-control"><button type="button" class="qty-btn" data-action="decrease" data-id="' + firstCartKey + '">−</button><span class="qty-num">' + qty + '</span><button type="button" class="qty-btn" data-action="increase" data-id="' + firstCartKey + '">+</button></div>';
       const badgeRight = p.badge ? '<span class="item-badge-right ' + p.badgeColor + '">' + escapeHTML(p.badge) + '</span>' : '';
       const flavorTag = p.flavorTag ? '<span class="item-flavor-tag">' + escapeHTML(p.flavorTag) + '</span>' : '';
@@ -767,7 +767,7 @@
   // PRODUCT MODAL
   // ============================================================
   const productModal = document.getElementById('productModal');
-  const SPICE_NAMES = ['Mild', 'Sedang', 'Pedas', 'Extra Pedas', 'Very Hot'];
+  const SPICE_NAMES = ['Mild Sweet', 'Light Spice', 'Signature', 'Bold', 'Extreme'];
 
   function openProductModal(id) {
     const product = PRODUCTS.find(p => p.id === id); if (!product) return;
@@ -793,7 +793,7 @@
     document.getElementById('modalTags').innerHTML = (product.tags || []).map(t => '<span class="modal-tag">' + escapeHTML(t) + '</span>').join('');
     const ritualDiv = document.createElement('div'); ritualDiv.className = 'ritual-box';
     ritualDiv.style.cssText = 'background:var(--ivory);border:1px solid var(--green-pale);border-radius:10px;padding:10px 12px;margin:8px 0;';
-    ritualDiv.innerHTML = '<div style="font-size:10px;font-weight:700;color:var(--green);">🎯 Ritual Nikmat</div><div style="font-size:11px;color:var(--gray-700);margin-top:4px;">① Tuang sambal ke wadah<br>② Aduk rata & nikmati<br>③ Tambah level pedas</div>';
+    ritualDiv.innerHTML = '<div style="font-size:10px;font-weight:700;color:var(--green);">🎯 Ritual Nikmat</div><div style="font-size:11px;color:var(--gray-700);margin-top:4px;">① Tuang sambal ke wadah<br>② Aduk rata dengan buah, lalu nikmati!</div>';
     document.getElementById('modalTags').after(ritualDiv);
     const breakdown = product.price <= 30000 ? (product.buah || []).length + ' jenis buah • sambal homemade • wadah food grade' :
       product.price <= 85000 ? (product.buah || []).length + ' jenis buah premium • sambal spesial • wadah jumbo' :
@@ -810,7 +810,7 @@
     productModal.classList.add('active'); document.body.style.overflow = 'hidden';
   }
 
-  function updateSpiceHighlight(l) { const el = document.getElementById('modalSpiceLabel'); if (el) el.textContent = l + ' - ' + (SPICE_NAMES[l - 1] || 'Pedas'); }
+  function updateSpiceHighlight(l) { const el = document.getElementById('modalSpiceLabel'); if (el) el.textContent = l + ' - ' + (SPICE_NAMES[l - 1] || 'Signature'); }
   function closeProductModal() { productModal.classList.remove('active'); document.body.style.overflow = ''; }
 
   // ============================================================
