@@ -108,7 +108,13 @@ body { display: flex; flex-direction: column; align-items: center; min-height: 1
 @keyframes pulse-gold { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.6; } 100% { transform: scale(1); opacity: 1; } }
 
 /* Category Scroll */
-.cat-scroll { display: flex; overflow-x: auto; gap: 8px; padding: 0 20px 16px; -webkit-overflow-scrolling: touch; }
+.cat-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 0 20px 12px;   /* dikurangi dari 16px */
+  -webkit-overflow-scrolling: touch;
+}
 .cat-pill { flex-shrink: 0; border: 1px solid transparent; background: var(--green-pale); color: var(--green); font-family: inherit; font-size: 13px; font-weight: 600; padding: 8px 18px; border-radius: var(--radius-pill); cursor: pointer; transition: all .18s; white-space: nowrap; }
 .cat-pill:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
 .cat-pill:active { transform: scale(.96); }
