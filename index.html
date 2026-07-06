@@ -90,32 +90,28 @@
         <span id="storeStatusBannerText">Toko tutup. Buka jam 10.00 WIB.</span>
       </div>
 
-      <div id="aiRecommendationContainer" style="display:none;"></div>
-
-      <!-- PROMO STRIP DIPERBAIKI -->
-      <div class="promo-strip" id="promoTrigger" data-action="open-promo">
-        <div class="promo-icon"><i data-lucide="gift" class="w-5 h-5 text-[#D62828]"></i></div>
-        <div class="promo-text">
-          <div class="promo-title">🎯 Misi Jajan — Diskon s/d Rp10.000</div>
-          <div class="promo-sub">Selesaikan misi belanja & share. Plus subsidi ongkir s/d Rp10.000!</div>
+      <!-- CAROUSEL UNIFIED: AI Recommendation + Promo -->
+      <div class="carousel-unified" id="carouselUnified" style="display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:12px; padding:4px 20px 16px; -webkit-overflow-scrolling:touch; scrollbar-width:none;">
+        <!-- Slide 1: Rekomendasi AI -->
+        <div id="aiRecommendationContainer" style="display:none; min-width:85%; scroll-snap-align:start; background:linear-gradient(135deg,#F8F5EE,#FFFDF5); border:1px solid #E8E0D0; border-radius:12px; padding:10px 14px; flex-shrink:0;"></div>
+        <!-- Slide 2: Misi Jajan -->
+        <div class="promo-strip" id="promoTrigger" data-action="open-promo" style="min-width:85%; scroll-snap-align:start; margin:0; flex-shrink:0; cursor:pointer; display:flex; align-items:center; gap:12px; background:#fff3cd; border:1px solid #e6c87a; border-radius:14px; padding:14px 16px;">
+          <div class="promo-icon"><i data-lucide="gift" class="w-5 h-5 text-[#D62828]"></i></div>
+          <div class="promo-text" style="flex:1;">
+            <div class="promo-title">🎯 Misi Jajan — Diskon s/d Rp10.000</div>
+            <div class="promo-sub">Selesaikan misi belanja & share. Plus subsidi ongkir s/d Rp10.000!</div>
+          </div>
+          <div class="promo-anim"><i data-lucide="sparkles" class="w-6 h-6 text-[#F4C430] promo-sparkle"></i></div>
         </div>
-        <div class="promo-anim"><i data-lucide="sparkles" class="w-6 h-6 text-[#F4C430] promo-sparkle"></i></div>
       </div>
 
       <nav class="cat-scroll no-sb" id="catScroll" aria-label="Kategori Menu">
         <button type="button" class="cat-pill active" data-cat="all">Semua</button>
         <button type="button" class="cat-pill" data-cat="signature">Signature</button>
         <button type="button" class="cat-pill" data-cat="classic">Classic</button>
-        <button type="button" class="cat-pill" data-cat="reserve">Reserve</button>
+        <button type="button" class="cat-pill" data-cat="reserve">Premium</button>
         <button type="button" class="cat-pill" data-cat="addon">Tambahan</button>
       </nav>
-      
-      <div class="legend-marquee"><div class="legend-track">
-        <span class="classic">🥭 Asem seger mangga muda</span><span class="signature">🌶️ Pedes nampol sambal mete</span><span class="reserve">🍍 Manis segar nanas & bengkuang</span><span class="classic">📦 Sambal terpisah — tetap renyah</span>
-        <span class="classic">🥭 Asem seger mangga muda</span><span class="signature">🌶️ Pedes nampol sambal mete</span><span class="reserve">🍍 Manis segar nanas & bengkuang</span><span class="classic">📦 Sambal terpisah — tetap renyah</span>
-      </div></div>
-      
-      <div style="padding:0 20px 12px;font-size:13px;color:var(--green);font-weight:600;"><i data-lucide="star" class="w-4 h-4 inline"></i> Pertama kali? Coba <strong>Rujak Segar</strong> — asem manis ringan, mudah disukai.</div>
       
       <div class="sec-header" id="menuHeader"><span class="sec-title">Koleksi Rasa</span>
         <div class="search-toggle-wrap" id="searchToggleWrap">
@@ -135,6 +131,7 @@
       <div class="divider"></div>
       <div class="sec-header"><span class="sec-title">Apa Kata Mereka?</span></div>
 
+      <!-- Testimoni Flip -->
       <div class="testi-flip-container" id="testiFlipContainer" style="position:relative;overflow:hidden;height:140px;margin:0 20px 16px;background:#FFFDF5;border:1px solid #F0E6C0;border-radius:14px;padding:20px;touch-action:pan-y;user-select:none;cursor:pointer;">
         <div class="testi-card active" data-index="0" style="position:absolute;top:0;left:0;right:0;padding:20px;transition:transform 0.6s cubic-bezier(0.4,0,0.2,1),opacity 0.6s;transform:translateY(0);opacity:1;">
           <div style="font-size:18px;margin-bottom:4px;letter-spacing:2px;">⭐️⭐️⭐️⭐️⭐️</div>
@@ -239,7 +236,7 @@
     </div>
   </div>
 
-  <!-- FOOTER DENGAN AI CHAT DI SAMPING WA -->
+  <!-- FOOTER DENGAN AI CHAT -->
   <footer class="footer-brand">
     <div class="footer-brand-inner">
       <div class="footer-brand-row">
@@ -308,7 +305,7 @@
     </div>
   </footer>
 
-  <!-- BOTTOM BAR & MODAL LAINNYA TIDAK BERUBAH -->
+  <!-- BOTTOM BAR -->
   <div id="bottom-bar">
     <button class="close-bottom-bar" id="closeBottomBar" aria-label="Tutup keranjang">✕</button>
     <div class="progress-container" id="progressContainer" style="display:none;"><div class="progress-text"><span id="progressLabel">Tambah Rp20.000 lagi untuk diskon</span><span id="progressPercent">0%</span></div><div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0;"></div></div></div>
@@ -344,7 +341,7 @@
       <div class="detail-row"><span class="label">Wadah</span><span class="value" id="modalContainer">-</span></div>
       <div class="detail-row"><span class="label">Porsi</span><span class="value" id="modalSize">-</span></div>
       <div class="detail-row"><span class="label">Sambal</span><span class="value" id="modalSambal">-</span></div>
-    </div><div id="modalBuahContainer"><div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px;">Buah-buahan</div><div class="modal-buah-text" id="modalBuahText"></div></div><div class="modal-tags" id="modalTags"></div><div class="spice-row"><span class="spice-icon"><i data-lucide="flame"></i></span><span class="spice-label">Level Pedas</span><span class="spice-value" id="modalSpiceLabel">3 - Pedas</span><select id="spiceSelect"><option value="1">1 - Mild</option><option value="2">2 - Sedang</option><option value="3" selected>3 - Pedas</option><option value="4">4 - Extra Pedas</option><option value="5">5 - Very Hot</option></select></div></div><div class="modal-footer"><button class="modal-add" id="modalAdd"><span>Tambah ke Keranjang</span><span id="btnPrice">Rp0</span></button></div></div></div>
+    </div><div id="modalBuahContainer"><div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px;">Buah-buahan</div><div class="modal-buah-text" id="modalBuahText"></div></div><div class="modal-tags" id="modalTags"></div><div class="spice-row"><span class="spice-icon"><i data-lucide="flame"></i></span><span class="spice-label">Level Pedas</span><span class="spice-value" id="modalSpiceLabel">3 - Signature</span><select id="spiceSelect"><option value="1">1 - Mild Sweet</option><option value="2">2 - Light Spice</option><option value="3" selected>3 - Signature</option><option value="4">4 - Bold</option><option value="5">5 - Extreme</option></select></div></div><div class="modal-footer"><button class="modal-add" id="modalAdd"><span>Tambah ke Keranjang</span><span id="btnPrice">Rp0</span></button></div></div></div>
 
   <!-- MODAL KERANJANG -->
   <div class="modal-overlay" id="miniCartModal"><div class="modal-content" style="max-width:420px;"><div class="modal-header"><span class="modal-header-title">🛒 Keranjang</span><div class="modal-header-actions"><button class="clear-cart-btn" id="clearCartBtn"><i data-lucide="trash" class="w-4 h-4"></i> Kosongkan</button><button class="modal-close" id="miniCartClose">&times;</button></div></div><div class="modal-body" style="padding:16px 20px;">
@@ -446,12 +443,12 @@
     </div>
   </div>
 
-  <!-- ✅ SCRIPTS - ORDER PENTING -->
+  <!-- SCRIPTS -->
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@4/dist/fp.min.js"></script>
   <script defer src="app.js"></script>
   
-  <!-- ✅ SUBSIDI POPUP (FIXED) -->
+  <!-- SUBSIDI POPUP SCRIPT -->
   <script>
   document.addEventListener('DOMContentLoaded', function() {
     var COUNTDOWN_MINUTES=30,COOLDOWN_HOURS=2,STORAGE_PREFIX='rujakco_subsidi_';
