@@ -95,15 +95,6 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100vh;over
 .promo-sparkle{animation:pulse-gold 1.8s ease-in-out infinite}
 @keyframes pulse-gold{0%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:0.6}100%{transform:scale(1);opacity:1}}
 
-.legend-marquee{margin:0 20px 12px;overflow:hidden;white-space:nowrap;background:var(--green-pale);border-radius:100px;padding:6px 0;position:relative;height:28px;display:flex;align-items:center}
-.legend-track{display:inline-block;animation:marquee 18s linear infinite;white-space:nowrap;will-change:transform}
-.legend-track span{display:inline-flex;align-items:center;gap:5px;margin-right:20px;font-size:11px;font-weight:600}
-.legend-track span::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.legend-track span.classic{color:#5d8a3c}.legend-track span.classic::before{background:#8BC34A}
-.legend-track span.signature{color:#b71c1c}.legend-track span.signature::before{background:#D62828}
-.legend-track span.reserve{color:#4e342e}.legend-track span.reserve::before{background:#5D4037}
-@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-
 .cat-scroll{display:flex;overflow-x:auto;gap:8px;padding:0 20px 16px}
 .cat-pill{flex-shrink:0;border:1px solid transparent;background:var(--green-pale);color:var(--green);font-family:inherit;font-size:13px;font-weight:600;padding:8px 18px;border-radius:var(--radius-pill);cursor:pointer;transition:all .18s;white-space:nowrap}
 .cat-pill:focus-visible{outline:2px solid var(--green);outline-offset:2px}
@@ -527,3 +518,36 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .form-section input:focus,.form-section textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(15,77,55,0.1)}
 .form-section input::placeholder,.form-section textarea::placeholder{color:var(--gray-400)}
 .form-section textarea{resize:vertical;min-height:60px}
+
+/* ========== UNIFIED ADD BUTTON ========== */
+.btn-add-unified {
+  background: #0F4D37;
+  color: white;
+  border: none;
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 3px 10px rgba(15,77,55,0.25);
+}
+.btn-add-unified:hover {
+  background: #0a3a2a;
+  transform: scale(1.04);
+}
+.btn-add-unified:active {
+  transform: scale(0.96);
+}
+
+/* Tambahan untuk tombol AI Chat di footer */
+#aiChatToggle {
+  transition: all 0.2s;
+}
+#aiChatToggle:hover {
+  background: #0F4D37 !important;
+  color: white !important;
+}
