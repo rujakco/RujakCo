@@ -248,6 +248,41 @@
     });
   }
 
+  function openCustomSelect(title, options, onSelect) {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'select-backdrop';
+    document.body.appendChild(backdrop);
+    
+    const modal = document.createElement('div');
+    modal.className = 'select-modal';
+    modal.innerHTML = `<h3>${title}</h3>` + options.map(opt => 
+      `<div class="select-option" data-value="${opt.value}">${opt.label}</div>`
+    ).join('');
+    document.body.appendChild(modal);
+    
+    const closeModal = () => {
+      modal.classList.remove('active');
+      backdrop.classList.remove('active');
+      setTimeout(() => { modal.remove(); backdrop.remove(); }, 300);
+    };
+    
+    modal.querySelectorAll('.select-option').forEach(opt => {
+      opt.addEventListener('click', function() {
+        const value = this.dataset.value;
+        const label = this.textContent;
+        onSelect(value, label);
+        closeModal();
+      });
+    });
+    
+    backdrop.addEventListener('click', closeModal);
+    
+    requestAnimationFrame(() => {
+      backdrop.classList.add('active');
+      modal.classList.add('active');
+    });
+  }
+
   function openWhatsApp(phone, message) {
     const waUrl = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(message);
     var win = window.open(waUrl, '_blank', 'noopener');
@@ -528,7 +563,6 @@
           gift_sender: (state.giftSender || '').substring(0, 50), gift_message: (state.giftMessage || '').substring(0, 300),
           mission_shared: state.hasShared || false, shipping_provider: state.shippingProvider || 'rujakco',
           vehicle: state.vehicleType || 'motor', priority: state.isPriority || false
-          // delivery_time removed to avoid error 400
         };
         let retries = 0; const maxRetries = 2;
         function attemptInsert() {
@@ -560,7 +594,6 @@
     const normalizedPhone = normalizePhone(cleanedPhone);
     if (!address || address.length < 5) { showToast('❌ Alamat terlalu pendek. Tulis lebih lengkap ya'); const el = document.getElementById('customerAddress'); if (el) el.focus(); return; }
 
-    // Validasi jam pengiriman (Fresh‑Prep) – tidak menutup modal
     const deliveryTimeEl = document.getElementById('deliveryTime');
     const deliveryTime = deliveryTimeEl ? deliveryTimeEl.value : '';
     if (!deliveryTime) {
@@ -836,13 +869,37 @@
     const detailGrid = document.getElementById('modalDetailGrid'); if (detailGrid) detailGrid.after(hargaDiv);
     const btnPriceEl = document.getElementById('btnPrice'); if (btnPriceEl) btnPriceEl.textContent = fmt(product.price);
     const modalAddEl = document.getElementById('modalAdd'); if (modalAddEl) modalAddEl.dataset.id = product.id;
-    const sel = document.getElementById('spiceSelect'); sel.onchange = null;
-    const dv = product.defaultSpice || 3; sel.value = dv; updateSpiceHighlight(dv);
-    sel.onchange = function() { updateSpiceHighlight(parseInt(this.value, 10)); };
+
+    // Custom spice select
+    const spiceTrigger = document.getElementById('spiceTrigger');
+    const spiceHidden = document.getElementById('spiceHidden');
+    const spiceLabel = document.getElementById('spiceLabel');
+    const dv = product.defaultSpice || 3;
+    spiceHidden.value = dv;
+    spiceLabel.textContent = dv + ' - ' + (SPICE_NAMES[dv-1] || 'Signature');
+    spiceTrigger.classList.add('selected');
+    if (spiceTrigger && !spiceTrigger._bound) {
+      spiceTrigger._bound = true;
+      spiceTrigger.addEventListener('click', function() {
+        const options = SPICE_NAMES.map(function(name, i) {
+          return { value: String(i+1), label: (i+1) + ' - ' + name };
+        });
+        openCustomSelect('Level Pedas', options, function(value, label) {
+          spiceHidden.value = value;
+          spiceLabel.textContent = label;
+          spiceTrigger.classList.add('selected');
+          updateSpiceHighlight(parseInt(value, 10));
+        });
+      });
+    }
+
     productModal.classList.add('active'); document.body.style.overflow = 'hidden';
   }
 
-  function updateSpiceHighlight(l) { const el = document.getElementById('modalSpiceLabel'); if (el) el.textContent = l + ' - ' + (SPICE_NAMES[l - 1] || 'Signature'); }
+  function updateSpiceHighlight(l) { 
+    const el = document.getElementById('spiceLabel'); 
+    if (el) el.textContent = l + ' - ' + (SPICE_NAMES[l - 1] || 'Signature'); 
+  }
   function closeProductModal() { productModal.classList.remove('active'); document.body.style.overflow = ''; }
 
   // ============================================================
@@ -957,7 +1014,7 @@
         if (addToCartLocked) return; lockAddToCart();
         const baseId = this.dataset.id;
         if (baseId) {
-          const spice = Math.min(5, Math.max(1, parseInt(document.getElementById('spiceSelect').value, 10) || 3));
+          const spice = parseInt(document.getElementById('spiceHidden').value, 10) || 3;
           const cartKey = baseId + '_spice' + spice;
           const entry = state.cart[cartKey] || { qty: 0, spice: spice };
           entry.qty += 1; entry.spice = spice; state.cart[cartKey] = entry;
@@ -1016,8 +1073,41 @@
       const ba2 = document.getElementById('btnAutoDetect'); if (ba2) ba2.classList.remove('active');
       const dw = document.getElementById('manualSelectWrapper'); if (dw) dw.style.display = 'block';
     });
-    const ds = document.getElementById('districtSelect');
-    if (ds) ds.addEventListener('change', function() { state.selectedDistrict = this.value; if (state.selectedDistrict) detectLocation(); });
+    
+    // Custom district select
+    const districtTrigger = document.getElementById('districtTrigger');
+    if (districtTrigger) {
+      districtTrigger.addEventListener('click', function() {
+        const options = Object.keys(DISTRICT_MAP).map(function(key) {
+          return { value: key, label: key.replace(/\b\w/g, l => l.toUpperCase()) + ' (~' + DISTRICT_MAP[key] + ' km)' };
+        });
+        openCustomSelect('Pilih Kecamatan', options, function(value, label) {
+          document.getElementById('districtSelect').value = value;
+          document.getElementById('districtLabel').textContent = label;
+          districtTrigger.classList.add('selected');
+          state.selectedDistrict = value;
+          detectLocation();
+        });
+      });
+    }
+
+    // Custom delivery time select
+    const deliveryTrigger = document.getElementById('deliveryTimeTrigger');
+    if (deliveryTrigger) {
+      deliveryTrigger.addEventListener('click', function() {
+        const options = [
+          { value: 'Pagi (09:00 - 11:00)', label: 'Pagi (09:00 - 11:00 WIB)' },
+          { value: 'Siang (11:00 - 13:00)', label: 'Siang (11:00 - 13:00 WIB)' },
+          { value: 'Sore (14:00 - 17:00)', label: 'Sore (14:00 - 17:00 WIB)' }
+        ];
+        openCustomSelect('Jam Pengiriman Besok', options, function(value, label) {
+          document.getElementById('deliveryTime').value = value;
+          document.getElementById('deliveryTimeLabel').textContent = label;
+          deliveryTrigger.classList.add('selected');
+        });
+      });
+    }
+
     const locationPill = document.getElementById('locationPill');
     if (locationPill) locationPill.addEventListener('click', function() { const msg = this.getAttribute('data-msg'); if (msg) showToast(msg); });
 
@@ -1057,7 +1147,6 @@
         if (!cleanedPhone || !isValidPhone(cleanedPhone)) { highlightEmptyFields(['customerPhone']); hasError = true; }
         if (!address || address.length < 5) { highlightEmptyFields(['customerAddress']); hasError = true; }
         
-        // Validasi jam pengiriman
         const deliveryTimeEl = document.getElementById('deliveryTime');
         const deliveryTime = deliveryTimeEl ? deliveryTimeEl.value : '';
         if (!deliveryTime) {
@@ -1095,8 +1184,6 @@
         document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active')); cb.classList.add('active');
         state.activeFilter = cb.dataset.cat; invalidateCache(); updateUI(); return;
       }
-      const ft = e.target.closest('[data-toggle="faq"]');
-      if (ft) { const parent = ft.closest('.faq-item'); if (parent) parent.classList.toggle('open'); return; }
       if (e.target.closest('#modalClose') || e.target === productModal) { closeProductModal(); return; }
       if (e.target.closest('#miniCartClose') || e.target === miniCartModal) { closeMiniCart(); return; }
       if (e.target.closest('#paymentClose') || e.target === document.getElementById('paymentModal')) {
@@ -1115,6 +1202,18 @@
       }
       if (e.target.closest('#clearSearchBtn')) { searchInput.value = ''; state.searchQuery = ''; invalidateCache(); updateUI(); updateClearButton(); return; }
     });
+
+    // FAQ handler – single click
+    const faqContainer = document.getElementById('faqContainer');
+    if (faqContainer) {
+      faqContainer.addEventListener('click', function(e) {
+        const question = e.target.closest('.faq-question');
+        if (!question) return;
+        e.preventDefault();
+        const item = question.closest('.faq-item');
+        if (item) item.classList.toggle('open');
+      });
+    }
 
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
@@ -1146,13 +1245,15 @@
   async function init() {
     await getOrCreateFingerprint().catch(() => {});
     loadCart(); loadCustomerData(); updateStoreStatus();
-    const districtSelect = document.getElementById('districtSelect');
-    if (districtSelect) {
-      districtSelect.innerHTML = '<option value="">Pilih kecamatan...</option>';
+    // Populate district hidden input (for manual fallback)
+    const districtHidden = document.getElementById('districtSelect');
+    if (districtHidden) {
+      districtHidden.innerHTML = '';
       Object.keys(DISTRICT_MAP).forEach(key => {
-        const option = document.createElement('option'); option.value = key;
+        const option = document.createElement('option');
+        option.value = key;
         option.textContent = key.replace(/\b\w/g, l => l.toUpperCase()) + ' (~' + DISTRICT_MAP[key] + ' km)';
-        districtSelect.appendChild(option);
+        districtHidden.appendChild(option);
       });
     }
     try { const s = localStorage.getItem('rujak_cart_minimized'); if (s !== null) state.isCartMinimized = s === 'true'; } catch(_) {}
