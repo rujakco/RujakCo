@@ -344,9 +344,11 @@
         <button type="button" id="btnAutoDetect" class="active" style="flex:1;padding:8px;border:1px solid var(--gray-200);border-radius:8px;background:white;">📍 Deteksi Otomatis</button>
         <button type="button" id="btnManualDistrict" style="flex:1;padding:8px;border:1px solid var(--gray-200);border-radius:8px;background:white;">🗺️ Pilih Manual</button>
       </div>
-      <select id="districtSelect" style="width:100%;padding:10px;border-radius:10px;border:1px solid #ddd;font-family:inherit;">
-        <option value="">Pilih kecamatan...</option>
-      </select>
+      <div id="districtTrigger" class="custom-select-trigger" style="margin-top:8px;">
+        <span id="districtLabel">Pilih kecamatan...</span>
+        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+      </div>
+      <input type="hidden" id="districtSelect" value="">
     </div>
 
     <div class="cart-summary" id="cartSummary" tabindex="0" role="button" aria-label="Buka keranjang"><span class="cart-items-preview" id="cartPreview">0 item</span><div class="cart-total-wrap"><span id="discountLabel" class="cart-discount-label" style="display:none;">-Rp10.000</span><span class="cart-total" id="cartTotalDisplay">Rp0</span></div></div>
@@ -359,14 +361,20 @@
   <!-- MODAL PROMO -->
   <div class="modal-overlay" id="promoModal"><div class="modal-content" style="max-width:380px;"><div class="modal-header"><span class="modal-header-title">🎯 Misi Jajan — Diskon s/d Rp10.000</span><button class="modal-close" id="promoClose" aria-label="Tutup">&times;</button></div><div class="modal-body"><p style="margin:0 0 16px;font-size:13px;color:var(--gray-500);">Selesaikan misi untuk klaim diskonmu!</p><div class="mission-item"><input type="checkbox" id="missionSpend" disabled /><span>Belanja min. Rp100.000 <b>(Potong Rp5.000)</b></span></div><div class="mission-item"><input type="checkbox" id="checkShare" disabled /><span>Bagikan ke teman <b>(Potong Rp5.000)</b></span></div><button type="button" class="share-btn" id="shareBtnModal" style="width:100%;justify-content:center;margin-top:12px;"><i data-lucide="share-2" class="w-4 h-4"></i> Bagikan Sekarang</button><p style="font-size:10px;color:var(--gray-400);margin-top:10px;text-align:center;background:var(--gray-100);border-radius:8px;padding:8px;">✅ Misi tercapai = otomatis tercentang. Diskon muncul di keranjang.</p><div style="margin-top:12px;padding:10px;background:#E8F5E9;border-radius:8px;font-size:11px;color:var(--green);text-align:center;font-weight:600;"><i data-lucide="coins" class="w-4 h-4 inline"></i> Subsidi ongkir s/d Rp10.000 juga berlaku!</div></div></div></div>
 
-  <!-- MODAL PRODUK -->
+  <!-- MODAL PRODUK (dengan trigger kustom untuk Level Pedas) -->
   <div class="modal-overlay" id="productModal"><div class="modal-content"><div class="modal-header"><span class="modal-header-title">Detail Produk</span><button class="modal-close" id="modalClose" aria-label="Tutup">&times;</button></div><div class="modal-body" id="modalBody"><div class="modal-img" id="modalImg"></div><div class="modal-title-wrap"><h2 class="modal-title" id="modalTitle">Nama Produk</h2><span class="modal-badge-eyebrow" id="modalBadge" style="display:none;">Badge</span></div><p class="modal-desc" id="modalDesc">Deskripsi produk</p><div class="modal-detail-grid" id="modalDetailGrid">
       <div class="detail-row"><span class="label">Wadah</span><span class="value" id="modalContainer">-</span></div>
       <div class="detail-row"><span class="label">Porsi</span><span class="value" id="modalSize">-</span></div>
       <div class="detail-row"><span class="label">Sambal</span><span class="value" id="modalSambal">-</span></div>
-    </div><div id="modalBuahContainer"><div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px;">Buah-buahan</div><div class="modal-buah-text" id="modalBuahText"></div></div><div class="modal-tags" id="modalTags"></div><div class="spice-row"><span class="spice-icon"><i data-lucide="flame"></i></span><span class="spice-label">Level Pedas</span><span class="spice-value" id="modalSpiceLabel">3 - Signature</span><select id="spiceSelect"><option value="1">1 - Mild Sweet</option><option value="2">2 - Light Spice</option><option value="3" selected>3 - Signature</option><option value="4">4 - Bold</option><option value="5">5 - Extreme</option></select></div></div><div class="modal-footer"><button class="modal-add" id="modalAdd"><span>Tambah ke Keranjang</span><span id="btnPrice">Rp0</span></button></div></div></div>
+    </div><div id="modalBuahContainer"><div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px;">Buah-buahan</div><div class="modal-buah-text" id="modalBuahText"></div></div><div class="modal-tags" id="modalTags"></div><div class="spice-row"><span class="spice-icon"><i data-lucide="flame"></i></span><span class="spice-label">Level Pedas</span>
+      <div id="spiceTrigger" class="custom-select-trigger" style="flex:1;">
+        <span id="spiceLabel">3 - Signature</span>
+        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+      </div>
+      <input type="hidden" id="spiceHidden" value="3">
+    </div></div><div class="modal-footer"><button class="modal-add" id="modalAdd"><span>Tambah ke Keranjang</span><span id="btnPrice">Rp0</span></button></div></div></div>
 
-  <!-- MODAL KERANJANG (dengan dropdown jam pengiriman) -->
+  <!-- MODAL KERANJANG (dengan trigger kustom untuk Jam Pengiriman) -->
   <div class="modal-overlay" id="miniCartModal"><div class="modal-content" style="max-width:420px;"><div class="modal-header"><span class="modal-header-title">🛒 Keranjang</span><div class="modal-header-actions"><button class="clear-cart-btn" id="clearCartBtn"><i data-lucide="trash" class="w-4 h-4"></i> Kosongkan</button><button class="modal-close" id="miniCartClose">&times;</button></div></div><div class="modal-body" style="padding:16px 20px;">
     <div class="step-indicator">
       <span class="step active" data-step="1" data-action="goto-step">1</span>
@@ -387,15 +395,14 @@
     <div class="form-section"><label class="form-label">Nomor HP</label><input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" autocomplete="tel"></div>
     <div class="form-section"><label class="form-label">Alamat</label><input type="text" id="customerAddress" placeholder="Alamat lengkap" autocomplete="street-address"></div>
     
-    <!-- DROPDOWN JAM PENGIRIMAN (PREMIUM) -->
+    <!-- DROPDOWN JAM PENGIRIMAN (CUSTOM) -->
     <div class="form-section">
       <label class="form-label">Jam Pengiriman (Besok)</label>
-      <select id="deliveryTime">
-        <option value="">Pilih jam pengiriman...</option>
-        <option value="Pagi (09:00 - 11:00)">Pagi (09:00 - 11:00 WIB)</option>
-        <option value="Siang (11:00 - 13:00)">Siang (11:00 - 13:00 WIB)</option>
-        <option value="Sore (14:00 - 17:00)">Sore (14:00 - 17:00 WIB)</option>
-      </select>
+      <div id="deliveryTimeTrigger" class="custom-select-trigger">
+        <span id="deliveryTimeLabel">Pilih jam pengiriman...</span>
+        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+      </div>
+      <input type="hidden" id="deliveryTime" name="deliveryTime" value="">
     </div>
 
     <div class="form-section"><label class="form-label">Catatan (Opsional)</label><textarea id="orderNotes" placeholder="Contoh: Sambal dipisah" rows="2"></textarea></div>
