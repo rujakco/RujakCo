@@ -1,5 +1,5 @@
 /* ============================================================
-   Rujak.Co — Complete Style (Final v3 — Jakco AI)
+   Rujak.Co — Complete Style (Final)
    ============================================================ */
 
 :root {
@@ -195,9 +195,6 @@ body { display: flex; flex-direction: column; align-items: center; min-height: 1
 .btn-add-unified:hover { background: #0a3a2a; transform: scale(1.04); }
 .btn-add-unified:active { transform: scale(0.96); }
 
-.addon-add { width: 26px; height: 26px; background: var(--green-pale); border: none; border-radius: 50%; color: var(--green); cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.addon-add:focus-visible { outline: 2px solid var(--green); }
-
 /* Fix: tombol menu dengan class tambahan */
 button.add-btn.btn-add-unified {
   width: 30px !important;
@@ -217,6 +214,9 @@ button.add-btn.btn-add-unified {
 button.add-btn.btn-add-unified i {
   display: block;
 }
+
+.addon-add { width: 26px; height: 26px; background: var(--green-pale); border: none; border-radius: 50%; color: var(--green); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.addon-add:focus-visible { outline: 2px solid var(--green); }
 
 /* Education */
 .edu-container { padding: 0 20px 24px; display: flex; flex-direction: column; gap: 12px; }
@@ -417,9 +417,7 @@ button.add-btn.btn-add-unified i {
 @keyframes slideDownAI { from { opacity: 0; transform: translateY(-20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
 /* Hilangkan border ganda */
-#aiRecommendationContainer > div {
-  border: none !important;
-}
+#aiRecommendationContainer > div { border: none !important; }
 
 #aiChatToggle { transition: all 0.2s; }
 #aiChatToggle:hover { background: #0F4D37 !important; color: white !important; }
@@ -436,6 +434,10 @@ button.add-btn.btn-add-unified i {
 .form-section input:focus, .form-section textarea:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(15,77,55,0.1); }
 .form-section input::placeholder, .form-section textarea::placeholder { color: var(--gray-400); }
 .form-section textarea { resize: vertical; min-height: 60px; }
+
+/* Banner Fresh‑Prep */
+#freshBanner { animation: fadeInDown 0.5s ease; }
+@keyframes fadeInDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
 /* Responsive */
 @media (max-width:420px) {
