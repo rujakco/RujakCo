@@ -357,6 +357,9 @@
 
   function lockAddToCart() { addToCartLocked = true; setTimeout(() => { addToCartLocked = false; }, 300); }
 
+  // ... (Semua fungsi shipping, cart, AI, checkout, UI, modal, event binding, init sama persis dengan sebelumnya)
+  // Saya lampirkan seluruhnya agar tidak ada kebingungan.
+
   // ============================================================
   // SHIPPING FUNCTIONS
   // ============================================================
@@ -834,6 +837,13 @@
   const productModal = document.getElementById('productModal');
   const SPICE_NAMES = ['Mild Sweet', 'Light Spice', 'Signature', 'Bold', 'Extreme'];
 
+  function getSpiceLabelHTML(level) {
+    const peppers = ['🌶️','🌶️🌶️','🌶️🌶️🌶️','🌶️🌶️🌶️🌶️','🌶️🌶️🌶️🌶️🌶️'];
+    const name = SPICE_NAMES[level-1] || 'Signature';
+    const pepperStr = peppers[level-1] || '🌶️🌶️🌶️';
+    return level + ' - ' + name + ' <span style="margin-left: 8px;">' + pepperStr + '</span>';
+  }
+
   function openProductModal(id) {
     const product = PRODUCTS.find(p => p.id === id); if (!product) return;
     const oldRitual = document.querySelector('.ritual-box'); if (oldRitual) oldRitual.remove();
@@ -870,36 +880,18 @@
     const btnPriceEl = document.getElementById('btnPrice'); if (btnPriceEl) btnPriceEl.textContent = fmt(product.price);
     const modalAddEl = document.getElementById('modalAdd'); if (modalAddEl) modalAddEl.dataset.id = product.id;
 
-    // Custom spice select
-    const spiceTrigger = document.getElementById('spiceTrigger');
+    // Set default spice
     const spiceHidden = document.getElementById('spiceHidden');
     const spiceLabel = document.getElementById('spiceLabel');
     const dv = product.defaultSpice || 3;
     spiceHidden.value = dv;
-    spiceLabel.textContent = dv + ' - ' + (SPICE_NAMES[dv-1] || 'Signature');
-    spiceTrigger.classList.add('selected');
-    if (spiceTrigger && !spiceTrigger._bound) {
-      spiceTrigger._bound = true;
-      spiceTrigger.addEventListener('click', function() {
-        const options = SPICE_NAMES.map(function(name, i) {
-          return { value: String(i+1), label: (i+1) + ' - ' + name };
-        });
-        openCustomSelect('Level Pedas', options, function(value, label) {
-          spiceHidden.value = value;
-          spiceLabel.textContent = label;
-          spiceTrigger.classList.add('selected');
-          updateSpiceHighlight(parseInt(value, 10));
-        });
-      });
-    }
+    spiceLabel.innerHTML = getSpiceLabelHTML(dv);
+    const spiceTrigger = document.getElementById('spiceTrigger');
+    if (spiceTrigger) spiceTrigger.classList.add('selected');
 
     productModal.classList.add('active'); document.body.style.overflow = 'hidden';
   }
 
-  function updateSpiceHighlight(l) { 
-    const el = document.getElementById('spiceLabel'); 
-    if (el) el.textContent = l + ' - ' + (SPICE_NAMES[l - 1] || 'Signature'); 
-  }
   function closeProductModal() { productModal.classList.remove('active'); document.body.style.overflow = ''; }
 
   // ============================================================
@@ -1108,6 +1100,30 @@
       });
     }
 
+    // Custom spice select (new logic with icons)
+    const spiceTrigger = document.getElementById('spiceTrigger');
+    const spiceModal = document.getElementById('spiceModal');
+    if (spiceTrigger && spiceModal) {
+      spiceTrigger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        spiceModal.classList.add('active');
+      });
+      spiceModal.querySelectorAll('.select-option').forEach(opt => {
+        opt.addEventListener('click', function() {
+          const spiceLabel = document.getElementById('spiceLabel');
+          const spiceHidden = document.getElementById('spiceHidden');
+          if (spiceLabel) spiceLabel.innerHTML = this.innerHTML;
+          if (spiceHidden) spiceHidden.value = this.dataset.value;
+          spiceModal.classList.remove('active');
+        });
+      });
+      document.addEventListener('click', function(e) {
+        if (!spiceTrigger.contains(e.target) && !spiceModal.contains(e.target)) {
+          spiceModal.classList.remove('active');
+        }
+      });
+    }
+
     const locationPill = document.getElementById('locationPill');
     if (locationPill) locationPill.addEventListener('click', function() { const msg = this.getAttribute('data-msg'); if (msg) showToast(msg); });
 
@@ -1245,7 +1261,6 @@
   async function init() {
     await getOrCreateFingerprint().catch(() => {});
     loadCart(); loadCustomerData(); updateStoreStatus();
-    // Populate district hidden input (for manual fallback)
     const districtHidden = document.getElementById('districtSelect');
     if (districtHidden) {
       districtHidden.innerHTML = '';
