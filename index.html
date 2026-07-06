@@ -90,7 +90,7 @@
         <span id="storeStatusBannerText">Toko tutup. Buka jam 10.00 WIB.</span>
       </div>
 
-      <!-- BANNER KESEGARAN (TEKS MENGAMBANG - OPSI 1) -->
+      <!-- BANNER KESEGARAN (TEKS MENGAMBANG) -->
       <div id="freshBanner" style="display:block; margin:8px 20px 16px; padding:0 8px; font-size:13px; color:#4a3f2b; font-weight:500; text-align:center; line-height:1.5;">
         <span style="display:inline-flex; align-items:center; gap:6px; justify-content:center;">
           <span style="font-size:16px;">🌿</span>
@@ -109,8 +109,8 @@
         <div class="promo-anim"><i data-lucide="sparkles" class="w-5 h-5 text-[#F4C430] promo-sparkle"></i></div>
       </div>
 
-      <!-- REKOMENDASI AI (spacing bawah dikurangi jadi 12px) -->
-      <div id="aiRecommendationContainer" style="display:none; margin: 0 20px 12px; background:linear-gradient(135deg,#F8F5EE,#FFFDF5); border:1px solid #E8E0D0; border-radius:12px; padding:12px 14px;"></div>
+      <!-- REKOMENDASI AI (spacing lebih rapat) -->
+      <div id="aiRecommendationContainer" style="display:none; margin: 0 20px 8px; background:linear-gradient(135deg,#F8F5EE,#FFFDF5); border:1px solid #E8E0D0; border-radius:12px; padding:10px 14px;"></div>
 
       <nav class="cat-scroll no-sb" id="catScroll" aria-label="Kategori Menu">
         <button type="button" class="cat-pill active" data-cat="all">Semua</button>
@@ -387,10 +387,10 @@
     <div class="form-section"><label class="form-label">Nomor HP</label><input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" autocomplete="tel"></div>
     <div class="form-section"><label class="form-label">Alamat</label><input type="text" id="customerAddress" placeholder="Alamat lengkap" autocomplete="street-address"></div>
     
-    <!-- DROPDOWN JAM PENGIRIMAN -->
+    <!-- DROPDOWN JAM PENGIRIMAN (PREMIUM) -->
     <div class="form-section">
       <label class="form-label">Jam Pengiriman (Besok)</label>
-      <select id="deliveryTime" style="width:100%; padding:12px 14px; border:2px solid var(--gray-200); border-radius:10px; font-family:'DM Sans',sans-serif; font-size:14px; color:var(--gray-900); background:white; appearance:none; background-image:url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%236B7280\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><polyline points=\'6 9 12 15 18 9\'></polyline></svg>'); background-repeat:no-repeat; background-position:right 14px center;">
+      <select id="deliveryTime">
         <option value="">Pilih jam pengiriman...</option>
         <option value="Pagi (09:00 - 11:00)">Pagi (09:00 - 11:00 WIB)</option>
         <option value="Siang (11:00 - 13:00)">Siang (11:00 - 13:00 WIB)</option>
