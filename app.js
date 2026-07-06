@@ -234,6 +234,20 @@
   function fmt(num) { return 'Rp' + num.toLocaleString('id-ID'); }
   function debounce(fn, delay) { let t; return function(...args) { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), delay); }; }
 
+  function highlightEmptyFields(fieldIds) {
+    fieldIds.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el && !el.value.trim()) {
+        el.classList.add('input-error');
+        setTimeout(function() { el.classList.remove('input-error'); }, 3000);
+        el.addEventListener('input', function handler() {
+          el.classList.remove('input-error');
+          el.removeEventListener('input', handler);
+        }, { once: true });
+      }
+    });
+  }
+
   function openWhatsApp(phone, message) {
     const waUrl = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(message);
     var win = window.open(waUrl, '_blank', 'noopener');
@@ -514,7 +528,7 @@
           gift_sender: (state.giftSender || '').substring(0, 50), gift_message: (state.giftMessage || '').substring(0, 300),
           mission_shared: state.hasShared || false, shipping_provider: state.shippingProvider || 'rujakco',
           vehicle: state.vehicleType || 'motor', priority: state.isPriority || false
-          // delivery_time dihapus untuk menghindari error 400
+          // delivery_time removed to avoid error 400
         };
         let retries = 0; const maxRetries = 2;
         function attemptInsert() {
@@ -550,6 +564,7 @@
     const deliveryTimeEl = document.getElementById('deliveryTime');
     const deliveryTime = deliveryTimeEl ? deliveryTimeEl.value : '';
     if (!deliveryTime) {
+      highlightEmptyFields(['deliveryTime']);
       showToast('❌ Mohon pilih jam pengiriman untuk besok');
       if (!document.getElementById('miniCartModal').classList.contains('active')) {
         openMiniCart();
@@ -586,13 +601,8 @@
     }).catch(error => { ErrorLogger.log('handleCheckout', error); checkoutLocked = false; if (checkoutTimer) { clearTimeout(checkoutTimer); checkoutTimer = null; } if (payBtn) { payBtn.textContent = '💳 Kirim Bukti Transfer'; payBtn.disabled = false; } showToast('⚠️ Gagal menyimpan. Coba lagi ya'); });
   }
 
-  // ... (semua fungsi UI, step, modal, event binding, init tetap sama seperti versi lengkap sebelumnya)
-  // Semua fungsi renderMenu, renderAddons, renderCart, renderMiniCart, updateUI, goToStep, openProductModal, dll. tetap ada.
-  // File ini adalah file lengkap yang sudah diberikan sebelumnya. Saya hapus bagian yang tidak berubah agar lebih ringkas.
-  // Jika Anda ingin file lengkapnya, saya bisa berikan. Tapi intinya hanya bagian handleCheckout dan saveOrderToDatabase yang berubah.
-
   // ============================================================
-  // UI FUNCTIONS (sama seperti sebelumnya)
+  // UI FUNCTIONS
   // ============================================================
   function updateStoreStatus() {
     const el = document.getElementById('storeStatusText'); if (!el) return;
@@ -1040,10 +1050,31 @@
       if (e.target.closest('#btnOpenPayment')) {
         const ne = document.getElementById('customerName'), pe = document.getElementById('customerPhone'), ae = document.getElementById('customerAddress');
         const name = ne?.value.trim() || '', phone = pe?.value.trim() || '', address = ae?.value.trim() || '';
-        if (!name || name.length < 2) { showToast('❌ Nama harus diisi'); if (ne) ne.focus(); return; }
+        
+        let hasError = false;
+        if (!name || name.length < 2) { highlightEmptyFields(['customerName']); hasError = true; }
         const cleanedPhone = phone.replace(/[\s\-\(\)]/g, '');
-        if (!cleanedPhone || !isValidPhone(cleanedPhone)) { showToast('❌ Format HP tidak valid. Contoh: 08123456789'); if (pe) pe.focus(); return; }
-        if (!address || address.length < 5) { showToast('❌ Alamat terlalu pendek. Tulis lebih lengkap ya'); if (ae) ae.focus(); return; }
+        if (!cleanedPhone || !isValidPhone(cleanedPhone)) { highlightEmptyFields(['customerPhone']); hasError = true; }
+        if (!address || address.length < 5) { highlightEmptyFields(['customerAddress']); hasError = true; }
+        
+        // Validasi jam pengiriman
+        const deliveryTimeEl = document.getElementById('deliveryTime');
+        const deliveryTime = deliveryTimeEl ? deliveryTimeEl.value : '';
+        if (!deliveryTime) {
+            highlightEmptyFields(['deliveryTime']);
+            hasError = true;
+        }
+        
+        if (hasError) {
+            showToast('❌ Lengkapi data yang wajib diisi');
+            const firstEmpty = document.querySelector('.input-error');
+            if (firstEmpty) {
+                firstEmpty.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setTimeout(() => firstEmpty.focus(), 300);
+            }
+            return;
+        }
+        
         const summary = getCartSummaryCached();
         if (summary.items.length === 0) { showToast('🛒 Keranjang masih kosong nih'); return; }
         if (summary.isOutOfRange && state.shippingProvider !== 'pembeli') { showToast('⚠️ Area ini belum kami jangkau'); return; }
