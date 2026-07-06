@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rujak.Co — Asem, Pedes, Manis, Seger. Dalam Satu Gigitan.</title>
-  <meta name="description" content="Rujak premium dengan sambal mete terpisah — tetap renyah sampai tujuan. Ongkir mulai Rp8.000 — bisa GRATIS dengan subsidi. 45 menit sampai." />
+  <meta name="description" content="Rujak premium dengan sambal mete terpisah — tetap renyah sampai tujuan. Ongkir mulai Rp8.000 — bisa GRATIS dengan subsidi." />
   <meta name="author" content="masngu" />
   <meta name="theme-color" content="#0F4D37" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -90,9 +90,9 @@
         <span id="storeStatusBannerText">Toko tutup. Buka jam 10.00 WIB.</span>
       </div>
 
-      <!-- BANNER KESEGARAN (FRESH-PREP) -->
-      <div id="freshBanner" style="display:block; margin:0 20px 12px; padding:10px 16px; border-radius:14px; background:#F8F5EE; border:1px solid #D4C9A8; font-size:13px; color:#4a3f2b; font-weight:500; text-align:center; line-height:1.6;">
-        <span style="display:inline-flex; align-items:center; gap:6px;">
+      <!-- BANNER KESEGARAN (TEKS MENGAMBANG - OPSI 1) -->
+      <div id="freshBanner" style="display:block; margin:8px 20px 16px; padding:0 8px; font-size:13px; color:#4a3f2b; font-weight:500; text-align:center; line-height:1.5;">
+        <span style="display:inline-flex; align-items:center; gap:6px; justify-content:center;">
           <span style="font-size:16px;">🌿</span>
           <span><strong style="color:#0F4D37;">Fresh‑Prep</strong> — Pesan hari ini, nikmati besok. Buah baru dipotong 15 menit sebelum dikirim agar kesegarannya 100% terjaga.</span>
           <span style="font-size:16px;">✨</span>
@@ -109,8 +109,8 @@
         <div class="promo-anim"><i data-lucide="sparkles" class="w-5 h-5 text-[#F4C430] promo-sparkle"></i></div>
       </div>
 
-      <!-- REKOMENDASI AI -->
-      <div id="aiRecommendationContainer" style="display:none; margin: 0 20px 16px; background:linear-gradient(135deg,#F8F5EE,#FFFDF5); border:1px solid #E8E0D0; border-radius:12px; padding:12px 14px;"></div>
+      <!-- REKOMENDASI AI (spacing bawah dikurangi jadi 12px) -->
+      <div id="aiRecommendationContainer" style="display:none; margin: 0 20px 12px; background:linear-gradient(135deg,#F8F5EE,#FFFDF5); border:1px solid #E8E0D0; border-radius:12px; padding:12px 14px;"></div>
 
       <nav class="cat-scroll no-sb" id="catScroll" aria-label="Kategori Menu">
         <button type="button" class="cat-pill active" data-cat="all">Semua</button>
@@ -227,7 +227,6 @@
       <div class="edu-container">
         <div class="edu-card"><div class="edu-icon-wrap" style="background:rgba(214,40,40,0.1);color:var(--red);"><i data-lucide="box" class="w-5 h-5"></i></div><div><h4 class="edu-title">Sambal Diracik Terpisah</h4><p class="edu-desc">Sambal dikemas dalam cup sealed. Buah tetap segar, tidak layu, tidak tumpah selama pengiriman.</p></div></div>
         <div class="edu-card"><div class="edu-icon-wrap" style="background:var(--green-pale);color:var(--green);"><i data-lucide="shield-check" class="w-5 h-5"></i></div><div><h4 class="edu-title">Fresh-Lock System™</h4><p class="edu-desc">Sambal sealed terpisah + buah dipotong fresh sebelum dikirim = tetap renyah sampai tujuan. Sampai benyek? Kami ganti.</p></div></div>
-        <!-- Ganti Antar Cepat 45 Menit dengan Standar Fresh-Prep -->
         <div class="edu-card">
           <div class="edu-icon-wrap" style="background:var(--green-pale);color:var(--green);">
             <i data-lucide="shield-check" class="w-5 h-5"></i>
@@ -244,7 +243,6 @@
       <div class="sec-header"><span class="sec-title">Pertanyaan Umum</span></div>
       <div class="faq-container" id="faqContainer">
         <div class="faq-item open"><div class="faq-question" data-toggle="faq"><span>Kenapa sambal dipisahkan?</span><i data-lucide="chevron-down" class="w-4 h-4"></i></div><div class="faq-answer">Agar buah tetap segar dan renyah saat diterima. Tidak lembek. Tidak tumpah.</div></div>
-        <!-- Ganti FAQ pengiriman -->
         <div class="faq-item">
           <div class="faq-question" data-toggle="faq">
             <span>Kenapa pesanan baru dikirim besok?</span>
@@ -330,7 +328,7 @@
     </div>
   </footer>
 
-  <!-- BOTTOM BAR (tetap) -->
+  <!-- BOTTOM BAR -->
   <div id="bottom-bar">
     <button class="close-bottom-bar" id="closeBottomBar" aria-label="Tutup keranjang">✕</button>
     <div class="progress-container" id="progressContainer" style="display:none;"><div class="progress-text"><span id="progressLabel">Tambah Rp20.000 lagi untuk diskon</span><span id="progressPercent">0%</span></div><div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0;"></div></div></div>
@@ -368,7 +366,7 @@
       <div class="detail-row"><span class="label">Sambal</span><span class="value" id="modalSambal">-</span></div>
     </div><div id="modalBuahContainer"><div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px;">Buah-buahan</div><div class="modal-buah-text" id="modalBuahText"></div></div><div class="modal-tags" id="modalTags"></div><div class="spice-row"><span class="spice-icon"><i data-lucide="flame"></i></span><span class="spice-label">Level Pedas</span><span class="spice-value" id="modalSpiceLabel">3 - Signature</span><select id="spiceSelect"><option value="1">1 - Mild Sweet</option><option value="2">2 - Light Spice</option><option value="3" selected>3 - Signature</option><option value="4">4 - Bold</option><option value="5">5 - Extreme</option></select></div></div><div class="modal-footer"><button class="modal-add" id="modalAdd"><span>Tambah ke Keranjang</span><span id="btnPrice">Rp0</span></button></div></div></div>
 
-  <!-- MODAL KERANJANG (dengan tambahan dropdown jam pengiriman & pengingat) -->
+  <!-- MODAL KERANJANG (dengan dropdown jam pengiriman) -->
   <div class="modal-overlay" id="miniCartModal"><div class="modal-content" style="max-width:420px;"><div class="modal-header"><span class="modal-header-title">🛒 Keranjang</span><div class="modal-header-actions"><button class="clear-cart-btn" id="clearCartBtn"><i data-lucide="trash" class="w-4 h-4"></i> Kosongkan</button><button class="modal-close" id="miniCartClose">&times;</button></div></div><div class="modal-body" style="padding:16px 20px;">
     <div class="step-indicator">
       <span class="step active" data-step="1" data-action="goto-step">1</span>
@@ -389,7 +387,7 @@
     <div class="form-section"><label class="form-label">Nomor HP</label><input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" autocomplete="tel"></div>
     <div class="form-section"><label class="form-label">Alamat</label><input type="text" id="customerAddress" placeholder="Alamat lengkap" autocomplete="street-address"></div>
     
-    <!-- DROPDOWN JAM PENGIRIMAN (FRESH-PREP) -->
+    <!-- DROPDOWN JAM PENGIRIMAN -->
     <div class="form-section">
       <label class="form-label">Jam Pengiriman (Besok)</label>
       <select id="deliveryTime" style="width:100%; padding:12px 14px; border:2px solid var(--gray-200); border-radius:10px; font-family:'DM Sans',sans-serif; font-size:14px; color:var(--gray-900); background:white; appearance:none; background-image:url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%236B7280\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><polyline points=\'6 9 12 15 18 9\'></polyline></svg>'); background-repeat:no-repeat; background-position:right 14px center;">
@@ -432,7 +430,7 @@
   </div>
   </div></div></div>
 
-  <!-- MODAL PEMBAYARAN (tetap) -->
+  <!-- MODAL PEMBAYARAN -->
   <div class="modal-overlay" id="paymentModal">
     <div class="modal-content">
       <div class="modal-header"><span class="modal-header-title">💳 Pembayaran QRIS</span><button class="modal-close" id="paymentClose">&times;</button></div>
@@ -467,7 +465,7 @@
     </div>
   </div>
 
-  <!-- SUBSIDI POPUP (tetap) -->
+  <!-- SUBSIDI POPUP -->
   <div id="subsidiPopup" role="dialog" aria-modal="true" aria-label="Subsidi Ongkir Terbatas">
     <div class="popup-inner">
       <div style="margin-bottom:16px;"><span style="background:#D62828;color:white;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.5px;">⚡ SUBSIDI TERBATAS</span></div>
@@ -491,7 +489,7 @@
   <script defer src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@4/dist/fp.min.js"></script>
   <script defer src="app.js"></script>
   
-  <!-- SUBSIDI POPUP SCRIPT (tetap) -->
+  <!-- SUBSIDI POPUP SCRIPT -->
   <script>
   (function() {
     var COUNTDOWN_MINUTES=30,COOLDOWN_HOURS=2,STORAGE_PREFIX='rujakco_subsidi_';
