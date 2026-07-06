@@ -1,5 +1,5 @@
 /* ============================================================
-   Rujak.Co — Complete Style (Final v2)
+   Rujak.Co — Complete Style (Final v3 — Jakco AI)
    ============================================================ */
 
 :root {
@@ -159,7 +159,7 @@ body { display: flex; flex-direction: column; align-items: center; min-height: 1
 .qty-btn:active { background: rgba(15,77,55,.12); }
 .qty-num { font-size: 14px; font-weight: 700; color: var(--green); min-width: 22px; text-align: center; }
 
-/* TOMBOL + BULAT DI MENU */
+/* Tombol + bulat di menu */
 .add-btn {
   width: 30px;
   height: 30px;
@@ -176,7 +176,7 @@ body { display: flex; flex-direction: column; align-items: center; min-height: 1
 }
 .add-btn:active { transform: scale(.9); }
 
-/* TOMBOL + TAMBAH KAPSUL (AI) */
+/* Tombol + Tambah kapsul (AI) */
 .btn-add-unified {
   background: var(--green);
   color: white;
@@ -197,6 +197,26 @@ body { display: flex; flex-direction: column; align-items: center; min-height: 1
 
 .addon-add { width: 26px; height: 26px; background: var(--green-pale); border: none; border-radius: 50%; color: var(--green); cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .addon-add:focus-visible { outline: 2px solid var(--green); }
+
+/* Fix: tombol menu dengan class tambahan */
+button.add-btn.btn-add-unified {
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  font-size: 18px;
+  line-height: 1;
+  background: var(--green);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  box-shadow: 0 3px 10px rgba(15,77,55,.35);
+}
+button.add-btn.btn-add-unified i {
+  display: block;
+}
 
 /* Education */
 .edu-container { padding: 0 20px 24px; display: flex; flex-direction: column; gap: 12px; }
@@ -396,7 +416,7 @@ body { display: flex; flex-direction: column; align-items: center; min-height: 1
 #aiRecommendationContainer { animation: slideDownAI 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
 @keyframes slideDownAI { from { opacity: 0; transform: translateY(-20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-/* Pastikan tidak ada border ganda pada inner div AI */
+/* Hilangkan border ganda */
 #aiRecommendationContainer > div {
   border: none !important;
 }
