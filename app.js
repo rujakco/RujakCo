@@ -2,7 +2,7 @@
   'use strict';
 
   // ============================================================
-  // CRITICAL FIXES v1.0.5 — FINAL
+  // CRITICAL FIXES v1.0.6 — FINAL (NO DISTANCE LIMIT)
   // ============================================================
 
   function safeGet(id) {
@@ -102,7 +102,7 @@
 
   const SYSTEM = {
     DISCOUNT_THRESHOLD: 100000, WA_NUMBER: '6289677161680', TOAST_DURATION: 3000,
-    MAX_DISTANCE: 50, DEFAULT_DISTANCE: 2,
+    MAX_DISTANCE: 9999, DEFAULT_DISTANCE: 2,
     SUBSIDY_TIER1: 75000, SUBSIDY_TIER2: 125000, SUBSIDY_TIER3: 200000,
     SUBSIDY_AMOUNT1: 5000, SUBSIDY_AMOUNT2: 10000,
     PRIORITY_SURCHARGE: 8000, MAX_SUBSIDY: 30000,
@@ -356,9 +356,6 @@
   }
 
   function lockAddToCart() { addToCartLocked = true; setTimeout(() => { addToCartLocked = false; }, 300); }
-
-  // ... (Semua fungsi shipping, cart, AI, checkout, UI, modal, event binding, init sama persis dengan sebelumnya)
-  // Saya lampirkan seluruhnya agar tidak ada kebingungan.
 
   // ============================================================
   // SHIPPING FUNCTIONS
@@ -880,7 +877,6 @@
     const btnPriceEl = document.getElementById('btnPrice'); if (btnPriceEl) btnPriceEl.textContent = fmt(product.price);
     const modalAddEl = document.getElementById('modalAdd'); if (modalAddEl) modalAddEl.dataset.id = product.id;
 
-    // Set default spice
     const spiceHidden = document.getElementById('spiceHidden');
     const spiceLabel = document.getElementById('spiceLabel');
     const dv = product.defaultSpice || 3;
