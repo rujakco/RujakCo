@@ -2,7 +2,7 @@
   'use strict';
 
   // ============================================================
-  // CRITICAL FIXES v1.0.9 – ONGKIR BERDASARKAN KECAMATAN TUJUAN
+  // CRITICAL FIXES v1.1.0 — STABLE (NO GOOGLE MAPS)
   // ============================================================
 
   function safeGet(id) {
@@ -111,7 +111,7 @@
     SUBSIDY_COOLDOWN_HOURS: 2
   };
 
-  // Daftar kecamatan diperbanyak agar mencakup area Jabodetabek dan sekitarnya
+  // Daftar kecamatan dengan estimasi jarak (km)
   const DISTRICT_MAP = {
     // Bekasi & Sekitarnya
     'bekasi barat':3, 'bekasi timur':5, 'bekasi selatan':7, 'bekasi utara':8,
@@ -481,7 +481,7 @@
     Object.keys(state.cart).forEach(id => { const entry = state.cart[id]; const item = getItemById(id); if (item && entry && entry.qty > 0) { const lt = item.price * entry.qty; subtotal += lt; totalQty += entry.qty; items.push({ cartId: id, id: id, name: item.name, price: item.price, qty: entry.qty, spice: entry.spice || null, lineTotal: lt }); } else { keysToDelete.push(id); } });
     keysToDelete.forEach(id => delete state.cart[id]);
     const discount = calculateDiscount(subtotal);
-    // Jarak diambil dari kecamatan yang dipilih, fallback ke GPS
+    // Jarak dari kecamatan yang dipilih, fallback ke GPS
     let distance;
     if (state.selectedDistrict && DISTRICT_MAP[state.selectedDistrict]) {
       distance = DISTRICT_MAP[state.selectedDistrict];
@@ -510,7 +510,7 @@
   function clearCart() { if (Object.keys(state.cart).length === 0) { showToast('🧹 Keranjang sudah kosong'); return; } showConfirmModal('Kosongkan Keranjang?', 'Semua item akan dihapus.', function() { state.cart = {}; invalidateCache(); updateUI(); if (document.getElementById('miniCartModal')?.classList.contains('active')) renderMiniCart(); showToast('🧹 Keranjang dikosongkan'); }); }
 
   // ============================================================
-  // AI ENGINE (tidak berubah)
+  // AI ENGINE
   // ============================================================
   function getAIRecommendation() { const hour = new Date().getHours(); const day = new Date().getDay(); const isWeekend = (day === 0 || day === 6); let timeBased = 'p_m1'; if (hour >= 6 && hour < 10) timeBased = 'p_m2'; else if (hour >= 10 && hour < 14) timeBased = 'p_m3'; else if (hour >= 14 && hour < 17) timeBased = 'p_m1'; else if (hour >= 17 && hour < 22) timeBased = 'p_m4'; let history = []; try { const raw = localStorage.getItem('rujak_order_history'); if (raw) history = JSON.parse(raw); } catch (_) {} let favorite = null; if (history.length > 0) { const freq = {}; history.forEach(id => { freq[id] = (freq[id] || 0) + 1; }); const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]); favorite = sorted[0] ? sorted[0][0] : null; } let rec = favorite || timeBased; if (isWeekend && hour >= 17) { const found = ['p_m4', 'p_m6'].find(id => PRODUCTS.find(prod => prod.id === id && !prod.isHidden)); if (found) rec = found; } const inCart = Object.keys(state.cart); let product = PRODUCTS.find(p => !p.isHidden && !inCart.some(key => key.startsWith(p.id)) && p.id === rec); if (!product) { product = PRODUCTS.filter(p => !p.isHidden && !inCart.some(key => key.startsWith(p.id))).sort((a, b) => a.price - b.price)[0] || null; } return product; }
 
@@ -690,7 +690,7 @@
   }
 
   // ============================================================
-  // UI FUNCTIONS (tidak berubah)
+  // UI FUNCTIONS
   // ============================================================
   function updateStoreStatus() {
     const el = document.getElementById('storeStatusText'); if (!el) return;
@@ -1037,7 +1037,6 @@
             updateShippingUI(distance, state.isPriority);
           });
       }, function() {
-        // GPS gagal – langsung arahkan ke manual
         console.warn('GPS gagal atau ditolak');
         if (locationDisplay) locationDisplay.textContent = 'GPS tidak aktif ▾';
         if (costEl) {
@@ -1134,22 +1133,35 @@
       const ba2 = document.getElementById('btnAutoDetect'); if (ba2) ba2.classList.remove('active');
     });
     
-    // Custom district select
+    // Custom district select (sinkronisasi dua trigger)
     const districtTrigger = document.getElementById('districtTrigger');
-    if (districtTrigger) {
-      districtTrigger.addEventListener('click', function() {
-        const options = Object.keys(DISTRICT_MAP).map(function(key) {
-          return { value: key, label: key.replace(/\b\w/g, l => l.toUpperCase()) + ' (~' + DISTRICT_MAP[key] + ' km)' };
-        });
-        openCustomSelect('Pilih Kecamatan Tujuan', options, function(value, label) {
-          document.getElementById('districtSelect').value = value;
-          document.getElementById('districtLabel').textContent = label;
-          districtTrigger.classList.add('selected');
-          state.selectedDistrict = value;
-          state.useManualDistrict = true;
-          detectLocation();
-        });
+    const districtTriggerInForm = document.getElementById('districtTriggerInForm');
+    
+    function openDistrictSelect() {
+      const options = Object.keys(DISTRICT_MAP).map(function(key) {
+        return { value: key, label: key.replace(/\b\w/g, l => l.toUpperCase()) + ' (~' + DISTRICT_MAP[key] + ' km)' };
       });
+      openCustomSelect('Pilih Kecamatan Tujuan', options, function(value, label) {
+        document.getElementById('districtSelect').value = value;
+        // Update kedua label
+        var labelBottom = document.getElementById('districtLabel');
+        var labelForm = document.getElementById('districtLabelInForm');
+        if (labelBottom) labelBottom.textContent = label;
+        if (labelForm) labelForm.textContent = label;
+        // Update class selected untuk kedua trigger
+        if (districtTrigger) districtTrigger.classList.add('selected');
+        if (districtTriggerInForm) districtTriggerInForm.classList.add('selected');
+        state.selectedDistrict = value;
+        state.useManualDistrict = true;
+        detectLocation();
+      });
+    }
+    
+    if (districtTrigger) {
+      districtTrigger.addEventListener('click', openDistrictSelect);
+    }
+    if (districtTriggerInForm) {
+      districtTriggerInForm.addEventListener('click', openDistrictSelect);
     }
 
     // Custom delivery time select
@@ -1330,16 +1342,6 @@
   async function init() {
     await getOrCreateFingerprint().catch(() => {});
     loadCart(); loadCustomerData(); updateStoreStatus();
-    const districtHidden = document.getElementById('districtSelect');
-    if (districtHidden) {
-      districtHidden.innerHTML = '';
-      Object.keys(DISTRICT_MAP).forEach(key => {
-        const option = document.createElement('option');
-        option.value = key;
-        option.textContent = key.replace(/\b\w/g, l => l.toUpperCase()) + ' (~' + DISTRICT_MAP[key] + ' km)';
-        districtHidden.appendChild(option);
-      });
-    }
     try { const s = localStorage.getItem('rujak_cart_minimized'); if (s !== null) state.isCartMinimized = s === 'true'; } catch(_) {}
     const pending = localStorage.getItem('last_order_pending'); if (pending === 'true') { localStorage.removeItem('last_order'); localStorage.removeItem('last_order_pending'); }
     window.addEventListener('beforeunload', function() { localStorage.removeItem('last_order_pending'); if (storeStatusInterval) clearInterval(storeStatusInterval); });
