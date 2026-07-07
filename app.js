@@ -2,7 +2,7 @@
   'use strict';
 
   // ============================================================
-  // CRITICAL FIXES v1.0.6 — FINAL (NO DISTANCE LIMIT)
+  // CRITICAL FIXES v1.0.8 — NO DISTANCE LIMIT + MANUAL ALWAYS VISIBLE
   // ============================================================
 
   function safeGet(id) {
@@ -378,7 +378,14 @@
     return 0;
   }
 
-  function getZoneLabel(distance) { if (distance <= 5) return 'Zona A (0-5 km)'; if (distance <= 10) return 'Zona B (5-10 km)'; if (distance <= 15) return 'Zona C (10-15 km)'; if (distance <= 20) return 'Zona D (15-20 km)'; return 'Zona E (>20 km)'; }
+  function getZoneLabel(distance) {
+    if (distance <= 5) return 'Zona A (0-5 km)';
+    if (distance <= 10) return 'Zona B (5-10 km)';
+    if (distance <= 15) return 'Zona C (10-15 km)';
+    if (distance <= 20) return 'Zona D (15-20 km)';
+    return 'Zona Jauh (>20 km)';
+  }
+
   function isPeakHour() { const now = new Date(); const hour = now.getHours(); const day = now.getDay(); if (day === 0 || day === 6) return (hour >= 11 && hour <= 13); return (hour >= 11 && hour <= 13) || (hour >= 16 && hour <= 19); }
   function getSurgeMultiplier() { if (!isPeakHour()) { state.currentSurge = null; return 1.0; } if (state.currentSurge) return state.currentSurge; state.currentSurge = 1.3; return state.currentSurge; }
 
@@ -390,7 +397,13 @@
     const lalamoveCost = calculateLalamoveCost(rawDistance, state.vehicleType); const surgedCost = Math.round(lalamoveCost * surgeMultiplier);
     const priorityCost = priority ? SYSTEM.PRIORITY_SURCHARGE : 0; const totalCost = surgedCost + priorityCost;
     const zoneLabel = getZoneLabel(rawDistance); const surgeLabel = isSurge ? ' ⚡Jam Sibuk' : '';
-    let zone = 'E'; if (rawDistance <= 20) { if (rawDistance <= 5) zone = 'A'; else if (rawDistance <= 10) zone = 'B'; else if (rawDistance <= 15) zone = 'C'; else zone = 'D'; }
+    let zone = 'F';
+    if (rawDistance <= 20) {
+      if (rawDistance <= 5) zone = 'A';
+      else if (rawDistance <= 10) zone = 'B';
+      else if (rawDistance <= 15) zone = 'C';
+      else zone = 'D';
+    }
     return { cost: totalCost, lalamoveCost: surgedCost, baseLalamoveCost: lalamoveCost, surgeMultiplier: surgeMultiplier, isSurge: isSurge, label: zoneLabel + ' • ' + (state.vehicleType === 'motor' ? 'Motor' : 'Mobil') + (priority ? ' • Prioritas' : '') + surgeLabel, distance: rawDistance, zone: zone };
   }
 
@@ -934,46 +947,54 @@
   }
 
   // ============================================================
-  // DETECT LOCATION
+  // DETECT LOCATION (MANUAL SELECT ALWAYS VISIBLE)
   // ============================================================
   function showManualLocationFallback() {
-    if (locationFallbackShown) return; locationFallbackShown = true;
-    const costEl = document.getElementById('shippingCost'); if (costEl) costEl.textContent = 'Pilih zona';
-    const dw = document.getElementById('manualSelectWrapper'); if (dw) dw.style.display = 'block';
-    const bm = document.getElementById('btnManualDistrict'); if (bm) bm.classList.add('active');
-    const ba = document.getElementById('btnAutoDetect'); if (ba) ba.classList.remove('active');
+    // Tidak lagi menyembunyikan wrapper – wrapper selalu terlihat
+    if (locationFallbackShown) return;
+    locationFallbackShown = true;
+    var bm = document.getElementById('btnManualDistrict');
+    var ba = document.getElementById('btnAutoDetect');
+    if (bm) bm.classList.add('active');
+    if (ba) ba.classList.remove('active');
     showToast('⚠️ Pilih zona pengiriman secara manual');
   }
 
   function detectLocation() {
     locationFallbackShown = false;
-    const costEl = document.getElementById('shippingCost'); if (costEl) costEl.textContent = '⏳';
+    var costEl = document.getElementById('shippingCost');
+    if (costEl) costEl.textContent = '⏳';
+
     if (state.useManualDistrict && state.selectedDistrict) {
-      const dist = DISTRICT_MAP[state.selectedDistrict] || SYSTEM.DEFAULT_DISTANCE; state.userDistance = dist;
-      document.getElementById('locationDisplay').textContent = state.selectedDistrict.replace(/\b\w/g, l => l.toUpperCase()) + ' ▾';
-      updateShippingUI(dist, state.isPriority); return;
+      var dist = DISTRICT_MAP[state.selectedDistrict] || SYSTEM.DEFAULT_DISTANCE;
+      state.userDistance = dist;
+      document.getElementById('locationDisplay').textContent = state.selectedDistrict.replace(/\b\w/g, function(l) { return l.toUpperCase(); }) + ' ▾';
+      updateShippingUI(dist, state.isPriority);
+      return;
     }
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function(pos) {
-        const lat = pos.coords.latitude, lng = pos.coords.longitude, R = 6371;
-        const dLat = (lat - SYSTEM.STORE_LAT) * Math.PI / 180, dLon = (lng - SYSTEM.STORE_LNG) * Math.PI / 180;
-        const a = Math.sin(dLat/2)**2 + Math.cos(SYSTEM.STORE_LAT * Math.PI/180) * Math.cos(lat * Math.PI/180) * Math.sin(dLon/2)**2;
-        const distance = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        var lat = pos.coords.latitude, lng = pos.coords.longitude, R = 6371;
+        var dLat = (lat - SYSTEM.STORE_LAT) * Math.PI / 180, dLon = (lng - SYSTEM.STORE_LNG) * Math.PI / 180;
+        var a = Math.sin(dLat/2)**2 + Math.cos(SYSTEM.STORE_LAT * Math.PI/180) * Math.cos(lat * Math.PI/180) * Math.sin(dLon/2)**2;
+        var distance = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng + '&format=json&zoom=10&accept-language=id', { headers: { 'User-Agent': 'RujakCo/1.0' } })
-          .then(r => r.json()).then(data => {
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
             state.userDistance = distance;
             document.getElementById('locationDisplay').textContent = (data.address?.city || data.address?.town || 'Lokasi Anda') + ' ▾';
             updateShippingUI(distance, state.isPriority);
             locationFallbackShown = false;
-            const dw = document.getElementById('manualSelectWrapper'); if (dw) dw.style.display = 'none';
-            const bm = document.getElementById('btnManualDistrict'); if (bm) bm.classList.remove('active');
-          }).catch(() => {
+            var bm = document.getElementById('btnManualDistrict');
+            if (bm) bm.classList.remove('active');
+          }).catch(function() {
             state.userDistance = distance;
             document.getElementById('locationDisplay').textContent = 'Lokasi Anda ▾';
             updateShippingUI(distance, state.isPriority);
           });
       }, function() {
-        getLocationFallback().then(data => {
+        getLocationFallback().then(function(data) {
           state.userDistance = data.distance;
           document.getElementById('locationDisplay').textContent = data.city + ' ▾';
           updateShippingUI(data.distance, state.isPriority);
@@ -981,14 +1002,18 @@
         });
       }, { enableHighAccuracy: true, timeout: 10000 });
     } else {
-      getLocationFallback().then(data => {
+      getLocationFallback().then(function(data) {
         state.userDistance = data.distance;
         document.getElementById('locationDisplay').textContent = data.city + ' ▾';
         updateShippingUI(data.distance, state.isPriority);
         if (data.distance >= 999) showManualLocationFallback();
       });
     }
-    setTimeout(() => { if (state.userDistance !== null && state.userDistance < 999) return; showManualLocationFallback(); }, SYSTEM.LOCATION_TIMEOUT);
+
+    setTimeout(function() {
+      if (state.userDistance !== null && state.userDistance < 999) return;
+      showManualLocationFallback();
+    }, SYSTEM.LOCATION_TIMEOUT);
   }
 
   // ============================================================
@@ -1052,14 +1077,12 @@
     if (ba) ba.addEventListener('click', function() {
       state.useManualDistrict = false; state.selectedDistrict = '';
       this.classList.add('active'); const bm = document.getElementById('btnManualDistrict'); if (bm) bm.classList.remove('active');
-      const dw = document.getElementById('manualSelectWrapper'); if (dw) dw.style.display = 'none';
       detectLocation();
     });
     const bm = document.getElementById('btnManualDistrict');
     if (bm) bm.addEventListener('click', function() {
       state.useManualDistrict = true; this.classList.add('active');
       const ba2 = document.getElementById('btnAutoDetect'); if (ba2) ba2.classList.remove('active');
-      const dw = document.getElementById('manualSelectWrapper'); if (dw) dw.style.display = 'block';
     });
     
     // Custom district select
