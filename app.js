@@ -2,7 +2,7 @@
   'use strict';
 
   // ============================================================
-  // CRITICAL FIXES v1.0.8 — NO DISTANCE LIMIT + MANUAL ALWAYS VISIBLE
+  // CRITICAL FIXES v1.0.9 – ONGKIR BERDASARKAN KECAMATAN TUJUAN
   // ============================================================
 
   function safeGet(id) {
@@ -111,12 +111,45 @@
     SUBSIDY_COOLDOWN_HOURS: 2
   };
 
+  // Daftar kecamatan diperbanyak agar mencakup area Jabodetabek dan sekitarnya
   const DISTRICT_MAP = {
+    // Bekasi & Sekitarnya
     'bekasi barat':3, 'bekasi timur':5, 'bekasi selatan':7, 'bekasi utara':8,
     'rawalumbu':6, 'jatiasih':9, 'pondokgede':12, 'cikarang':18,
+    'tambun':12, 'cibitung':15, 'karawang':35, 'cikampek':50,
+    'serang':55, 'cilegon':70,
+    // Jakarta
     'jakarta pusat':18, 'jakarta selatan':20, 'jakarta timur':15,
-    'jakarta barat':22, 'jakarta utara':25, 'depok':28,
-    'bogor':35, 'tangerang':30, 'tangerang selatan':27
+    'jakarta barat':22, 'jakarta utara':25,
+    'gambir':18, 'menteng':19, 'senen':18, 'cempaka putih':19,
+    'kemayoran':20, 'sawah besar':20, 'taman sari':21,
+    'tambora':22, 'grogol petamburan':23, 'palmerah':22,
+    'tanah abang':20, 'setiabudi':19, 'tebet':20,
+    'pancoran':21, 'pasar minggu':22, 'kebayoran lama':24,
+    'kebayoran baru':22, 'mampang prapatan':21, 'jagakarsa':23,
+    'cilandak':24, 'pesanggrahan':25, 'kembangan':25,
+    'cengkareng':26, 'kalideres':27, 'penjaringan':28,
+    'pademangan':26, 'tanjung priok':27, 'koja':28,
+    'cilincing':29, 'kelapa gading':24, 'pulo gadung':20,
+    'jatinegara':19, 'duren sawit':18, 'kramat jati':19,
+    'pasar rebo':21, 'ciracas':22, 'cipayung':23,
+    'makasar':20, 'cakung':18,
+    // Depok
+    'depok':28, 'beji':29, 'pancoran mas':29, 'cipayung depok':30,
+    'sukmajaya':30, 'cilodong':31, 'limo':32, 'cinere':33,
+    'cimanggis':27, 'tapos':29, 'sawangan':34, 'bojongsari':35,
+    // Tangerang
+    'tangerang':30, 'tangerang selatan':27, 'batuceper':31,
+    'benda':32, 'cibodas':31, 'ciledug':28, 'cipondoh':30,
+    'jatiuwung':33, 'karawaci':31, 'periuk':32, 'pinang':30,
+    'serpong':32, 'serpong utara':33, 'pamulang':30,
+    'pondok aren':29, 'ciputat':28, 'ciputat timur':29,
+    // Bogor
+    'bogor':35, 'bogor barat':37, 'bogor selatan':36,
+    'bogor timur':35, 'bogor utara':34, 'tanah sareal':36,
+    'ciawi':40, 'cibinong':33, 'citeureup':35,
+    'gunung putri':30, 'cileungsi':28, 'jonggol':42,
+    'parung':38, 'dramaga':45
   };
 
   const state = {
@@ -447,7 +480,16 @@
     const items = []; let subtotal = 0, totalQty = 0; const keysToDelete = [];
     Object.keys(state.cart).forEach(id => { const entry = state.cart[id]; const item = getItemById(id); if (item && entry && entry.qty > 0) { const lt = item.price * entry.qty; subtotal += lt; totalQty += entry.qty; items.push({ cartId: id, id: id, name: item.name, price: item.price, qty: entry.qty, spice: entry.spice || null, lineTotal: lt }); } else { keysToDelete.push(id); } });
     keysToDelete.forEach(id => delete state.cart[id]);
-    const discount = calculateDiscount(subtotal); const distance = state.userDistance !== null ? state.userDistance : SYSTEM.DEFAULT_DISTANCE;
+    const discount = calculateDiscount(subtotal);
+    // Jarak diambil dari kecamatan yang dipilih, fallback ke GPS
+    let distance;
+    if (state.selectedDistrict && DISTRICT_MAP[state.selectedDistrict]) {
+      distance = DISTRICT_MAP[state.selectedDistrict];
+    } else if (state.userDistance !== null) {
+      distance = state.userDistance;
+    } else {
+      distance = SYSTEM.DEFAULT_DISTANCE;
+    }
     const shipping = calculateShipping(distance, state.isPriority); const rawShippingCost = shipping.cost;
     const shippingSubsidy = calculateSubsidy(subtotal, shipping.zone, rawShippingCost);
     const shippingCost = state.shippingProvider === 'pembeli' ? 0 : (rawShippingCost === null || rawShippingCost === undefined ? 0 : Math.max(0, rawShippingCost - shippingSubsidy));
@@ -468,7 +510,7 @@
   function clearCart() { if (Object.keys(state.cart).length === 0) { showToast('🧹 Keranjang sudah kosong'); return; } showConfirmModal('Kosongkan Keranjang?', 'Semua item akan dihapus.', function() { state.cart = {}; invalidateCache(); updateUI(); if (document.getElementById('miniCartModal')?.classList.contains('active')) renderMiniCart(); showToast('🧹 Keranjang dikosongkan'); }); }
 
   // ============================================================
-  // AI ENGINE
+  // AI ENGINE (tidak berubah)
   // ============================================================
   function getAIRecommendation() { const hour = new Date().getHours(); const day = new Date().getDay(); const isWeekend = (day === 0 || day === 6); let timeBased = 'p_m1'; if (hour >= 6 && hour < 10) timeBased = 'p_m2'; else if (hour >= 10 && hour < 14) timeBased = 'p_m3'; else if (hour >= 14 && hour < 17) timeBased = 'p_m1'; else if (hour >= 17 && hour < 22) timeBased = 'p_m4'; let history = []; try { const raw = localStorage.getItem('rujak_order_history'); if (raw) history = JSON.parse(raw); } catch (_) {} let favorite = null; if (history.length > 0) { const freq = {}; history.forEach(id => { freq[id] = (freq[id] || 0) + 1; }); const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]); favorite = sorted[0] ? sorted[0][0] : null; } let rec = favorite || timeBased; if (isWeekend && hour >= 17) { const found = ['p_m4', 'p_m6'].find(id => PRODUCTS.find(prod => prod.id === id && !prod.isHidden)); if (found) rec = found; } const inCart = Object.keys(state.cart); let product = PRODUCTS.find(p => !p.isHidden && !inCart.some(key => key.startsWith(p.id)) && p.id === rec); if (!product) { product = PRODUCTS.filter(p => !p.isHidden && !inCart.some(key => key.startsWith(p.id))).sort((a, b) => a.price - b.price)[0] || null; } return product; }
 
@@ -648,7 +690,7 @@
   }
 
   // ============================================================
-  // UI FUNCTIONS
+  // UI FUNCTIONS (tidak berubah)
   // ============================================================
   function updateStoreStatus() {
     const el = document.getElementById('storeStatusText'); if (!el) return;
@@ -950,25 +992,26 @@
   // DETECT LOCATION (MANUAL SELECT ALWAYS VISIBLE)
   // ============================================================
   function showManualLocationFallback() {
-    // Tidak lagi menyembunyikan wrapper – wrapper selalu terlihat
     if (locationFallbackShown) return;
     locationFallbackShown = true;
     var bm = document.getElementById('btnManualDistrict');
     var ba = document.getElementById('btnAutoDetect');
     if (bm) bm.classList.add('active');
     if (ba) ba.classList.remove('active');
-    showToast('⚠️ Pilih zona pengiriman secara manual');
+    showToast('📍 Silakan pilih kecamatan tujuan untuk menghitung ongkir.');
   }
 
   function detectLocation() {
     locationFallbackShown = false;
     var costEl = document.getElementById('shippingCost');
+    var locationDisplay = document.getElementById('locationDisplay');
     if (costEl) costEl.textContent = '⏳';
+    if (locationDisplay) locationDisplay.textContent = 'Mendeteksi... ▾';
 
     if (state.useManualDistrict && state.selectedDistrict) {
       var dist = DISTRICT_MAP[state.selectedDistrict] || SYSTEM.DEFAULT_DISTANCE;
       state.userDistance = dist;
-      document.getElementById('locationDisplay').textContent = state.selectedDistrict.replace(/\b\w/g, function(l) { return l.toUpperCase(); }) + ' ▾';
+      if (locationDisplay) locationDisplay.textContent = state.selectedDistrict.replace(/\b\w/g, function(l) { return l.toUpperCase(); }) + ' ▾';
       updateShippingUI(dist, state.isPriority);
       return;
     }
@@ -983,31 +1026,37 @@
           .then(function(r) { return r.json(); })
           .then(function(data) {
             state.userDistance = distance;
-            document.getElementById('locationDisplay').textContent = (data.address?.city || data.address?.town || 'Lokasi Anda') + ' ▾';
+            if (locationDisplay) locationDisplay.textContent = (data.address?.city || data.address?.town || 'Lokasi Anda') + ' ▾';
             updateShippingUI(distance, state.isPriority);
             locationFallbackShown = false;
             var bm = document.getElementById('btnManualDistrict');
             if (bm) bm.classList.remove('active');
           }).catch(function() {
             state.userDistance = distance;
-            document.getElementById('locationDisplay').textContent = 'Lokasi Anda ▾';
+            if (locationDisplay) locationDisplay.textContent = 'Lokasi Anda ▾';
             updateShippingUI(distance, state.isPriority);
           });
       }, function() {
-        getLocationFallback().then(function(data) {
-          state.userDistance = data.distance;
-          document.getElementById('locationDisplay').textContent = data.city + ' ▾';
-          updateShippingUI(data.distance, state.isPriority);
-          if (data.distance >= 999) showManualLocationFallback();
-        });
+        // GPS gagal – langsung arahkan ke manual
+        console.warn('GPS gagal atau ditolak');
+        if (locationDisplay) locationDisplay.textContent = 'GPS tidak aktif ▾';
+        if (costEl) {
+          costEl.textContent = 'Pilih kecamatan';
+          costEl.style.color = 'var(--gray-500)';
+        }
+        var manualBtn = document.getElementById('btnManualDistrict');
+        if (manualBtn) manualBtn.click();
+        showToast('📍 GPS tidak aktif. Silakan pilih kecamatan tujuan.');
       }, { enableHighAccuracy: true, timeout: 10000 });
     } else {
-      getLocationFallback().then(function(data) {
-        state.userDistance = data.distance;
-        document.getElementById('locationDisplay').textContent = data.city + ' ▾';
-        updateShippingUI(data.distance, state.isPriority);
-        if (data.distance >= 999) showManualLocationFallback();
-      });
+      if (locationDisplay) locationDisplay.textContent = 'Pilih lokasi ▾';
+      if (costEl) {
+        costEl.textContent = 'Pilih kecamatan';
+        costEl.style.color = 'var(--gray-500)';
+      }
+      var manualBtn = document.getElementById('btnManualDistrict');
+      if (manualBtn) manualBtn.click();
+      showToast('📍 Browser tidak mendukung GPS. Silakan pilih kecamatan tujuan.');
     }
 
     setTimeout(function() {
@@ -1092,11 +1141,12 @@
         const options = Object.keys(DISTRICT_MAP).map(function(key) {
           return { value: key, label: key.replace(/\b\w/g, l => l.toUpperCase()) + ' (~' + DISTRICT_MAP[key] + ' km)' };
         });
-        openCustomSelect('Pilih Kecamatan', options, function(value, label) {
+        openCustomSelect('Pilih Kecamatan Tujuan', options, function(value, label) {
           document.getElementById('districtSelect').value = value;
           document.getElementById('districtLabel').textContent = label;
           districtTrigger.classList.add('selected');
           state.selectedDistrict = value;
+          state.useManualDistrict = true;
           detectLocation();
         });
       });
