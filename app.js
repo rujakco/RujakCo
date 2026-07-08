@@ -2,7 +2,7 @@
   'use strict';
 
   // ============================================================
-  // CRITICAL FIXES v1.1.0 — STABLE (NO GOOGLE MAPS)
+  // CRITICAL FIXES v1.2.0 — STABLE + SUBSIDI 15% + BREAKDOWN + COPY
   // ============================================================
 
   function safeGet(id) {
@@ -111,14 +111,11 @@
     SUBSIDY_COOLDOWN_HOURS: 2
   };
 
-  // Daftar kecamatan dengan estimasi jarak (km)
   const DISTRICT_MAP = {
-    // Bekasi & Sekitarnya
     'bekasi barat':3, 'bekasi timur':5, 'bekasi selatan':7, 'bekasi utara':8,
     'rawalumbu':6, 'jatiasih':9, 'pondokgede':12, 'cikarang':18,
     'tambun':12, 'cibitung':15, 'karawang':35, 'cikampek':50,
     'serang':55, 'cilegon':70,
-    // Jakarta
     'jakarta pusat':18, 'jakarta selatan':20, 'jakarta timur':15,
     'jakarta barat':22, 'jakarta utara':25,
     'gambir':18, 'menteng':19, 'senen':18, 'cempaka putih':19,
@@ -134,17 +131,14 @@
     'jatinegara':19, 'duren sawit':18, 'kramat jati':19,
     'pasar rebo':21, 'ciracas':22, 'cipayung':23,
     'makasar':20, 'cakung':18,
-    // Depok
     'depok':28, 'beji':29, 'pancoran mas':29, 'cipayung depok':30,
     'sukmajaya':30, 'cilodong':31, 'limo':32, 'cinere':33,
     'cimanggis':27, 'tapos':29, 'sawangan':34, 'bojongsari':35,
-    // Tangerang
     'tangerang':30, 'tangerang selatan':27, 'batuceper':31,
     'benda':32, 'cibodas':31, 'ciledug':28, 'cipondoh':30,
     'jatiuwung':33, 'karawaci':31, 'periuk':32, 'pinang':30,
     'serpong':32, 'serpong utara':33, 'pamulang':30,
     'pondok aren':29, 'ciputat':28, 'ciputat timur':29,
-    // Bogor
     'bogor':35, 'bogor barat':37, 'bogor selatan':36,
     'bogor timur':35, 'bogor utara':34, 'tanah sareal':36,
     'ciawi':40, 'cibinong':33, 'citeureup':35,
@@ -397,10 +391,16 @@
     if (shippingZone === 'E' || rawShippingCost === null || rawShippingCost === undefined) return 0;
     if (!isSubsidyActive()) return 0;
     let subsidy = 0;
-    if (subtotal >= SYSTEM.SUBSIDY_TIER3 && ['A','B','C','D'].includes(shippingZone)) { subsidy = rawShippingCost; }
-    else if (subtotal >= SYSTEM.SUBSIDY_TIER2) { subsidy = SYSTEM.SUBSIDY_AMOUNT2; }
-    else if (subtotal >= SYSTEM.SUBSIDY_TIER1) { subsidy = SYSTEM.SUBSIDY_AMOUNT1; }
-    if (subsidy > SYSTEM.MAX_SUBSIDY) subsidy = SYSTEM.MAX_SUBSIDY;
+    if (subtotal >= SYSTEM.SUBSIDY_TIER3 && ['A','B','C','D'].includes(shippingZone)) {
+      subsidy = rawShippingCost;
+    } else if (subtotal >= SYSTEM.SUBSIDY_TIER2) {
+      subsidy = SYSTEM.SUBSIDY_AMOUNT2;
+    } else if (subtotal >= SYSTEM.SUBSIDY_TIER1) {
+      subsidy = SYSTEM.SUBSIDY_AMOUNT1;
+    }
+    const maxPercentSubsidy = Math.min(rawShippingCost, Math.floor(subtotal * 0.15));
+    const cap = Math.min(maxPercentSubsidy, SYSTEM.MAX_SUBSIDY);
+    if (subsidy > cap) subsidy = cap;
     return subsidy;
   }
 
@@ -481,7 +481,6 @@
     Object.keys(state.cart).forEach(id => { const entry = state.cart[id]; const item = getItemById(id); if (item && entry && entry.qty > 0) { const lt = item.price * entry.qty; subtotal += lt; totalQty += entry.qty; items.push({ cartId: id, id: id, name: item.name, price: item.price, qty: entry.qty, spice: entry.spice || null, lineTotal: lt }); } else { keysToDelete.push(id); } });
     keysToDelete.forEach(id => delete state.cart[id]);
     const discount = calculateDiscount(subtotal);
-    // Jarak dari kecamatan yang dipilih, fallback ke GPS
     let distance;
     if (state.selectedDistrict && DISTRICT_MAP[state.selectedDistrict]) {
       distance = DISTRICT_MAP[state.selectedDistrict];
@@ -544,8 +543,7 @@
       if (score > bestScore) { bestScore = score; bestProduct = p; }
     });
     if (!bestProduct || bestScore < 0) return '';
-    const addCost = bestProduct.price;
-    const addCostText = fmt(addCost);
+    const addCostText = fmt(bestProduct.price);
     return '<div style="background:linear-gradient(135deg,#FFF8E1,#FFECB3);border:1px solid #F4C430;border-radius:12px;padding:12px 14px;margin-top:10px;text-align:center;">' +
       '<div style="font-size:10px;font-weight:600;color:#92400e;">🧠 AI Suggestion</div>' +
       '<div style="font-size:14px;font-weight:700;color:#3d2b00;margin:2px 0;">Tambah ' + addCostText + ' → <strong>' + escapeHTML(bestProduct.name) + '</strong></div>' +
@@ -831,37 +829,57 @@
     const step1Upsell = document.getElementById('step1Upsell');
     if (step1Upsell && summary.items.length > 0) step1Upsell.innerHTML = renderAIUpsell(summary);
 
-    const s2d = document.getElementById('step2Distance'); if (s2d) s2d.textContent = '~' + Math.ceil(summary.shippingDistance) + ' km';
-    const s2z = document.getElementById('step2Zone'); if (s2z) s2z.textContent = summary.shippingLabel || '';
-    const s2c = document.getElementById('step2ShippingCost'), s2t = document.getElementById('step2TotalShipping');
-    if (summary.shippingProvider === 'rujakco') {
-      if (summary.isOutOfRange) { if (s2c) s2c.textContent = 'Konfirmasi Admin'; if (s2t) s2t.textContent = 'Konfirmasi Admin'; }
-      else { if (s2c) s2c.textContent = fmt(summary.lalamoveCost || summary.rawShippingCost || 0); if (s2t) s2t.textContent = fmt(summary.shippingCost); }
-    } else { if (s2c) s2c.textContent = 'Gratis'; if (s2t) s2t.textContent = 'Gratis'; }
-    document.querySelectorAll('#cartStep2 .ship-btn').forEach(b => b.classList.toggle('active', b.dataset.provider === state.shippingProvider));
-    document.querySelectorAll('#cartStep2 .veh-btn').forEach(b => b.classList.toggle('active', b.dataset.vehicle === state.vehicleType));
-    const pm = document.getElementById('priorityToggleMini'); if (pm) pm.checked = state.isPriority;
-    const ro = document.getElementById('rujakcoOptions'); if (ro) ro.style.display = state.shippingProvider === 'rujakco' ? 'block' : 'none';
-    const fSub = document.getElementById('finalSubtotal'); if (fSub) fSub.textContent = fmt(summary.subtotal);
-    const fDisc = document.getElementById('finalDiscount'); if (fDisc) fDisc.textContent = summary.discount > 0 ? '-Rp' + summary.discount.toLocaleString('id-ID') : 'Rp0';
-    const fShip = document.getElementById('finalShipping'); if (fShip) fShip.textContent = summary.isOutOfRange ? 'Konfirmasi Admin' : fmt(summary.shippingCost);
-    const fTotal = document.getElementById('finalTotal'); if (fTotal) fTotal.textContent = summary.isOutOfRange ? 'Konfirmasi' : fmt(summary.total);
-    const orderNotesEl = document.getElementById('orderNotes'); if (orderNotesEl) orderNotesEl.value = state.orderNotes;
-    const customerNameEl = document.getElementById('customerName'); if (customerNameEl) customerNameEl.value = state.customerName;
-    const customerPhoneEl = document.getElementById('customerPhone'); if (customerPhoneEl) customerPhoneEl.value = state.customerPhone;
-    const customerAddressEl = document.getElementById('customerAddress'); if (customerAddressEl) customerAddressEl.value = state.customerAddress;
-    const giftToggleEl = document.getElementById('giftToggle'); if (giftToggleEl) giftToggleEl.checked = state.isGift;
-    const giftSenderEl = document.getElementById('giftSender'); if (giftSenderEl) giftSenderEl.value = state.giftSender;
-    const giftMessageEl = document.getElementById('giftMessage'); if (giftMessageEl) giftMessageEl.value = state.giftMessage;
-    const giftFieldsEl = document.getElementById('giftFields'); if (giftFieldsEl) giftFieldsEl.style.display = state.isGift ? 'block' : 'none';
+    const breakdownContainer = document.getElementById('step2Breakdown');
+    if (breakdownContainer) {
+      let breakdownHTML = '';
+      breakdownHTML += '<div style="font-weight:700;margin-bottom:4px;color:var(--gray-900);">📦 Detail Ongkir</div>';
+      breakdownHTML += '<div>Jarak: <strong>' + Math.ceil(summary.shippingDistance) + ' km</strong> <span style="font-size:10px;color:var(--gray-400);">' + (summary.shippingLabel || '') + '</span></div>';
+
+      if (summary.shippingProvider === 'rujakco' && !summary.isOutOfRange) {
+        breakdownHTML += '<div>🚚 Tarif Dasar: <strong>' + fmt(summary.baseLalamoveCost || summary.lalamoveCost || 0) + '</strong></div>';
+        if (summary.isSurge) {
+          const surgeAmount = (summary.lalamoveCost || 0) - (summary.baseLalamoveCost || 0);
+          if (surgeAmount > 0) breakdownHTML += '<div style="color:#D62828;">⚡ Surge (x' + summary.surgeMultiplier + '): +' + fmt(surgeAmount) + '</div>';
+        }
+        if (state.isPriority) {
+          breakdownHTML += '<div>🚀 Prioritas: +Rp8.000</div>';
+        }
+        if (summary.shippingSubsidy > 0) {
+          breakdownHTML += '<div style="color:var(--green);">💰 Subsidi: -' + fmt(summary.shippingSubsidy) + '</div>';
+        }
+        breakdownHTML += '<div style="border-top:1px solid var(--gray-200);margin-top:6px;padding-top:6px;font-weight:700;">Total Ongkir: <strong style="color:var(--red);">' + fmt(summary.shippingCost) + '</strong></div>';
+      } else if (summary.shippingProvider === 'pembeli') {
+        breakdownHTML += '<div>Total Ongkir: <strong>Gratis (Kurir Sendiri)</strong></div>';
+      } else {
+        breakdownHTML += '<div>Total Ongkir: <strong>Konfirmasi Admin</strong></div>';
+      }
+      breakdownContainer.innerHTML = breakdownHTML;
+    }
+
+    document.getElementById('finalSubtotal').textContent = fmt(summary.subtotal);
+    document.getElementById('finalDiscount').textContent = summary.discount > 0 ? '-Rp' + summary.discount.toLocaleString('id-ID') : 'Rp0';
+    document.getElementById('finalShipping').textContent = summary.isOutOfRange ? 'Konfirmasi Admin' : fmt(summary.shippingCost);
+    document.getElementById('finalTotal').textContent = summary.isOutOfRange ? 'Konfirmasi' : fmt(summary.total);
+
+    document.getElementById('customerName').value = state.customerName;
+    document.getElementById('customerPhone').value = state.customerPhone;
+    document.getElementById('customerAddress').value = state.customerAddress;
+    document.getElementById('giftToggle').checked = state.isGift;
+    document.getElementById('giftSender').value = state.giftSender;
+    document.getElementById('giftMessage').value = state.giftMessage;
+    document.getElementById('giftFields').style.display = state.isGift ? 'block' : 'none';
+
     const bp = document.getElementById('btnOpenPayment');
     if (bp) {
-      const isEmpty = summary.items.length === 0, isOutOfRange = summary.isOutOfRange && state.shippingProvider !== 'pembeli', isLocationPending = state.userDistance === null && state.shippingProvider !== 'pembeli';
+      const isEmpty = summary.items.length === 0;
+      const isOutOfRange = summary.isOutOfRange && state.shippingProvider !== 'pembeli';
+      const isLocationPending = state.userDistance === null && state.shippingProvider !== 'pembeli' && !(state.selectedDistrict && DISTRICT_MAP[state.selectedDistrict]);
       if (isEmpty) { bp.disabled = true; bp.textContent = 'Keranjang kosong'; }
       else if (isOutOfRange) { bp.disabled = true; bp.textContent = 'Admin Konfirmasi'; }
       else if (isLocationPending) { bp.disabled = true; bp.textContent = '⏳ Mencari lokasi...'; }
       else { bp.disabled = false; bp.textContent = '💳 Bayar Via QRIS'; }
     }
+
     if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
   }
 
@@ -1013,6 +1031,7 @@
       state.userDistance = dist;
       if (locationDisplay) locationDisplay.textContent = state.selectedDistrict.replace(/\b\w/g, function(l) { return l.toUpperCase(); }) + ' ▾';
       updateShippingUI(dist, state.isPriority);
+      renderMiniCart();   // ✅ FIX: langsung aktifkan tombol bayar
       return;
     }
 
@@ -1132,39 +1151,22 @@
       state.useManualDistrict = true; this.classList.add('active');
       const ba2 = document.getElementById('btnAutoDetect'); if (ba2) ba2.classList.remove('active');
     });
-    
-    // Custom district select (sinkronisasi dua trigger)
     const districtTrigger = document.getElementById('districtTrigger');
-    const districtTriggerInForm = document.getElementById('districtTriggerInForm');
-    
     function openDistrictSelect() {
       const options = Object.keys(DISTRICT_MAP).map(function(key) {
         return { value: key, label: key.replace(/\b\w/g, l => l.toUpperCase()) + ' (~' + DISTRICT_MAP[key] + ' km)' };
       });
       openCustomSelect('Pilih Kecamatan Tujuan', options, function(value, label) {
         document.getElementById('districtSelect').value = value;
-        // Update kedua label
         var labelBottom = document.getElementById('districtLabel');
-        var labelForm = document.getElementById('districtLabelInForm');
         if (labelBottom) labelBottom.textContent = label;
-        if (labelForm) labelForm.textContent = label;
-        // Update class selected untuk kedua trigger
         if (districtTrigger) districtTrigger.classList.add('selected');
-        if (districtTriggerInForm) districtTriggerInForm.classList.add('selected');
         state.selectedDistrict = value;
         state.useManualDistrict = true;
         detectLocation();
       });
     }
-    
-    if (districtTrigger) {
-      districtTrigger.addEventListener('click', openDistrictSelect);
-    }
-    if (districtTriggerInForm) {
-      districtTriggerInForm.addEventListener('click', openDistrictSelect);
-    }
-
-    // Custom delivery time select
+    if (districtTrigger) districtTrigger.addEventListener('click', openDistrictSelect);
     const deliveryTrigger = document.getElementById('deliveryTimeTrigger');
     if (deliveryTrigger) {
       deliveryTrigger.addEventListener('click', function() {
@@ -1180,8 +1182,6 @@
         });
       });
     }
-
-    // Custom spice select (new logic with icons)
     const spiceTrigger = document.getElementById('spiceTrigger');
     const spiceModal = document.getElementById('spiceModal');
     if (spiceTrigger && spiceModal) {
@@ -1204,7 +1204,6 @@
         }
       });
     }
-
     const locationPill = document.getElementById('locationPill');
     if (locationPill) locationPill.addEventListener('click', function() { const msg = this.getAttribute('data-msg'); if (msg) showToast(msg); });
 
@@ -1237,37 +1236,35 @@
       if (e.target.closest('#btnOpenPayment')) {
         const ne = document.getElementById('customerName'), pe = document.getElementById('customerPhone'), ae = document.getElementById('customerAddress');
         const name = ne?.value.trim() || '', phone = pe?.value.trim() || '', address = ae?.value.trim() || '';
-        
         let hasError = false;
         if (!name || name.length < 2) { highlightEmptyFields(['customerName']); hasError = true; }
         const cleanedPhone = phone.replace(/[\s\-\(\)]/g, '');
         if (!cleanedPhone || !isValidPhone(cleanedPhone)) { highlightEmptyFields(['customerPhone']); hasError = true; }
         if (!address || address.length < 5) { highlightEmptyFields(['customerAddress']); hasError = true; }
-        
         const deliveryTimeEl = document.getElementById('deliveryTime');
         const deliveryTime = deliveryTimeEl ? deliveryTimeEl.value : '';
-        if (!deliveryTime) {
-            highlightEmptyFields(['deliveryTime']);
-            hasError = true;
-        }
-        
+        if (!deliveryTime) { highlightEmptyFields(['deliveryTime']); hasError = true; }
         if (hasError) {
             showToast('❌ Lengkapi data yang wajib diisi');
             const firstEmpty = document.querySelector('.input-error');
-            if (firstEmpty) {
-                firstEmpty.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                setTimeout(() => firstEmpty.focus(), 300);
-            }
+            if (firstEmpty) { firstEmpty.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => firstEmpty.focus(), 300); }
             return;
         }
-        
         const summary = getCartSummaryCached();
         if (summary.items.length === 0) { showToast('🛒 Keranjang masih kosong nih'); return; }
         if (summary.isOutOfRange && state.shippingProvider !== 'pembeli') { showToast('⚠️ Area ini belum kami jangkau'); return; }
-        if (state.userDistance === null && state.shippingProvider !== 'pembeli') { showToast('📍 Mencari lokasi kamu...'); return; }
+        // ✅ FIX: fallback selectedDistrict
+        if (state.userDistance === null && state.shippingProvider !== 'pembeli') {
+          if (state.selectedDistrict && DISTRICT_MAP[state.selectedDistrict]) {
+            state.userDistance = DISTRICT_MAP[state.selectedDistrict];
+          } else {
+            showToast('📍 Mencari lokasi kamu...');
+            return;
+          }
+        }
         const totalText = document.getElementById('finalTotal')?.textContent || 'Rp0';
-        const pt2 = document.getElementById('paymentTotalDisplay'); if (pt2) pt2.textContent = totalText;
-        const pt3 = document.getElementById('paymentTotalDisplay2'); if (pt3) pt3.textContent = totalText;
+        document.getElementById('paymentTotalDisplay').textContent = totalText;
+        document.getElementById('paymentTotalDisplay2').textContent = totalText;
         closeMiniCart();
         const pmt = document.getElementById('paymentModal'); if (pmt) { pmt.classList.add('active'); document.body.style.overflow = 'hidden'; }
         return;
@@ -1300,15 +1297,17 @@
       if (e.target.closest('#clearSearchBtn')) { searchInput.value = ''; state.searchQuery = ''; invalidateCache(); updateUI(); updateClearButton(); return; }
     });
 
-    // FAQ handler – single click
-    const faqContainer = document.getElementById('faqContainer');
-    if (faqContainer) {
-      faqContainer.addEventListener('click', function(e) {
-        const question = e.target.closest('.faq-question');
-        if (!question) return;
-        e.preventDefault();
-        const item = question.closest('.faq-item');
-        if (item) item.classList.toggle('open');
+    // Tombol Salin Nominal
+    const copyAmountBtn = document.getElementById('copyAmountBtn');
+    if (copyAmountBtn) {
+      copyAmountBtn.addEventListener('click', function() {
+        const totalText = document.getElementById('paymentTotalDisplay')?.textContent || '';
+        const nominal = totalText.replace(/[^0-9]/g, '');
+        if (nominal) {
+          navigator.clipboard.writeText(nominal).then(() => {
+            showToast('✅ Nominal tersalin: Rp' + Number(nominal).toLocaleString('id-ID'));
+          }).catch(() => { showToast('⚠️ Gagal menyalin'); });
+        } else { showToast('⚠️ Total belum tersedia'); }
       });
     }
 
