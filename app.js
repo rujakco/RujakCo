@@ -1035,7 +1035,7 @@
   }
 
   // ============================================================
-  // UI FUNCTIONS (sama seperti sebelumnya, tidak diubah)
+  // UI FUNCTIONS
   // ============================================================
   function updateStoreStatus() {
     const el = document.getElementById('storeStatusText');
