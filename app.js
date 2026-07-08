@@ -152,7 +152,8 @@
     customerName: '', customerPhone: '', customerAddress: '',
     isGift: false, giftSender: '', giftMessage: '',
     useManualDistrict: false, selectedDistrict: '', hasShared: false,
-    shippingProvider: 'rujakco', vehicleType: 'motor', currentStep: 1, currentSurge: null
+    shippingProvider: 'rujakco', vehicleType: 'motor', currentStep: 1, currentSurge: null,
+    currentOrderNumber: null // untuk upload bukti
   };
 
   let addToCartLocked = false, checkoutLocked = false, locationFallbackShown = false;
@@ -385,6 +386,21 @@
   function lockAddToCart() { addToCartLocked = true; setTimeout(() => { addToCartLocked = false; }, 300); }
 
   // ============================================================
+  // PAXEL COST CALCULATION
+  // ============================================================
+  function calculatePaxelCost(distance, vehicleType, weight) {
+    var perKg = 0;
+    if (distance <= 10) perKg = 15000;
+    else if (distance <= 20) perKg = 20000;
+    else if (distance <= 50) perKg = 25000;
+    else perKg = 35000;
+
+    var base = perKg * weight;
+    var min = vehicleType === 'motor' ? 20000 : 35000;
+    return Math.max(base, min);
+  }
+
+  // ============================================================
   // SHIPPING FUNCTIONS
   // ============================================================
   function calculateSubsidy(subtotal, shippingZone, rawShippingCost) {
@@ -422,22 +438,70 @@
   function isPeakHour() { const now = new Date(); const hour = now.getHours(); const day = now.getDay(); if (day === 0 || day === 6) return (hour >= 11 && hour <= 13); return (hour >= 11 && hour <= 13) || (hour >= 16 && hour <= 19); }
   function getSurgeMultiplier() { if (!isPeakHour()) { state.currentSurge = null; return 1.0; } if (state.currentSurge) return state.currentSurge; state.currentSurge = 1.3; return state.currentSurge; }
 
-  function calculateShipping(distance, priority) {
-    if (state.shippingProvider === 'pembeli') { return { cost: 0, label: 'Kurir Saya', distance: distance, zone: null, surge: 1.0, isSurge: false, lalamoveCost: 0, baseLalamoveCost: 0 }; }
-    const rawDistance = (distance === null || distance === undefined || isNaN(distance)) ? SYSTEM.DEFAULT_DISTANCE : distance;
-    if (rawDistance > SYSTEM.MAX_DISTANCE) { return { cost: null, label: 'Admin Konfirmasi', distance: rawDistance, zone: 'E', surge: 1.0, isSurge: false, lalamoveCost: 0, baseLalamoveCost: 0 }; }
-    const surgeMultiplier = getSurgeMultiplier(); const isSurge = surgeMultiplier > 1.0;
-    const lalamoveCost = calculateLalamoveCost(rawDistance, state.vehicleType); const surgedCost = Math.round(lalamoveCost * surgeMultiplier);
-    const priorityCost = priority ? SYSTEM.PRIORITY_SURCHARGE : 0; const totalCost = surgedCost + priorityCost;
-    const zoneLabel = getZoneLabel(rawDistance); const surgeLabel = isSurge ? ' ⚡Jam Sibuk' : '';
-    let zone = 'F';
-    if (rawDistance <= 20) {
-      if (rawDistance <= 5) zone = 'A';
-      else if (rawDistance <= 10) zone = 'B';
-      else if (rawDistance <= 15) zone = 'C';
-      else zone = 'D';
+  function calculateShipping(distance, priority, totalQty) {
+    if (state.shippingProvider === 'pembeli') {
+      return { cost: 0, label: 'Kurir Saya', distance: distance, zone: null, surge: 1.0, isSurge: false, lalamoveCost: 0, baseLalamoveCost: 0 };
     }
-    return { cost: totalCost, lalamoveCost: surgedCost, baseLalamoveCost: lalamoveCost, surgeMultiplier: surgeMultiplier, isSurge: isSurge, label: zoneLabel + ' • ' + (state.vehicleType === 'motor' ? 'Motor' : 'Mobil') + (priority ? ' • Prioritas' : '') + surgeLabel, distance: rawDistance, zone: zone };
+    const rawDistance = (distance === null || distance === undefined || isNaN(distance)) ? SYSTEM.DEFAULT_DISTANCE : distance;
+    if (rawDistance > SYSTEM.MAX_DISTANCE) {
+      return { cost: null, label: 'Admin Konfirmasi', distance: rawDistance, zone: 'E', surge: 1.0, isSurge: false, lalamoveCost: 0, baseLalamoveCost: 0 };
+    }
+    const surgeMultiplier = getSurgeMultiplier();
+    const isSurge = surgeMultiplier > 1.0;
+
+    let lalamoveCost = 0;
+    let baseLalamoveCost = 0;
+    let totalCost = 0;
+    let zoneLabel = '';
+    let surgeLabel = isSurge ? ' ⚡Jam Sibuk' : '';
+    let zone = 'F';
+
+    if (state.shippingProvider === 'paxel') {
+      const weight = totalQty || 1;
+      const paxelCost = calculatePaxelCost(rawDistance, state.vehicleType, weight);
+      totalCost = paxelCost;
+      lalamoveCost = paxelCost;
+      baseLalamoveCost = paxelCost;
+      zoneLabel = 'Paxel ' + getZoneLabel(rawDistance);
+      surgeLabel = '';
+      if (rawDistance <= 20) {
+        if (rawDistance <= 5) zone = 'A';
+        else if (rawDistance <= 10) zone = 'B';
+        else if (rawDistance <= 15) zone = 'C';
+        else zone = 'D';
+      } else {
+        zone = 'F';
+      }
+    } else {
+      const lalamoveBase = calculateLalamoveCost(rawDistance, state.vehicleType);
+      baseLalamoveCost = lalamoveBase;
+      const surgedCost = Math.round(lalamoveBase * surgeMultiplier);
+      lalamoveCost = surgedCost;
+      const priorityCost = priority ? SYSTEM.PRIORITY_SURCHARGE : 0;
+      totalCost = surgedCost + priorityCost;
+      zoneLabel = getZoneLabel(rawDistance);
+      if (rawDistance <= 20) {
+        if (rawDistance <= 5) zone = 'A';
+        else if (rawDistance <= 10) zone = 'B';
+        else if (rawDistance <= 15) zone = 'C';
+        else zone = 'D';
+      } else {
+        zone = 'F';
+      }
+    }
+
+    const label = zoneLabel + ' • ' + (state.vehicleType === 'motor' ? 'Motor' : 'Mobil') + (priority && state.shippingProvider !== 'paxel' ? ' • Prioritas' : '') + surgeLabel;
+
+    return {
+      cost: totalCost,
+      lalamoveCost: lalamoveCost,
+      baseLalamoveCost: baseLalamoveCost,
+      surgeMultiplier: surgeMultiplier,
+      isSurge: isSurge,
+      label: label,
+      distance: rawDistance,
+      zone: zone
+    };
   }
 
   function getLocationFallback() {
@@ -456,7 +520,7 @@
   }
 
   function updateShippingUI(distance, isPriority) {
-    const shipping = calculateShipping(distance, isPriority);
+    const shipping = calculateShipping(distance, isPriority, 1);
     const distEl = document.getElementById('shippingDistance'); if (distEl) distEl.textContent = '~' + Math.ceil(distance) + ' km';
     const costEl = document.getElementById('shippingCost'); const outEl = document.getElementById('outOfRange');
     if (shipping.zone === 'E') { if (costEl) { costEl.textContent = 'Konfirmasi'; costEl.style.color = 'var(--red)'; } if (outEl) outEl.style.display = 'block'; }
@@ -489,7 +553,8 @@
     } else {
       distance = SYSTEM.DEFAULT_DISTANCE;
     }
-    const shipping = calculateShipping(distance, state.isPriority); const rawShippingCost = shipping.cost;
+    const shipping = calculateShipping(distance, state.isPriority, totalQty);
+    const rawShippingCost = shipping.cost;
     const shippingSubsidy = calculateSubsidy(subtotal, shipping.zone, rawShippingCost);
     const shippingCost = state.shippingProvider === 'pembeli' ? 0 : (rawShippingCost === null || rawShippingCost === undefined ? 0 : Math.max(0, rawShippingCost - shippingSubsidy));
     const total = subtotal - discount + shippingCost;
@@ -513,7 +578,6 @@
   // ============================================================
   function getAIRecommendation() { const hour = new Date().getHours(); const day = new Date().getDay(); const isWeekend = (day === 0 || day === 6); let timeBased = 'p_m1'; if (hour >= 6 && hour < 10) timeBased = 'p_m2'; else if (hour >= 10 && hour < 14) timeBased = 'p_m3'; else if (hour >= 14 && hour < 17) timeBased = 'p_m1'; else if (hour >= 17 && hour < 22) timeBased = 'p_m4'; let history = []; try { const raw = localStorage.getItem('rujak_order_history'); if (raw) history = JSON.parse(raw); } catch (_) {} let favorite = null; if (history.length > 0) { const freq = {}; history.forEach(id => { freq[id] = (freq[id] || 0) + 1; }); const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]); favorite = sorted[0] ? sorted[0][0] : null; } let rec = favorite || timeBased; if (isWeekend && hour >= 17) { const found = ['p_m4', 'p_m6'].find(id => PRODUCTS.find(prod => prod.id === id && !prod.isHidden)); if (found) rec = found; } const inCart = Object.keys(state.cart); let product = PRODUCTS.find(p => !p.isHidden && !inCart.some(key => key.startsWith(p.id)) && p.id === rec); if (!product) { product = PRODUCTS.filter(p => !p.isHidden && !inCart.some(key => key.startsWith(p.id))).sort((a, b) => a.price - b.price)[0] || null; } return product; }
 
-  // 🆕 MODIFIKASI: renderAIRecommendation dengan badge hemat ongkir
   function renderAIRecommendation() {
     const container = document.getElementById('aiRecommendationContainer');
     if (!container) return;
@@ -522,9 +586,10 @@
       container.style.display = 'none';
       return;
     }
-    // Hitung ongkir untuk memberikan info hemat
-    const distance = state.userDistance || SYSTEM.DEFAULT_DISTANCE;
-    const shipping = calculateShipping(distance, false);
+    const distance = state.selectedDistrict && DISTRICT_MAP[state.selectedDistrict]
+      ? DISTRICT_MAP[state.selectedDistrict]
+      : (state.userDistance || SYSTEM.DEFAULT_DISTANCE);
+    const shipping = calculateShipping(distance, false, 1);
     const shippingCost = shipping.cost || 0;
     let extraHTML = '';
     if (shippingCost > 30000 && rec.price < 50000) {
@@ -549,17 +614,16 @@
 
   function aiSearch(query) { if (!query || query.length < 2) return PRODUCTS.filter(p => !p.isHidden); const q = query.toLowerCase().trim(); const words = q.split(/\s+/); const synSets = []; words.forEach(word => { let found = false; for (const [key, synonyms] of Object.entries(SEARCH_SYNONYMS)) { if (key.includes(word) || word.includes(key) || synonyms.some(s => s.includes(word) || word.includes(s))) { synSets.push([key, ...synonyms]); found = true; break; } } if (!found) synSets.push([word]); }); const uniqueTerms = [...new Set(synSets.flat())]; const scored = PRODUCTS.filter(p => !p.isHidden).map(p => { let score = 0; const searchable = [p.name, p.desc, p.flavor, ...(p.tags || []), ...(p.buah || [])].join(' ').toLowerCase(); uniqueTerms.forEach(term => { if (searchable.includes(term)) score += 1; if (p.name.toLowerCase().includes(term)) score += 3; if ((p.tags || []).some(t => t.toLowerCase().includes(term))) score += 2; if ((p.buah || []).some(b => b.toLowerCase().includes(term))) score += 1.5; if (p.flavor.toLowerCase().includes(term)) score += 2; }); if (q.includes('classic') && p.cat === 'classic') score += 2; if (q.includes('signature') && p.cat === 'signature') score += 2; if (q.includes('reserve') && p.cat === 'reserve') score += 2; return { product: p, score }; }).filter(item => item.score > 0).sort((a, b) => b.score - a.score).map(item => item.product); if (scored.length === 0) return PRODUCTS.filter(p => !p.isHidden && [p.name, p.desc, p.flavor, ...(p.tags || []), ...(p.buah || [])].join(' ').toLowerCase().includes(q)); return scored; }
 
-  // 🆕 MODIFIKASI: renderAIUpsell dengan logika agresif untuk ongkir tinggi
   function renderAIUpsell(summary) {
     if (summary.items.length === 0) return '';
+    if (!summary.subtotal || summary.subtotal === 0) return '';
     const cartProductIds = summary.items.map(i => i.id);
     const available = PRODUCTS.filter(p => !p.isHidden && !cartProductIds.some(id => id.startsWith(p.id))).sort((a, b) => a.price - b.price);
     if (available.length === 0) return '';
 
-    // AGGRESSIVE UPSELL: jika ongkir > 50% subtotal dan subtotal < 75k
     const shippingRatio = summary.shippingCost / summary.subtotal;
     if (shippingRatio > 0.5 && summary.subtotal < 75000) {
-      const cheapest = available[0]; // produk termurah
+      const cheapest = available[0];
       if (cheapest) {
         const needed = 75000 - summary.subtotal;
         const qtyNeeded = Math.ceil(needed / cheapest.price);
@@ -577,7 +641,6 @@
       }
     }
 
-    // Logika normal (berdasarkan score)
     let bestScore = -1, bestProduct = null;
     available.forEach(p => {
       let score = 0;
@@ -612,6 +675,136 @@
     function sendMessage() { const msg = input.value.trim(); if (!msg) return; const userDiv = document.createElement('div'); userDiv.style.cssText = 'text-align:right;margin-bottom:8px;'; const userSpan = document.createElement('span'); userSpan.style.cssText = 'background:#0F4D37;color:white;padding:8px 14px;border-radius:16px;display:inline-block;max-width:85%;'; userSpan.textContent = msg; userDiv.appendChild(userSpan); messages.appendChild(userDiv); input.value = ''; messages.scrollTop = messages.scrollHeight; setTimeout(function() { const reply = generateAIResponse(msg); const replyDiv = document.createElement('div'); replyDiv.style.marginBottom = '8px'; const replySpan = document.createElement('span'); replySpan.style.cssText = 'background:#E8F5E9;padding:8px 14px;border-radius:16px;display:inline-block;max-width:85%;'; replySpan.textContent = '🤖 ' + reply; replyDiv.appendChild(replySpan); messages.appendChild(replyDiv); messages.scrollTop = messages.scrollHeight; }, 400 + Math.random() * 300); }
     function generateAIResponse(msg) { const lower = msg.toLowerCase(); if (lower.includes('menu') || lower.includes('produk')) { const products = PRODUCTS.filter(p => !p.isHidden); return 'Ada ' + products.length + ' menu seru buat kamu: ' + products.map(p => p.name + ' (' + fmt(p.price) + ')').join(' • ') + '. Mau saya rekomendasiin salah satu?'; } if (lower.includes('rekomend') || lower.includes('saran')) { const rec = getAIRecommendation(); return rec ? rec.name + ' cocok banget buat kamu sekarang! Harganya ' + fmt(rec.price) + '.' : 'Coba Rujak Gaco, favorit banyak orang!'; } if (lower.includes('ongkir') || lower.includes('subsidi')) { const summary = getCartSummaryCached(); if (summary.isOutOfRange) return 'Duh, lokasi kamu di luar jangkauan pengiriman kami nih.'; return 'Ongkir kamu ' + fmt(summary.shippingCost) + ', udah termasuk subsidi kalau lagi berlaku ya!'; } if (lower.includes('pedas') || lower.includes('sambal')) return 'Ada Sambal Original (Rp8k) yang klasik, dan Sambal Mete Premium (Rp12k) yang lebih gurih. Pilih sesuai selera!'; if (lower.includes('harga')) return 'Range harga kami mulai dari Rp26.000 sampai Rp200.000, tinggal pilih sesuai porsi dan selera kamu!'; return 'Coba tanya soal menu, rekomendasi, ongkir, sambal, atau harga ya!'; }
     send.addEventListener('click', sendMessage); input.addEventListener('keydown', function(e) { if (e.key === 'Enter') sendMessage(); });
+  }
+
+  // ============================================================
+  // UPLOAD BUKTI TRANSFER + TELEGRAM NOTIFICATION
+  // ============================================================
+
+  async function uploadPaymentProof(file, orderId) {
+    const uploadStatus = document.getElementById('uploadStatus');
+    if (!uploadStatus) return false;
+
+    if (!file) {
+      uploadStatus.textContent = '❌ Pilih file bukti transfer terlebih dahulu.';
+      uploadStatus.style.color = 'var(--red)';
+      return false;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      uploadStatus.textContent = '❌ Ukuran file terlalu besar (maks 2MB).';
+      uploadStatus.style.color = 'var(--red)';
+      return false;
+    }
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      uploadStatus.textContent = '❌ Format file tidak didukung. Gunakan JPG, PNG, atau WEBP.';
+      uploadStatus.style.color = 'var(--red)';
+      return false;
+    }
+
+    uploadStatus.textContent = '⏳ Mengupload bukti...';
+    uploadStatus.style.color = 'var(--gray-500)';
+
+    try {
+      const client = await getSupabase();
+      if (!client) {
+        uploadStatus.textContent = '❌ Gagal terhubung ke server.';
+        uploadStatus.style.color = 'var(--red)';
+        return false;
+      }
+
+      const ext = file.name.split('.').pop();
+      const fileName = `${orderId}_${Date.now()}.${ext}`;
+      const filePath = `bukti-transfer/${fileName}`;
+
+      const { data, error } = await client.storage
+        .from('payment-proofs')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false,
+          contentType: file.type
+        });
+
+      if (error) {
+        console.error('[RujakCo] Upload error:', error);
+        uploadStatus.textContent = '❌ Gagal upload: ' + error.message;
+        uploadStatus.style.color = 'var(--red)';
+        return false;
+      }
+
+      const { data: urlData } = client.storage
+        .from('payment-proofs')
+        .getPublicUrl(filePath);
+
+      const imageUrl = urlData?.publicUrl || '';
+
+      if (!imageUrl) {
+        uploadStatus.textContent = '❌ Gagal mendapatkan URL gambar.';
+        uploadStatus.style.color = 'var(--red)';
+        return false;
+      }
+
+      const { error: updateError } = await client
+        .from('orders')
+        .update({ payment_proof_url: imageUrl, payment_status: 'pending_verification' })
+        .eq('order_number', orderId);
+
+      if (updateError) {
+        console.error('[RujakCo] Update order error:', updateError);
+        uploadStatus.textContent = '❌ Gagal menyimpan link bukti.';
+        uploadStatus.style.color = 'var(--red)';
+        return false;
+      }
+
+      await sendTelegramNotification(orderId, imageUrl);
+
+      uploadStatus.textContent = '✅ Bukti berhasil diupload! Admin akan segera verifikasi.';
+      uploadStatus.style.color = 'var(--green)';
+
+      const uploadBtn = document.getElementById('uploadProofBtn');
+      if (uploadBtn) {
+        uploadBtn.disabled = true;
+        uploadBtn.textContent = '✅ Terkirim';
+        uploadBtn.style.opacity = '0.5';
+      }
+
+      return true;
+
+    } catch (err) {
+      console.error('[RujakCo] Upload error:', err);
+      uploadStatus.textContent = '❌ Terjadi kesalahan: ' + (err.message || 'Unknown error');
+      uploadStatus.style.color = 'var(--red)';
+      return false;
+    }
+  }
+
+  async function sendTelegramNotification(orderId, imageUrl) {
+    try {
+      const client = await getSupabase();
+      if (!client) return false;
+
+      const { data, error } = await client.functions.invoke('telegram-notify', {
+        body: {
+          orderId: orderId,
+          imageUrl: imageUrl,
+          customerName: state.customerName || 'Guest',
+          customerPhone: state.customerPhone || '',
+          total: document.getElementById('paymentTotalDisplay')?.textContent || 'Rp0'
+        }
+      });
+
+      if (error) {
+        console.error('[RujakCo] Telegram error:', error);
+        return false;
+      }
+
+      return true;
+    } catch (err) {
+      console.error('[RujakCo] Telegram error:', err);
+      return false;
+    }
   }
 
   // ============================================================
@@ -721,6 +914,7 @@
     if (checkoutTimer) clearTimeout(checkoutTimer);
     checkoutTimer = setTimeout(() => { checkoutLocked = false; if (payBtn) { payBtn.textContent = '💳 Kirim Bukti Transfer'; payBtn.disabled = false; } checkoutTimer = null; }, 5000);
     const orderNumber = 'RJ' + Date.now().toString(36).slice(-6) + Math.random().toString(36).substring(2, 5).toUpperCase();
+    state.currentOrderNumber = orderNumber; // simpan untuk upload bukti
     saveOrderToDatabase(summary.items, summary.total, summary.subtotal, summary.shippingCost, summary.discount, orderNumber).then(saved => {
       if (checkoutTimer) { clearTimeout(checkoutTimer); checkoutTimer = null; }
       checkoutLocked = false; if (payBtn) { payBtn.textContent = '💳 Kirim Bukti Transfer'; payBtn.disabled = false; }
@@ -817,14 +1011,15 @@
     if (divider) divider.style.display = show ? 'block' : 'none';
   }
 
-  // 🆕 MODIFIKASI: updateProgressBar dengan tampilan khusus untuk jarak jauh
   function updateProgressBar(subtotal) {
     const container = document.getElementById('progressContainer');
     if (!container) return;
-    const distance = state.userDistance || SYSTEM.DEFAULT_DISTANCE;
+
+    const distance = state.selectedDistrict && DISTRICT_MAP[state.selectedDistrict]
+      ? DISTRICT_MAP[state.selectedDistrict]
+      : (state.userDistance || SYSTEM.DEFAULT_DISTANCE);
     const isFar = distance > 20;
 
-    // Jika jarak jauh dan subtotal < 75k, tampilkan progress yang lebih menonjol
     if (isFar && subtotal < 75000) {
       container.style.display = 'block';
       container.style.borderColor = '#F59E0B';
@@ -839,7 +1034,6 @@
       return;
     }
 
-    // Logika normal (progress menuju diskon 100k)
     if (subtotal >= SYSTEM.DISCOUNT_THRESHOLD) {
       container.style.display = 'none';
       return;
@@ -861,16 +1055,15 @@
     const cs = document.getElementById('checkShare'); if (cs) cs.checked = state.hasShared;
   }
 
-  // 🆕 MODIFIKASI: Fungsi untuk memeriksa peringatan ongkir
   function checkShippingWarning() {
     const summary = getCartSummaryCached();
     if (summary.items.length === 0) return;
-    if (summary.shippingProvider === 'pembeli') return; // kurir sendiri tidak perlu peringatan
+    if (summary.shippingProvider === 'pembeli') return;
+    if (!summary.shippingCost || !summary.subtotal || summary.subtotal === 0) return;
     const shippingRatio = summary.shippingCost / summary.subtotal;
     if (shippingRatio > 0.7 && summary.subtotal < 75000) {
       showToast('💡 Ongkir hampir 2x harga produk! Tambah 1 item lagi dapat subsidi Rp5.000.');
     } else if (shippingRatio > 0.4 && summary.subtotal < 75000) {
-      // hanya tampilkan jika belum ada toast lain
       const remaining = 75000 - summary.subtotal;
       if (remaining > 0) {
         showToast('💡 Tambah ' + fmt(remaining) + ' lagi dapat subsidi ongkir!');
@@ -899,7 +1092,6 @@
       if (footer) footer.style.paddingBottom = '0';
     }
     saveCart(); updateFloatingButton();
-    // Panggil peringatan ongkir
     checkShippingWarning();
   }
 
@@ -937,7 +1129,7 @@
       breakdownHTML += '<div>Jarak: <strong>' + Math.ceil(summary.shippingDistance) + ' km</strong> <span style="font-size:10px;color:var(--gray-400);">' + (summary.shippingLabel || '') + '</span></div>';
 
       if (summary.shippingProvider === 'rujakco' && !summary.isOutOfRange) {
-        breakdownHTML += '<div>🚚 Tarif Dasar: <strong>' + fmt(summary.baseLalamoveCost || summary.lalamoveCost || 0) + '</strong></div>';
+        breakdownHTML += '<div>🚚 Tarif Dasar: <strong>' + fmt(summary.baseLalamoveCost || 0) + '</strong></div>';
         if (summary.isSurge) {
           const surgeAmount = (summary.lalamoveCost || 0) - (summary.baseLalamoveCost || 0);
           if (surgeAmount > 0) breakdownHTML += '<div style="color:#D62828;">⚡ Surge (x' + summary.surgeMultiplier + '): +' + fmt(surgeAmount) + '</div>';
@@ -949,6 +1141,16 @@
           breakdownHTML += '<div style="color:var(--green);">💰 Subsidi: -' + fmt(summary.shippingSubsidy) + '</div>';
         }
         breakdownHTML += '<div style="border-top:1px solid var(--gray-200);margin-top:6px;padding-top:6px;font-weight:700;">Total Ongkir: <strong style="color:var(--red);">' + fmt(summary.shippingCost) + '</strong></div>';
+
+      } else if (summary.shippingProvider === 'paxel' && !summary.isOutOfRange) {
+        const weight = summary.totalQty || 1;
+        breakdownHTML += '<div>📦 Berat: <strong>' + weight + ' kg</strong></div>';
+        breakdownHTML += '<div>📦 Tarif Paxel: <strong>' + fmt(summary.baseLalamoveCost || 0) + '</strong></div>';
+        if (summary.shippingSubsidy > 0) {
+          breakdownHTML += '<div style="color:var(--green);">💰 Subsidi: -' + fmt(summary.shippingSubsidy) + '</div>';
+        }
+        breakdownHTML += '<div style="border-top:1px solid var(--gray-200);margin-top:6px;padding-top:6px;font-weight:700;">Total Ongkir: <strong style="color:var(--red);">' + fmt(summary.shippingCost) + '</strong></div>';
+
       } else if (summary.shippingProvider === 'pembeli') {
         breakdownHTML += '<div>Total Ongkir: <strong>Gratis (Kurir Sendiri)</strong></div>';
       } else {
@@ -988,7 +1190,6 @@
     invalidateCache(); renderMenu(); renderAddons(); renderCart(); renderAIRecommendation();
     if (document.getElementById('miniCartModal')?.classList.contains('active')) renderMiniCart();
     if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
-    // Panggil peringatan ongkir setelah semua render
     checkShippingWarning();
   }
 
@@ -1134,7 +1335,7 @@
       state.userDistance = dist;
       if (locationDisplay) locationDisplay.textContent = state.selectedDistrict.replace(/\b\w/g, function(l) { return l.toUpperCase(); }) + ' ▾';
       updateShippingUI(dist, state.isPriority);
-      renderMiniCart();   // ✅ FIX: langsung aktifkan tombol bayar
+      renderMiniCart();
       return;
     }
 
@@ -1310,6 +1511,25 @@
     const locationPill = document.getElementById('locationPill');
     if (locationPill) locationPill.addEventListener('click', function() { const msg = this.getAttribute('data-msg'); if (msg) showToast(msg); });
 
+    // Upload Bukti Transfer
+    const uploadBtn = document.getElementById('uploadProofBtn');
+    const fileInput = document.getElementById('proofFileInput');
+    if (uploadBtn && fileInput) {
+      uploadBtn.addEventListener('click', async function() {
+        const file = fileInput.files[0];
+        if (!file) {
+          showToast('❌ Pilih file bukti transfer terlebih dahulu.');
+          return;
+        }
+        const orderNumber = state.currentOrderNumber || 'RJ' + Date.now().toString(36).slice(-6).toUpperCase();
+        const success = await uploadPaymentProof(file, orderNumber);
+        if (success) {
+          showToast('✅ Bukti berhasil diupload! Admin akan verifikasi.');
+          fileInput.value = '';
+        }
+      });
+    }
+
     document.addEventListener('click', function(e) {
       const stepEl = e.target.closest('[data-action="goto-step"]');
       if (stepEl) {
@@ -1356,7 +1576,6 @@
         const summary = getCartSummaryCached();
         if (summary.items.length === 0) { showToast('🛒 Keranjang masih kosong nih'); return; }
         if (summary.isOutOfRange && state.shippingProvider !== 'pembeli') { showToast('⚠️ Area ini belum kami jangkau'); return; }
-        // ✅ FIX: fallback selectedDistrict
         if (state.userDistance === null && state.shippingProvider !== 'pembeli') {
           if (state.selectedDistrict && DISTRICT_MAP[state.selectedDistrict]) {
             state.userDistance = DISTRICT_MAP[state.selectedDistrict];
@@ -1400,7 +1619,6 @@
       if (e.target.closest('#clearSearchBtn')) { searchInput.value = ''; state.searchQuery = ''; invalidateCache(); updateUI(); updateClearButton(); return; }
     });
 
-    // Tombol Salin Nominal
     const copyAmountBtn = document.getElementById('copyAmountBtn');
     if (copyAmountBtn) {
       copyAmountBtn.addEventListener('click', function() {
