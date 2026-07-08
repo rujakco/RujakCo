@@ -303,7 +303,47 @@
 
   <div class="modal-overlay" id="promoModal"><div class="modal-content" style="max-width:380px;"><div class="modal-header"><span class="modal-header-title">🎯 Misi Jajan — Diskon s/d Rp10.000</span><button class="modal-close" id="promoClose">&times;</button></div><div class="modal-body"><p style="margin:0 0 16px;font-size:13px;color:var(--gray-500);">Selesaikan misi untuk klaim diskonmu!</p><div class="mission-item"><input type="checkbox" id="missionSpend" disabled /><span>Belanja min. Rp100.000 <b>(Potong Rp5.000)</b></span></div><div class="mission-item"><input type="checkbox" id="checkShare" disabled /><span>Bagikan ke teman <b>(Potong Rp5.000)</b></span></div><button type="button" class="share-btn" id="shareBtnModal" style="width:100%;justify-content:center;margin-top:12px;"><i data-lucide="share-2" class="w-4 h-4"></i> Bagikan Sekarang</button><p style="font-size:10px;color:var(--gray-400);margin-top:10px;text-align:center;background:var(--gray-100);border-radius:8px;padding:8px;">✅ Misi tercapai = otomatis tercentang. Diskon muncul di keranjang.</p></div></div></div>
 
-  <div class="modal-overlay" id="productModal"><div class="modal-content"><div class="modal-header"><span class="modal-header-title">Detail Produk</span><button class="modal-close" id="modalClose">&times;</button></div><div class="modal-body" id="modalBody"><div class="modal-img" id="modalImg"></div><div class="modal-title-wrap"><h2 class="modal-title" id="modalTitle">Nama Produk</h2><span class="modal-badge-eyebrow" id="modalBadge" style="display:none;">Badge</span></div><p class="modal-desc" id="modalDesc">Deskripsi produk</p><div class="modal-detail-grid" id="modalDetailGrid"><div class="detail-row"><span class="label">Wadah</span><span class="value" id="modalContainer">-</span></div><div class="detail-row"><span class="label">Porsi</span><span class="value" id="modalSize">-</span></div><div class="detail-row"><span class="label">Sambal</span><span class="value" id="modalSambal">-</span></div></div><div id="modalBuahContainer"><div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px;">Buah-buahan</div><div class="modal-buah-text" id="modalBuahText"></div></div><div class="modal-tags" id="modalTags"></div><div class="spice-row"><span class="spice-icon"><i data-lucide="flame"></i></span><span class="spice-label">Level Pedas</span><div id="spiceTrigger" class="custom-select-trigger" style="margin-top: 8px;"><span id="spiceLabel">3 - Signature <span style="margin-left: 8px;">🌶️🌶️🌶️</span></span><i data-lucide="chevron-down" class="w-4 h-4"></i></div><input type="hidden" id="spiceHidden" value="3"></div></div><div class="modal-footer"><button class="modal-add" id="modalAdd"><span>Tambah ke Keranjang</span><span id="btnPrice">Rp0</span></button></div></div></div>
+  <div class="modal-overlay" id="productModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="modal-header-title">Detail Produk</span>
+        <button class="modal-close" id="modalClose">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <div class="modal-img" id="modalImg"></div>
+        <div class="modal-title-wrap">
+          <h2 class="modal-title" id="modalTitle">Nama Produk</h2>
+          <span class="modal-badge-eyebrow" id="modalBadge" style="display:none;">Badge</span>
+        </div>
+        <p class="modal-desc" id="modalDesc">Deskripsi produk</p>
+        <div class="modal-detail-grid" id="modalDetailGrid">
+          <div class="detail-row"><span class="label">Wadah</span><span class="value" id="modalContainer">-</span></div>
+          <div class="detail-row"><span class="label">Porsi</span><span class="value" id="modalSize">-</span></div>
+          <div class="detail-row"><span class="label">Sambal</span><span class="value" id="modalSambal">-</span></div>
+        </div>
+        <div id="modalBuahContainer">
+          <div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px;">Buah-buahan</div>
+          <div class="modal-buah-text" id="modalBuahText"></div>
+        </div>
+        <div class="modal-tags" id="modalTags"></div>
+        <div class="spice-row">
+          <span class="spice-icon"><i data-lucide="flame"></i></span>
+          <span class="spice-label">Level Pedas</span>
+          <div id="spiceTrigger" class="custom-select-trigger" style="margin-top: 8px;">
+            <span id="spiceLabel">3 - Signature <span style="margin-left: 8px;">🌶️🌶️🌶️</span></span>
+            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+          </div>
+          <input type="hidden" id="spiceHidden" value="3">
+        </div>
+      </div>
+      <div class="modal-footer" style="flex-direction: column; gap: 8px;">
+        <button class="modal-add" id="modalAdd"><span>Tambah ke Keranjang</span><span id="btnPrice">Rp0</span></button>
+        <button id="modalShareBtn" style="background:white; border:1px solid #0F4D37; color:#0F4D37; width:100%; padding:12px; border-radius:10px; font-weight:700; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+          <i data-lucide="share-2" class="w-4 h-4"></i> Bagikan Menu Ini
+        </button>
+      </div>
+    </div>
+  </div>
 
   <div id="spiceModal" class="select-modal">
     <div style="font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid #eee; padding-bottom: 8px;">Pilih Level Pedas</div>
