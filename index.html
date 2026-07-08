@@ -263,7 +263,6 @@
     </div>
   </footer>
 
-  <!-- BOTTOM BAR -->
   <div id="bottom-bar">
     <button class="close-bottom-bar" id="closeBottomBar" aria-label="Tutup keranjang">✕</button>
     <div class="progress-container" id="progressContainer" style="display:none;">
@@ -302,10 +301,8 @@
   <div id="floatingCartBtn" aria-label="Buka keranjang"><i data-lucide="shopping-bag" style="width:24px;height:24px;"></i><span class="badge-cart" id="floatingBadge">0</span></div>
   <div id="toast" role="alert" aria-live="polite"></div>
 
-  <!-- MODAL PROMO -->
   <div class="modal-overlay" id="promoModal"><div class="modal-content" style="max-width:380px;"><div class="modal-header"><span class="modal-header-title">🎯 Misi Jajan — Diskon s/d Rp10.000</span><button class="modal-close" id="promoClose">&times;</button></div><div class="modal-body"><p style="margin:0 0 16px;font-size:13px;color:var(--gray-500);">Selesaikan misi untuk klaim diskonmu!</p><div class="mission-item"><input type="checkbox" id="missionSpend" disabled /><span>Belanja min. Rp100.000 <b>(Potong Rp5.000)</b></span></div><div class="mission-item"><input type="checkbox" id="checkShare" disabled /><span>Bagikan ke teman <b>(Potong Rp5.000)</b></span></div><button type="button" class="share-btn" id="shareBtnModal" style="width:100%;justify-content:center;margin-top:12px;"><i data-lucide="share-2" class="w-4 h-4"></i> Bagikan Sekarang</button><p style="font-size:10px;color:var(--gray-400);margin-top:10px;text-align:center;background:var(--gray-100);border-radius:8px;padding:8px;">✅ Misi tercapai = otomatis tercentang. Diskon muncul di keranjang.</p></div></div></div>
 
-  <!-- MODAL PRODUK -->
   <div class="modal-overlay" id="productModal"><div class="modal-content"><div class="modal-header"><span class="modal-header-title">Detail Produk</span><button class="modal-close" id="modalClose">&times;</button></div><div class="modal-body" id="modalBody"><div class="modal-img" id="modalImg"></div><div class="modal-title-wrap"><h2 class="modal-title" id="modalTitle">Nama Produk</h2><span class="modal-badge-eyebrow" id="modalBadge" style="display:none;">Badge</span></div><p class="modal-desc" id="modalDesc">Deskripsi produk</p><div class="modal-detail-grid" id="modalDetailGrid"><div class="detail-row"><span class="label">Wadah</span><span class="value" id="modalContainer">-</span></div><div class="detail-row"><span class="label">Porsi</span><span class="value" id="modalSize">-</span></div><div class="detail-row"><span class="label">Sambal</span><span class="value" id="modalSambal">-</span></div></div><div id="modalBuahContainer"><div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px;">Buah-buahan</div><div class="modal-buah-text" id="modalBuahText"></div></div><div class="modal-tags" id="modalTags"></div><div class="spice-row"><span class="spice-icon"><i data-lucide="flame"></i></span><span class="spice-label">Level Pedas</span><div id="spiceTrigger" class="custom-select-trigger" style="margin-top: 8px;"><span id="spiceLabel">3 - Signature <span style="margin-left: 8px;">🌶️🌶️🌶️</span></span><i data-lucide="chevron-down" class="w-4 h-4"></i></div><input type="hidden" id="spiceHidden" value="3"></div></div><div class="modal-footer"><button class="modal-add" id="modalAdd"><span>Tambah ke Keranjang</span><span id="btnPrice">Rp0</span></button></div></div></div>
 
   <div id="spiceModal" class="select-modal">
@@ -317,7 +314,6 @@
     <div class="select-option" data-value="5"><span>5 - Extreme</span><span style="color:#a93226;">🌶️🌶️🌶️🌶️🌶️</span></div>
   </div>
 
-  <!-- MODAL KERANJANG & CHECKOUT -->
   <div class="modal-overlay" id="miniCartModal">
     <div class="modal-content" style="max-width:480px;">
       <div class="modal-header">
@@ -334,7 +330,6 @@
         <div id="step1Upsell"></div>
         <hr style="margin:16px 0; border:1px solid var(--gray-200);">
 
-        <!-- Data Pemesan -->
         <div class="form-section">
           <label class="form-label">Nama Penerima</label>
           <input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name">
@@ -348,10 +343,8 @@
           <input type="text" id="customerAddress" placeholder="Jalan, RT/RW, Kelurahan" autocomplete="street-address">
         </div>
 
-        <!-- Status Lokasi (ditampilkan oleh JS) -->
         <div id="locationStatus" style="display:none; font-size:12px; margin-top:4px;"></div>
 
-        <!-- Kecamatan dengan autocomplete custom -->
         <div class="form-section" style="position:relative;">
           <label class="form-label">Kecamatan</label>
           <input type="text" id="districtInput" placeholder="Ketik nama kecamatan..." autocomplete="off">
@@ -359,7 +352,6 @@
           <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">💡 Pilih kecamatan untuk menghitung ongkir.</div>
         </div>
 
-        <!-- Jam Pengiriman -->
         <div class="form-section">
           <label class="form-label" for="deliveryTime">Jam Pengiriman (Besok)</label>
           <div id="deliveryTimeTrigger" class="custom-select-trigger">
@@ -369,13 +361,11 @@
           <input type="hidden" id="deliveryTime" name="deliveryTime" value="">
         </div>
 
-        <!-- Catatan -->
         <div class="form-section">
           <label class="form-label">Catatan (Opsional)</label>
           <textarea id="orderNotes" placeholder="Contoh: Sambal dipisah" rows="2"></textarea>
         </div>
 
-        <!-- Pilihan Kurir -->
         <div id="shippingSection" style="display:none; margin-top:12px;">
           <div class="form-section">
             <label class="form-label">Pilih Kurir</label>
@@ -409,14 +399,12 @@
             </div>
           </div>
 
-          <!-- Breakdown Ongkir -->
           <div id="step2Breakdown" style="background:white;border:1px solid var(--gray-200);border-radius:10px;padding:10px 14px;margin-top:10px;font-size:12px;color:var(--gray-700);line-height:1.8;">
             <div style="font-weight:700;margin-bottom:4px;color:var(--gray-900);">📦 Detail Ongkir</div>
             <div id="breakdownContent">Pilih kecamatan terlebih dahulu.</div>
           </div>
         </div>
 
-        <!-- Gift -->
         <div class="gift-section" style="margin-top:12px;">
           <label><input type="checkbox" id="giftToggle"> 🎁 Kirim sebagai Kado</label>
           <div id="giftFields" style="display:none;margin-top:8px;">
@@ -425,7 +413,6 @@
           </div>
         </div>
 
-        <!-- Final Summary -->
         <div class="final-summary" style="margin-top:12px;">
           <div class="final-row"><span>Subtotal</span><span id="finalSubtotal">Rp0</span></div>
           <div class="final-row discount"><span>Diskon</span><span id="finalDiscount">-Rp0</span></div>
@@ -443,7 +430,6 @@
     </div>
   </div>
 
-  <!-- MODAL PEMBAYARAN -->
   <div class="modal-overlay" id="paymentModal">
     <div class="modal-content">
       <div class="modal-header"><span class="modal-header-title">💳 Pembayaran QRIS</span><button class="modal-close" id="paymentClose">&times;</button></div>
