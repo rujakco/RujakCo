@@ -61,15 +61,13 @@
           <div class="store-status" id="storeStatus"><span class="status-dot"></span><span class="status-text" id="storeStatusText">Buka</span></div>
           <div class="location-pill" id="locationPill" data-action="toast" data-msg="Pilih kecamatan di bawah untuk menghitung ongkir.">
             <i data-lucide="map-pin" class="w-4 h-4 text-[#0F4D37]"></i>
-            <div class="location-text"><span class="location-label">Diantar ke</span><span class="location-value" id="locationDisplay">Pilih di sini ▾</span></div>
+            <div class="location-text"><span class="location-label">Diantar ke</span><span class="location-value" id="locationDisplay">Mendeteksi... ▾</span></div>
           </div>
         </div>
       </div>
     </header>
 
     <div class="content-wrapper">
-      <!-- Hero, Banner, Promo, AI, Kategori, Menu, Addons, Testimoni, Edu, FAQ (sama seperti sebelumnya) -->
-      <!-- Saya ringkas di sini untuk menghemat, tapi di kode asli tetap lengkap -->
       <div class="hero-wrap">
         <div class="hero">
           <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Asem, pedes, manis, seger" width="1260" height="540" onerror="this.style.display='none'" />
@@ -128,11 +126,9 @@
       <div class="sec-header" id="addonHeader"><span class="sec-title">Tambahan</span><span style="font-size:11px;color:var(--gray-500);font-weight:500;white-space:nowrap;">Opsional — Sambal ekstra, buah tambahan, dll.</span></div>
       <div class="addon-grid" id="addonList"></div>
 
-      <!-- Testimoni dan lainnya -->
       <div class="divider"></div>
       <div class="sec-header"><span class="sec-title">Apa Kata Mereka?</span></div>
       <div class="testi-flip-container" id="testiFlipContainer" style="position:relative;overflow:hidden;height:140px;margin:0 20px 16px;background:#FFFDF5;border:1px solid #F0E6C0;border-radius:14px;padding:20px;touch-action:pan-y;user-select:none;cursor:pointer;">
-        <!-- 6 testimoni (sama seperti sebelumnya) -->
         <div class="testi-card active" data-index="0" style="position:absolute;top:0;left:0;right:0;padding:20px;transition:transform 0.6s cubic-bezier(0.4,0,0.2,1),opacity 0.6s;transform:translateY(0);opacity:1;">
           <div style="font-size:18px;margin-bottom:4px;letter-spacing:2px;">⭐️⭐️⭐️⭐️⭐️</div>
           <p style="font-size:16px;color:#3d2b00;font-weight:600;margin:0 0 6px;line-height:1.4;">"Buset ini rujak bukan kaleng-kaleng. Sambel metenya berasa banget, nggak pelit sama sekali."</p>
@@ -321,7 +317,7 @@
     <div class="select-option" data-value="5"><span>5 - Extreme</span><span style="color:#a93226;">🌶️🌶️🌶️🌶️🌶️</span></div>
   </div>
 
-  <!-- MODAL KERANJANG -->
+  <!-- MODAL KERANJANG & CHECKOUT -->
   <div class="modal-overlay" id="miniCartModal">
     <div class="modal-content" style="max-width:480px;">
       <div class="modal-header">
@@ -338,6 +334,7 @@
         <div id="step1Upsell"></div>
         <hr style="margin:16px 0; border:1px solid var(--gray-200);">
 
+        <!-- Data Pemesan -->
         <div class="form-section">
           <label class="form-label">Nama Penerima</label>
           <input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name">
@@ -351,6 +348,10 @@
           <input type="text" id="customerAddress" placeholder="Jalan, RT/RW, Kelurahan" autocomplete="street-address">
         </div>
 
+        <!-- Status Lokasi (ditampilkan oleh JS) -->
+        <div id="locationStatus" style="display:none; font-size:12px; margin-top:4px;"></div>
+
+        <!-- Kecamatan dengan autocomplete custom -->
         <div class="form-section" style="position:relative;">
           <label class="form-label">Kecamatan</label>
           <input type="text" id="districtInput" placeholder="Ketik nama kecamatan..." autocomplete="off">
@@ -358,6 +359,7 @@
           <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">💡 Pilih kecamatan untuk menghitung ongkir.</div>
         </div>
 
+        <!-- Jam Pengiriman -->
         <div class="form-section">
           <label class="form-label" for="deliveryTime">Jam Pengiriman (Besok)</label>
           <div id="deliveryTimeTrigger" class="custom-select-trigger">
@@ -367,11 +369,13 @@
           <input type="hidden" id="deliveryTime" name="deliveryTime" value="">
         </div>
 
+        <!-- Catatan -->
         <div class="form-section">
           <label class="form-label">Catatan (Opsional)</label>
           <textarea id="orderNotes" placeholder="Contoh: Sambal dipisah" rows="2"></textarea>
         </div>
 
+        <!-- Pilihan Kurir -->
         <div id="shippingSection" style="display:none; margin-top:12px;">
           <div class="form-section">
             <label class="form-label">Pilih Kurir</label>
@@ -405,12 +409,14 @@
             </div>
           </div>
 
+          <!-- Breakdown Ongkir -->
           <div id="step2Breakdown" style="background:white;border:1px solid var(--gray-200);border-radius:10px;padding:10px 14px;margin-top:10px;font-size:12px;color:var(--gray-700);line-height:1.8;">
             <div style="font-weight:700;margin-bottom:4px;color:var(--gray-900);">📦 Detail Ongkir</div>
             <div id="breakdownContent">Pilih kecamatan terlebih dahulu.</div>
           </div>
         </div>
 
+        <!-- Gift -->
         <div class="gift-section" style="margin-top:12px;">
           <label><input type="checkbox" id="giftToggle"> 🎁 Kirim sebagai Kado</label>
           <div id="giftFields" style="display:none;margin-top:8px;">
@@ -419,6 +425,7 @@
           </div>
         </div>
 
+        <!-- Final Summary -->
         <div class="final-summary" style="margin-top:12px;">
           <div class="final-row"><span>Subtotal</span><span id="finalSubtotal">Rp0</span></div>
           <div class="final-row discount"><span>Diskon</span><span id="finalDiscount">-Rp0</span></div>
