@@ -2,7 +2,7 @@
   'use strict';
 
   // ============================================================
-  // RUJAK.CO v2.0 FINAL — FULL APP + PAXEL FLAT RATE + ANTI-BUG
+  // RUJAK.CO v2.0 FINAL — FULL APP + PAXEL FLAT RATE + ANTI-BUG + MARKETING TOOLS
   // ============================================================
 
   function safeGet(id) {
@@ -78,7 +78,7 @@
       container:'Thinwall 1000ml (PP Food Grade)', 
       size:'Porsi Reguler', 
       sambal:'Sambal Original (1 Cup)', 
-      buah:['Mangga Muda','Nanas','Bengkoang','Jambu Air','Kedondong'], 
+      buah:['Mangga Mengkel','Nanas','Bengkoang','Jambu Air','Kedondong'], 
       flavor:'Segar & Autentik', 
       flavorTag:null, 
       defaultSpice:3, 
@@ -120,7 +120,7 @@
       container:'Thinwall 1000ml (PP Food Grade)', 
       size:'Porsi Reguler', 
       sambal:'Sambal Mete Premium (1 Cup)', 
-      buah:['Jambu Kristal','Mangga Muda','Nanas','Bengkoang','Jambu Air','Kedondong'], 
+      buah:['Jambu Kristal','Mangga Mengkel','Nanas','Bengkoang','Jambu Air','Kedondong'], 
       flavor:'Gurih Mete Premium', 
       flavorTag:null, 
       defaultSpice:3, 
@@ -141,7 +141,7 @@
       container:'Thinwall Jumbo 1000ml (PP Food Grade)', 
       size:'Porsi Sharing', 
       sambal:'Sambal Mete Premium (2 Cup)', 
-      buah:['Jambu Kristal','Mangga Muda','Nanas','Bengkoang','Jambu Air','Kedondong'], 
+      buah:['Jambu Kristal','Mangga Mengkel','Nanas','Bengkoang','Jambu Air','Kedondong'], 
       flavor:'Gurih Mete Extra Pedas', 
       flavorTag:null, 
       defaultSpice:4, 
@@ -162,7 +162,7 @@
       container:'Thinwall Jumbo 1000ml + Paper Bag', 
       size:'Porsi Premium', 
       sambal:'Sambal Mete Premium (2 Cup)', 
-      buah:['Shine Muscat','Jambu Kristal','Mangga Muda','Nanas','Bengkoang','Jambu Air','Kedondong'], 
+      buah:['Shine Muscat','Jambu Kristal','Mangga Mengkel','Nanas','Bengkoang','Jambu Air','Kedondong'], 
       flavor:'Eksklusif & Premium', 
       flavorTag:null, 
       defaultSpice:3, 
@@ -183,7 +183,7 @@
       container:'Tampah Bambu Ø40cm + Kardus + Wrap', 
       size:'Porsi Besar', 
       sambal:'Varian Original & Mete (4 Cup)', 
-      buah:['Shine Muscat','Jambu Kristal','Mangga Muda','Nanas','Bengkoang','Jambu Air','Kedondong','Ubi Merah'], 
+      buah:['Shine Muscat','Jambu Kristal','Mangga Mengkel','Nanas','Bengkoang','Jambu Air','Kedondong','Ubi Merah'], 
       flavor:'Kemegahan Berbagai Rasa', 
       flavorTag:null, 
       defaultSpice:3, 
@@ -766,7 +766,7 @@
   };
 
   const SEARCH_SYNONYMS = {
-    'asem': ['mangga muda','kedondong','asam','asam jawa'],
+    'asem': ['mangga muda','mangga mengkel','kedondong','asam','asam jawa'],
     'manis': ['nanas','bengkoang','muscat','anggur','madu'],
     'pedas': ['sambal','mete','cabe','sambel','spicy'],
     'seger': ['jambu','kristal','air','dingin','fresh'],
@@ -1475,6 +1475,39 @@
     const modalAddEl = document.getElementById('modalAdd');
     if (modalAddEl) modalAddEl.dataset.id = product.id;
 
+    // --- MULAI BLOK TOMBOL SHARE ---
+    const shareBtn = document.getElementById('modalShareBtn');
+    if (shareBtn) {
+      shareBtn.replaceWith(shareBtn.cloneNode(true));
+      const newShareBtn = document.getElementById('modalShareBtn');
+      newShareBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const productId = product.id;
+        const shareUrl = window.location.origin + window.location.pathname + '?product=' + productId;
+        const shareText = '🍜 ' + product.name + ' — ' + product.desc + '\nPesan sekarang di Rujak.Co!';
+        if (navigator.share) {
+          navigator.share({
+            title: product.name,
+            text: shareText,
+            url: shareUrl
+          }).catch(() => {});
+        } else {
+          navigator.clipboard.writeText(shareUrl + '\n' + shareText).then(() => {
+            showToast('📋 Link produk disalin!');
+          }).catch(() => {
+            const dummy = document.createElement('textarea');
+            dummy.value = shareUrl + '\n' + shareText;
+            document.body.appendChild(dummy);
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            showToast('📋 Link produk disalin!');
+          });
+        }
+      });
+    }
+    // --- AKHIR BLOK TOMBOL SHARE ---
+
     const spiceHidden = document.getElementById('spiceHidden');
     const spiceLabel = document.getElementById('spiceLabel');
     const dv = product.defaultSpice || 3;
@@ -2137,6 +2170,19 @@
     bindEvents();
     initAIChat(); 
     
+    // --- MULAI BLOK DEEP-LINKING (URL PARAMS) ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('product');
+    if (productId) {
+      setTimeout(function() {
+        const product = PRODUCTS.find(p => p.id === productId && !p.isHidden);
+        if (product) {
+          openProductModal(productId);
+        }
+      }, 300);
+    }
+    // --- AKHIR BLOK DEEP-LINKING ---
+
     if (typeof lucide !== 'undefined' && lucide.createIcons) {
       lucide.createIcons();
     } else {
