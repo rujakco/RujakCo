@@ -2,7 +2,7 @@
   'use strict';
 
   // ============================================================
-  // RUJAK.CO v2.0 FINAL — FULL APP + PAXEL FLAT RATE LOGIC
+  // RUJAK.CO v2.0 FINAL — FULL APP + PAXEL FLAT RATE + ANTI-BUG
   // ============================================================
 
   function safeGet(id) {
@@ -167,20 +167,6 @@
   function fmt(num) { return 'Rp' + num.toLocaleString('id-ID'); }
   function debounce(fn, delay) { let t; return function(...args) { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), delay); }; }
 
-  function highlightEmptyFields(fieldIds) {
-    fieldIds.forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el && !el.value.trim()) {
-        el.classList.add('input-error');
-        setTimeout(function() { el.classList.remove('input-error'); }, 3000);
-        el.addEventListener('input', function handler() {
-          el.classList.remove('input-error');
-          el.removeEventListener('input', handler);
-        }, { once: true });
-      }
-    });
-  }
-
   function openCustomSelect(title, options, onSelect) {
     const backdrop = document.createElement('div');
     backdrop.className = 'select-backdrop';
@@ -245,7 +231,6 @@
       modal.remove();
     });
     document.getElementById('closeWaFallback').addEventListener('click', function() { modal.remove(); pendingWhatsAppMessage = null; });
-    modal.addEventListener('click', function(e) { if (e.target === modal) { modal.remove(); pendingWhatsAppMessage = null; } });
   }
 
   function shareToWhatsApp() {
@@ -285,14 +270,12 @@
   function lockAddToCart() { addToCartLocked = true; setTimeout(() => { addToCartLocked = false; }, 300); }
 
   // ============================================================
-  // COST CALCULATIONS
+  // COST CALCULATIONS (PAXEL FLAT RATE + PACKING FEE)
   // ============================================================
   function calculatePaxelCost(distance, vehicleType, totalQty) {
     const qty = totalQty || 1;
     
-    // Logika Packing: Ditumpuk ke atas (Maks 16x16x24 cm)
-    // Tiap 2 porsi dijadikan 1 paket Large (Rp25.000)
-    // Sisa 1 porsi dijadikan 1 paket Medium (Rp20.000)
+    // Logika Packing Rujak.Co (16x16x12) - Ditumpuk
     const numLargeBoxes = Math.floor(qty / 2); 
     const numMediumBoxes = qty % 2;            
     
@@ -301,7 +284,7 @@
     const costLarge = numLargeBoxes * 25000;
     const costMedium = numMediumBoxes * 20000;
     
-    // Biaya tambahan operasional/packing Rp3.000 per paket
+    // + Rp3.000 Overhead Handling / Ice Gel per paket
     const packagingFee = totalPackages * 3000; 
     
     return costLarge + costMedium + packagingFee;
@@ -839,6 +822,7 @@
     } catch (err) { console.error('[RujakCo] Telegram error:', err); return false; }
   }
 
+  // FUNGSI VALIDASI VISUAL
   function validateOrderForm() {
     const name = document.getElementById('customerName').value.trim();
     const phone = document.getElementById('customerPhone').value.trim();
@@ -847,12 +831,52 @@
     const district = state.selectedDistrict || '';
     const deliveryTime = document.getElementById('deliveryTime').value;
 
-    if (!name || name.length < 2) { showToast('❌ Nama harus diisi'); document.getElementById('customerName').focus(); return false; }
+    let hasError = false;
+
+    if (!name || name.length < 2) { 
+        showToast('❌ Nama harus diisi'); 
+        document.getElementById('customerName').classList.add('input-error');
+        hasError = true; 
+    } else {
+        document.getElementById('customerName').classList.remove('input-error');
+    }
+
     const cleanedPhone = phone.replace(/[\s\-\(\)]/g, '');
-    if (!cleanedPhone || !isValidPhone(cleanedPhone)) { showToast('❌ Format HP tidak valid. Contoh: 08123456789'); document.getElementById('customerPhone').focus(); return false; }
-    if (!baseAddress || baseAddress.length < 5) { showToast('❌ Alamat terlalu pendek. Tulis detail jalannya ya'); document.getElementById('customerAddress').focus(); return false; }
-    if (!district && state.shippingProvider !== 'pembeli') { showToast('❌ Pilih kecamatan terlebih dahulu'); document.getElementById('districtInput').focus(); return false; }
-    if (!deliveryTime) { showToast('❌ Pilih jam pengiriman'); document.getElementById('deliveryTimeTrigger').click(); return false; }
+    if (!cleanedPhone || !isValidPhone(cleanedPhone)) { 
+        if (!hasError) showToast('❌ Format HP tidak valid'); 
+        document.getElementById('customerPhone').classList.add('input-error');
+        hasError = true; 
+    } else {
+        document.getElementById('customerPhone').classList.remove('input-error');
+    }
+
+    if (!baseAddress || baseAddress.length < 5) { 
+        if (!hasError) showToast('❌ Alamat terlalu pendek'); 
+        document.getElementById('customerAddress').classList.add('input-error');
+        hasError = true; 
+    } else {
+        document.getElementById('customerAddress').classList.remove('input-error');
+    }
+
+    if (!district && state.shippingProvider !== 'pembeli') { 
+        if (!hasError) showToast('❌ Pilih kecamatan terlebih dahulu'); 
+        document.getElementById('districtInput').classList.add('input-error');
+        hasError = true; 
+    } else {
+        document.getElementById('districtInput').classList.remove('input-error');
+    }
+
+    if (!deliveryTime) { 
+        if (!hasError) showToast('❌ Pilih jam pengiriman'); 
+        const dt = document.getElementById('deliveryTimeTrigger');
+        if (dt) dt.classList.add('input-error');
+        hasError = true; 
+    } else {
+        const dt = document.getElementById('deliveryTimeTrigger');
+        if (dt) dt.classList.remove('input-error');
+    }
+
+    if (hasError) return false;
 
     return { name, phone: normalizePhone(cleanedPhone), baseAddress, district, deliveryTime };
   }
@@ -1117,6 +1141,49 @@
     updateFloatingButton();
   }
 
+  function updateShippingDisplay() {
+    const shippingData = calculateShippingCost();
+    if (!shippingData) {
+      document.getElementById('shippingSection').style.display = 'none';
+      return;
+    }
+    document.getElementById('shippingSection').style.display = 'block';
+
+    const breakdownContent = document.getElementById('breakdownContent');
+    let html = '';
+    if (shippingData.isOutOfRange) {
+      html = '<div>⚠️ Area ini di luar jangkauan kami. Silakan pilih "Kurir Pembeli" atau hubungi admin.</div>';
+    } else {
+      html = '<div>Jarak: <strong>' + Math.ceil(shippingData.shippingDistance) + ' km</strong> <span style="font-size:10px;color:var(--gray-400);">' + (shippingData.shippingLabel || '') + '</span></div>';
+      if (state.shippingProvider === 'rujakco') {
+        html += '<div>🚚 Tarif Dasar: <strong>' + fmt(shippingData.baseLalamoveCost || 0) + '</strong></div>';
+        if (shippingData.isSurge) {
+          const surgeAmount = (shippingData.lalamoveCost || 0) - (shippingData.baseLalamoveCost || 0);
+          if (surgeAmount > 0) html += '<div style="color:#D62828;">⚡ Surge (x' + shippingData.surgeMultiplier + '): +' + fmt(surgeAmount) + '</div>';
+        }
+        if (state.isPriority) {
+          html += '<div>🚀 Prioritas: +Rp8.000</div>';
+        }
+        html += '<div style="border-top:1px solid var(--gray-200);margin-top:6px;padding-top:6px;font-weight:700;">Total Ongkir: <strong style="color:var(--red);">' + fmt(shippingData.shippingCost) + '</strong></div>';
+      } else if (state.shippingProvider === 'paxel') {
+        const weight = getCartSummaryCached().totalQty || 1;
+        html += '<div>📦 Layanan: <strong>Same Day (Besok)</strong></div>';
+        html += '<div>📦 Box/Dimensi: <strong>Medium/Large</strong></div>';
+        html += '<div>📦 Tarif Paxel: <strong>' + fmt(shippingData.baseLalamoveCost || 0) + '</strong></div>';
+        html += '<div style="border-top:1px solid var(--gray-200);margin-top:6px;padding-top:6px;font-weight:700;">Total Ongkir: <strong style="color:var(--red);">' + fmt(shippingData.shippingCost) + '</strong></div>';
+      } else if (state.shippingProvider === 'pembeli') {
+        html += '<div>Total Ongkir: <strong>Gratis (Kurir Pembeli)</strong></div>';
+      }
+    }
+    breakdownContent.innerHTML = html;
+
+    const summary = getCartSummaryCached();
+    document.getElementById('finalSubtotal').textContent = fmt(summary.subtotal);
+    document.getElementById('finalDiscount').textContent = summary.discount > 0 ? '-Rp' + summary.discount.toLocaleString('id-ID') : 'Rp0';
+    document.getElementById('finalShipping').textContent = shippingData.isOutOfRange ? 'Konfirmasi Admin' : fmt(shippingData.shippingCost);
+    document.getElementById('finalTotal').textContent = shippingData.isOutOfRange ? 'Konfirmasi' : fmt(shippingData.total);
+  }
+
   function renderMiniCart() {
     const summary = getCartSummaryCached();
     const list = document.getElementById('miniCartList');
@@ -1152,6 +1219,8 @@
 
     document.getElementById('customerName').value = state.customerName;
     document.getElementById('customerPhone').value = state.customerPhone;
+    
+    // Tampilkan murni alamat saja, tanpa nama kecamatan nyangkut
     document.getElementById('customerAddress').value = state.customerAddress;
     
     if (state.selectedDistrict) {
@@ -1172,46 +1241,28 @@
       updateShippingDisplay();
     }
 
-    // Refresh UI Tombol
+    // Refresh UI Options (Kurir & Jam Pengiriman)
     document.querySelectorAll('.ship-btn').forEach(b => b.classList.toggle('active', b.dataset.provider === state.shippingProvider));
     document.querySelectorAll('.veh-btn').forEach(b => b.classList.toggle('active', b.dataset.vehicle === state.vehicleType));
     
     const paxelOptions = document.getElementById('paxelOptions');
     const rujakcoOptions = document.getElementById('rujakcoOptions');
-    if (paxelOptions) paxelOptions.style.display = state.shippingProvider === 'paxel' ? 'block' : 'none';
-    if (rujakcoOptions) rujakcoOptions.style.display = state.shippingProvider === 'rujakco' ? 'block' : 'none';
+    const deliveryTrigger = document.getElementById('deliveryTimeTrigger');
+    const deliveryLabel = document.querySelector('label[for="deliveryTime"]');
+
+    if (state.shippingProvider === 'paxel') {
+        if (paxelOptions) paxelOptions.style.display = 'block';
+        if (rujakcoOptions) rujakcoOptions.style.display = 'none';
+        if (deliveryTrigger) deliveryTrigger.style.display = 'none';
+        if (deliveryLabel) deliveryLabel.style.display = 'none';
+    } else {
+        if (paxelOptions) paxelOptions.style.display = 'none';
+        if (rujakcoOptions) rujakcoOptions.style.display = 'block';
+        if (deliveryTrigger) deliveryTrigger.style.display = 'flex';
+        if (deliveryLabel) deliveryLabel.style.display = 'block';
+    }
 
     if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
-  }
-
-  function updatePaymentButton() {
-    const bp = document.getElementById('btnOpenPayment');
-    const summary = getCartSummaryCached();
-    const shippingData = calculateShippingCost();
-    if (!bp) return;
-
-    if (summary.items.length === 0) {
-      bp.disabled = true; bp.textContent = 'Keranjang kosong'; return;
-    }
-    if (shippingData && shippingData.isOutOfRange && state.shippingProvider !== 'pembeli') {
-      bp.disabled = true; bp.textContent = 'Admin Konfirmasi'; return;
-    }
-    if (!state.selectedDistrict && state.userDistance === null && state.shippingProvider !== 'pembeli') {
-      bp.disabled = true; bp.textContent = '⏳ Pilih kecamatan...'; return;
-    }
-    bp.disabled = false;
-    bp.textContent = '💳 Bayar Via QRIS';
-  }
-
-  function openPaymentModal() {
-    const totalText = document.getElementById('finalTotal')?.textContent || 'Rp0';
-    document.getElementById('paymentTotalDisplay').textContent = totalText;
-    document.getElementById('paymentTotalDisplay2').textContent = totalText;
-    const pmt = document.getElementById('paymentModal');
-    if (pmt) {
-      pmt.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
   }
 
   // ============================================================
@@ -1744,6 +1795,7 @@
           document.getElementById('deliveryTime').value = value;
           document.getElementById('deliveryTimeLabel').textContent = label;
           deliveryTrigger.classList.add('selected');
+          deliveryTrigger.classList.remove('input-error');
         });
       });
     }
