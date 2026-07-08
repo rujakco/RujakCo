@@ -52,7 +52,6 @@
 </head>
 <body>
   <div id="app">
-    <!-- Header -->
     <header id="header">
       <div class="header-top">
         <div class="header-left">
@@ -69,7 +68,6 @@
     </header>
 
     <div class="content-wrapper">
-      <!-- Hero -->
       <div class="hero-wrap">
         <div class="hero">
           <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Asem, pedes, manis, seger dalam satu gigitan" width="1260" height="540" onerror="this.style.display='none'" />
@@ -94,7 +92,6 @@
         </span>
       </div>
 
-      <!-- Misi Promo -->
       <div class="promo-strip" id="promoTrigger" data-action="open-promo" style="margin: 0 20px 12px; cursor:pointer; display:flex; align-items:center; gap:12px; background:#fff3cd; border:1px solid #e6c87a; border-radius:12px; padding:10px 14px;">
         <div class="promo-icon"><i data-lucide="gift" class="w-5 h-5 text-[#D62828]"></i></div>
         <div class="promo-text" style="flex:1;">
@@ -106,7 +103,6 @@
 
       <div id="aiRecommendationContainer" style="display:none; margin: 0 20px 12px; background:linear-gradient(135deg,#F8F5EE,#FFFDF5); border:1px solid #E8E0D0; border-radius:12px; padding:10px 14px;"></div>
 
-      <!-- Kategori -->
       <nav class="cat-scroll no-sb" id="catScroll">
         <button type="button" class="cat-pill active" data-cat="all">Semua</button>
         <button type="button" class="cat-pill" data-cat="signature">Signature</button>
@@ -130,7 +126,6 @@
       <div class="sec-header" id="addonHeader"><span class="sec-title">Tambahan</span><span style="font-size:11px;color:var(--gray-500);font-weight:500;white-space:nowrap;">Opsional — Sambal ekstra, buah tambahan, dll.</span></div>
       <div class="addon-grid" id="addonList"></div>
 
-      <!-- Testimoni -->
       <div class="divider"></div>
       <div class="sec-header"><span class="sec-title">Apa Kata Mereka?</span></div>
       <div class="testi-flip-container" id="testiFlipContainer" style="position:relative;overflow:hidden;height:140px;margin:0 20px 16px;background:#FFFDF5;border:1px solid #F0E6C0;border-radius:14px;padding:20px;touch-action:pan-y;user-select:none;cursor:pointer;">
@@ -216,7 +211,6 @@
       })();
       </script>
 
-      <!-- Edu & FAQ -->
       <div class="divider"></div>
       <div class="sec-header" style="margin-top:16px"><span class="sec-title">Kenapa Rujak.Co Bikin Ngiler?</span></div>
       <div class="edu-container">
@@ -238,7 +232,6 @@
     </div>
   </div>
 
-  <!-- Footer -->
   <footer class="footer-brand">
     <div class="footer-brand-inner">
       <div class="footer-brand-row"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" /><span class="footer-brand-name">Rujak<span>.Co</span></span></div>
@@ -275,7 +268,7 @@
     </div>
   </footer>
 
-  <!-- ========== BOTTOM BAR (TANPA ONGKIR) ========== -->
+  <!-- BOTTOM BAR (TANPA ONGKIR) -->
   <div id="bottom-bar">
     <button class="close-bottom-bar" id="closeBottomBar" aria-label="Tutup keranjang">✕</button>
     <div class="progress-container" id="progressContainer" style="display:none;">
@@ -313,7 +306,7 @@
     <div class="select-option" data-value="5"><span>5 - Extreme</span><span style="color:#a93226;">🌶️🌶️🌶️🌶️🌶️</span></div>
   </div>
 
-  <!-- ========== MINI CART / CHECKOUT MODAL ========== -->
+  <!-- MINI CART / CHECKOUT MODAL -->
   <div class="modal-overlay" id="miniCartModal">
     <div class="modal-content" style="max-width:480px;">
       <div class="modal-header">
@@ -324,19 +317,13 @@
         </div>
       </div>
       <div class="modal-body" style="padding:16px 20px; max-height:70vh; overflow-y:auto;">
-        <!-- RINGKASAN KERANJANG -->
         <div id="miniCartList"></div>
         <div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotalDisplay">Rp0</span></div>
-
-        <!-- DISKON PROGRESS -->
         <div id="step1Progress"></div>
-
-        <!-- AI UPSELL -->
         <div id="step1Upsell"></div>
-
         <hr style="margin:16px 0; border:1px solid var(--gray-200);">
 
-        <!-- DATA PEMESAN + ALAMAT + KECAMATAN -->
+        <!-- DATA PEMESAN -->
         <div class="form-section">
           <label class="form-label">Nama Penerima</label>
           <input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name">
@@ -347,18 +334,20 @@
         </div>
         <div class="form-section">
           <label class="form-label">Alamat Lengkap</label>
-          <input type="text" id="customerAddress" placeholder="Jalan, RT/RW, Kelurahan, Kecamatan" autocomplete="street-address">
+          <input type="text" id="customerAddress" placeholder="Jalan, RT/RW, Kelurahan" autocomplete="street-address">
         </div>
-        <div class="form-section">
+
+        <!-- KECAMATAN + CUSTOM DROPDOWN -->
+        <div class="form-section" style="position:relative;">
           <label class="form-label">Kecamatan</label>
-          <input type="text" id="districtInput" placeholder="Ketik nama kecamatan..." autocomplete="off" list="districtOptions">
-          <datalist id="districtOptions"></datalist>
+          <input type="text" id="districtInput" placeholder="Ketik nama kecamatan..." autocomplete="off">
+          <div id="customDistrictDropdown" style="display:none; position:absolute; background:white; border:1px solid var(--gray-300); border-radius:8px; max-height:200px; overflow-y:auto; width:100%; z-index:999; box-shadow:0 4px 12px rgba(0,0,0,0.1);"></div>
           <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">💡 Pilih kecamatan untuk menghitung ongkir.</div>
         </div>
 
         <!-- JAM PENGIRIMAN -->
         <div class="form-section">
-          <label class="form-label">Jam Pengiriman (Besok)</label>
+          <label class="form-label" for="deliveryTime">Jam Pengiriman (Besok)</label>
           <div id="deliveryTimeTrigger" class="custom-select-trigger">
             <span id="deliveryTimeLabel">Pilih jam pengiriman...</span>
             <i data-lucide="chevron-down" class="w-4 h-4"></i>
@@ -378,10 +367,12 @@
             <label class="form-label">Pilih Kurir</label>
             <div class="shipping-options">
               <button type="button" class="ship-btn active" data-provider="rujakco">🚚 Rujak.Co (Lalamove)</button>
-              <button type="button" class="ship-btn" data-provider="paxel">📦 Paxel</button>
+              <button type="button" class="ship-btn" data-provider="paxel">📦 Paxel (Same Day)</button>
               <button type="button" class="ship-btn" data-provider="pembeli">🏍️ Kurir Saya</button>
             </div>
           </div>
+
+          <!-- RujakCo Options -->
           <div id="rujakcoOptions">
             <div class="form-section">
               <label class="form-label">Kendaraan</label>
@@ -395,7 +386,18 @@
               <label class="switch"><input type="checkbox" id="priorityToggleMini"><span class="slider"></span></label>
             </div>
           </div>
-          <!-- Breakdown ongkir -->
+
+          <!-- Paxel Options -->
+          <div id="paxelOptions" style="display:none; margin-top:10px;">
+            <div class="form-section">
+              <label class="form-label">Layanan Paxel</label>
+              <div style="font-size:13px; color:var(--gray-600); background:var(--green-pale); padding:8px 12px; border-radius:8px;">
+                🚀 Same Day — Dikirim besok (Fresh-Prep)
+              </div>
+            </div>
+          </div>
+
+          <!-- Breakdown Ongkir -->
           <div id="step2Breakdown" style="background:white;border:1px solid var(--gray-200);border-radius:10px;padding:10px 14px;margin-top:10px;font-size:12px;color:var(--gray-700);line-height:1.8;">
             <div style="font-weight:700;margin-bottom:4px;color:var(--gray-900);">📦 Detail Ongkir</div>
             <div id="breakdownContent">Pilih kecamatan terlebih dahulu.</div>
@@ -441,7 +443,9 @@
           <span style="color:#ccc;">→</span>
           <div><span style="background:#0F4D37;color:white;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;">3</span><span style="font-size:11px;font-weight:600;color:#0F4D37;">Kirim Bukti</span></div>
         </div>
-        <div style="position:relative;display:block;width:100%;max-width:280px;margin:0 auto;"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" id="qrisImagePayment" style="width:100%;height:auto;aspect-ratio:1/1;object-fit:contain;border-radius:12px;background:white;display:block;border:2px solid #E8E0D0;" /></div>
+        <div style="position:relative;display:block;width:100%;max-width:280px;margin:0 auto;">
+          <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" id="qrisImagePayment" style="width:100%;height:auto;aspect-ratio:1/1;object-fit:contain;border-radius:12px;background:white;display:block;border:2px solid #E8E0D0;" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=\'padding:20px;text-align:center;color:var(--gray-500);\'>⚠️ QRIS tidak dapat dimuat, silakan hubungi admin.</div>';" />
+        </div>
         <div style="background:#0F4D37;color:white;border-radius:12px;padding:12px 16px;margin:12px 0;text-align:center;"><div style="font-size:11px;opacity:0.7;">Total Tagihan</div><div style="font-size:24px;font-weight:800;" id="paymentTotalDisplay">Rp0</div></div>
         <button id="copyAmountBtn" style="width:100%;background:white;border:1px solid #0F4D37;color:#0F4D37;padding:10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:8px;">📋 Salin Nominal</button>
         <div style="background:#E8F5E9;border-radius:12px;padding:12px 14px;text-align:left;font-size:12px;color:#0F4D37;line-height:1.8;">
