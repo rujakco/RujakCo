@@ -2,7 +2,7 @@
   'use strict';
 
   // ============================================================
-  // RUJAK.CO v2.0 FINAL — FULL APP + SECURE LOGIC
+  // RUJAK.CO v2.0 FINAL — FULL APP + SECURE LOGIC (ANTI-MACET)
   // ============================================================
 
   function safeGet(id) {
@@ -148,7 +148,7 @@
   const state = {
     cart: {}, activeFilter: 'all', searchQuery: '', userDistance: null,
     isPriority: false, orderNotes: '', isCartMinimized: false,
-    customerName: '', customerPhone: '', customerAddress: '', // HANYA Base Address
+    customerName: '', customerPhone: '', customerAddress: '', 
     isGift: false, giftSender: '', giftMessage: '',
     useManualDistrict: false, selectedDistrict: '', hasShared: false,
     shippingProvider: 'rujakco', vehicleType: 'motor', currentStep: 1,
@@ -166,20 +166,6 @@
   function escapeHTML(str) { return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;'); }
   function fmt(num) { return 'Rp' + num.toLocaleString('id-ID'); }
   function debounce(fn, delay) { let t; return function(...args) { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), delay); }; }
-
-  function highlightEmptyFields(fieldIds) {
-    fieldIds.forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el && !el.value.trim()) {
-        el.classList.add('input-error');
-        setTimeout(function() { el.classList.remove('input-error'); }, 3000);
-        el.addEventListener('input', function handler() {
-          el.classList.remove('input-error');
-          el.removeEventListener('input', handler);
-        }, { once: true });
-      }
-    });
-  }
 
   function openCustomSelect(title, options, onSelect) {
     const backdrop = document.createElement('div');
@@ -201,19 +187,13 @@
     
     modal.querySelectorAll('.select-option').forEach(opt => {
       opt.addEventListener('click', function() {
-        const value = this.dataset.value;
-        const label = this.textContent;
-        onSelect(value, label);
+        onSelect(this.dataset.value, this.textContent);
         closeModal();
       });
     });
     
     backdrop.addEventListener('click', closeModal);
-    
-    requestAnimationFrame(() => {
-      backdrop.classList.add('active');
-      modal.classList.add('active');
-    });
+    requestAnimationFrame(() => { backdrop.classList.add('active'); modal.classList.add('active'); });
   }
 
   function openWhatsApp(phone, message) {
@@ -251,7 +231,6 @@
       modal.remove();
     });
     document.getElementById('closeWaFallback').addEventListener('click', function() { modal.remove(); pendingWhatsAppMessage = null; });
-    modal.addEventListener('click', function(e) { if (e.target === modal) { modal.remove(); pendingWhatsAppMessage = null; } });
   }
 
   function shareToWhatsApp() {
@@ -363,8 +342,6 @@
         else if (rawDistance <= 10) zone = 'B';
         else if (rawDistance <= 15) zone = 'C';
         else zone = 'D';
-      } else {
-        zone = 'F';
       }
     } else {
       const lalamoveBase = calculateLalamoveCost(rawDistance, state.vehicleType);
@@ -379,8 +356,6 @@
         else if (rawDistance <= 10) zone = 'B';
         else if (rawDistance <= 15) zone = 'C';
         else zone = 'D';
-      } else {
-        zone = 'F';
       }
     }
 
@@ -396,21 +371,6 @@
       distance: rawDistance,
       zone: zone
     };
-  }
-
-  function getLocationFallback() {
-    return new Promise((resolve) => {
-      const cached = localStorage.getItem('rujak_location');
-      if (cached) { try { const data = JSON.parse(cached); if (Date.now() - data.timestamp < 86400000 && data.distance < 900) return resolve(data); } catch(e) {} }
-      const controller = new AbortController(); const timeoutId = setTimeout(() => controller.abort(), 5000);
-      fetch('https://ipapi.co/json/', { signal: controller.signal }).then(r => r.json()).then(data => {
-        clearTimeout(timeoutId); const city = data.city || data.region || 'Lokasi'; let distance = 999; const c = city.toLowerCase();
-        if (c.includes('bekasi')) distance = 2; else if (c.includes('jakarta')) distance = 15; else if (c.includes('depok')) distance = 20; else if (c.includes('tangerang')) distance = 25; else if (c.includes('bogor')) distance = 30;
-        const result = { city: city, distance: distance, timestamp: Date.now() };
-        try { localStorage.setItem('rujak_location', JSON.stringify(result)); } catch(e) {}
-        resolve(result);
-      }).catch(() => { clearTimeout(timeoutId); resolve({ city: 'Lokasi Tidak Diketahui', distance: 999 }); });
-    });
   }
 
   function updateShippingUI(distance, isPriority) {
@@ -432,7 +392,6 @@
   }
 
   function saveCart() {
-    try { var tk = '__rujak_test__'; localStorage.setItem(tk, '1'); localStorage.removeItem(tk); } catch(e) { try { localStorage.removeItem('rujak_order_history'); localStorage.removeItem('rujak_location'); } catch(e2) {} }
     try { localStorage.setItem('rujak_cart', JSON.stringify(state.cart)); } catch(e) { ErrorLogger.log('saveCart', e); }
   }
 
@@ -496,11 +455,10 @@
     } catch (_) {}
   }
 
-  // 🔥 FIX 2: Simpan `selectedDistrict` ke LocalStorage
   function saveCustomerData() {
     try {
       localStorage.setItem('rujak_customer', JSON.stringify({
-        name: state.customerName, phone: state.customerPhone, address: state.customerAddress, // Hanya Base Address (tanpa kec)
+        name: state.customerName, phone: state.customerPhone, address: state.customerAddress,
         isGift: state.isGift, giftSender: state.giftSender, giftMessage: state.giftMessage,
         hasShared: state.hasShared, shippingProvider: state.shippingProvider, vehicleType: state.vehicleType,
         selectedDistrict: state.selectedDistrict, useManualDistrict: state.useManualDistrict
@@ -542,9 +500,6 @@
     });
   }
 
-  // ============================================================
-  // SHIPPING CALCULATION
-  // ============================================================
   function calculateShippingCost() {
     const summary = getCartSummaryCached();
     if (!state.selectedDistrict && state.userDistance === null) {
@@ -820,7 +775,7 @@
   }
 
   // ============================================================
-  // TELEGRAM NOTIFICATION
+  // TELEGRAM & CHECKOUT SECURE LOGIC
   // ============================================================
   async function sendTelegramNotification(orderId, fullAddress) {
     try {
@@ -856,132 +811,125 @@
     } catch (err) { console.error('[RujakCo] Telegram error:', err); return false; }
   }
 
-  // ============================================================
-  // CHECKOUT FUNCTIONS
-  // ============================================================
-  function handleCheckout() {
-    if (checkoutLocked) { showToast('⏳ Pesanan sedang diproses...'); return; }
-    
+  // 🔥 FUNGSI VALIDASI SENTRAL (Agar tidak ada modal tersangkut)
+  function validateOrderForm() {
     const name = document.getElementById('customerName').value.trim();
     const phone = document.getElementById('customerPhone').value.trim();
-    
-    // 🔥 FIX 1: Tangkap Jalan-nya saja (Base Address). Jangan digabung dulu.
     const rawAddress = document.getElementById('customerAddress').value.trim(); 
     const baseAddress = rawAddress.replace(/(?:,\s*)?Kec\..*$/gi, '').trim(); 
-    
     const district = state.selectedDistrict || '';
-    const displayDistrict = district ? district.replace(/\b\w/g, l => l.toUpperCase()) : '';
     const deliveryTime = document.getElementById('deliveryTime').value;
-    const notes = document.getElementById('orderNotes').value.trim();
 
-    if (!name || name.length < 2) { showToast('❌ Nama harus diisi'); document.getElementById('customerName').focus(); return; }
+    if (!name || name.length < 2) { showToast('❌ Nama harus diisi'); document.getElementById('customerName').focus(); return false; }
     const cleanedPhone = phone.replace(/[\s\-\(\)]/g, '');
-    if (!cleanedPhone || !isValidPhone(cleanedPhone)) { showToast('❌ Format HP tidak valid. Contoh: 08123456789'); document.getElementById('customerPhone').focus(); return; }
-    const normalizedPhone = normalizePhone(cleanedPhone);
-    if (!baseAddress || baseAddress.length < 5) { showToast('❌ Alamat terlalu pendek. Tulis detail jalannya ya'); document.getElementById('customerAddress').focus(); return; }
-    if (!district && state.shippingProvider !== 'pembeli') { showToast('❌ Pilih kecamatan terlebih dahulu'); document.getElementById('districtInput').focus(); return; }
-    if (!deliveryTime) { showToast('❌ Pilih jam pengiriman'); document.getElementById('deliveryTimeTrigger').click(); return; }
+    if (!cleanedPhone || !isValidPhone(cleanedPhone)) { showToast('❌ Format HP tidak valid. Contoh: 08123456789'); document.getElementById('customerPhone').focus(); return false; }
+    if (!baseAddress || baseAddress.length < 5) { showToast('❌ Alamat terlalu pendek. Tulis detail jalannya ya'); document.getElementById('customerAddress').focus(); return false; }
+    if (!district && state.shippingProvider !== 'pembeli') { showToast('❌ Pilih kecamatan terlebih dahulu'); document.getElementById('districtInput').focus(); return false; }
+    if (!deliveryTime) { showToast('❌ Pilih jam pengiriman'); document.getElementById('deliveryTimeTrigger').click(); return false; }
+
+    return { name, phone: normalizePhone(cleanedPhone), baseAddress, district, deliveryTime };
+  }
+
+  function handleCheckout() {
+    if (checkoutLocked) return;
+    
+    const validData = validateOrderForm();
+    if (!validData) {
+      // Tutup modal payment jika pembeli tanpa sengaja menembus validasi awal
+      const pmt = document.getElementById('paymentModal');
+      if (pmt) { pmt.classList.remove('active'); document.body.style.overflow = ''; }
+      return;
+    }
 
     const summary = getCartSummaryCached();
     const shippingData = calculateShippingCost();
     if (!shippingData) { showToast('⚠️ Hitung ongkir gagal. Pilih kecamatan.'); return; }
     if (shippingData.isOutOfRange && state.shippingProvider !== 'pembeli') {
-      showToast('⚠️ Area ini di luar jangkauan. Pilih "Kurir Pembeli" atau hubungi admin.');
-      return;
+      showToast('⚠️ Area ini di luar jangkauan. Pilih "Kurir Pembeli" atau hubungi admin.'); return;
     }
 
-    // 🔥 PENGGABUNGAN AMAN: Hanya dilakukan saat mengirim payload, state tetap bersih.
-    const fullAddress = baseAddress + (displayDistrict ? ', Kec. ' + displayDistrict : '');
+    const notes = document.getElementById('orderNotes').value.trim();
+    const displayDistrict = validData.district ? validData.district.replace(/\b\w/g, l => l.toUpperCase()) : '';
+    const fullAddress = validData.baseAddress + (displayDistrict ? ', Kec. ' + displayDistrict : '');
 
-    state.customerName = name;
-    state.customerPhone = normalizedPhone;
-    state.customerAddress = baseAddress; // Simpan TANPA KECAMATAN agar tidak dobel saat reload
+    state.customerName = validData.name;
+    state.customerPhone = validData.phone;
+    state.customerAddress = validData.baseAddress; // Simpan TANPA KECAMATAN agar cache selalu bersih
     state.orderNotes = notes;
     saveCustomerData();
 
     checkoutLocked = true;
     const payBtn = document.querySelector('[data-action="confirm-wa"]');
-    if (payBtn) { payBtn.textContent = '⏳ Menyimpan...'; payBtn.disabled = true; }
-    if (checkoutTimer) clearTimeout(checkoutTimer);
-    checkoutTimer = setTimeout(() => {
-      checkoutLocked = false;
-      if (payBtn) { payBtn.textContent = '💳 Kirim Bukti Transfer'; payBtn.disabled = false; }
-      checkoutTimer = null;
-    }, 5000);
+    if (payBtn) { payBtn.textContent = '⏳ Menyiapkan Pesanan...'; payBtn.disabled = true; }
 
     const orderNumber = 'RJ' + Date.now().toString(36).slice(-6) + Math.random().toString(36).substring(2,5).toUpperCase();
 
+    // 1. GENERATE WHATSAPP MESSAGE (MUTLAK BERHASIL)
+    let waMsg = '🍜 *PESANAN RUJAK.CO*\n\n';
+    waMsg += '📋 *Order:* ' + orderNumber + '\n';
+    waMsg += '👤 *Nama:* ' + validData.name + '\n';
+    waMsg += '📱 *HP:* ' + validData.phone + '\n';
+    waMsg += '📍 *Alamat:* ' + fullAddress + '\n';
+    waMsg += '📅 *Jam Kirim:* ' + validData.deliveryTime + '\n';
+    waMsg += '🚚 *Kurir:* ' + (state.shippingProvider === 'rujakco' ? 'Rujak.Co (Lalamove)' : state.shippingProvider === 'paxel' ? 'Paxel Same Day' : 'Kurir Pembeli') + '\n';
+    waMsg += '🛵 *Kendaraan:* ' + (state.vehicleType === 'motor' ? 'Motor' : 'Mobil') + '\n';
+    if (state.isPriority && state.shippingProvider !== 'paxel') waMsg += '⚡ *Prioritas:* Aktif (+Rp8.000)\n';
+    waMsg += '\n📦 *Pesanan:*\n';
+    summary.items.forEach(item => {
+      waMsg += '• ' + item.name;
+      if (item.spice) waMsg += ' (Level ' + item.spice + ' 🌶️)';
+      waMsg += ' x' + item.qty + ' — ' + fmt(item.lineTotal) + '\n';
+    });
+    if (notes) waMsg += '\n📝 *Catatan:*\n' + notes + '\n';
+    if (state.isGift) {
+      waMsg += '\n🎁 *KADO*\n';
+      if (state.giftSender) waMsg += 'Dari: ' + state.giftSender + '\n';
+      if (state.giftMessage) waMsg += 'Ucapan: ' + state.giftMessage + '\n';
+    }
+    waMsg += '\n💰 *Rincian Biaya:*\n';
+    waMsg += 'Subtotal: ' + fmt(summary.subtotal) + '\n';
+    if (summary.discount > 0) waMsg += 'Diskon: -' + fmt(summary.discount) + '\n';
+    waMsg += 'Ongkir: ' + fmt(shippingData.shippingCost) + '\n';
+    waMsg += '------------------------\n';
+    waMsg += '🟢 *TOTAL: ' + fmt(shippingData.total) + '*\n\n';
+    waMsg += '📸 *Bukti Transfer:*\n*(sertakan foto)*\n';
+    waMsg += '✅ *Terima kasih telah memesan!*';
+
+    // 2. SIMPAN KE DATABASE (FIRE & FORGET, tidak menghambat proses WhatsApp)
     getSupabase().then(client => {
-      if (!client) throw new Error('Database disconnected');
-      const payload = {
-        order_id: orderNumber, // 🔥 FIX 3: Pastikan ID masuk ke DB Supabase
-        customer_name: state.customerName.substring(0, 50),
-        customer_phone: state.customerPhone,
-        customer_address: fullAddress.substring(0, 500), // Kirim full address ke DB
-        items: summary.items.map(item => { const rest = { ...item }; delete rest.cartId; return rest; }),
-        subtotal: summary.subtotal, shipping_cost: shippingData.shippingCost, discount: summary.discount, total: shippingData.total,
-        status: 'pending', is_gift: state.isGift || false, gift_sender: (state.giftSender || '').substring(0, 50),
-        gift_message: (state.giftMessage || '').substring(0, 300), mission_shared: state.hasShared || false,
-        shipping_provider: state.shippingProvider || 'rujakco', vehicle: state.vehicleType || 'motor', priority: state.isPriority || false
-      };
-      return client.from('orders').insert([payload]);
-    }).then(async (result) => {
-      if (result && result.error) throw result.error;
-      if (checkoutTimer) { clearTimeout(checkoutTimer); checkoutTimer = null; }
+      if (client) {
+        const payload = {
+          order_id: orderNumber, // Fix missing ID
+          customer_name: validData.name.substring(0, 50),
+          customer_phone: validData.phone,
+          customer_address: fullAddress.substring(0, 500),
+          items: summary.items.map(item => { const rest = { ...item }; delete rest.cartId; return rest; }),
+          subtotal: summary.subtotal, shipping_cost: shippingData.shippingCost, discount: summary.discount, total: shippingData.total,
+          status: 'pending', is_gift: state.isGift || false, gift_sender: (state.giftSender || '').substring(0, 50),
+          gift_message: (state.giftMessage || '').substring(0, 300), mission_shared: state.hasShared || false,
+          shipping_provider: state.shippingProvider || 'rujakco', vehicle: state.vehicleType || 'motor', priority: state.isPriority || false
+        };
+        client.from('orders').insert([payload]).then(({error}) => {
+          if (error) ErrorLogger.log('Supabase Insert', error);
+        });
+        sendTelegramNotification(orderNumber, fullAddress);
+      }
+    }).catch(e => ErrorLogger.log('Supabase Connection', e));
+
+    // 3. TAMPILKAN LAYAR KONFIRMASI WHATSAPP SEGERA
+    setTimeout(() => {
       checkoutLocked = false;
       if (payBtn) { payBtn.textContent = '💳 Kirim Bukti Transfer'; payBtn.disabled = false; }
-
-      showToast('✅ Pesanan tersimpan!');
+      
       const paymentModal = document.getElementById('paymentModal');
       if (paymentModal) { paymentModal.classList.remove('active'); document.body.style.overflow = ''; }
-      recordOrderHistory(summary.items);
-
-      // Kirim notifikasi Telegram
-      sendTelegramNotification(orderNumber, fullAddress);
-
-      let waMsg = '🍜 *PESANAN RUJAK.CO*\n\n';
-      waMsg += '📋 *Order:* ' + orderNumber + '\n';
-      waMsg += '👤 *Nama:* ' + name + '\n';
-      waMsg += '📱 *HP:* ' + normalizedPhone + '\n';
-      waMsg += '📍 *Alamat:* ' + fullAddress + '\n';
-      waMsg += '📅 *Jam Kirim:* ' + deliveryTime + '\n';
-      waMsg += '🚚 *Kurir:* ' + (state.shippingProvider === 'rujakco' ? 'Rujak.Co (Lalamove)' : state.shippingProvider === 'paxel' ? 'Paxel Same Day' : 'Kurir Pembeli') + '\n';
-      waMsg += '🛵 *Kendaraan:* ' + (state.vehicleType === 'motor' ? 'Motor' : 'Mobil') + '\n';
-      if (state.isPriority && state.shippingProvider !== 'paxel') waMsg += '⚡ *Prioritas:* Aktif (+Rp8.000)\n';
-      waMsg += '\n📦 *Pesanan:*\n';
-      summary.items.forEach(item => {
-        waMsg += '• ' + item.name;
-        if (item.spice) waMsg += ' (Level ' + item.spice + ' 🌶️)';
-        waMsg += ' x' + item.qty + ' — ' + fmt(item.lineTotal) + '\n';
-      });
-      if (notes) waMsg += '\n📝 *Catatan:*\n' + notes + '\n';
-      if (state.isGift) {
-        waMsg += '\n🎁 *KADO*\n';
-        if (state.giftSender) waMsg += 'Dari: ' + state.giftSender + '\n';
-        if (state.giftMessage) waMsg += 'Ucapan: ' + state.giftMessage + '\n';
-      }
-      waMsg += '\n💰 *Rincian Biaya:*\n';
-      waMsg += 'Subtotal: ' + fmt(summary.subtotal) + '\n';
-      if (summary.discount > 0) waMsg += 'Diskon: -' + fmt(summary.discount) + '\n';
-      waMsg += 'Ongkir: ' + fmt(shippingData.shippingCost) + '\n';
-      waMsg += '------------------------\n';
-      waMsg += '🟢 *TOTAL: ' + fmt(shippingData.total) + '*\n\n';
-      waMsg += '📸 *Bukti Transfer:*\n*(sertakan foto)*\n';
-      waMsg += '✅ *Terima kasih telah memesan!*';
       
+      recordOrderHistory(summary.items);
       showOrderConfirmation(waMsg.substring(0, 4000));
-    }).catch(error => {
-      ErrorLogger.log('handleCheckout', error);
-      checkoutLocked = false;
-      if (checkoutTimer) { clearTimeout(checkoutTimer); checkoutTimer = null; }
-      if (payBtn) { payBtn.textContent = '💳 Kirim Bukti Transfer'; payBtn.disabled = false; }
-      showToast('⚠️ Gagal menyimpan. Coba lagi ya');
-    });
+    }, 500); 
   }
 
   function showOrderConfirmation(waMessage) {
-    const paymentModal = document.getElementById('paymentModal');
-    if (paymentModal) { paymentModal.classList.remove('active'); document.body.style.overflow = ''; }
     state.cart = {}; invalidateCache(); saveCart(); updateUI();
     
     var oldModal = document.getElementById('orderConfirmationModal');
@@ -1004,11 +952,10 @@
     document.getElementById('backToMenuFromConfirm').addEventListener('click', function() {
       modal.remove();
     });
-    setTimeout(() => { if (modal) modal.remove(); }, 15000);
   }
 
   // ============================================================
-  // UI FUNCTIONS
+  // UI & RENDER FUNCTIONS
   // ============================================================
   function updateStoreStatus() {
     const el = document.getElementById('storeStatusText');
@@ -1094,7 +1041,6 @@
     const container = document.getElementById('progressContainer');
     if (!container) return;
     
-    // 🔥 FIX 4: Tidak ada halusinasi 75rb. Tetap fokus ke DISCOUNT_THRESHOLD (100rb).
     if (subtotal >= SYSTEM.DISCOUNT_THRESHOLD) {
       container.style.display = 'none';
       return;
@@ -1189,8 +1135,6 @@
     document.getElementById('finalDiscount').textContent = summary.discount > 0 ? '-Rp' + summary.discount.toLocaleString('id-ID') : 'Rp0';
     document.getElementById('finalShipping').textContent = shippingData.isOutOfRange ? 'Konfirmasi Admin' : fmt(shippingData.shippingCost);
     document.getElementById('finalTotal').textContent = shippingData.isOutOfRange ? 'Konfirmasi' : fmt(shippingData.total);
-
-    updatePaymentButton();
   }
 
   function renderMiniCart() {
@@ -1229,7 +1173,7 @@
     document.getElementById('customerName').value = state.customerName;
     document.getElementById('customerPhone').value = state.customerPhone;
     
-    // Tampilkan hanya Pure Address di keranjang, tanpa nempel kecamatan
+    // Pastikan di form hanya tampil Base Address, tanpa tempelan kecamatan
     document.getElementById('customerAddress').value = state.customerAddress;
     
     if (state.selectedDistrict) {
@@ -1250,39 +1194,16 @@
       updateShippingDisplay();
     }
 
-    updatePaymentButton();
+    // Refresh Tombol Kurir & Kendaraan
+    document.querySelectorAll('.ship-btn').forEach(b => b.classList.toggle('active', b.dataset.provider === state.shippingProvider));
+    document.querySelectorAll('.veh-btn').forEach(b => b.classList.toggle('active', b.dataset.vehicle === state.vehicleType));
+    
+    const paxelOptions = document.getElementById('paxelOptions');
+    const rujakcoOptions = document.getElementById('rujakcoOptions');
+    if (paxelOptions) paxelOptions.style.display = state.shippingProvider === 'paxel' ? 'block' : 'none';
+    if (rujakcoOptions) rujakcoOptions.style.display = state.shippingProvider === 'rujakco' ? 'block' : 'none';
 
     if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
-  }
-
-  function updatePaymentButton() {
-    const bp = document.getElementById('btnOpenPayment');
-    const summary = getCartSummaryCached();
-    const shippingData = calculateShippingCost();
-    if (!bp) return;
-
-    if (summary.items.length === 0) {
-      bp.disabled = true; bp.textContent = 'Keranjang kosong'; return;
-    }
-    if (shippingData && shippingData.isOutOfRange && state.shippingProvider !== 'pembeli') {
-      bp.disabled = true; bp.textContent = 'Admin Konfirmasi'; return;
-    }
-    if (!state.selectedDistrict && state.userDistance === null && state.shippingProvider !== 'pembeli') {
-      bp.disabled = true; bp.textContent = '⏳ Pilih kecamatan...'; return;
-    }
-    bp.disabled = false;
-    bp.textContent = '💳 Bayar Via QRIS';
-  }
-
-  function openPaymentModal() {
-    const totalText = document.getElementById('finalTotal')?.textContent || 'Rp0';
-    document.getElementById('paymentTotalDisplay').textContent = totalText;
-    document.getElementById('paymentTotalDisplay2').textContent = totalText;
-    const pmt = document.getElementById('paymentModal');
-    if (pmt) {
-      pmt.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
   }
 
   // ============================================================
@@ -1391,7 +1312,6 @@
     const customerPhoneEl = document.getElementById('customerPhone');
     if (customerPhoneEl) state.customerPhone = customerPhoneEl.value.trim();
     
-    // Clean Address on close
     const customerAddressEl = document.getElementById('customerAddress');
     if (customerAddressEl) {
        const raw = customerAddressEl.value.trim();
@@ -1413,7 +1333,7 @@
   }
 
   // ============================================================
-  // PROMO MODAL
+  // PROMO MODAL & CART TOGGLE
   // ============================================================
   const promoModal = document.getElementById('promoModal');
   function openPromoModal() {
@@ -1430,9 +1350,6 @@
     }
   }
 
-  // ============================================================
-  // SEARCH & CART MINIMIZE
-  // ============================================================
   const searchInput = document.getElementById('searchInput');
   const clearSearchBtn = document.getElementById('clearSearchBtn');
   function updateClearButton() {
@@ -1912,12 +1829,15 @@
         if (action === 'open-promo') { openPromoModal(); return; }
       }
 
+      // 🔥 FIX 1: TAHAN BAYAR SEBELUM FORM VALID!
       if (e.target.closest('#btnOpenPayment')) {
-        if (!state.selectedDistrict && state.shippingProvider !== 'pembeli') {
-          showToast('📍 Pilih kecamatan terlebih dahulu.');
-          document.getElementById('districtInput').focus(); return;
-        }
-        openPaymentModal(); return;
+        const validData = validateOrderForm();
+        if (!validData) return; // Jika gagal, form tidak mau lanjut ke QRIS
+
+        const ft = document.getElementById('finalTotal').textContent;
+        document.getElementById('paymentTotalDisplay').textContent = ft;
+        document.getElementById('paymentTotalDisplay2').textContent = ft;
+        document.getElementById('paymentModal').classList.add('active');
       }
 
       if (e.target.closest('#clearCartBtn')) { clearCart(); return; }
@@ -2005,7 +1925,6 @@
     
     createDistrictAutocomplete();
     
-    // RESTORE UI LOCATION JIKA ADA DI CACHE
     if (state.selectedDistrict) {
       const displayStr = state.selectedDistrict.replace(/\b\w/g, l => l.toUpperCase());
       const distLabel = document.getElementById('districtLabel');
@@ -2017,7 +1936,7 @@
     detectLocation();
     updateUI();
     bindEvents();
-    initAIChat(); // AI CHAT DIKEMBALIKAN KE TEMPATNYA!
+    initAIChat(); 
     
     if (typeof lucide !== 'undefined' && lucide.createIcons) {
       lucide.createIcons();
