@@ -513,7 +513,35 @@
   // ============================================================
   function getAIRecommendation() { const hour = new Date().getHours(); const day = new Date().getDay(); const isWeekend = (day === 0 || day === 6); let timeBased = 'p_m1'; if (hour >= 6 && hour < 10) timeBased = 'p_m2'; else if (hour >= 10 && hour < 14) timeBased = 'p_m3'; else if (hour >= 14 && hour < 17) timeBased = 'p_m1'; else if (hour >= 17 && hour < 22) timeBased = 'p_m4'; let history = []; try { const raw = localStorage.getItem('rujak_order_history'); if (raw) history = JSON.parse(raw); } catch (_) {} let favorite = null; if (history.length > 0) { const freq = {}; history.forEach(id => { freq[id] = (freq[id] || 0) + 1; }); const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]); favorite = sorted[0] ? sorted[0][0] : null; } let rec = favorite || timeBased; if (isWeekend && hour >= 17) { const found = ['p_m4', 'p_m6'].find(id => PRODUCTS.find(prod => prod.id === id && !prod.isHidden)); if (found) rec = found; } const inCart = Object.keys(state.cart); let product = PRODUCTS.find(p => !p.isHidden && !inCart.some(key => key.startsWith(p.id)) && p.id === rec); if (!product) { product = PRODUCTS.filter(p => !p.isHidden && !inCart.some(key => key.startsWith(p.id))).sort((a, b) => a.price - b.price)[0] || null; } return product; }
 
-  function renderAIRecommendation() { const container = document.getElementById('aiRecommendationContainer'); if (!container) return; const rec = getAIRecommendation(); if (!rec || Object.keys(state.cart).some(key => key.startsWith(rec.id))) { container.style.display = 'none'; return; } container.style.display = 'block'; container.innerHTML = '<div style="background:linear-gradient(135deg,#F8F5EE,#FFFDF5);border:1px solid #E8E0D0;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">🤖</span><div style="flex:1;"><div style="font-size:9px;font-weight:600;color:#8B7355;">Rekomendasi AI</div><div style="font-weight:700;font-size:14px;color:#0F4D37;">' + escapeHTML(rec.name) + '</div><div style="font-size:11px;color:#666;">' + escapeHTML(rec.desc) + '</div></div><button onclick="window.addToCartAI(\'' + rec.id + '\')" class="btn-add-unified">+ Tambah</button></div>'; }
+  // 🆕 MODIFIKASI: renderAIRecommendation dengan badge hemat ongkir
+  function renderAIRecommendation() {
+    const container = document.getElementById('aiRecommendationContainer');
+    if (!container) return;
+    const rec = getAIRecommendation();
+    if (!rec || Object.keys(state.cart).some(key => key.startsWith(rec.id))) {
+      container.style.display = 'none';
+      return;
+    }
+    // Hitung ongkir untuk memberikan info hemat
+    const distance = state.userDistance || SYSTEM.DEFAULT_DISTANCE;
+    const shipping = calculateShipping(distance, false);
+    const shippingCost = shipping.cost || 0;
+    let extraHTML = '';
+    if (shippingCost > 30000 && rec.price < 50000) {
+      extraHTML = `<div style="font-size:9px;color:#D62828;font-weight:700;margin-top:2px;">🔥 Kombinasi ini lebih hemat ongkir!</div>`;
+    }
+    container.style.display = 'block';
+    container.innerHTML = `<div style="background:linear-gradient(135deg,#F8F5EE,#FFFDF5);border:1px solid #E8E0D0;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:20px;">🤖</span>
+      <div style="flex:1;">
+        <div style="font-size:9px;font-weight:600;color:#8B7355;">Rekomendasi AI</div>
+        <div style="font-weight:700;font-size:14px;color:#0F4D37;">${escapeHTML(rec.name)}</div>
+        <div style="font-size:11px;color:#666;">${escapeHTML(rec.desc)}</div>
+        ${extraHTML}
+      </div>
+      <button onclick="window.addToCartAI('${rec.id}')" class="btn-add-unified">+ Tambah</button>
+    </div>`;
+  }
 
   window.addToCartAI = function(productId) { if (addToCartLocked) return; lockAddToCart(); const product = PRODUCTS.find(p => p.id === productId); if (!product) return; const spice = product.defaultSpice || 3; const cartKey = productId + '_spice' + spice; const entry = state.cart[cartKey] || { qty: 0, spice: spice }; entry.qty += 1; entry.spice = spice; state.cart[cartKey] = entry; invalidateCache(); updateUI(); showToast('✅ ' + product.name + ' ditambahkan!'); const container = document.getElementById('aiRecommendationContainer'); if (container) container.style.display = 'none'; };
 
@@ -521,11 +549,35 @@
 
   function aiSearch(query) { if (!query || query.length < 2) return PRODUCTS.filter(p => !p.isHidden); const q = query.toLowerCase().trim(); const words = q.split(/\s+/); const synSets = []; words.forEach(word => { let found = false; for (const [key, synonyms] of Object.entries(SEARCH_SYNONYMS)) { if (key.includes(word) || word.includes(key) || synonyms.some(s => s.includes(word) || word.includes(s))) { synSets.push([key, ...synonyms]); found = true; break; } } if (!found) synSets.push([word]); }); const uniqueTerms = [...new Set(synSets.flat())]; const scored = PRODUCTS.filter(p => !p.isHidden).map(p => { let score = 0; const searchable = [p.name, p.desc, p.flavor, ...(p.tags || []), ...(p.buah || [])].join(' ').toLowerCase(); uniqueTerms.forEach(term => { if (searchable.includes(term)) score += 1; if (p.name.toLowerCase().includes(term)) score += 3; if ((p.tags || []).some(t => t.toLowerCase().includes(term))) score += 2; if ((p.buah || []).some(b => b.toLowerCase().includes(term))) score += 1.5; if (p.flavor.toLowerCase().includes(term)) score += 2; }); if (q.includes('classic') && p.cat === 'classic') score += 2; if (q.includes('signature') && p.cat === 'signature') score += 2; if (q.includes('reserve') && p.cat === 'reserve') score += 2; return { product: p, score }; }).filter(item => item.score > 0).sort((a, b) => b.score - a.score).map(item => item.product); if (scored.length === 0) return PRODUCTS.filter(p => !p.isHidden && [p.name, p.desc, p.flavor, ...(p.tags || []), ...(p.buah || [])].join(' ').toLowerCase().includes(q)); return scored; }
 
+  // 🆕 MODIFIKASI: renderAIUpsell dengan logika agresif untuk ongkir tinggi
   function renderAIUpsell(summary) {
     if (summary.items.length === 0) return '';
     const cartProductIds = summary.items.map(i => i.id);
     const available = PRODUCTS.filter(p => !p.isHidden && !cartProductIds.some(id => id.startsWith(p.id))).sort((a, b) => a.price - b.price);
     if (available.length === 0) return '';
+
+    // AGGRESSIVE UPSELL: jika ongkir > 50% subtotal dan subtotal < 75k
+    const shippingRatio = summary.shippingCost / summary.subtotal;
+    if (shippingRatio > 0.5 && summary.subtotal < 75000) {
+      const cheapest = available[0]; // produk termurah
+      if (cheapest) {
+        const needed = 75000 - summary.subtotal;
+        const qtyNeeded = Math.ceil(needed / cheapest.price);
+        const totalAdd = cheapest.price * qtyNeeded;
+        return `<div style="background:#FEF3C7;border:2px solid #F59E0B;border-radius:12px;padding:12px;margin-top:10px;text-align:center;">
+          <div style="font-size:13px;font-weight:700;color:#92400E;">💡 Ongkir lebih mahal dari produk!</div>
+          <div style="font-size:12px;color:#78350F;margin:4px 0;">
+            Tambah <strong>${qtyNeeded}x ${cheapest.name}</strong> (${fmt(totalAdd)}) 
+            → dapat subsidi Rp5.000 & ongkir lebih masuk akal!
+          </div>
+          <button onclick="window.addToCartAI('${cheapest.id}')" class="btn-add-unified" style="margin-top:6px;">
+            + Tambah Sekarang
+          </button>
+        </div>`;
+      }
+    }
+
+    // Logika normal (berdasarkan score)
     let bestScore = -1, bestProduct = null;
     available.forEach(p => {
       let score = 0;
@@ -765,18 +817,65 @@
     if (divider) divider.style.display = show ? 'block' : 'none';
   }
 
+  // 🆕 MODIFIKASI: updateProgressBar dengan tampilan khusus untuk jarak jauh
   function updateProgressBar(subtotal) {
-    const container = document.getElementById('progressContainer'); if (!container) return;
-    if (subtotal >= SYSTEM.DISCOUNT_THRESHOLD) { container.style.display = 'none'; return; }
-    const remaining = SYSTEM.DISCOUNT_THRESHOLD - subtotal; container.style.display = 'block';
-    const label = document.getElementById('progressLabel'); if (label) label.textContent = 'Tambah ' + fmt(remaining) + ' lagi untuk potongan Rp5.000';
-    const percent = document.getElementById('progressPercent'); if (percent) percent.textContent = Math.min(100, Math.round((subtotal / SYSTEM.DISCOUNT_THRESHOLD) * 100)) + '%';
-    const fill = document.getElementById('progressFill'); if (fill) fill.style.width = Math.min(100, Math.round((subtotal / SYSTEM.DISCOUNT_THRESHOLD) * 100)) + '%';
+    const container = document.getElementById('progressContainer');
+    if (!container) return;
+    const distance = state.userDistance || SYSTEM.DEFAULT_DISTANCE;
+    const isFar = distance > 20;
+
+    // Jika jarak jauh dan subtotal < 75k, tampilkan progress yang lebih menonjol
+    if (isFar && subtotal < 75000) {
+      container.style.display = 'block';
+      container.style.borderColor = '#F59E0B';
+      container.style.background = '#FFFBEB';
+      const remaining = 75000 - subtotal;
+      const label = document.getElementById('progressLabel');
+      if (label) label.textContent = `📍 Jarak ${Math.ceil(distance)} km — Tambah ${fmt(remaining)} lagi dapat subsidi Rp5.000!`;
+      const percent = document.getElementById('progressPercent');
+      if (percent) percent.textContent = Math.min(100, Math.round((subtotal / 75000) * 100)) + '%';
+      const fill = document.getElementById('progressFill');
+      if (fill) fill.style.width = Math.min(100, Math.round((subtotal / 75000) * 100)) + '%';
+      return;
+    }
+
+    // Logika normal (progress menuju diskon 100k)
+    if (subtotal >= SYSTEM.DISCOUNT_THRESHOLD) {
+      container.style.display = 'none';
+      return;
+    }
+    const remaining = SYSTEM.DISCOUNT_THRESHOLD - subtotal;
+    container.style.display = 'block';
+    container.style.borderColor = 'rgba(15,77,55,.08)';
+    container.style.background = 'white';
+    const label = document.getElementById('progressLabel');
+    if (label) label.textContent = 'Tambah ' + fmt(remaining) + ' lagi untuk potongan Rp5.000';
+    const percent = document.getElementById('progressPercent');
+    if (percent) percent.textContent = Math.min(100, Math.round((subtotal / SYSTEM.DISCOUNT_THRESHOLD) * 100)) + '%';
+    const fill = document.getElementById('progressFill');
+    if (fill) fill.style.width = Math.min(100, Math.round((subtotal / SYSTEM.DISCOUNT_THRESHOLD) * 100)) + '%';
   }
 
   function updateMissionCheckboxes(subtotal) {
     const ms = document.getElementById('missionSpend'); if (ms) ms.checked = subtotal >= SYSTEM.DISCOUNT_THRESHOLD;
     const cs = document.getElementById('checkShare'); if (cs) cs.checked = state.hasShared;
+  }
+
+  // 🆕 MODIFIKASI: Fungsi untuk memeriksa peringatan ongkir
+  function checkShippingWarning() {
+    const summary = getCartSummaryCached();
+    if (summary.items.length === 0) return;
+    if (summary.shippingProvider === 'pembeli') return; // kurir sendiri tidak perlu peringatan
+    const shippingRatio = summary.shippingCost / summary.subtotal;
+    if (shippingRatio > 0.7 && summary.subtotal < 75000) {
+      showToast('💡 Ongkir hampir 2x harga produk! Tambah 1 item lagi dapat subsidi Rp5.000.');
+    } else if (shippingRatio > 0.4 && summary.subtotal < 75000) {
+      // hanya tampilkan jika belum ada toast lain
+      const remaining = 75000 - summary.subtotal;
+      if (remaining > 0) {
+        showToast('💡 Tambah ' + fmt(remaining) + ' lagi dapat subsidi ongkir!');
+      }
+    }
   }
 
   function renderCart() {
@@ -800,6 +899,8 @@
       if (footer) footer.style.paddingBottom = '0';
     }
     saveCart(); updateFloatingButton();
+    // Panggil peringatan ongkir
+    checkShippingWarning();
   }
 
   function renderMiniCart() {
@@ -887,6 +988,8 @@
     invalidateCache(); renderMenu(); renderAddons(); renderCart(); renderAIRecommendation();
     if (document.getElementById('miniCartModal')?.classList.contains('active')) renderMiniCart();
     if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+    // Panggil peringatan ongkir setelah semua render
+    checkShippingWarning();
   }
 
   // ============================================================
