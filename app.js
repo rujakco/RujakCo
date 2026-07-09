@@ -1,10 +1,6 @@
 (function() {
   'use strict';
 
-  // ============================================================
-  // RUJAK.CO v3.1 — STABLE ENGINE + PREMIUM UI
-  // ============================================================
-
   const SUPABASE_URL = "https://ghhnnfrmftttptcejizp.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoaG5uZnJtZnR0dHB0Y2VqaXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNjA1ODksImV4cCI6MjA5NzgzNjU4OX0.FM-sPvJJzviX2kA0GEHnznOppivm4JNyC4IPFv_RkdE";
   const SYSTEM = { DISCOUNT_THRESHOLD: 100000, DISCOUNT_AMOUNT: 5000, WA_NUMBER: '6289677161680', STORE_LAT: -6.2165414, STORE_LNG: 107.0177395, DEFAULT_DISTANCE: 2 };
@@ -37,7 +33,6 @@
   let cachedSummary = null;
   let toastTimer = null;
 
-  // --- Utilities ---
   function fmt(num) { return 'Rp' + num.toLocaleString('id-ID'); }
   function escapeHTML(str) { return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
   function haptic() { if (navigator.vibrate) navigator.vibrate(10); }
@@ -49,14 +44,13 @@
   }
 
   function getSupabase() { return window.supabase?.createClient ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null; }
+  function estimateRoadDistance(straightKm) { return Math.round(straightKm * (straightKm <= 10 ? 1.35 : straightKm <= 20 ? 1.30 : 1.20)); }
   function haversineDistance(lat1, lon1, lat2, lon2) {
     const R = 6371, dLat = (lat2 - lat1) * Math.PI / 180, dLon = (lon2 - lon1) * Math.PI / 180;
     const a = Math.sin(dLat/2)**2 + Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * Math.sin(dLon/2)**2;
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
   }
-  function estimateRoadDistance(straightKm) { return Math.round(straightKm * (straightKm <= 10 ? 1.35 : straightKm <= 20 ? 1.30 : 1.20)); }
 
-  // --- Cart Data ---
   function getItemById(id) { let item = PRODUCTS.find(p => p.id === id); if(item) return item; const sm = id.match(/^(.+)_spice(\d+)$/); if(sm){ item = PRODUCTS.find(p => p.id === sm[1]); if(item) return item; } return ADDONS.find(a => a.id === id) || null; }
 
   function getCartSummary() {
@@ -78,7 +72,6 @@
   function saveCart() { try { localStorage.setItem('rujak_cart_v3', JSON.stringify(state.cart)); } catch(e){} }
   function loadCart() { try { const s = localStorage.getItem('rujak_cart_v3'); if(s) state.cart = JSON.parse(s); } catch(e){} }
 
-  // --- Logistics ---
   function calculateShipping(distance, mainQty) {
     const dist = distance || SYSTEM.DEFAULT_DISTANCE;
     if (dist > 50) return { cost: null, label: 'Konfirmasi Pramutamu' };
@@ -115,7 +108,6 @@
     document.getElementById('finalTotal').textContent = ship.cost ? fmt(summary.subtotal - summary.discount + ship.cost) : 'Konfirmasi';
   }
 
-  // --- Rendering UI ---
   function renderMenu() {
     const container = document.getElementById('menuList'); if (!container) return;
     let items = state.activeFilter === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.cat === state.activeFilter);
@@ -141,7 +133,7 @@
       const control = qty === 0 ? `<button class="btn-add-unified" data-action="add-addon" data-id="${a.id}">Tambahkan</button>` : `<div class="qty-control"><button class="qty-btn" data-action="decrease" data-id="${a.id}">−</button><span class="qty-num">${qty}</span><button class="qty-btn" data-action="increase" data-id="${a.id}">+</button></div>`;
       return `<div class="addon-card"><div class="addon-icon"><i data-lucide="${a.icon}" class="w-6 h-6"></i></div><div class="addon-name">${a.name}</div><div class="addon-price">${fmt(a.price)}</div>${control}</div>`;
     }).join('');
-    if(window.lucide) lucide.createIcons();
+    if(window.lucide) window.lucide.createIcons();
   }
 
   function renderCart() {
@@ -172,7 +164,6 @@
     document.getElementById('miniCartList').innerHTML = sum.items.length === 0 ? '<p style="text-align:center;color:var(--gray-500);padding:20px 0;">Sajian belum dipilih.</p>' : sum.items.map(i => `<div class="mini-cart-item"><div class="mini-cart-info"><div class="mini-cart-name">${i.name}${i.spice?' (Level '+i.spice+')':''}</div><div class="mini-cart-detail">${fmt(i.price)}</div></div><div class="mini-cart-qty"><button class="qty-btn" data-action="decrease" data-id="${i.cartId}">−</button><span class="qty-num">${i.qty}</span><button class="qty-btn" data-action="increase" data-id="${i.cartId}">+</button></div></div>`).join('');
     document.getElementById('cartSubtotalDisplay').textContent = fmt(sum.subtotal);
     
-    // AI Upsell di Mini Cart
     const upsell = document.getElementById('step1Upsell');
     if(upsell && sum.totalQty > 0) {
       const avail = PRODUCTS.filter(p => !sum.items.some(i => i.id.startsWith(p.id)));
@@ -191,7 +182,6 @@
 
   function updateUI() { invalidateCache(); renderMenu(); renderAddons(); renderCart(); if(document.getElementById('miniCartModal')?.classList.contains('active')) renderMiniCart(); }
 
-  // --- Product Page Flow ---
   function openProductPage(id) {
     const p = PRODUCTS.find(x => x.id === id); if(!p) return;
     document.getElementById('productPageImg').innerHTML = `<img src="${p.image}">`;
@@ -226,7 +216,6 @@
     state.cart[id + '_spice3'] = { qty: 1, spice: 3 }; invalidateCache(); updateUI(); showToast('✅ Sajian ditambahkan.');
   };
 
-  // --- Init & Events ---
   function bindEvents() {
     document.getElementById('backFromProduct').addEventListener('click', closeProductPage);
     document.getElementById('addToCartPage').addEventListener('click', function() {
@@ -248,33 +237,21 @@
     document.getElementById('qtyMinusPage').addEventListener('click', () => { if (state.currentProductPage.qty > 1) { state.currentProductPage.qty--; document.getElementById('qtyNumPage').textContent = state.currentProductPage.qty; } });
     document.getElementById('qtyPlusPage').addEventListener('click', () => { state.currentProductPage.qty++; document.getElementById('qtyNumPage').textContent = state.currentProductPage.qty; });
 
-    document.getElementById('searchIconBtn')?.addEventListener('click', function() { const wrap = document.getElementById('searchInputWrap'); wrap.classList.toggle('open'); if (wrap.classList.contains('open')) document.getElementById('searchInput').focus(); });
-    document.getElementById('clearSearchBtn')?.addEventListener('click', function() { const input = document.getElementById('searchInput'); if(input){ input.value=''; state.searchQuery=''; invalidateCache(); updateUI(); } });
-    document.getElementById('searchInput')?.addEventListener('input', debounce(function() { state.searchQuery = this.value; invalidateCache(); updateUI(); }, 300));
+    let tOut;
+    document.getElementById('searchInput')?.addEventListener('input', e => {
+      document.getElementById('clearSearchBtn').style.display = e.target.value.length ? 'inline-block' : 'none';
+      clearTimeout(tOut); tOut = setTimeout(() => { state.searchQuery = e.target.value; invalidateCache(); updateUI(); }, 300);
+    });
+    document.getElementById('searchIconBtn')?.addEventListener('click', () => { document.getElementById('searchInputWrap').classList.toggle('open'); document.getElementById('searchInput').focus(); });
+    document.getElementById('clearSearchBtn')?.addEventListener('click', () => { document.getElementById('searchInput').value = ''; state.searchQuery = ''; document.getElementById('clearSearchBtn').style.display = 'none'; invalidateCache(); updateUI(); });
 
-    // District Dropdown
     const di = document.getElementById('districtInput'), dt = document.getElementById('districtTrigger'), dm = document.getElementById('customDistrictDropdown');
-    if(dt) dt.addEventListener('click', () => {
-      di.type = 'text'; di.style.marginBottom = '8px'; di.focus(); dm.style.display = 'block';
-      dm.innerHTML = Object.keys(DISTRICT_MAP).map(k => `<div style="padding:14px 16px; border-bottom:1px solid #eee; cursor:pointer;" data-val="${k}">${k.replace(/\b\w/g, l=>l.toUpperCase())}</div>`).join('');
-    });
-    if(di) di.addEventListener('input', e => {
-      const v = e.target.value.toLowerCase(), m = Object.keys(DISTRICT_MAP).filter(k => k.includes(v));
-      dm.innerHTML = m.map(k => `<div style="padding:14px 16px; border-bottom:1px solid #eee; cursor:pointer;" data-val="${k}">${k.replace(/\b\w/g, l=>l.toUpperCase())}</div>`).join('');
-    });
-    if(dm) dm.addEventListener('click', e => {
-      const v = e.target.closest('div[data-val]')?.dataset.val; if(!v) return;
-      state.selectedDistrict = v; di.type = 'hidden'; dm.style.display = 'none';
-      document.getElementById('districtLabel').textContent = v.replace(/\b\w/g, l=>l.toUpperCase()); updateShippingUI();
-    });
-
-    document.getElementById('deliveryTimeTrigger')?.addEventListener('click', function() {
-      openCustomSelect('Waktu Pengiriman', [{value:'Pagi (09:00 - 11:00)',label:'Pagi (09:00 - 11:00 WIB)'},{value:'Siang (11:00 - 13:00)',label:'Siang (11:00 - 13:00 WIB)'},{value:'Sore (14:00 - 17:00)',label:'Sore (14:00 - 17:00 WIB)'}], function(val, lbl) { document.getElementById('deliveryTime').value = val; document.getElementById('deliveryTimeLabel').textContent = lbl; });
-    });
+    if(dt) dt.addEventListener('click', () => { di.type = 'text'; di.style.marginBottom = '8px'; di.focus(); dm.style.display = 'block'; dm.innerHTML = Object.keys(DISTRICT_MAP).map(k => `<div style="padding:14px 16px; border-bottom:1px solid #eee; cursor:pointer;" data-val="${k}">${k.replace(/\b\w/g, l=>l.toUpperCase())}</div>`).join(''); });
+    if(di) di.addEventListener('input', e => { const v = e.target.value.toLowerCase(), m = Object.keys(DISTRICT_MAP).filter(k => k.includes(v)); dm.innerHTML = m.map(k => `<div style="padding:14px 16px; border-bottom:1px solid #eee; cursor:pointer;" data-val="${k}">${k.replace(/\b\w/g, l=>l.toUpperCase())}</div>`).join(''); });
+    if(dm) dm.addEventListener('click', e => { const v = e.target.closest('div[data-val]')?.dataset.val; if(!v) return; state.selectedDistrict = v; di.type = 'hidden'; dm.style.display = 'none'; document.getElementById('districtLabel').textContent = v.replace(/\b\w/g, l=>l.toUpperCase()); updateShippingUI(); });
 
     document.getElementById('giftToggle')?.addEventListener('change', function() { state.isGift = this.checked; document.getElementById('giftFields').style.display = this.checked ? 'block' : 'none'; });
 
-    // Global Event Delegation
     document.addEventListener('click', e => {
       if(e.target.closest('[data-action="open-cart"]') || e.target.closest('.cart-summary')) { const m = document.getElementById('miniCartModal'); if(m){ m.classList.add('active'); document.body.style.overflow='hidden'; renderMiniCart(); } return; }
       if(e.target.closest('#miniCartClose') || (e.target.id === 'miniCartModal' && !e.target.closest('.modal-content'))) { const m = document.getElementById('miniCartModal'); if(m){ m.classList.remove('active'); document.body.style.overflow=''; } return; }
@@ -288,57 +265,28 @@
         else if(type === 'decrease') { state.cart[id].qty--; if(state.cart[id].qty<=0) delete state.cart[id]; invalidateCache(); updateUI(); }
       }
 
-      if(e.target.closest('.cat-pill')) {
-        document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
-        const btn = e.target.closest('.cat-pill'); btn.classList.add('active');
-        state.activeFilter = btn.dataset.cat; updateUI();
-      }
-
-      if(e.target.closest('.ship-btn')) {
-        document.querySelectorAll('.ship-btn').forEach(b => b.classList.remove('active'));
-        const btn = e.target.closest('.ship-btn'); btn.classList.add('active');
-        state.shippingProvider = btn.dataset.provider;
-        document.getElementById('rujakcoOptions').style.display = state.shippingProvider === 'paxel' ? 'none' : 'block';
-        document.getElementById('paxelOptions').style.display = state.shippingProvider === 'paxel' ? 'block' : 'none';
-        updateShippingUI();
-      }
-
-      if(e.target.closest('.veh-btn')) {
-        document.querySelectorAll('.veh-btn').forEach(b => b.classList.remove('active'));
-        const btn = e.target.closest('.veh-btn'); btn.classList.add('active');
-        state.vehicleType = btn.dataset.vehicle; updateShippingUI();
-      }
-
+      if(e.target.closest('.cat-pill')) { document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active')); const btn = e.target.closest('.cat-pill'); btn.classList.add('active'); state.activeFilter = btn.dataset.cat; updateUI(); }
+      if(e.target.closest('.ship-btn')) { document.querySelectorAll('.ship-btn').forEach(b => b.classList.remove('active')); const btn = e.target.closest('.ship-btn'); btn.classList.add('active'); state.shippingProvider = btn.dataset.provider; document.getElementById('rujakcoOptions').style.display = state.shippingProvider === 'paxel' ? 'none' : 'block'; document.getElementById('paxelOptions').style.display = state.shippingProvider === 'paxel' ? 'block' : 'none'; updateShippingUI(); }
+      if(e.target.closest('.veh-btn')) { document.querySelectorAll('.veh-btn').forEach(b => b.classList.remove('active')); const btn = e.target.closest('.veh-btn'); btn.classList.add('active'); state.vehicleType = btn.dataset.vehicle; updateShippingUI(); }
       if(e.target.id === 'priorityToggleMini') { state.isPriority = e.target.checked; updateShippingUI(); }
       if(e.target.id === 'clearCartBtn') { state.cart = {}; invalidateCache(); updateUI(); renderMiniCart(); showToast('Keranjang dikosongkan.'); }
 
-      // Checkout Validate
       if(e.target.closest('#btnOpenPayment')) {
         const name = document.getElementById('customerName').value.trim(), phone = document.getElementById('customerPhone').value.trim(), address = document.getElementById('customerAddress').value.trim();
-        if(!name || !phone || !address || !state.selectedDistrict) { showToast('Mohon lengkapi formulir pengiriman.'); return; }
-        
+        if(!name || !phone || !address || !state.selectedDistrict) { showToast('Mohon lengkapi informasi pengiriman.'); return; }
         state.customerName = name; state.customerPhone = phone; state.customerAddress = address; state.orderNotes = document.getElementById('orderNotes').value;
-        
         document.getElementById('paymentTotalDisplay').textContent = document.getElementById('finalTotal').textContent;
         document.getElementById('paymentModal').classList.add('active');
       }
 
       if(e.target.closest('#paymentClose')) { document.getElementById('paymentModal').classList.remove('active'); }
-      
-      // Confirm & Send WA
       if(e.target.closest('[data-action="confirm-wa"]')) {
-        const sum = getCartSummaryCached(), ship = calculateShippingCost();
-        const orderId = 'RJ' + Date.now().toString(36).toUpperCase().slice(-6);
+        const sum = getCartSummaryCached(), ship = calculateShippingCost(), orderId = 'RJ' + Date.now().toString(36).toUpperCase().slice(-6);
         let msg = `*PESANAN RUJAK.CO*\n\nOrder: ${orderId}\nNama: ${state.customerName}\nTelp: ${state.customerPhone}\nAlamat: ${state.customerAddress}, Kec. ${state.selectedDistrict.replace(/\b\w/g, l=>l.toUpperCase())}\n\n*Sajian:*\n`;
         sum.items.forEach(i => msg += `- ${i.name} ${i.spice?'(Lv '+i.spice+')':''} x${i.qty}\n`);
         msg += `\nSubtotal: ${fmt(sum.subtotal)}\nPrivilege: -${fmt(sum.discount)}\nOngkir: ${fmt(ship.shippingCost)}\n*TOTAL: ${fmt(ship.total)}*\n\n(Tolong lampirkan bukti transfer QRIS)`;
-        
-        const waUrl = 'https://wa.me/' + SYSTEM.WA_NUMBER + '?text=' + encodeURIComponent(msg);
-        window.open(waUrl, '_blank');
-        
-        state.cart = {}; invalidateCache(); updateUI();
-        document.getElementById('paymentModal').classList.remove('active');
-        const mc = document.getElementById('miniCartModal'); if(mc){ mc.classList.remove('active'); document.body.style.overflow=''; }
+        window.open('https://wa.me/' + SYSTEM.WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
+        state.cart = {}; invalidateCache(); updateUI(); document.getElementById('paymentModal').classList.remove('active'); const mc = document.getElementById('miniCartModal'); if(mc){ mc.classList.remove('active'); document.body.style.overflow=''; }
       }
 
       const mi = e.target.closest('.menu-item');
