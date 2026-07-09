@@ -34,7 +34,7 @@
       "servesCuisine": "Indonesian",
       "areaServed": "Jabodetabek",
       "telephone": "+6289677161680",
-      "priceRange": "Rp25.000 - Rp200.000",
+      "priceRange": "Rp26.000 - Rp200.000",
       "address": { "@type": "PostalAddress", "addressLocality": "Bekasi", "addressRegion": "Jawa Barat", "addressCountry": "ID" },
       "openingHoursSpecification": [
           { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "10:00", "closes": "20:00" },
@@ -284,7 +284,7 @@
       </div>
       <input type="hidden" id="districtSelect" value="">
     </div>
-    <div class="shipping-out-of-range" id="outOfRange" style="margin:0 0 10px 0;border-radius:12px;">⚠️ Pengiriman hanya tersedia untuk wilayah Jabodetabek (maks. 50 km)</div>
+    <div class="shipping-out-of-range" id="outOfRange" style="margin:0 0 10px 0;border-radius:12px;">⚠️ Lokasi ini di luar jangkauan pengiriman otomatis kami. Hubungi admin untuk konfirmasi ongkir.</div>
     <div class="cart-summary" id="cartSummary" tabindex="0" role="button" aria-label="Buka keranjang">
       <span class="cart-items-preview" id="cartPreview">0 item</span>
       <div class="cart-total-wrap">
@@ -511,7 +511,6 @@
   </div>
 
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@4/dist/fp.min.js"></script>
   <script defer src="app.js"></script>
 </body>
 </html>
