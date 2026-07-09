@@ -2194,4 +2194,103 @@
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
+/* =========================================
+   PREMIUM INTERACTIONS (Paste di paling bawah)
+   ========================================= */
+
+// 1. Scroll Reveal Observer
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.reveal-on-scroll, .stagger-children').forEach(el => revealObserver.observe(el));
+
+// 2. Haptic Feedback (Getaran Halus)
+function haptic(type) { if (navigator.vibrate) navigator.vibrate(type === 'light' ? 5 : 10); }
+document.addEventListener('click', (e) => {
+  if (e.target.closest('.add-btn, .wa-btn, .hero-cta')) haptic('medium');
+  if (e.target.closest('.qty-btn')) haptic('light');
+});
+
+// 3. Add-to-Cart Flying Animation
+function animateAddToCart(btn, imgSrc) {
+  if (!imgSrc) return;
+  const rect = btn.getBoundingClientRect();
+  const clone = document.createElement('img');
+  clone.src = imgSrc;
+  clone.style.cssText = `position:fixed;width:60px;height:60px;left:${rect.left}px;top:${rect.top}px;border-radius:50%;z-index:9999;pointer-events:none;transition:all 0.8s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 10px 40px rgba(0,0,0,.3);object-fit:cover;`;
+  document.body.appendChild(clone);
+  
+  const target = document.getElementById('floatingCartBtn');
+  if (target) {
+    const tRect = target.getBoundingClientRect();
+    requestAnimationFrame(() => {
+      clone.style.left = tRect.left + 'px';
+      clone.style.top = tRect.top + 'px';
+      clone.style.width = '20px'; clone.style.height = '20px';
+      clone.style.opacity = '0'; clone.style.transform = 'scale(0.3) rotate(360deg)';
+    });
+    setTimeout(() => clone.remove(), 900);
+    
+    // Badge Pop
+    const badge = document.getElementById('floatingBadge');
+    if(badge) { badge.style.animation = 'badgePop 0.4s cubic-bezier(0.34,1.56,0.64,1)'; setTimeout(()=>badge.style.animation='',400); }
+  }
+}
+
+// Inject animation into existing add buttons
+document.addEventListener('click', function(e) {
+  const addBtn = e.target.closest('[data-action="open-modal"]');
+  if(addBtn) {
+    // Delay slightly to let modal open, then find image
+    setTimeout(() => {
+      const modalImg = document.querySelector('#modalImg img');
+      if(modalImg) {
+         // Override the main add button in modal
+         const modalAdd = document.getElementById('modalAdd');
+         if(modalAdd && !modalAdd.dataset.animated) {
+            modalAdd.dataset.animated = "true";
+            modalAdd.addEventListener('click', () => {
+              // Jalankan animasi, lalu tutup modal setelah selesai
+              animateAddToCart(modalAdd, modalImg.src);
+              setTimeout(() => {
+                // closeProductModal akan dipanggil dari handler asli, tapi kita bisa tunda
+                // Agar aman, kita tidak perlu panggil closeProductModal lagi
+              }, 900);
+            });
+         }
+      }
+    }, 100);
+  }
+});
+
+// 4. Live Order Ticker
+const liveOrders = ['Dina dari Bekasi memesan Rujak Gaco', 'Rina dari Jaktim memesan Rujak Rama', 'Aldo dari Depok memesan Rujak Segar'];
+let liveIdx = 0;
+setInterval(() => {
+  const el = document.getElementById('liveOrderText');
+  if(el) {
+    el.style.opacity = '0';
+    setTimeout(() => {
+      liveIdx = (liveIdx + 1) % liveOrders.length;
+      el.textContent = liveOrders[liveIdx];
+      el.style.opacity = '1';
+    }, 300);
+  }
+}, 5000);
+
+// 5. Testimonial Auto-Flip (menggantikan script di HTML)
+const testiCards = document.querySelectorAll('.testi-card');
+const testiDots = document.querySelectorAll('.testi-dot');
+let currentTesti = 0;
+if(testiCards.length > 0) {
+  setInterval(() => {
+    testiCards.forEach(c => c.classList.remove('active'));
+    testiDots.forEach(d => d.classList.remove('active'));
+    currentTesti = (currentTesti + 1) % testiCards.length;
+    testiCards[currentTesti].classList.add('active');
+    if(testiDots[currentTesti]) testiDots[currentTesti].classList.add('active');
+  }, 5000);
 })();
