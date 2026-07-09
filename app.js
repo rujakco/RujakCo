@@ -2293,4 +2293,4 @@ if(testiCards.length > 0) {
     testiCards[currentTesti].classList.add('active');
     if(testiDots[currentTesti]) testiDots[currentTesti].classList.add('active');
   }, 5000);
-})();
+}})();
