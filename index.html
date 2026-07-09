@@ -1,276 +1,3261 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Rujak.Co — Premium Rujak Experience</title>
-  <meta name="theme-color" content="#0F4D37" />
-  <link rel="icon" type="image/webp" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
-  <script defer src="https://unpkg.com/lucide@0.383.0"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Rujak.Co — Asem, Pedes, Manis, Seger. Dalam Satu Gigitan.</title>
+    <meta name="description" content="Rujak premium dengan sambal mete terpisah — tetap renyah sampai tujuan. Ongkir mulai Rp8.000." />
+    <link rel="icon" type="image/webp" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ============================================================
+           RUJAK.CO — COMPLETE STYLE (FIXED BOTTOM BAR + FOOTER)
+           ============================================================ */
+        :root {
+            --green: #0F4D37;
+            --green-dark: #0a3a2a;
+            --green-light: #1a6b4e;
+            --green-pale: #EAF2EE;
+            --red: #D62828;
+            --gold: #F4C430;
+            --ivory: #FDFDF8;
+            --gray-100: #F5F5F5;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-400: #9CA3AF;
+            --gray-500: #6B7280;
+            --gray-700: #374151;
+            --gray-900: #111827;
+            --radius-card: 16px;
+            --radius-pill: 100px;
+            --bottom-bar-height: 78px;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background: #EFEFE9;
+            font-family: 'DM Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            scroll-behavior: smooth;
+            min-height: 100vh;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            padding-bottom: calc(var(--bottom-bar-height) + 24px);
+        }
+
+        #app {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            background: var(--ivory);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            padding-bottom: 16px;
+        }
+
+        /* ===== HEADER ===== */
+        #header {
+            position: sticky;
+            top: 0;
+            background: var(--ivory);
+            z-index: 100;
+            padding: 12px 20px 10px;
+            border-bottom: 1px solid rgba(15, 77, 55, .06);
+            transition: box-shadow .2s ease;
+        }
+
+        #header.shadowed {
+            box-shadow: 0 4px 20px rgba(15, 77, 55, .05);
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .brand-logo img {
+            height: 36px;
+            width: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--green);
+            letter-spacing: -.5px;
+            white-space: nowrap;
+        }
+
+        .brand-name span {
+            color: var(--red);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .store-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--green-pale);
+            border-radius: var(--radius-pill);
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--green);
+            white-space: nowrap;
+        }
+
+        .store-status.closed {
+            background: #fee2e2;
+            color: var(--red);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            flex-shrink: 0;
+        }
+
+        .store-status.closed .status-dot {
+            background: var(--red);
+        }
+
+        .location-pill {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--green-pale);
+            border-radius: var(--radius-pill);
+            padding: 4px 10px 4px 6px;
+            cursor: pointer;
+            transition: background .15s;
+            flex-shrink: 0;
+        }
+
+        .location-pill:active {
+            background: #d4e8de;
+        }
+
+        .location-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .location-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            line-height: 1;
+        }
+
+        .location-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--green);
+            line-height: 1.2;
+        }
+
+        /* ===== HERO ===== */
+        .hero-wrap {
+            padding: 16px 20px;
+        }
+
+        .hero {
+            width: 100%;
+            aspect-ratio: 21/9;
+            background: var(--green);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero-grad {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to right, rgba(15, 77, 55, .85) 0%, rgba(15, 77, 55, 0) 70%);
+        }
+
+        .hero-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hero-title {
+            font-size: clamp(18px, 6vw, 24px);
+            font-weight: 800;
+            color: white;
+            line-height: 1.2;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, .3);
+        }
+
+        .hero-sub {
+            font-size: 12px;
+            color: rgba(255, 255, 255, .9);
+            font-weight: 500;
+            line-height: 1.4;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, .2);
+        }
+
+        /* ===== PROMO STRIP ===== */
+        .promo-strip {
+            margin: 0 20px 12px;
+            background: #fff3cd;
+            border: 1px solid #e6c87a;
+            border-radius: 14px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .promo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--gold);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .promo-text {
+            flex: 1;
+        }
+
+        .promo-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: #3d2b00;
+        }
+
+        .promo-sub {
+            font-size: 11px;
+            color: #5a3e00;
+            margin-top: 1px;
+            font-weight: 500;
+        }
+
+        .promo-anim {
+            flex-shrink: 0;
+        }
+
+        .promo-sparkle {
+            animation: pulse-gold 1.8s ease-in-out infinite;
+        }
+
+        @keyframes pulse-gold {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.4);
+                opacity: 0.6;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* ===== FRESH BANNER ===== */
+        #freshBanner {
+            display: block;
+            margin: 8px 20px 16px;
+            padding: 0 8px;
+            font-size: 13px;
+            color: #4a3f2b;
+            font-weight: 500;
+            text-align: center;
+            line-height: 1.5;
+            animation: fadeInDown 0.5s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== CATEGORY SCROLL ===== */
+        .cat-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 8px;
+            padding: 0 20px 12px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .cat-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .cat-pill {
+            flex-shrink: 0;
+            border: 1px solid transparent;
+            background: var(--green-pale);
+            color: var(--green);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 18px;
+            border-radius: var(--radius-pill);
+            cursor: pointer;
+            transition: all .18s;
+            white-space: nowrap;
+        }
+
+        .cat-pill:active {
+            transform: scale(.96);
+        }
+
+        .cat-pill.active {
+            background: var(--green);
+            color: white;
+            box-shadow: 0 4px 12px rgba(15, 77, 55, .25);
+        }
+
+        /* ===== SECTION HEADER ===== */
+        .sec-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 20px 16px;
+        }
+
+        .sec-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--gray-900);
+        }
+
+        /* ===== SEARCH ===== */
+        .search-toggle-wrap {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .search-icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            color: var(--green);
+            transition: background 0.2s;
+        }
+
+        .search-icon-btn:hover {
+            background: var(--green-pale);
+        }
+
+        .search-input-wrap {
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            max-width: 0;
+            opacity: 0;
+            transition: max-width 0.3s ease, opacity 0.2s ease, margin 0.2s;
+            background: white;
+            border: 1px solid var(--green-pale);
+            border-radius: 100px;
+            margin-left: 0;
+        }
+
+        .search-input-wrap.open {
+            max-width: 200px;
+            opacity: 1;
+            margin-left: 8px;
+        }
+
+        .search-input-wrap input {
+            border: none;
+            outline: none;
+            background: transparent;
+            padding: 6px 10px;
+            font-family: inherit;
+            font-size: 13px;
+            width: 100%;
+            min-width: 80px;
+        }
+
+        .search-input-wrap .clear-search {
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 0 8px;
+            font-size: 16px;
+            line-height: 1;
+            display: none;
+        }
+
+        .search-input-wrap .clear-search.visible {
+            display: inline-block;
+        }
+
+        .clear-search:hover {
+            color: var(--red);
+        }
+
+        /* ===== MENU LIST ===== */
+        .menu-list {
+            padding: 0 20px;
+            display: block;
+        }
+
+        .menu-item {
+            display: flex;
+            gap: 14px;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(15, 77, 55, .06);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .menu-item:active {
+            background: rgba(15, 77, 55, .02);
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-img-wrap {
+            flex-shrink: 0;
+            width: 110px;
+            height: 110px;
+            border-radius: 14px;
+            background: var(--gray-100);
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(15, 77, 55, .05);
+        }
+
+        .item-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .item-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .item-name-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .item-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--gray-900);
+            line-height: 1.3;
+            margin: 0;
+        }
+
+        .item-badge-right {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            padding: 2px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            background: var(--green-pale);
+            color: var(--green);
+        }
+
+        .item-badge-right.red {
+            background: var(--red);
+            color: white;
+        }
+
+        .item-badge-right.gold {
+            background: var(--gray-900);
+            color: var(--gold);
+        }
+
+        .item-flavor-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            width: 100%;
+            margin-bottom: 2px;
+        }
+
+        .item-flavor {
+            font-size: 12px;
+            color: var(--gray-500);
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .item-flavor-tag {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--green);
+            white-space: nowrap;
+            flex-shrink: 0;
+            text-align: right;
+        }
+
+        .item-spice {
+            font-size: 11px;
+            color: var(--red);
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .item-desc {
+            font-size: 13px;
+            color: var(--gray-500);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .item-buah-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 10px;
+            margin-bottom: 4px;
+        }
+
+        .item-buah-chip {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--green);
+            background: var(--green-pale);
+            padding: 2px 8px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+
+        .item-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 6px;
+        }
+
+        .item-price {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--gray-900);
+            letter-spacing: -.02em;
+        }
+
+        .item-portion {
+            font-size: 11px;
+            color: var(--gray-400);
+            font-weight: 500;
+        }
+
+        /* ===== QUANTITY CONTROLS ===== */
+        .qty-control {
+            display: flex;
+            align-items: center;
+            background: var(--green-pale);
+            border-radius: var(--radius-pill);
+            overflow: hidden;
+            transition: all .2s;
+        }
+
+        .qty-btn {
+            width: 30px;
+            height: 30px;
+            background: none;
+            border: none;
+            color: var(--green);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 300;
+            flex-shrink: 0;
+        }
+
+        .qty-btn:active {
+            background: rgba(15, 77, 55, .12);
+        }
+
+        .qty-num {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--green);
+            min-width: 22px;
+            text-align: center;
+        }
+
+        .add-btn {
+            width: 30px;
+            height: 30px;
+            background: var(--green);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 10px rgba(15, 77, 55, .35);
+            flex-shrink: 0;
+            font-size: 18px;
+        }
+
+        .add-btn:active {
+            transform: scale(.9);
+        }
+
+        .btn-add-unified {
+            background: var(--green);
+            color: white;
+            border: none;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 3px 10px rgba(15, 77, 55, 0.25);
+            transition: all 0.2s ease;
+        }
+
+        .btn-add-unified:active {
+            transform: scale(0.96);
+        }
+
+        /* ===== ADDONS ===== */
+        .addon-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 0 20px 24px;
+        }
+
+        .addon-card {
+            background: white;
+            border: 1px solid rgba(15, 77, 55, .08);
+            border-radius: 14px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            transition: border-color .2s;
+        }
+
+        .addon-icon {
+            margin-bottom: 8px;
+        }
+
+        .addon-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .addon-desc {
+            font-size: 11px;
+            color: var(--gray-400);
+            margin: 2px 0 6px;
+        }
+
+        .addon-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: auto;
+        }
+
+        .addon-price {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--gray-700);
+        }
+
+        .addon-add {
+            width: 26px;
+            height: 26px;
+            background: var(--green-pale);
+            border: none;
+            border-radius: 50%;
+            color: var(--green);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .addon-add:active {
+            background: var(--gray-300);
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--gray-500);
+            font-size: 15px;
+            display: none;
+        }
+
+        /* ===== DIVIDER ===== */
+        .divider {
+            height: 8px;
+            background: rgba(244, 196, 48, .08);
+            margin: 12px 0;
+        }
+
+        /* ===== EDUCATION ===== */
+        .edu-container {
+            padding: 0 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .edu-card {
+            background: white;
+            border: 1px solid rgba(15, 77, 55, .08);
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .edu-icon-wrap {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .edu-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .edu-desc {
+            font-size: 13px;
+            color: var(--gray-500);
+            line-height: 1.5;
+        }
+
+        /* ===== FAQ ===== */
+        .faq-container {
+            padding: 0 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .faq-item {
+            background: white;
+            border: 1px solid rgba(15, 77, 55, .08);
+            border-radius: 14px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: border-color .2s;
+        }
+
+        .faq-item:active {
+            background: var(--gray-100);
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--gray-900);
+        }
+
+        .faq-question svg {
+            color: var(--green);
+            transition: transform .3s;
+            pointer-events: none;
+        }
+
+        .faq-answer {
+            font-size: 13px;
+            color: var(--gray-500);
+            line-height: 1.6;
+            margin-top: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .3s ease, margin-top .3s ease;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 500px;
+            margin-top: 8px;
+        }
+
+        .faq-item.open .faq-question svg {
+            transform: rotate(180deg);
+        }
+
+        /* ===== TESTIMONIALS ===== */
+        .testi-flip-container {
+            position: relative;
+            overflow: hidden;
+            height: 140px;
+            margin: 0 20px 16px;
+            background: #FFFDF5;
+            border: 1px solid #F0E6C0;
+            border-radius: 14px;
+            padding: 20px;
+            touch-action: pan-y;
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .testi-card {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s;
+        }
+
+        .testi-dot {
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer-brand {
+            background: var(--green);
+            color: white;
+            width: 100%;
+            transition: padding-bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: auto;
+        }
+
+        .footer-brand-inner {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 32px 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .footer-brand-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-brand-row img {
+            height: 44px;
+            width: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .footer-brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.5px;
+        }
+
+        .footer-brand-name span {
+            color: var(--gold);
+        }
+
+        .footer-brand-desc {
+            font-size: 14px;
+            opacity: .85;
+            line-height: 1.6;
+            flex: 1;
+            margin: 0;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 12px;
+        }
+
+        .footer-col h4 {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 12px;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            opacity: .9;
+        }
+
+        .footer-col ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-col ul li {
+            font-size: 13px;
+            opacity: .8;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-col ul li svg {
+            color: var(--gold);
+            width: 16px;
+            height: 16px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+            margin-bottom: 16px;
+        }
+
+        .footer-social a {
+            color: white;
+            background: rgba(255, 255, 255, .12);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background .2s, transform .2s;
+            text-decoration: none;
+        }
+
+        .footer-social a img {
+            width: 32px !important;
+            height: 32px !important;
+            object-fit: contain;
+        }
+
+        .footer-social a:hover {
+            background: var(--gold);
+            transform: translateY(-3px);
+        }
+
+        .footer-wa-icon {
+            background: var(--gold);
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 16px rgba(244, 196, 48, 0.4);
+        }
+
+        .footer-wa-icon:hover {
+            transform: scale(1.15);
+        }
+
+        .footer-wa-icon img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, .12);
+            padding-top: 16px;
+            text-align: center;
+            font-size: 11px;
+            opacity: .5;
+            margin-top: 8px;
+        }
+
+        /* ===== BOTTOM BAR (FIXED) ===== */
+        #bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(100%);
+            width: 100%;
+            max-width: 480px;
+            background: rgba(255, 253, 248, 0.96);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-top: 1px solid rgba(15, 77, 55, .06);
+            padding: 6px 12px max(10px, env(safe-area-inset-bottom, 10px));
+            z-index: 200;
+            box-shadow: 0 -10px 30px rgba(15, 77, 55, .05);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #bottom-bar.visible {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        #bottom-bar .close-bottom-bar {
+            position: absolute;
+            top: 4px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.04);
+            border: none;
+            color: var(--gray-500);
+            font-size: 16px;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            z-index: 10;
+        }
+
+        #bottom-bar .close-bottom-bar:active {
+            color: var(--red);
+        }
+
+        .progress-container {
+            margin-bottom: 8px;
+            background: white;
+            border: 1px solid rgba(15, 77, 55, .08);
+            border-radius: 10px;
+            padding: 6px 10px;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3px;
+            font-size: 10px;
+            color: var(--gray-700);
+        }
+
+        .progress-text span:first-child {
+            font-weight: 600;
+        }
+
+        .progress-text span:last-child {
+            font-weight: 800;
+            color: var(--green);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--gray-200);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--red);
+            border-radius: 10px;
+            transition: width .4s ease;
+        }
+
+        .shipping-estimate {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            background: var(--green-pale);
+            border-radius: var(--radius-pill);
+            padding: 4px 10px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            font-size: 10px;
+        }
+
+        .shipping-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .shipping-left svg {
+            width: 14px;
+            height: 14px;
+            color: var(--green);
+        }
+
+        .shipping-cost {
+            font-weight: 800;
+            color: var(--red);
+            font-size: 12px;
+        }
+
+        .shipping-distance {
+            font-size: 10px;
+            color: var(--gray-500);
+            font-weight: 500;
+            margin-left: 2px;
+        }
+
+        .shipping-toggle {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .shipping-toggle input[type=checkbox] {
+            width: 30px;
+            height: 16px;
+            appearance: none;
+            background: var(--gray-300);
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
+            transition: background .2s;
+            flex-shrink: 0;
+        }
+
+        .shipping-toggle input[type=checkbox]::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            transition: transform .2s;
+        }
+
+        .shipping-toggle input[type=checkbox]:checked {
+            background: var(--red);
+        }
+
+        .shipping-toggle input[type=checkbox]:checked::after {
+            transform: translateX(14px);
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .toggle-label svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .badge-priority {
+            background: var(--red);
+            color: white;
+            font-size: 8px;
+            font-weight: 700;
+            padding: 1px 4px;
+            border-radius: 10px;
+            text-transform: uppercase;
+        }
+
+        .shipping-out-of-range {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: var(--red);
+            padding: 4px 10px;
+            border-radius: var(--radius-pill);
+            font-size: 10px;
+            font-weight: 600;
+            display: none;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .cart-summary {
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 1px solid rgba(15, 77, 55, .1);
+            border-radius: 10px;
+            padding: 6px 10px;
+            margin-bottom: 4px;
+            gap: 8px;
+            cursor: pointer;
+            min-height: 40px;
+        }
+
+        .cart-summary:active {
+            background: var(--gray-100);
+        }
+
+        .cart-items-preview {
+            flex: 1;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .cart-total-wrap {
+            text-align: right;
+        }
+
+        .cart-total {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--green);
+            display: block;
+        }
+
+        .cart-discount-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--red);
+            background: #fef2f2;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 4px;
+            display: inline-block;
+        }
+
+        .wa-btn {
+            width: 100%;
+            background: var(--green);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all .18s;
+        }
+
+        .wa-btn:active {
+            transform: scale(.98);
+        }
+
+        .wa-btn-left {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            gap: 1px;
+        }
+
+        .wa-btn-sub {
+            font-size: 10px;
+            font-weight: 500;
+            opacity: .7;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+        }
+
+        .wa-badge {
+            background: rgba(255, 255, 255, .2);
+            border: 1px solid rgba(255, 255, 255, .3);
+            border-radius: 8px;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ===== FLOATING CART BUTTON ===== */
+        #floatingCartBtn {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: var(--green);
+            color: white;
+            border-radius: 50%;
+            box-shadow: 0 6px 20px rgba(15, 77, 55, .4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 250;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #floatingCartBtn:active {
+            transform: scale(0.95);
+        }
+
+        #floatingCartBtn .badge-cart {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--red);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        @media (max-width: 480px) {
+            #floatingCartBtn {
+                bottom: 120px;
+            }
+            #bottom-bar.visible~#floatingCartBtn {
+                display: none !important;
+            }
+        }
+
+        /* ===== TOAST ===== */
+        #toast {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: var(--green);
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: var(--radius-pill);
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: all .25s;
+            max-width: 90%;
+            word-wrap: break-word;
+            box-shadow: 0 4px 16px rgba(15, 77, 55, .4);
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ===== MODALS ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .3s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            max-width: 400px;
+            width: 100%;
+            max-height: 90vh;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: scale(0.95);
+            transition: transform .3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px 8px;
+            flex-shrink: 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .modal-header-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .modal-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray-500);
+            padding: 4px;
+            line-height: 1;
+        }
+
+        .modal-close:active {
+            color: var(--gray-900);
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px 12px;
+            overscroll-behavior: contain;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .modal-footer {
+            flex-shrink: 0;
+            padding: 16px 20px 20px;
+            background: white;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .modal-footer .modal-add {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            background: var(--green);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background .2s, transform .2s;
+        }
+
+        .modal-footer .modal-add:active {
+            background: var(--green-light);
+            transform: scale(.98);
+        }
+
+        /* ===== PRODUCT MODAL ===== */
+        .modal-img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: var(--gray-100);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+            overflow: hidden;
+        }
+
+        .modal-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-title-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 2px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin: 0;
+        }
+
+        .modal-badge-eyebrow {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 2px 10px;
+            border-radius: 20px;
+            background: var(--green-pale);
+            color: var(--green);
+            letter-spacing: .03em;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .modal-badge-eyebrow.red {
+            background: var(--red);
+            color: white;
+        }
+
+        .modal-badge-eyebrow.gold {
+            background: var(--gray-900);
+            color: var(--gold);
+        }
+
+        .modal-desc {
+            font-size: 14px;
+            color: var(--gray-500);
+            line-height: 1.6;
+            margin: 4px 0 12px;
+        }
+
+        .modal-detail-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: var(--gray-100);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+        }
+
+        .modal-detail-grid .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .modal-detail-grid .label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: .03em;
+        }
+
+        .modal-detail-grid .value {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray-900);
+            text-align: right;
+            max-width: 70%;
+            word-break: break-word;
+        }
+
+        .modal-buah-text {
+            font-size: 13px;
+            color: var(--gray-700);
+            line-height: 1.5;
+            margin: 4px 0 10px;
+            padding: 8px 12px;
+            background: var(--gray-100);
+            border-radius: 10px;
+        }
+
+        .modal-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .modal-tag {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: var(--green-pale);
+            color: var(--green);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .spice-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 8px 0 4px;
+            flex-wrap: wrap;
+            background: #fce4e4;
+            border: 1px solid #f5c2c2;
+            border-radius: 12px;
+            padding: 10px 14px;
+        }
+
+        .spice-row .spice-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--gray-700);
+            white-space: nowrap;
+        }
+
+        .custom-select-trigger {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid var(--gray-200);
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            color: var(--gray-400);
+            transition: border-color 0.2s;
+        }
+
+        .custom-select-trigger.selected {
+            color: var(--gray-900);
+        }
+
+        .custom-select-trigger:focus {
+            outline: none;
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(15, 77, 55, 0.1);
+        }
+
+        /* ===== SELECT MODAL (Bottom Sheet) ===== */
+        .select-modal {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            padding: 20px;
+            z-index: 9999;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.15);
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .select-modal.active {
+            transform: translateY(0);
+        }
+
+        .select-modal h3 {
+            margin: 0 0 16px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gray-900);
+            text-align: center;
+        }
+
+        .select-option {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .select-option:active {
+            background: var(--green-pale);
+        }
+
+        .select-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 9998;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .select-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* ===== MINI CART ===== */
+        .mini-cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .mini-cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .mini-cart-info {
+            flex: 1;
+        }
+
+        .mini-cart-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--gray-900);
+        }
+
+        .mini-cart-detail {
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        .mini-cart-qty {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mini-cart-qty button {
+            background: var(--green-pale);
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--green);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mini-cart-qty button:active {
+            background: var(--gray-300);
+        }
+
+        .mini-cart-qty span {
+            font-weight: 700;
+            font-size: 14px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .mini-cart-remove {
+            background: none;
+            border: none;
+            color: var(--red);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .clear-cart-btn {
+            background: none;
+            border: none;
+            color: var(--red);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background .2s;
+        }
+
+        .clear-cart-btn:active {
+            background: rgba(214, 40, 40, .08);
+        }
+
+        .cart-subtotal {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: 16px;
+            padding: 12px 0;
+            border-top: 1px solid var(--gray-200);
+            margin-top: 8px;
+        }
+
+        .cart-subtotal span:last-child {
+            color: var(--green);
+        }
+
+        .btn-step {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            background: var(--gray-200);
+            color: var(--gray-700);
+            margin-top: 10px;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .btn-step:active {
+            transform: scale(0.98);
+        }
+
+        .btn-step.primary {
+            background: var(--green);
+            color: white;
+        }
+
+        .btn-step.primary:active {
+            background: var(--green-dark);
+        }
+
+        .btn-step.primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .shipping-options,
+        .vehicle-options {
+            display: flex;
+            gap: 8px;
+        }
+
+        .ship-btn,
+        .veh-btn {
+            flex: 1;
+            padding: 10px 12px;
+            border: 2px solid var(--gray-200);
+            border-radius: 10px;
+            background: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .ship-btn:active,
+        .veh-btn:active {
+            transform: scale(0.97);
+        }
+
+        .ship-btn.active,
+        .veh-btn.active {
+            border-color: var(--green);
+            background: var(--green-pale);
+            color: var(--green);
+        }
+
+        .priority-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: var(--gray-100);
+            border-radius: 10px;
+        }
+
+        .priority-toggle span {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--gray-700);
+        }
+
+        .final-summary {
+            background: var(--gray-100);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .final-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            padding: 4px 0;
+            color: var(--gray-700);
+        }
+
+        .final-row.discount {
+            color: var(--red);
+        }
+
+        .final-row.total {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--green);
+            border-top: 2px solid var(--gray-300);
+            padding-top: 8px;
+            margin-top: 4px;
+        }
+
+        .gift-section {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-top: 8px;
+        }
+
+        .gift-section input[type="checkbox"] {
+            accent-color: var(--green);
+            width: 16px;
+            height: 16px;
+            margin-right: 6px;
+        }
+
+        .gift-section label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #92400e;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .gift-section input,
+        .gift-section textarea {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .gift-section input:focus,
+        .gift-section textarea:focus {
+            outline: none;
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(15, 77, 55, .1);
+        }
+
+        /* ===== FORM ===== */
+        .form-section {
+            margin-bottom: 14px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--gray-700);
+            margin-bottom: 6px;
+        }
+
+        .form-section input,
+        .form-section textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid var(--gray-200);
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            color: var(--gray-900);
+            background: white;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+
+        .form-section input:focus,
+        .form-section textarea:focus {
+            outline: none;
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(15, 77, 55, 0.1);
+        }
+
+        .form-section input::placeholder,
+        .form-section textarea::placeholder {
+            color: var(--gray-400);
+        }
+
+        .form-section textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .input-error {
+            border-color: #fecaca !important;
+            background-color: #fff5f5 !important;
+            box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.2) !important;
+        }
+
+        .field-error {
+            color: var(--red);
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        /* ===== QRIS ===== */
+        #qrisImagePayment {
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            transform-origin: center center;
+            width: 100%;
+            max-width: 280px;
+            height: auto;
+            aspect-ratio: 1/1;
+            object-fit: contain;
+            border-radius: 12px;
+            background: white;
+            border: 2px solid #E8E0D0;
+            display: block;
+            margin: 0 auto;
+        }
+
+        #qrisImagePayment.qr-zoomed-1 {
+            transform: scale(1.5);
+        }
+        #qrisImagePayment.qr-zoomed-2 {
+            transform: scale(3);
+        }
+        #qrisImagePayment.qr-zoomed-3 {
+            transform: scale(4.5);
+        }
+
+        /* ===== AI ===== */
+        #aiRecommendationContainer {
+            animation: slideDownAI 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideDownAI {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .ai-search-highlight {
+            background: #F4C430;
+            color: #0F4D37;
+            padding: 0 4px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        /* ===== SKELETON ===== */
+        .skeleton {
+            background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        .skeleton-item {
+            display: flex;
+            gap: 14px;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(15, 77, 55, .06);
+        }
+
+        .skeleton-img {
+            width: 110px;
+            height: 110px;
+            border-radius: 14px;
+            flex-shrink: 0;
+        }
+
+        .skeleton-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .skeleton-line {
+            height: 14px;
+            border-radius: 6px;
+            width: 100%;
+        }
+
+        .skeleton-line.short {
+            width: 60%;
+        }
+        .skeleton-line.medium {
+            width: 80%;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 420px) {
+            .brand-name {
+                font-size: 17px;
+            }
+            .location-value {
+                font-size: 11px;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .addon-grid {
+                grid-template-columns: 1fr;
+            }
+            .shipping-options,
+            .vehicle-options {
+                flex-direction: column;
+            }
+            .ship-btn,
+            .veh-btn {
+                flex: none;
+            }
+            .modal-footer {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            .modal-footer .modal-add {
+                width: 100%;
+            }
+            .spice-row {
+                flex-wrap: wrap;
+            }
+            .store-status {
+                font-size: 11px;
+                padding: 3px 8px;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .wa-btn {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+            .wa-badge {
+                padding: 3px 8px;
+                font-size: 10px;
+            }
+            .footer-social a {
+                width: 48px;
+                height: 48px;
+            }
+            .footer-social a img {
+                width: 28px !important;
+                height: 28px !important;
+            }
+            .footer-wa-icon {
+                width: 52px;
+                height: 52px;
+            }
+            .footer-wa-icon img {
+                width: 28px;
+                height: 28px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        button:focus-visible,
+        a:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: 2px solid var(--green);
+            outline-offset: 2px;
+        }
+
+        @media print {
+            #bottom-bar,
+            #floatingCartBtn,
+            #toast,
+            .modal-overlay {
+                display: none !important;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div id="app">
-    <!-- HEADER -->
-    <header id="header">
-      <div class="header-top">
-        <div class="header-left">
-          <div class="brand-logo"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" /><span class="brand-name">Rujak<span>.Co</span></span></div>
-        </div>
-        <div class="header-right">
-          <div class="store-status" id="storeStatus"><span class="status-dot"></span><span class="status-text" id="storeStatusText">Buka</span></div>
-          <div class="location-pill" id="locationPill">
-            <i data-lucide="map-pin" class="w-4 h-4 text-[#0F4D37]"></i>
-            <div class="location-text"><span class="location-label">Pengiriman ke</span><span class="location-value" id="locationDisplay">Mendeteksi... ▾</span></div>
-          </div>
-        </div>
-      </div>
-    </header>
 
-    <!-- MAIN CONTENT -->
-    <div class="content-wrapper" id="mainContent">
-      <div class="hero-premium">
-        <div class="hero-media"><img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Asem, pedes, manis, seger" /></div>
-        <div class="hero-gradient"></div>
-        <div class="hero-content-premium">
-          <span class="hero-eyebrow">Kualitas Premium • Bekasi</span>
-          <h2 class="hero-title">Asem, Pedes,<br><em>Manis, Seger.</em></h2>
-          <p class="hero-subtitle">Kurasi buah terbaik dalam satu gigitan.</p>
-          <button class="hero-cta" onclick="document.getElementById('menuList').scrollIntoView({behavior:'smooth'})">Lihat Koleksi <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
-        </div>
-      </div>
-
-      <div class="trust-section reveal-on-scroll">
-        <div class="trust-stats stagger-children">
-          <div class="trust-stat"><div class="trust-stat-number">4.9</div><div class="trust-stat-label">Rating Pelanggan</div></div>
-          <div class="trust-stat"><div class="trust-stat-number">100%</div><div class="trust-stat-label">Garansi Segar</div></div>
-          <div class="trust-stat"><div class="trust-stat-number"><i data-lucide="shield-check" class="w-6 h-6 inline"></i></div><div class="trust-stat-label">Standar Higienis</div></div>
-        </div>
-      </div>
-
-      <div id="storeStatusBanner" class="store-status-banner" style="display:none;"><i data-lucide="clock" class="w-4 h-4 inline"></i> <span id="storeStatusBannerText">Toko tutup. Buka jam 10.00 WIB.</span></div>
-
-      <div id="freshBanner" class="fresh-banner"><i data-lucide="leaf" class="w-4 h-4 text-[#0F4D37]"></i> <span><strong>Standar Fresh-Prep:</strong> Buah dipotong 15 menit sebelum pengiriman untuk menjaga kerenyahan optimal.</span></div>
-
-      <div id="aiRecommendationContainer" class="ai-recommendation" style="display:none;"></div>
-
-      <nav class="cat-scroll no-sb" id="catScroll">
-        <button type="button" class="cat-pill active" data-cat="all">Semua Koleksi</button>
-        <button type="button" class="cat-pill" data-cat="signature">Signature</button>
-        <button type="button" class="cat-pill" data-cat="classic">Classic</button>
-        <button type="button" class="cat-pill" data-cat="reserve">Reserve</button>
-        <button type="button" class="cat-pill" data-cat="addon">Pelengkap</button>
-      </nav>
-
-      <div class="sec-header" id="menuHeader"><span class="sec-title">Koleksi Rasa</span>
-        <div class="search-toggle-wrap" id="searchToggleWrap">
-          <button class="search-icon-btn" id="searchIconBtn" aria-label="Cari"><i data-lucide="search" class="w-5 h-5"></i></button>
-          <div class="search-input-wrap" id="searchInputWrap"><input type="text" id="searchInput" placeholder="Cari sajian..." autocomplete="off" /><button type="button" class="clear-search" id="clearSearchBtn">✕</button></div>
-        </div>
-      </div>
-
-      <div class="empty-state" id="emptyState" style="display:none;">Sajian tidak ditemukan.</div>
-      <div id="skeletonContainer" style="padding:0 20px;"><div class="skeleton-item"><div class="skeleton-img skeleton"></div><div class="skeleton-body"><div class="skeleton-line skeleton"></div><div class="skeleton-line skeleton medium"></div><div class="skeleton-line skeleton short"></div></div></div></div>
-      <div class="menu-list" id="menuList" style="display:none;"></div>
-
-      <div class="divider" id="addonDivider"></div>
-      <div class="sec-header" id="addonHeader"><span class="sec-title">Pelengkap Sajian</span></div>
-      <div class="addon-grid" id="addonList"></div>
-
-      <div class="divider"></div>
-      <div class="sec-header" style="margin-top:16px"><span class="sec-title">Pengalaman Rujak.Co</span></div>
-      <div class="edu-container reveal-on-scroll stagger-children">
-        <div class="edu-card"><div class="edu-icon-wrap"><i data-lucide="droplets" class="w-5 h-5"></i></div><div><h4 class="edu-title">Sistem Fresh-Lock™</h4><p class="edu-desc">Sambal premium dikemas dalam wadah tersegel terpisah, memastikan buah tetap dingin dan renyah selama perjalanan.</p></div></div>
-        <div class="edu-card"><div class="edu-icon-wrap"><i data-lucide="clock" class="w-5 h-5"></i></div><div><h4 class="edu-title">Standar Fresh-Prep</h4><p class="edu-desc">Pesanan hari ini dikirim esok hari. Proses pengupasan dilakukan tepat sebelum kurir tiba untuk mempertahankan kualitas buah.</p></div></div>
-      </div>
-
-      <div class="guarantee-badge reveal-on-scroll"><i data-lucide="award" class="w-8 h-8 text-[#0F4D37]"></i><div><strong>Jaminan Kualitas</strong><span>Pengembalian penuh jika kualitas buah tidak memenuhi standar premium kami saat diterima.</span></div></div>
-    </div>
-
-    <!-- PRODUCT DETAIL PAGE -->
-    <div class="product-page" id="productPage" style="display:none;">
-      <div class="product-page-header">
-        <button class="back-btn" id="backFromProduct"><i data-lucide="arrow-left"></i></button>
-        <span class="product-page-title">Detail Sajian</span>
-        <button class="share-btn-page" id="shareProductPage"><i data-lucide="share-2"></i></button>
-      </div>
-      <div class="product-page-img" id="productPageImg"></div>
-      <div class="product-page-body">
-        <div class="product-page-badge" id="productPageBadge" style="display:none;"></div>
-        <h1 class="product-page-name" id="productPageName"></h1>
-        <p class="product-page-desc" id="productPageDesc"></p>
-        <div class="product-page-meta">
-          <div class="meta-row"><span>Kemasan</span><span id="productPageContainer">-</span></div>
-          <div class="meta-row"><span>Sajian</span><span id="productPageSize">-</span></div>
-          <div class="meta-row"><span>Sambal</span><span id="productPageSambal">-</span></div>
-        </div>
-        <div class="product-page-buah" id="productPageBuah"></div>
-        <div class="product-page-tags" id="productPageTags"></div>
-        <div class="spice-row-page"><span>Intensitas Pedas</span><div class="spice-options" id="spiceOptionsPage"></div></div>
-        <div class="product-page-actions">
-          <div class="product-page-price" id="productPagePrice"></div>
-          <div class="qty-control"><button class="qty-btn" id="qtyMinusPage">−</button><span class="qty-num" id="qtyNumPage">1</span><button class="qty-btn" id="qtyPlusPage">+</button></div>
-          <button class="add-to-cart-page" id="addToCartPage">Tambahkan</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- BOTTOM BAR (Floating Checkout Summary) -->
-  <div id="bottom-bar">
-    <div class="progress-container" id="progressContainer" style="display:none;">
-      <div class="progress-text"><span id="progressLabel">Belanja Rp100rb untuk Privilege</span><span id="progressPercent">0%</span></div>
-      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0;"></div></div>
-    </div>
-    <div class="shipping-estimate" id="shippingEstimate">
-      <div class="shipping-left"><i data-lucide="truck" class="w-4 h-4 text-[#0F4D37]"></i><span>Ongkir:</span><span class="shipping-cost" id="shippingCost">⏳</span><span class="shipping-distance" id="shippingDistance"></span></div>
-      <div class="shipping-toggle"><input type="checkbox" id="priorityToggle" /><label for="priorityToggle" class="toggle-label" style="cursor:pointer;"><i data-lucide="zap"></i><span class="badge-priority">Prioritas</span></label></div>
-    </div>
-    <div id="manualSelectWrapper" style="margin-bottom:10px;">
-      <div style="display:flex;gap:8px;margin-bottom:8px;">
-        <button type="button" id="btnAutoDetect" class="active" style="flex:1;padding:8px;border:1px solid var(--gray-200);border-radius:8px;background:white;font-size:12px;font-weight:600;">📍 Deteksi Otomatis</button>
-        <button type="button" id="btnManualDistrict" style="flex:1;padding:8px;border:1px solid var(--gray-200);border-radius:8px;background:white;font-size:12px;font-weight:600;">🗺️ Pilih Manual</button>
-      </div>
-      <div id="districtTrigger" class="custom-select-trigger" style="margin-top:8px;"><span id="districtLabel">Pilih kecamatan tujuan...</span><i data-lucide="chevron-down" class="w-4 h-4"></i></div>
-      <input type="hidden" id="districtSelect" value="">
-    </div>
-    <div class="shipping-out-of-range" id="outOfRange" style="display:none;">⚠️ Wilayah di luar jangkauan kurir standar.</div>
-    <div class="cart-summary" id="cartSummary" tabindex="0" role="button" aria-label="Buka keranjang">
-      <span class="cart-items-preview" id="cartPreview">0 sajian</span>
-      <div class="cart-total-wrap"><span id="discountLabel" class="cart-discount-label" style="display:none;">Privilege Aktif</span><span class="cart-total" id="cartTotalDisplay">Rp0</span></div>
-    </div>
-    <button type="button" class="wa-btn" data-action="open-cart"><div class="wa-btn-left"><span class="wa-btn-sub">Pesanan Anda</span><span>Selesaikan Checkout</span></div><i data-lucide="chevron-right" class="w-5 h-5 text-white"></i></button>
-  </div>
-
-  <!-- FIXED BOTTOM NAVIGATION BAR -->
-  <nav class="bottom-nav" id="bottomNav">
-    <a href="#" class="nav-item active" data-tab="home"><i data-lucide="home" class="nav-icon"></i><span class="nav-label">Home</span></a>
-    <a href="#" class="nav-item" data-tab="explore"><i data-lucide="compass" class="nav-icon"></i><span class="nav-label">Jelajah</span></a>
-    <a href="#" class="nav-item" data-tab="orders"><i data-lucide="package" class="nav-icon"></i><span class="nav-label">Pesanan</span></a>
-    <a href="#" class="nav-item" data-tab="chat"><i data-lucide="message-circle" class="nav-icon"></i><span class="nav-label">Concierge</span></a>
-  </nav>
-
-  <div id="floatingCartBtn" aria-label="Buka keranjang"><i data-lucide="shopping-bag" style="width:24px;height:24px;"></i><span class="badge-cart" id="floatingBadge">0</span></div>
-  <div id="toast" role="alert" aria-live="polite"></div>
-
-  <!-- MINI CART MODAL -->
-  <div class="modal-overlay" id="miniCartModal">
-    <div class="modal-content bottom-sheet" style="max-width:480px;">
-      <div class="modal-header"><span class="modal-header-title">Detail Pesanan</span><button class="modal-close" id="miniCartClose">✕</button></div>
-      <div class="modal-body" style="padding:16px 20px; max-height:75vh; overflow-y:auto; background:#FAFAFA;">
-        
-        <div class="checkout-card">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><div class="card-title">Sajian Anda</div><button class="clear-cart-btn" id="clearCartBtn">Kosongkan</button></div>
-          <div id="miniCartList"></div>
-          <div class="cart-subtotal"><span>Subtotal Sajian</span><span id="cartSubtotalDisplay">Rp0</span></div>
-        </div>
-
-        <div id="step1Upsell"></div>
-
-        <div class="checkout-card">
-          <div class="card-title">Informasi Pengiriman</div>
-          <div class="form-section"><input type="text" id="customerName" placeholder="Nama Lengkap Penerima" autocomplete="name"></div>
-          <div class="form-section"><input type="tel" id="customerPhone" placeholder="Nomor Telepon (08xx)" autocomplete="tel"></div>
-          <div class="form-section"><textarea id="customerAddress" placeholder="Detail Alamat (Jalan, Nomor, Patokan)" rows="2"></textarea></div>
-          
-          <div class="form-section" style="position:relative;">
-            <input type="text" id="districtInput" placeholder="Ketik nama kecamatan untuk konfirmasi..." autocomplete="off">
-            <div id="customDistrictDropdown" style="display:none; position:absolute; background:white; border:1px solid var(--gray-200); border-radius:8px; max-height:200px; overflow-y:auto; width:100%; z-index:999; box-shadow:0 4px 12px rgba(0,0,0,0.1);" role="listbox"></div>
-          </div>
-          
-          <div class="form-section">
-            <div id="deliveryTimeTrigger" class="custom-select-trigger"><span id="deliveryTimeLabel">Pilih Waktu Pengiriman (Besok)...</span><i data-lucide="chevron-down" class="w-4 h-4"></i></div>
-            <input type="hidden" id="deliveryTime" name="deliveryTime" value="">
-          </div>
-          <div class="form-section"><input type="text" id="orderNotes" placeholder="Catatan Khusus (Opsional)"></div>
-        </div>
-
-        <div class="checkout-card" id="shippingSection" style="display:none;">
-          <div class="card-title">Opsi Logistik</div>
-          <div class="shipping-options"><button type="button" class="ship-btn active" data-provider="rujakco">Kurir Instan</button><button type="button" class="ship-btn" data-provider="paxel">Paxel Same Day</button></div>
-          <div id="rujakcoOptions" style="margin-top:12px;">
-            <div class="vehicle-options"><button type="button" class="veh-btn active" data-vehicle="motor">Roda Dua</button><button type="button" class="veh-btn" data-vehicle="mobil">Roda Empat (Aman)</button></div>
-            <div class="priority-toggle" style="margin-top:12px;display:flex;justify-content:space-between;align-items:center;">
-              <span style="font-size:13px;font-weight:600;color:var(--gray-700);">Layanan Prioritas (+Rp8.000)</span>
-              <input type="checkbox" id="priorityToggleMini" style="width:20px;height:20px;accent-color:var(--green);">
+    <div id="app">
+        <!-- ===== HEADER ===== -->
+        <header id="header">
+            <div class="header-top">
+                <div class="header-left">
+                    <div class="brand-logo">
+                        <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" />
+                        <span class="brand-name">Rujak<span>.Co</span></span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="store-status" id="storeStatus">
+                        <span class="status-dot"></span>
+                        <span class="status-text" id="storeStatusText">Buka</span>
+                    </div>
+                    <div class="location-pill" id="locationPill">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0F4D37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <div class="location-text">
+                            <span class="location-label">Diantar ke</span>
+                            <span class="location-value" id="locationDisplay">Mendeteksi... ▾</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div id="paxelOptions" style="display:none; margin-top:10px; font-size:12px; color:var(--gray-500); background:var(--green-pale); padding:10px; border-radius:8px;">🚀 Pengiriman terjadwal Paxel Same Day.</div>
-          <div id="breakdownContent" style="margin-top:12px; font-size:12px; color:var(--gray-500); border-top:1px solid var(--gray-200); padding-top:12px;"></div>
-        </div>
+        </header>
 
-        <div class="checkout-card gift-section">
-          <label style="display:flex;align-items:center;gap:8px;font-weight:600;font-size:13px;color:var(--gray-900);cursor:pointer;"><input type="checkbox" id="giftToggle" style="width:18px;height:18px;accent-color:var(--gold);"> Layanan Bingkisan / Kado</label>
-          <div id="giftFields" style="display:none;margin-top:12px;"><input type="text" id="giftSender" placeholder="Dari (Nama Pengirim)" style="margin-bottom:8px;"><textarea id="giftMessage" placeholder="Pesan Pribadi" rows="2"></textarea></div>
-        </div>
-
-        <div class="checkout-card final-summary">
-          <div class="final-row"><span>Subtotal</span><span id="finalSubtotal">Rp0</span></div>
-          <div class="final-row discount"><span>Privilege</span><span id="finalDiscount">-Rp0</span></div>
-          <div class="final-row"><span>Logistik</span><span id="finalShipping">Rp0</span></div>
-          <div class="final-row total"><span>Total Akhir</span><span id="finalTotal">Rp0</span></div>
-        </div>
-
-        <button class="btn-step primary" id="btnOpenPayment">Lanjutkan Pembayaran</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- PAYMENT MODAL -->
-  <div class="modal-overlay" id="paymentModal">
-    <div class="modal-content bottom-sheet">
-      <div class="modal-header"><span class="modal-header-title">Pembayaran Transaksi</span><button class="modal-close" id="paymentClose">✕</button></div>
-      <div class="modal-body" style="padding:24px 20px;">
-        <div style="position:relative;display:block;width:100%;max-width:240px;margin:0 auto 20px;">
-          <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" id="qrisImagePayment" style="width:100%;height:auto;aspect-ratio:1/1;object-fit:contain;border-radius:16px;background:white;display:block;box-shadow: 0 10px 30px rgba(0,0,0,0.08);" />
-        </div>
-        <div style="text-align:center; margin-bottom: 24px;">
-          <div style="font-size:12px;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Total Tagihan</div>
-          <div style="font-family:'Fraunces', serif;font-size:32px;font-weight:600;color:var(--green);" id="paymentTotalDisplay">Rp0</div>
-          <div id="paymentTotalDisplay2" style="display:none;"></div>
-        </div>
-        <button class="btn-step" id="copyAmountBtn" style="background:var(--ivory);border:1px solid var(--green-pale);color:var(--green);margin-bottom:16px;font-size:13px;padding:12px;">Salin Nominal Pembayaran</button>
-        <div style="background:var(--gray-100);border-radius:12px;padding:16px;font-size:13px;color:var(--gray-700);line-height:1.6;"><strong>Instruksi:</strong><br>Pindai kode QR di atas. Setelah transfer berhasil, klik tombol di bawah untuk melampirkan bukti transaksi.</div>
-      </div>
-      <div class="modal-footer" style="padding:16px 20px 24px;"><button type="button" class="btn-step primary" data-action="confirm-wa" style="margin:0;">Konfirmasi Pembayaran</button></div>
-    </div>
-  </div>
-
-  <!-- FOOTER BRAND CONCIERGE -->
-  <footer class="footer-brand">
-    <div class="footer-brand-inner">
-      <div class="footer-brand-row"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" /><span class="footer-brand-name">Rujak<span>.Co</span></span></div>
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:16px;">
-        <p class="footer-brand-desc" style="margin:0;">Menghadirkan keberagaman rasa rujak Indonesia dalam satu pengalaman yang elegan dan berkualitas.</p>
-        <div style="position: relative;">
-          <button id="aiChatToggle" class="ai-chat-btn">🤖 Concierge</button>
-          <div id="aiChatBox" class="ai-chat-box" style="display:none;">
-            <div class="ai-chat-header">
-              <div style="display:flex; align-items:center; gap:8px;"><span>🛎️</span><div><div style="font-size:14px;font-weight:700;">Rujak.Co Concierge</div><div style="font-size:9px;opacity:0.7;">Pramutamu Klien Premium</div></div></div>
-              <button id="aiChatClose" style="background:none;border:none;color:var(--green);cursor:pointer;font-weight:700;">✕</button>
+        <div class="content-wrapper">
+            <!-- ===== HERO ===== -->
+            <div class="hero-wrap">
+                <div class="hero">
+                    <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Asem, pedes, manis, seger" width="1260" height="540" />
+                    <div class="hero-grad"></div>
+                    <div class="hero-content">
+                        <h2 class="hero-title">Asem, Pedes,<br>Manis, Seger.<br>Dalam Satu Gigitan.</h2>
+                        <p class="hero-sub">Rujak premium dengan sambal mete terpisah — tetap renyah sampai tujuan. Ongkir mulai Rp8.000.</p>
+                    </div>
+                </div>
             </div>
-            <div id="aiChatMessages" class="ai-chat-messages" role="log" aria-live="polite">
-              <div style="margin-bottom:8px;"><span class="chat-bubble bot">Selamat datang di layanan Concierge Rujak.Co. Ada yang bisa saya bantu rekomendasikan untuk Anda hari ini?</span></div>
-            </div>
-            <div class="ai-chat-input-area">
-              <input id="aiChatInput" type="text" placeholder="Ketik pesan Anda...">
-              <button id="aiChatSend">Kirim</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="footer-grid" style="margin-top:24px;">
-        <div class="footer-col"><h4>Layanan Klien</h4><ul><li><i data-lucide="clock"></i> Sen–Jum: 10.00–20.00</li><li><i data-lucide="map-pin"></i> Bekasi, Jawa Barat</li></ul></div>
-        <div class="footer-col"><h4>Ikuti Kami</h4><div class="footer-social"><a href="https://www.instagram.com/rujakco.id" target="_blank" rel="noopener" aria-label="Instagram"><i data-lucide="instagram" class="w-4 h-4"></i></a></div></div>
-      </div>
-      <div class="footer-bottom">&copy; 2026 Rujak.Co — Premium Rujak Experience. All rights reserved.</div>
-    </div>
-  </footer>
 
-  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script defer src="app.js"></script>
-</body>
-</html>
+            <!-- ===== STORE STATUS BANNER ===== -->
+            <div id="storeStatusBanner" style="display:none;margin:0 20px 12px;padding:10px 14px;border-radius:12px;background:#FEE2E2;border:1px solid #FECACA;text-align:center;font-size:13px;font-weight:600;color:#991B1B;">
+                <span id="storeStatusBannerText">Toko tutup. Buka jam 10.00 WIB.</span>
+            </div>
+
+            <!-- ===== FRESH PREP BANNER ===== -->
+            <div id="freshBanner">
+                <span style="display:inline-flex; align-items:center; gap:6px; justify-content:center;">
+                    <span style="font-size:16px;">🌿</span>
+                    <span><strong style="color:#0F4D37;">Fresh‑Prep</strong> — Pesan hari ini, nikmati besok. Buah baru dipotong 15 menit sebelum dikirim agar kesegarannya 100% terjaga.</span>
+                    <span style="font-size:16px;">✨</span>
+                </span>
+            </div>
+
+            <!-- ===== PROMO STRIP ===== -->
+            <div class="promo-strip" id="promoTrigger">
+                <div class="promo-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D62828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                </div>
+                <div class="promo-text">
+                    <div class="promo-title">🎯 Misi Jajan — Diskon s/d Rp10.000</div>
+                    <div class="promo-sub">Selesaikan misi belanja & bagikan ke teman.</div>
+                </div>
+                <div class="promo-anim">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F4C430" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="promo-sparkle"><path d="M12 2L13.5 9.5L21 11L13.5 12.5L12 20L10.5 12.5L3 11L10.5 9.5L12 2Z"/></svg>
+                </div>
+            </div>
+
+            <!-- ===== AI RECOMMENDATION ===== -->
+            <div id="aiRecommendationContainer" style="display:none; margin: 0 20px 12px;"></div>
+
+            <!-- ===== CATEGORIES ===== -->
+            <nav class="cat-scroll" id="catScroll">
+                <button type="button" class="cat-pill active" data-cat="all">Semua</button>
+                <button type="button" class="cat-pill" data-cat="signature">Signature</button>
+                <button type="button" class="cat-pill" data-cat="classic">Classic</button>
+                <button type="button" class="cat-pill" data-cat="reserve">Reserve</button>
+                <button type="button" class="cat-pill" data-cat="addon">Tambahan</button>
+            </nav>
+
+            <!-- ===== MENU HEADER ===== -->
+            <div class="sec-header">
+                <span class="sec-title">Koleksi Rasa</span>
+                <div class="search-toggle-wrap">
+                    <button class="search-icon-btn" id="searchIconBtn" aria-label="Cari">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    </button>
+                    <div class="search-input-wrap" id="searchInputWrap">
+                        <input type="text" id="searchInput" placeholder="Cari menu..." autocomplete="off" />
+                        <button type="button" class="clear-search" id="clearSearchBtn" aria-label="Hapus">✕</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== EMPTY STATE ===== -->
+            <div class="empty-state" id="emptyState">Menu tidak ditemukan.</div>
+
+            <!-- ===== SKELETON ===== -->
+            <div id="skeletonContainer" style="padding:0 20px;">
+                <div class="skeleton-item"><div class="skeleton-img skeleton"></div><div class="skeleton-body"><div class="skeleton-line skeleton"></div><div class="skeleton-line skeleton medium"></div><div class="skeleton-line skeleton short"></div></div></div>
+                <div class="skeleton-item"><div class="skeleton-img skeleton"></div><div class="skeleton-body"><div class="skeleton-line skeleton"></div><div class="skeleton-line skeleton medium"></div><div class="skeleton-line skeleton short"></div></div></div>
+            </div>
+
+            <!-- ===== MENU LIST ===== -->
+            <div class="menu-list" id="menuList" style="display:none;"></div>
+
+            <!-- ===== ADDONS ===== -->
+            <div class="divider" id="addonDivider"></div>
+            <div class="sec-header" id="addonHeader">
+                <span class="sec-title">Tambahan</span>
+                <span style="font-size:11px;color:var(--gray-500);font-weight:500;white-space:nowrap;">Opsional — Sambal ekstra, buah tambahan, dll.</span>
+            </div>
+            <div class="addon-grid" id="addonList"></div>
+
+            <!-- ===== TESTIMONIALS ===== -->
+            <div class="divider"></div>
+            <div class="sec-header"><span class="sec-title">Apa Kata Mereka?</span></div>
+            <div class="testi-flip-container" id="testiFlipContainer">
+                <div class="testi-card active" data-index="0" style="transform:translateY(0);opacity:1;">
+                    <div style="font-size:18px;margin-bottom:4px;letter-spacing:2px;">⭐️⭐️⭐️⭐️⭐️</div>
+                    <p style="font-size:16px;color:#3d2b00;font-weight:600;margin:0 0 6px;line-height:1.4;">"Buset ini rujak bukan kaleng-kaleng. Sambel metenya berasa banget, nggak pelit sama sekali."</p>
+                    <span style="font-size:13px;color:#8B7355;">— Dina, Bekasi</span>
+                </div>
+                <div class="testi-card" data-index="1" style="transform:translateY(100%);opacity:0;">
+                    <div style="font-size:18px;margin-bottom:4px;letter-spacing:2px;">⭐️⭐️⭐️⭐️⭐️</div>
+                    <p style="font-size:16px;color:#3d2b00;font-weight:600;margin:0 0 6px;line-height:1.4;">"Ngidam rujak pas hamil, ini satu-satunya yang nggak ngecewain. Asem pedesnya pas banget."</p>
+                    <span style="font-size:13px;color:#8B7355;">— Rina, Jakarta Timur</span>
+                </div>
+                <div class="testi-card" data-index="2" style="transform:translateY(100%);opacity:0;">
+                    <div style="font-size:18px;margin-bottom:4px;letter-spacing:2px;">⭐️⭐️⭐️⭐️⭐️</div>
+                    <p style="font-size:16px;color:#3d2b00;font-weight:600;margin:0 0 6px;line-height:1.4;">"Gue kira overhype, ternyata emang enak. Buahnya masih seger, nggak kayak yang udah dipotong lama."</p>
+                    <span style="font-size:13px;color:#8B7355;">— Aldo, Depok</span>
+                </div>
+                <div class="testi-card" data-index="3" style="transform:translateY(100%);opacity:0;">
+                    <div style="font-size:18px;margin-bottom:4px;letter-spacing:2px;">⭐️⭐️⭐️⭐️⭐️</div>
+                    <p style="font-size:16px;color:#3d2b00;font-weight:600;margin:0 0 6px;line-height:1.4;">"Akhirnya ada rujak delivery yang sambalnya dipisah. Sampe rumah masih renyah buahnya. Top!"</p>
+                    <span style="font-size:13px;color:#8B7355;">— Sari, Tangerang</span>
+                </div>
+                <div class="testi-card" data-index="4" style="transform:translateY(100%);opacity:0;">
+                    <div style="font-size:18px;margin-bottom:4px;letter-spacing:2px;">⭐️⭐️⭐️⭐️⭐️</div>
+                    <p style="font-size:16px;color:#3d2b00;font-weight:600;margin:0 0 6px;line-height:1.4;">"Pesen buat kantor, abis semua 15 menit. Bos sampe nanyain beli di mana. Auto repeat!"</p>
+                    <span style="font-size:13px;color:#8B7355;">— Hendra, Cikarang</span>
+                </div>
+                <div class="testi-card" data-index="5" style="transform:translateY(100%);opacity:0;">
+                    <div style="font-size:18px;margin-bottom:4px;letter-spacing:2px;">⭐️⭐️⭐️⭐️⭐️</div>
+                    <p style="font-size:16px;color:#3d2b00;font-weight:600;margin:0 0 6px;line-height:1.4;">"Mete aslinya kerasa, bukan cuma kacang doang. Worth it banget buat harga segini."</p>
+                    <span style="font-size:13px;color:#8B7355;">— Dimas, Jakarta Selatan</span>
+                </div>
+                <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:2;">
+                    <div class="testi-dot active" data-dot="0" style="width:16px;height:6px;border-radius:10px;background:#0F4D37;"></div>
+                    <div class="testi-dot" data-dot="1" style="width:6px;height:6px;border-radius:50%;background:#D4C9A8;"></div>
+                    <div class="testi-dot" data-dot="2" style="width:6px;height:6px;border-radius:50%;background:#D4C9A8;"></div>
+                    <div class="testi-dot" data-dot="3" style="width:6px;height:6px;border-radius:50%;background:#D4C9A8;"></div>
+                    <div class="testi-dot" data-dot="4" style="width:6px;height:6px;border-radius:50%;background:#D4C9A8;"></div>
+                    <div class="testi-dot" data-dot="5" style="width:6px;height:6px;border-radius:50%;background:#D4C9A8;"></div>
+                </div>
+            </div>
+
+            <!-- ===== EDUCATION ===== -->
+            <div class="divider"></div>
+            <div class="sec-header"><span class="sec-title">Kenapa Rujak.Co Bikin Ngiler?</span></div>
+            <div class="edu-container">
+                <div class="edu-card">
+                    <div class="edu-icon-wrap" style="background:rgba(214,40,40,0.1);color:var(--red);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                    </div>
+                    <div><h4 class="edu-title">Sambal Diracik Terpisah</h4><p class="edu-desc">Sambal dikemas dalam cup sealed. Buah tetap segar, tidak layu, tidak tumpah selama pengiriman.</p></div>
+                </div>
+                <div class="edu-card">
+                    <div class="edu-icon-wrap" style="background:var(--green-pale);color:var(--green);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+                    </div>
+                    <div><h4 class="edu-title">Fresh-Lock System™</h4><p class="edu-desc">Sambal sealed terpisah + buah dipotong fresh sebelum dikirim = tetap renyah sampai tujuan. Sampai benyek? Kami ganti.</p></div>
+                </div>
+                <div class="edu-card">
+                    <div class="edu-icon-wrap" style="background:var(--green-pale);color:var(--green);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-4.5A2.5 2.5 0 0 1 13 4.5V3"/><path d="M4 7h16v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7z"/><path d="M9 11h6"/><path d="M9 15h4"/></svg>
+                    </div>
+                    <div><h4 class="edu-title">Standar Fresh-Prep</h4><p class="edu-desc">Pesanan dikirim esok hari. Buah baru dikupas dan dipotong 15 menit sebelum kurir jalan, menjamin tekstur tetap renyah dan dingin sampai di tangan Anda.</p></div>
+                </div>
+                <div class="edu-card">
+                    <div class="edu-icon-wrap" style="background:rgba(244,196,48,0.15);color:#b58d10;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    </div>
+                    <div><h4 class="edu-title">Ongkir Mulai Rp8.000</h4><p class="edu-desc">Ongkir dihitung dari jarak. Pilih kurir Rujak.Co (Lalamove) atau Paxel untuk pengiriman lebih luas.</p></div>
+                </div>
+            </div>
+
+            <!-- ===== FAQ ===== -->
+            <div class="divider"></div>
+            <div class="sec-header"><span class="sec-title">Pertanyaan Umum</span></div>
+            <div class="faq-container" id="faqContainer">
+                <div class="faq-item open">
+                    <div class="faq-question"><span>Kenapa sambal dipisahkan?</span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+                    <div class="faq-answer">Agar buah tetap segar dan renyah saat diterima. Tidak lembek. Tidak tumpah.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question"><span>Kenapa pesanan baru dikirim besok?</span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+                    <div class="faq-answer">Karena kami menerapkan standar <strong>Fresh-Prep</strong>. Pesanan hari ini akan dikirim esok hari, dan buah baru dipotong 15 menit tepat sebelum diserahkan ke kurir. Kami menunda pengiriman semata-mata agar Anda menerima rujak dalam kondisi paling renyah dan segar.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question"><span>Berapa ongkirnya?</span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+                    <div class="faq-answer">Ongkir dihitung dari jarak (mulai Rp8.000). Pilih kurir Rujak.Co (Lalamove) untuk instan, atau Paxel untuk jangkauan lebih luas.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question"><span>Bagaimana kalau rujak sampai benyek?</span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+                    <div class="faq-answer">Kami ganti. Tapi dengan Fresh-Lock System™, kecil kemungkinan itu terjadi.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question"><span>Apakah tersedia untuk acara?</span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+                    <div class="faq-answer">Ya, tersedia paket sharing dan Tampah Nusantara untuk berbagai acara.</div>
+                </div>
+            </div>
+        </div>
+        <!-- end content-wrapper -->
+
+        <!-- ===== FOOTER ===== -->
+        <footer class="footer-brand">
+            <div class="footer-brand-inner">
+                <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                    <div class="footer-brand-row">
+                        <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" />
+                        <span class="footer-brand-name">Rujak<span>.Co</span></span>
+                    </div>
+                    <p class="footer-brand-desc" style="flex:1; min-width:150px;">Menghadirkan keberagaman rasa rujak Indonesia dalam satu pengalaman yang segar, modern, dan berkualitas.</p>
+                    <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+                        <a href="https://wa.me/6289677161680" target="_blank" rel="noopener" class="footer-wa-icon">
+                            <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Wa-icon.webp" alt="WhatsApp" />
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-grid">
+                    <div class="footer-col">
+                        <h4>Jam Operasional</h4>
+                        <ul>
+                            <li><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Sen–Jum: 10.00–20.00</li>
+                            <li><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Sab–Min: 09.00–18.00</li>
+                            <li><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Bekasi, Jawa Barat</li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Ikuti Kami</h4>
+                        <div class="footer-social">
+                            <a href="https://www.tiktok.com/@rujakco" target="_blank" rel="noopener" aria-label="TikTok"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Tiktok-icon.webp" alt="TikTok"></a>
+                            <a href="https://www.instagram.com/rujakco.id" target="_blank" rel="noopener" aria-label="Instagram"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Instagram-icon.webp" alt="Instagram"></a>
+                            <a href="https://www.threads.net/@rujakco.id" target="_blank" rel="noopener" aria-label="Threads"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Thread-icon.webp" alt="Threads"></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">&copy; 2026 Rujak.Co — Premium Rujak Experience. All rights reserved.</div>
+            </div>
+        </footer>
+
+        <!-- ============================================================
+        BOTTOM BAR (FIXED)
+        ============================================================ -->
+        <div id="bottom-bar">
+            <button class="close-bottom-bar" id="closeBottomBar" aria-label="Tutup keranjang">✕</button>
+
+            <div class="progress-container" id="progressContainer" style="display:none;">
+                <div class="progress-text">
+                    <span id="progressLabel">Tambah Rp20.000 lagi untuk diskon</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width:0;"></div>
+                </div>
+            </div>
+
+            <div class="shipping-estimate">
+                <div class="shipping-left">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><polyline points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18" r="2.5"/><circle cx="18.5" cy="18" r="2.5"/></svg>
+                    <span>Ongkir:</span>
+                    <span class="shipping-cost" id="shippingCost">⏳</span>
+                    <span class="shipping-distance" id="shippingDistance"></span>
+                </div>
+                <div class="shipping-toggle">
+                    <input type="checkbox" id="priorityToggle" />
+                    <label for="priorityToggle" class="toggle-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        <span class="badge-priority">Prioritas</span>
+                    </label>
+                    <span style="font-size:9px;color:var(--gray-400);margin-left:4px;">🚀 Lebih cepat</span>
+                </div>
+            </div>
+
+            <div class="shipping-out-of-range" id="outOfRange">⚠️ Lokasi ini di luar jangkauan pengiriman otomatis kami. Hubungi admin untuk konfirmasi ongkir.</div>
+
+            <!-- ===== CART SUMMARY ===== -->
+            <div class="cart-summary" id="cartSummary" tabindex="0" role="button" aria-label="Buka keranjang">
+                <span class="cart-items-preview" id="cartPreview">0 item</span>
+                <div class="cart-total-wrap">
+                    <span id="discountLabel" class="cart-discount-label" style="display:none;">-Rp10.000</span>
+                    <span class="cart-total" id="cartTotalDisplay">Rp0</span>
+                </div>
+            </div>
+
+            <!-- ===== PESAN SEKARANG BUTTON ===== -->
+            <button type="button" class="wa-btn" data-action="open-cart">
+                <div class="wa-btn-left">
+                    <span class="wa-btn-sub">Ngiler?</span>
+                    <span>Pesan Sekarang</span>
+                </div>
+                <div class="wa-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/><path d="M12 8v6"/></svg>
+                    Seger
+                </div>
+            </button>
+        </div>
+        <!-- end bottom-bar -->
+
+        <!-- ===== FLOATING CART BUTTON ===== -->
+        <div id="floatingCartBtn" aria-label="Buka keranjang">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span class="badge-cart" id="floatingBadge">0</span>
+        </div>
+
+        <!-- ===== TOAST ===== -->
+        <div id="toast" role="alert" aria-live="polite"></div>
+
+        <!-- ============================================================
+        MODALS
+        ============================================================ -->
+
+        <!-- ===== PROMO MODAL ===== -->
+        <div class="modal-overlay" id="promoModal">
+            <div class="modal-content" style="max-width:380px;">
+                <div class="modal-header">
+                    <span class="modal-header-title">🎯 Misi Jajan — Diskon s/d Rp10.000</span>
+                    <button class="modal-close" id="promoClose">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p style="margin:0 0 16px;font-size:13px;color:var(--gray-500);">Selesaikan misi untuk klaim diskonmu!</p>
+                    <div class="mission-item" style="display:flex;align-items:center;gap:8px;padding:6px 0;">
+                        <input type="checkbox" id="missionSpend" disabled />
+                        <span>Belanja min. Rp100.000 <b>(Potong Rp5.000)</b></span>
+                    </div>
+                    <div class="mission-item" style="display:flex;align-items:center;gap:8px;padding:6px 0;">
+                        <input type="checkbox" id="checkShare" disabled />
+                        <span>Bagikan ke teman <b>(Potong Rp5.000)</b></span>
+                    </div>
+                    <button type="button" class="share-btn" id="shareBtnModal" style="width:100%;justify-content:center;margin-top:12px;background:#0F4D37;color:white;border:none;padding:12px;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                        Bagikan Sekarang
+                    </button>
+                    <p style="font-size:10px;color:var(--gray-400);margin-top:10px;text-align:center;background:var(--gray-100);border-radius:8px;padding:8px;">✅ Misi tercapai = otomatis tercentang. Diskon muncul di keranjang.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PRODUCT MODAL ===== -->
+        <div class="modal-overlay" id="productModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-header-title">Detail Produk</span>
+                    <button class="modal-close" id="modalClose">&times;</button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <div class="modal-img" id="modalImg"></div>
+                    <div class="modal-title-wrap">
+                        <h2 class="modal-title" id="modalTitle">Nama Produk</h2>
+                        <span class="modal-badge-eyebrow" id="modalBadge" style="display:none;">Badge</span>
+                    </div>
+                    <p class="modal-desc" id="modalDesc">Deskripsi produk</p>
+                    <div class="modal-detail-grid" id="modalDetailGrid">
+                        <div class="detail-row"><span class="label">Wadah</span><span class="value" id="modalContainer">-</span></div>
+                        <div class="detail-row"><span class="label">Porsi</span><span class="value" id="modalSize">-</span></div>
+                        <div class="detail-row"><span class="label">Sambal</span><span class="value" id="modalSambal">-</span></div>
+                    </div>
+                    <div id="modalBuahContainer">
+                        <div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px;">Buah-buahan</div>
+                        <div class="modal-buah-text" id="modalBuahText"></div>
+                    </div>
+                    <div class="modal-tags" id="modalTags"></div>
+                    <div class="spice-row">
+                        <span class="spice-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7L4 3"/><path d="M16 7l4-4"/><path d="M20 11v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6"/><path d="M4 7h16"/><path d="M8 11v6"/><path d="M12 11v6"/><path d="M16 11v6"/></svg>
+                        </span>
+                        <span class="spice-label">Level Pedas</span>
+                        <div id="spiceTrigger" class="custom-select-trigger" style="margin-top: 8px;">
+                            <span id="spiceLabel">3 - Signature <span style="margin-left: 8px;">🌶️🌶️🌶️</span></span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
+                        <input type="hidden" id="spiceHidden" value="3">
+                    </div>
+                </div>
+                <div class="modal-footer" style="flex-direction: column; gap: 8px;">
+                    <button class="modal-add" id="modalAdd"><span>Tambah ke Keranjang</span><span id="btnPrice">Rp0</span></button>
+                    <button id="modalShareBtn" style="background:white; border:1px solid #0F4D37; color:#0F4D37; width:100%; padding:12px; border-radius:10px; font-weight:700; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                        Bagikan Menu Ini
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== SPICE SELECT MODAL ===== -->
+        <div id="spiceModal" class="select-modal">
+            <h3>Pilih Level Pedas</h3>
+            <div class="select-option" data-value="1"><span>1 - Mild Sweet</span><span style="color:#e67e22;">🌶️</span></div>
+            <div class="select-option" data-value="2"><span>2 - Light Spice</span><span style="color:#e67e22;">🌶️🌶️</span></div>
+            <div class="select-option" data-value="3"><span>3 - Signature</span><span style="color:#d35400;">🌶️🌶️🌶️</span></div>
+            <div class="select-option" data-value="4"><span>4 - Bold</span><span style="color:#c0392b;">🌶️🌶️🌶️🌶️</span></div>
+            <div class="select-option" data-value="5"><span>5 - Extreme</span><span style="color:#a93226;">🌶️🌶️🌶️🌶️🌶️</span></div>
+        </div>
+        <div class="select-backdrop" id="spiceBackdrop"></div>
+
+        <!-- ===== MINI CART MODAL ===== -->
+        <div class="modal-overlay" id="miniCartModal">
+            <div class="modal-content" style="max-width:480px;">
+                <div class="modal-header">
+                    <span class="modal-header-title">🛒 Keranjang & Checkout</span>
+                    <div class="modal-header-actions">
+                        <button class="clear-cart-btn" id="clearCartBtn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Kosongkan</button>
+                        <button class="modal-close" id="miniCartClose">&times;</button>
+                    </div>
+                </div>
+                <div class="modal-body" style="padding:16px 20px; max-height:70vh; overflow-y:auto;">
+                    <div id="miniCartList"></div>
+                    <div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotalDisplay">Rp0</span></div>
+                    <div id="step1Progress"></div>
+                    <div id="step1Upsell"></div>
+                    <hr style="margin:16px 0; border:1px solid var(--gray-200);">
+
+                    <div class="form-section">
+                        <label class="form-label">Nama Penerima</label>
+                        <input type="text" id="customerName" placeholder="Nama lengkap" autocomplete="name">
+                    </div>
+                    <div class="form-section">
+                        <label class="form-label">Nomor HP</label>
+                        <input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" autocomplete="tel">
+                    </div>
+                    <div class="form-section">
+                        <label class="form-label">Alamat Lengkap</label>
+                        <input type="text" id="customerAddress" placeholder="Jalan, RT/RW, Kelurahan" autocomplete="street-address">
+                    </div>
+
+                    <div class="form-section" style="position:relative;">
+                        <label class="form-label">Kecamatan</label>
+                        <input type="text" id="districtInput" placeholder="Ketik nama kecamatan..." autocomplete="off">
+                        <div id="customDistrictDropdown" style="display:none; position:absolute; background:white; border:1px solid var(--gray-300); border-radius:8px; max-height:200px; overflow-y:auto; width:100%; z-index:999; box-shadow:0 4px 12px rgba(0,0,0,0.1);"></div>
+                        <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">💡 Pilih kecamatan untuk menghitung ongkir.</div>
+                    </div>
+
+                    <div class="form-section">
+                        <label class="form-label" for="deliveryTime">Jam Pengiriman (Besok)</label>
+                        <div id="deliveryTimeTrigger" class="custom-select-trigger">
+                            <span id="deliveryTimeLabel">Pilih jam pengiriman...</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
+                        <input type="hidden" id="deliveryTime" name="deliveryTime" value="">
+                    </div>
+
+                    <div class="form-section">
+                        <label class="form-label">Catatan (Opsional)</label>
+                        <textarea id="orderNotes" placeholder="Contoh: Sambal dipisah" rows="2"></textarea>
+                    </div>
+
+                    <div id="shippingSection" style="display:none; margin-top:12px;">
+                        <div class="form-section">
+                            <label class="form-label">Pilih Kurir</label>
+                            <div class="shipping-options">
+                                <button type="button" class="ship-btn active" data-provider="rujakco">🚚 Rujak.Co (Lalamove)</button>
+                                <button type="button" class="ship-btn" data-provider="paxel">📦 Paxel (Same Day)</button>
+                                <button type="button" class="ship-btn" data-provider="pembeli">🏍️ Kurir Pembeli</button>
+                            </div>
+                        </div>
+
+                        <div id="rujakcoOptions">
+                            <div class="form-section">
+                                <label class="form-label">Kendaraan</label>
+                                <div class="vehicle-options">
+                                    <button type="button" class="veh-btn active" data-vehicle="motor">🛵 Motor</button>
+                                    <button type="button" class="veh-btn" data-vehicle="mobil">🚗 Mobil</button>
+                                </div>
+                            </div>
+                            <div class="priority-toggle">
+                                <span>⚡ Prioritas (lebih cepat +Rp8.000)</span>
+                                <label class="switch" style="position:relative;display:inline-block;width:40px;height:22px;">
+                                    <input type="checkbox" id="priorityToggleMini" style="opacity:0;width:0;height:0;">
+                                    <span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#ccc;transition:.3s;border-radius:22px;"></span>
+                                    <span style="position:absolute;content:'';height:16px;width:16px;left:3px;bottom:3px;background:white;transition:.3s;border-radius:50%;" id="sliderMini"></span>
+                                </label>
+                            </div>
+                            <style>
+                                #priorityToggleMini:checked+.switch span:last-child {
+                                    transform: translateX(18px);
+                                }
+                                #priorityToggleMini:checked+.switch span:first-child {
+                                    background: var(--red);
+                                }
+                                .switch {
+                                    position: relative;
+                                    display: inline-block;
+                                    width: 40px;
+                                    height: 22px;
+                                }
+                                .switch input {
+                                    opacity: 0;
+                                    width: 0;
+                                    height: 0;
+                                }
+                                .switch .slider-round {
+                                    position: absolute;
+                                    cursor: pointer;
+                                    top: 0;
+                                    left: 0;
+                                    right: 0;
+                                    bottom: 0;
+                                    background: #ccc;
+                                    transition: .3s;
+                                    border-radius: 22px;
+                                }
+                                .switch .slider-round:before {
+                                    content: "";
+                                    position: absolute;
+                                    height: 16px;
+                                    width: 16px;
+                                    left: 3px;
+                                    bottom: 3px;
+                                    background: white;
+                                    transition: .3s;
+                                    border-radius: 50%;
+                                }
+                                .switch input:checked+.slider-round {
+                                    background: var(--red);
+                                }
+                                .switch input:checked+.slider-round:before {
+                                    transform: translateX(18px);
+                                }
+                            </style>
+                        </div>
+
+                        <div id="paxelOptions" style="display:none; margin-top:10px;">
+                            <div class="form-section">
+                                <label class="form-label">Layanan Paxel</label>
+                                <div style="font-size:13px; color:var(--gray-600); background:var(--green-pale); padding:8px 12px; border-radius:8px;">
+                                    🚀 Same Day — Dikirim besok (Fresh-Prep)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="step2Breakdown" style="background:white;border:1px solid var(--gray-200);border-radius:10px;padding:10px 14px;margin-top:10px;font-size:12px;color:var(--gray-700);line-height:1.8;">
+                            <div style="font-weight:700;margin-bottom:4px;color:var(--gray-900);">📦 Detail Ongkir</div>
+                            <div id="breakdownContent">Pilih kecamatan terlebih dahulu.</div>
+                        </div>
+                    </div>
+
+                    <div class="gift-section" style="margin-top:12px;">
+                        <label><input type="checkbox" id="giftToggle"> 🎁 Kirim sebagai Kado</label>
+                        <div id="giftFields" style="display:none;margin-top:8px;">
+                            <input type="text" id="giftSender" placeholder="Nama pengirim">
+                            <textarea id="giftMessage" placeholder="Pesan kado" rows="2"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="final-summary" style="margin-top:12px;">
+                        <div class="final-row"><span>Subtotal</span><span id="finalSubtotal">Rp0</span></div>
+                        <div class="final-row discount"><span>Diskon</span><span id="finalDiscount">-Rp0</span></div>
+                        <div class="final-row"><span>Ongkir</span><span id="finalShipping">Rp0</span></div>
+                        <div class="final-row total"><span>Total</span><span id="finalTotal">Rp0</span></div>
+                    </div>
+
+                    <div style="margin-top:8px; margin-bottom:12px; padding:10px 14px; background:#F8F5EE; border-radius:12px; border:1px solid #E8E0D0; font-size:12px; color:#5a4a2e; text-align:center; line-height:1.5;">
+                        🌿 <strong>Siap dinikmati besok!</strong><br>Pesanan Anda diproses dengan standar <strong>Fresh‑Prep</strong> (baru dipotong 15 menit sebelum dikirim esok hari).
+                    </div>
+
+                    <button class="btn-step primary" id="btnOpenPayment" style="width:100%;justify-content:center;margin-top:12px;font-size:16px;padding:16px;">💳 Bayar Via QRIS</button>
+                    <div style="font-size:10px;color:var(--gray-400);text-align:center;margin-top:8px;">🔒 Data aman. Pesanan langsung diproses setelah pembayaran.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PAYMENT MODAL ===== -->
+        <div class="modal-overlay" id="paymentModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-header-title">💳 Pembayaran QRIS</span>
+                    <button class="modal-close" id="paymentClose">&times;</button>
+                </div>
+                <div class="modal-body" style="padding:16px 20px;">
+                    <div style="display:flex;justify-content:center;gap:6px;margin-bottom:16px;padding:10px;background:#F5F5F5;border-radius:12px;">
+                        <div style="text-align:center;"><span style="background:#0F4D37;color:white;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;margin:0 auto;">1</span><span style="font-size:11px;font-weight:600;color:#0F4D37;">Scan QR</span></div>
+                        <span style="color:#ccc;display:flex;align-items:center;">→</span>
+                        <div style="text-align:center;"><span style="background:#0F4D37;color:white;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;margin:0 auto;">2</span><span style="font-size:11px;font-weight:600;color:#0F4D37;">Transfer</span></div>
+                        <span style="color:#ccc;display:flex;align-items:center;">→</span>
+                        <div style="text-align:center;"><span style="background:#0F4D37;color:white;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;margin:0 auto;">3</span><span style="font-size:11px;font-weight:600;color:#0F4D37;">Kirim Bukti</span></div>
+                    </div>
+
+                    <div style="position:relative;display:block;width:100%;max-width:280px;margin:0 auto;">
+                        <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" id="qrisImagePayment" />
+                    </div>
+
+                    <div style="background:#0F4D37;color:white;border-radius:12px;padding:12px 16px;margin:12px 0;text-align:center;">
+                        <div style="font-size:11px;opacity:0.7;">Total Tagihan</div>
+                        <div style="font-size:24px;font-weight:800;" id="paymentTotalDisplay">Rp0</div>
+                    </div>
+                    <button id="copyAmountBtn" style="width:100%;background:white;border:1px solid #0F4D37;color:#0F4D37;padding:10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:8px;">📋 Salin Nominal</button>
+
+                    <div style="background:#E8F5E9;border-radius:12px;padding:12px 14px;text-align:left;font-size:12px;color:#0F4D37;line-height:1.8;">
+                        <div style="font-weight:700;margin-bottom:4px;">📝 Cara Bayar:</div>
+                        <ol style="margin:0;padding-left:18px;">
+                            <li>Scan QRIS pakai <strong>mBanking</strong> atau <strong>QRIS App</strong></li>
+                            <li>Transfer <strong id="paymentTotalDisplay2">Rp0</strong> (sesuai tagihan)</li>
+                            <li>Klik tombol <strong>"Kirim Bukti"</strong> di bawah untuk mengirim via WhatsApp</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="modal-footer" style="flex-direction:column;align-items:stretch;gap:8px;padding:12px 20px 16px;">
+                    <button type="button" class="modal-add" data-action="confirm-wa" style="justify-content:center;gap:8px;margin-top:0;background:#0F4D37;padding:14px;font-size:15px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                        Kirim Bukti Transfer via WhatsApp
+                    </button>
+                    <button type="button" id="downloadQrisBtnPayment" style="background:none;border:1px solid var(--gray-300);color:var(--gray-700);font-size:12px;cursor:pointer;padding:10px;border-radius:8px;font-weight:600;">📥 Download QRIS</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- end #app -->
+
+    <script>
+        // ============================================================
+        // RUJAK.CO — MAIN APPLICATION (FIXED BOTTOM BAR + PESAN SEKARANG)
+        // ============================================================
+        (function() {
+            'use strict';
+
+            // ============================================================
+            // PRODUCT & ADDON DATA
+            // ============================================================
+            const PRODUCTS = [
+                { id: 'p_m1', name: 'Rujak Segar', desc: 'Kombinasi buah pilihan dengan sambal original Rujak.Co.', price: 35000,
+                    cat: 'classic', tags: ['Pilihan Klasik', '5 Buah'], badge: null, badgeColor: null,
+                    container: 'Thinwall 1000ml (PP Food Grade)', size: 'Porsi Reguler', sambal: 'Sambal Original (1 Cup)',
+                    buah: ['Mangga Mengkel', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'], flavor: 'Segar & Autentik',
+                    flavorTag: null, defaultSpice: 3, portion: '1 Orang',
+                    thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp',
+                    image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp', isHidden: false },
+                { id: 'p_m2', name: 'Rujak Serut', desc: 'Buah diserut halus untuk pengalaman rasa yang lebih menyatu.',
+                    price: 26000, cat: 'classic', tags: ['Renyah', 'Serut'], badge: null, badgeColor: null,
+                    container: 'Thinwall 750ml (PP Food Grade)', size: 'Porsi Reguler', sambal: 'Sambal Original (1 Cup)',
+                    buah: ['Mangga Muda', 'Bengkoang', 'Nanas', 'Ubi Merah'], flavor: 'Renyah Segar', flavorTag: 'Renyah',
+                    defaultSpice: 3, portion: '1 Orang',
+                    thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp',
+                    image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp', isHidden: false },
+                { id: 'p_m3', name: 'Rujak Gaco', desc: 'Enam buah pilihan dengan sambal mete premium.', price: 40000,
+                    cat: 'signature', tags: ['Mete Premium', 'Bestseller'], badge: 'Koleksi Favorit', badgeColor: 'red',
+                    container: 'Thinwall 1000ml (PP Food Grade)', size: 'Porsi Reguler',
+                    sambal: 'Sambal Mete Premium (1 Cup)',
+                    buah: ['Jambu Kristal', 'Mangga Mengkel', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'],
+                    flavor: 'Gurih Mete Premium', flavorTag: null, defaultSpice: 3, portion: '1 Orang',
+                    thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-thumb.webp',
+                    image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-hd.webp', isHidden: false },
+                { id: 'p_m4', name: 'Rujak Rama', desc: 'Porsi melimpah untuk dua hingga tiga orang.', price: 48000,
+                    cat: 'signature', tags: ['Porsi Besar', 'Sharing'], badge: 'Untuk Dibagi Bersama', badgeColor: 'red',
+                    container: 'Thinwall Jumbo 1000ml (PP Food Grade)', size: 'Porsi Sharing',
+                    sambal: 'Sambal Mete Premium (2 Cup)',
+                    buah: ['Jambu Kristal', 'Mangga Mengkel', 'Nanas', 'Bengkoang', 'Jambu Air', 'Kedondong'],
+                    flavor: 'Gurih Mete Extra Pedas', flavorTag: null, defaultSpice: 4, portion: '2-3 Orang',
+                    thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-thumb.webp',
+                    image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-hd.webp', isHidden: false },
+                { id: 'p_m5', name: 'Rujak Mahkota', desc: 'Koleksi premium dengan Shine Muscat.', price: 85000,
+                    cat: 'reserve', tags: ['Eksklusif', 'Shine Muscat'], badge: 'Reserve Collection', badgeColor: 'gold',
+                    container: 'Thinwall Jumbo 1000ml + Paper Bag', size: 'Porsi Premium',
+                    sambal: 'Sambal Mete Premium (2 Cup)',
+                    buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga Mengkel', 'Nanas', 'Bengkoang', 'Jambu Air',
+                        'Kedondong'
+                    ], flavor: 'Eksklusif & Premium', flavorTag: null, defaultSpice: 3, portion: '1-2 Orang',
+                    thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp',
+                    image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp',
+                isHidden: false },
+                { id: 'p_m6', name: 'Tampah Nusantara', desc: 'Sajian kebersamaan dalam tampah bambu.', price: 200000,
+                    cat: 'reserve', tags: ['Tampah', 'Pre-Order'], badge: 'Untuk 8-10 Orang', badgeColor: 'gold',
+                    container: 'Tampah Bambu Ø40cm + Kardus + Wrap', size: 'Porsi Besar',
+                    sambal: 'Varian Original & Mete (4 Cup)',
+                    buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga Mengkel', 'Nanas', 'Bengkoang', 'Jambu Air',
+                        'Kedondong', 'Ubi Merah'
+                    ], flavor: 'Kemegahan Berbagai Rasa', flavorTag: null, defaultSpice: 3, portion: '8-10 Orang',
+                    thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-thumb.webp',
+                    image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp',
+                isHidden: false },
+                { id: 'p_vip', name: 'Mahkota VIP', desc: 'Menu rahasia eksklusif dengan komposisi premium.', price: 125000,
+                    cat: 'reserve', tags: ['Eksklusif', 'VIP Only'], badge: 'Menu Rahasia', badgeColor: 'gold',
+                    container: 'Box Premium + Paper Bag', size: 'Porsi Eksklusif',
+                    sambal: 'Sambal Mete Premium Spesial (2 Cup)',
+                    buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga Harum Manis', 'Nanas Madu', 'Bengkoang',
+                        'Strawberry'
+                    ], flavor: 'Premium & Misterius', flavorTag: 'Limited', defaultSpice: 2, portion: '1-2 Orang',
+                    thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp',
+                    image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp',
+                isHidden: true }
+            ];
+
+            const ADDONS = [
+                { id: 'a_sambal1', name: 'Sambal Original', price: 8000, icon: 'fire', iconColor: 'text-red-500',
+                    desc: 'Warisan rasa klasik.' },
+                { id: 'a_sambal2', name: 'Sambal Mete Premium', price: 12000, icon: 'fire', iconColor: 'text-red-600',
+                    desc: 'Lebih gurih dan kaya rasa.' },
+                { id: 'a_extra_jambu', name: 'Extra Jambu Kristal', price: 10000, icon: 'apple',
+                    iconColor: 'text-green-500', desc: 'Tambahan jambu kristal segar' },
+                { id: 'a_extra_muscat', name: 'Extra Shine Muscat', price: 15000, icon: 'grape',
+                    iconColor: 'text-purple-500', desc: 'Tambahan anggur Shine Muscat impor' }
+            ];
+
+            const DISTRICT_MAP = {
+                'bekasi barat': 5,
+                'bekasi timur': 7,
+                'bekasi selatan': 9,
+                'bekasi utara': 11,
+                'rawalumbu': 8,
+                'jatiasih': 12,
+                'pondokgede': 14,
+                'cikarang': 23,
+                'tambun': 16,
+                'cibitung': 20,
+                'karawang': 44,
+                'cikampek': 60,
+                'serang': 63,
+                'cilegon': 80,
+                'gambir': 18,
+                'menteng': 19,
+                'senen': 18,
+                'cempaka putih': 19,
+                'kemayoran': 20,
+                'sawah besar': 20,
+                'taman sari': 21,
+                'tanah abang': 20,
+                'setiabudi': 19,
+                'tebet': 20,
+                'pancoran': 21,
+                'pasar minggu': 22,
+                'kebayoran lama': 24,
+                'kebayoran baru': 22,
+                'mampang prapatan': 21,
+                'jagakarsa': 23,
+                'cilandak': 24,
+                'pesanggrahan': 25,
+                'pulo gadung': 16,
+                'jatinegara': 18,
+                'duren sawit': 15,
+                'kramat jati': 19,
+                'pasar rebo': 20,
+                'ciracas': 22,
+                'cipayung': 23,
+                'makasar': 16,
+                'cakung': 12,
+                'tambora': 24,
+                'grogol petamburan': 23,
+                'palmerah': 22,
+                'kembangan': 25,
+                'cengkareng': 28,
+                'kalideres': 30,
+                'kemanggisan': 23,
+                'kedoya': 25,
+                'meruya': 25,
+                'penjaringan': 30,
+                'pademangan': 28,
+                'tanjung priok': 29,
+                'koja': 30,
+                'cilincing': 31,
+                'kelapa gading': 27,
+                'depok': 35,
+                'beji': 36,
+                'pancoran mas': 36,
+                'cipayung depok': 38,
+                'sukmajaya': 38,
+                'cilodong': 39,
+                'limo': 40,
+                'cinere': 41,
+                'cimanggis': 34,
+                'tapos': 36,
+                'sawangan': 42,
+                'bojongsari': 44,
+                'tangerang': 38,
+                'tangerang selatan': 34,
+                'batuceper': 39,
+                'benda': 40,
+                'cibodas': 39,
+                'ciledug': 35,
+                'cipondoh': 38,
+                'jatiuwung': 41,
+                'karawaci': 39,
+                'periuk': 40,
+                'pinang': 38,
+                'serpong': 40,
+                'serpong utara': 41,
+                'pamulang': 38,
+                'pondok aren': 36,
+                'ciputat': 35,
+                'ciputat timur': 36,
+                'bogor': 50,
+                'bogor barat': 50,
+                'bogor selatan': 49,
+                'bogor timur': 50,
+                'bogor utara': 48,
+                'tanah sareal': 49,
+                'ciawi': 54,
+                'cibinong': 47,
+                'citeureup': 50,
+                'gunung putri': 44,
+                'cileungsi': 41,
+                'jonggol': 56,
+                'parung': 52,
+                'dramaga': 60
+            };
+
+            const SYSTEM = {
+                DISCOUNT_THRESHOLD: 100000,
+                WA_NUMBER: '6289677161680',
+                TOAST_DURATION: 3000,
+                PRIORITY_SURCHARGE: 8000,
+                STORE_LAT: -6.2165414,
+                STORE_LNG: 107.0177395,
+                LOCATION_TIMEOUT: 12000,
+                DEFAULT_DISTANCE: 2,
+                MAX_DISTANCE: 9999
+            };
+
+            // ============================================================
+            // STATE
+            // ============================================================
+            const state = {
+                cart: {},
+                activeFilter: 'all',
+                searchQuery: '',
+                userDistance: null,
+                isPriority: false,
+                orderNotes: '',
+                isCartMinimized: false,
+                customerName: '',
+                customerPhone: '',
+                customerAddress: '',
+                isGift: false,
+                giftSender: '',
+                giftMessage: '',
+                useManualDistrict: false,
+                selectedDistrict: '',
+                hasShared: false,
+                shippingProvider: 'rujakco',
+                vehicleType: 'motor',
+                currentStep: 1,
+                shippingCalculated: false
+            };
+
+            let addToCartLocked = false;
+            let checkoutLocked = false;
+            let toastTimer = null;
+            let cachedSummary = null;
+            let cachedSummaryKey = '';
+
+            // ============================================================
+            // UTILITY
+            // ============================================================
+            function fmt(num) { return 'Rp' + num.toLocaleString('id-ID'); }
+
+            function escapeHTML(str) { return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g,
+                    '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;'); }
+
+            function showToast(msg) {
+                const el = document.getElementById('toast');
+                if (!el) return;
+                el.textContent = msg;
+                el.classList.remove('show');
+                void el.offsetWidth;
+                el.classList.add('show');
+                if (toastTimer) clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => { el.classList.remove('show'); }, SYSTEM.TOAST_DURATION);
+            }
+
+            function openCustomSelect(title, options, onSelect) {
+                const backdrop = document.createElement('div');
+                backdrop.className = 'select-backdrop';
+                document.body.appendChild(backdrop);
+                const modal = document.createElement('div');
+                modal.className = 'select-modal';
+                modal.innerHTML = '<h3>' + title + '</h3>' +
+                    options.map(function(opt) { return '<div class="select-option" data-value="' + opt.value + '">' + opt
+                            .label + '</div>'; }).join('');
+                document.body.appendChild(modal);
+                function closeModal() {
+                    modal.classList.remove('active');
+                    backdrop.classList.remove('active');
+                    setTimeout(function() { modal.remove();
+                        backdrop.remove(); }, 300);
+                }
+                modal.querySelectorAll('.select-option').forEach(function(opt) {
+                    opt.addEventListener('click', function() {
+                        onSelect(this.dataset.value, this.textContent);
+                        closeModal();
+                    });
+                });
+                backdrop.addEventListener('click', closeModal);
+                requestAnimationFrame(function() {
+                    backdrop.classList.add('active');
+                    modal.classList.add('active');
+                });
+            }
+
+            function lockAddToCart() { addToCartLocked = true;
+                setTimeout(function() { addToCartLocked = false; }, 300); }
+
+            // ============================================================
+            // CART
+            // ============================================================
+            function loadCart() {
+                try { var s = localStorage.getItem('rujak_cart'); if (s) { var p = JSON.parse(s); if (typeof p === 'object' &&
+                            p !== null) state.cart = p; } } catch (_) { state.cart = {}; }
+            }
+
+            function saveCart() {
+                try { localStorage.setItem('rujak_cart', JSON.stringify(state.cart)); } catch (e) {}
+            }
+
+            function getItemById(id) {
+                var item = PRODUCTS.find(function(p) { return p.id === id; });
+                if (item) return item;
+                var sm = id.match(/^(.+)_spice(\d+)$/);
+                if (sm) { item = PRODUCTS.find(function(p) { return p.id === sm[1]; }); if (item) return item; }
+                return ADDONS.find(function(a) { return a.id === id; }) || null;
+            }
+
+            function getCartSummary() {
+                var items = [],
+                    subtotal = 0,
+                    totalQty = 0;
+                var keysToDelete = [];
+                Object.keys(state.cart).forEach(function(id) {
+                    var entry = state.cart[id];
+                    var item = getItemById(id);
+                    if (item && entry && entry.qty > 0) {
+                        var lt = item.price * entry.qty;
+                        subtotal += lt;
+                        totalQty += entry.qty;
+                        items.push({ cartId: id, id: id, name: item.name, price: item.price, qty: entry.qty,
+                            spice: entry.spice || null, lineTotal: lt });
+                    } else { keysToDelete.push(id); }
+                });
+                keysToDelete.forEach(function(id) { delete state.cart[id]; });
+                var discount = 0;
+                if (sub
