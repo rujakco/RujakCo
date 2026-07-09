@@ -2,8 +2,8 @@
   'use strict';
 
   // ============================================================
-  // RUJAK.CO v2.2 — KOORDINAT TOKO BARU, DISTRICT MAP AMAN,
-  // FALLBACK CERDAS, SWIPE GESTURES, VALIDASI FIELD, PWA READY
+  // RUJAK.CO v2.3 — FINAL: KOORDINAT BARU, ONGKIR AKURAT,
+  // DISTRICT MAP KALIBRASI, FALLBACK CERDAS, SWIPE, VALIDASI, PWA
   // ============================================================
 
   function safeGet(id) {
@@ -148,7 +148,6 @@
     { id:'a_extra_muscat', name:'Extra Shine Muscat', price:15000, icon:'grape', iconColor:'text-purple-500', desc:'Tambahan anggur Shine Muscat impor' }
   ];
 
-  // Koordinat toko baru: TiZo Bekasi
   const SYSTEM = {
     DISCOUNT_THRESHOLD: 100000,
     WA_NUMBER: '6289677161680',
@@ -157,7 +156,7 @@
     DEFAULT_DISTANCE: 2,
     PRIORITY_SURCHARGE: 8000,
     STORE_LAT: -6.2165414,
-    STORE_LNG: 107.0177395,  // sudah diperbarui
+    STORE_LNG: 107.0177395,
     LOCATION_TIMEOUT: 12000
   };
 
@@ -173,7 +172,7 @@
     'setiabudi':19, 'tebet':20, 'pancoran':21, 'pasar minggu':22,
     'kebayoran lama':24, 'kebayoran baru':22, 'mampang prapatan':21,
     'jagakarsa':23, 'cilandak':24, 'pesanggrahan':25,
-    'pulo gadung':16, 'jatinegara':18, 'duren sawit':15,  // sudah dikoreksi
+    'pulo gadung':16, 'jatinegara':18, 'duren sawit':15,
     'kramat jati':19, 'pasar rebo':20, 'ciracas':22,
     'cipayung':23, 'makasar':16, 'cakung':12,
     'tambora':24, 'grogol petamburan':23, 'palmerah':22,
@@ -349,8 +348,22 @@
 
   function calculateLalamoveCost(distance, vehicleType) {
     const dist = Math.ceil(distance);
-    if (vehicleType === 'motor') { if (dist <= 3) return 8000; if (dist <= 25) return 8000 + ((dist - 3) * 2000); return 8000 + (22 * 2000) + ((dist - 25) * 2400); }
-    if (vehicleType === 'mobil') { if (dist <= 3) return 24000; if (dist <= 15) return 24000 + ((dist - 3) * 4500); return 24000 + (12 * 4500) + ((dist - 15) * 5000); }
+    if (vehicleType === 'motor') {
+      if (dist <= 3) return 8000;
+      if (dist <= 10) return 8000 + (dist - 3) * 1800;
+      if (dist <= 20) return 20600 + (dist - 10) * 1600;
+      if (dist <= 30) return 36600 + (dist - 20) * 1400;
+      if (dist <= 50) return 50600 + (dist - 30) * 1150;   // 42 km = 64.400
+      return 73600 + (dist - 50) * 1000;
+    }
+    if (vehicleType === 'mobil') {
+      if (dist <= 3) return 24000;
+      if (dist <= 10) return 24000 + (dist - 3) * 4500;
+      if (dist <= 20) return 55500 + (dist - 10) * 4000;
+      if (dist <= 30) return 95500 + (dist - 20) * 3500;
+      if (dist <= 50) return 130500 + (dist - 30) * 3000;
+      return 190500 + (dist - 50) * 2500;
+    }
     return 0;
   }
 
@@ -449,7 +462,6 @@
     invalidateCache();
   }
 
-  // Menjaga tampilan ongkir (bottom bar ringkas + breakdown mini cart) selalu sinkron.
   function refreshShippingDisplays() {
     const dist = (state.selectedDistrict && DISTRICT_MAP[state.selectedDistrict])
       ? DISTRICT_MAP[state.selectedDistrict]
@@ -584,6 +596,11 @@
     let distance;
     if (state.selectedDistrict && DISTRICT_MAP[state.selectedDistrict]) {
       distance = DISTRICT_MAP[state.selectedDistrict];
+    } else if (state.selectedDistrict && !DISTRICT_MAP[state.selectedDistrict]) {
+      // fallback jika kecamatan tidak dikenal (seharusnya tidak terjadi)
+      distance = estimateRoadDistance(
+        haversineDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, -6.2, 106.8)
+      );
     } else if (state.userDistance !== null) {
       distance = state.userDistance;
     } else {
@@ -868,7 +885,7 @@
         customerPhone: state.customerPhone || '',
         customerAddress: fullAddress || state.customerAddress || '',
         deliveryTime: document.getElementById('deliveryTime')?.value || '-',
-        shippingProvider: state.shippingProvider === 'rujakco' ? 'Rujak.Co (Lalamove)' : state.shippingProvider === 'paxel' ? 'Paxel Same Day' : 'Kurir Pembeli',
+        shippingProvider: state.shippingProvider === 'rujakco' ? 'Lalamove' : state.shippingProvider === 'paxel' ? 'Paxel Same Day' : 'Kurir Pembeli',
         vehicleType: state.vehicleType === 'motor' ? 'Motor' : 'Mobil',
         isPriority: state.isPriority ? 'Ya (+Rp8.000)' : 'Tidak',
         items: itemsList,
@@ -984,7 +1001,7 @@
     waMsg += '📱 *HP:* ' + validData.phone + '\n';
     waMsg += '📍 *Alamat:* ' + fullAddress + '\n';
     waMsg += '📅 *Jam Kirim:* ' + validData.deliveryTime + '\n';
-    waMsg += '🚚 *Kurir:* ' + (state.shippingProvider === 'rujakco' ? 'Rujak.Co (Lalamove)' : state.shippingProvider === 'paxel' ? 'Paxel Same Day' : 'Kurir Pembeli') + '\n';
+    waMsg += '🚚 *Kurir:* ' + (state.shippingProvider === 'rujakco' ? 'Lalamove' : state.shippingProvider === 'paxel' ? 'Paxel Same Day' : 'Kurir Pembeli') + '\n';
     waMsg += '🛵 *Kendaraan:* ' + (state.vehicleType === 'motor' ? 'Motor' : 'Mobil') + '\n';
     if (state.isPriority && state.shippingProvider !== 'paxel') waMsg += '⚡ *Prioritas:* Aktif (+Rp8.000)\n';
     waMsg += '\n📦 *Pesanan:*\n';
@@ -1426,7 +1443,6 @@
     productModal.classList.add('active');
     document.body.style.overflow = 'hidden';
 
-    // Update indicator posisi produk
     updateProductIndicator(id);
   }
 
@@ -1630,20 +1646,17 @@
     if (costEl) costEl.textContent = '⏳';
     if (locationDisplay) locationDisplay.textContent = 'Mendeteksi... ▾';
 
-    // Jika pengguna memilih kecamatan manual
     if (state.useManualDistrict && state.selectedDistrict) {
-      var dist = DISTRICT_MAP[state.selectedDistrict] || SYSTEM.DEFAULT_DISTANCE;
-      // Jika tidak ada di DISTRICT_MAP, coba hitung estimasi dari Haversine (jika kita punya koordinat)
-      if (!DISTRICT_MAP[state.selectedDistrict]) {
-        // Untuk sementara pakai default, bisa diperbaiki dengan database koordinat
-        dist = estimateRoadDistance(haversineDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, -6.2, 106.8)); // fallback
+      var dist = DISTRICT_MAP[state.selectedDistrict];
+      if (!dist) {
+        // fallback aman: estimasi dari haversine
+        dist = estimateRoadDistance(haversineDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, -6.2, 106.8));
       }
       state.userDistance = dist;
       if (locationDisplay) locationDisplay.textContent = state.selectedDistrict.replace(/\b\w/g, function(l) { return l.toUpperCase(); }) + ' ▾';
       updateShippingUI(dist, state.isPriority);
       renderMiniCart();
 
-      // Penyempurnaan progresif ORS
       (function() {
         var districtAtCallTime = state.selectedDistrict;
         geocodeDistrict(districtAtCallTime).then(function(coords) {
@@ -1660,7 +1673,6 @@
       return;
     }
 
-    // Jika GPS
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function(pos) {
         var lat = pos.coords.latitude, lng = pos.coords.longitude;
@@ -1673,7 +1685,6 @@
         var bm = document.getElementById('btnManualDistrict');
         if (bm) bm.classList.remove('active');
 
-        // ORS penyempurnaan
         var cacheKey = 'gps:' + lat.toFixed(3) + ',' + lng.toFixed(3);
         getRoadDistanceKm(lat, lng, cacheKey).then(function(roadKm) {
           if (roadKm !== null && !state.useManualDistrict) {
@@ -2077,7 +2088,7 @@
       }
 
       const cb = e.target.closest('.cat-pill');
-      if (cb && cb.dataset.cb) {
+      if (cb && cb.dataset.cat) {
         document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
         cb.classList.add('active');
         state.activeFilter = cb.dataset.cat;
