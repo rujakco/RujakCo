@@ -1,10 +1,11 @@
 /* ============================================================
-   RUJAK.CO — STYLE SYSTEM
+   RUJAK.CO — CLEAN LUXURY
    ============================================================ */
 
+/* ---- Tokens ---- */
 :root {
-  --bg: #F7F5F0;
-  --bg-white: #FFFFFF;
+  --bg: #F8F6F2;
+  --white: #FFFFFF;
   --green: #0F3A2A;
   --green-dark: #09261C;
   --gold: #B8944A;
@@ -23,21 +24,19 @@
 
   --space-xs: 6px;
   --space-sm: 12px;
-  --space-md: 18px;
-  --space-lg: 24px;
-  --space-xl: 36px;
-  --space-2xl: 48px;
+  --space-md: 20px;
+  --space-lg: 28px;
+  --space-xl: 40px;
+  --space-2xl: 56px;
 
   --radius: 16px;
   --radius-full: 9999px;
 
-  --shadow: 0 8px 40px rgba(0, 0, 0, 0.04);
-  --shadow-hover: 0 12px 56px rgba(0, 0, 0, 0.06);
-
-  --transition: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.03);
+  --shadow-hover: 0 12px 48px rgba(0, 0, 0, 0.05);
 }
 
-/* ---- RESET ---- */
+/* ---- Reset ---- */
 *,
 *::before,
 *::after {
@@ -53,6 +52,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #EFEFE9;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -68,14 +68,14 @@ body {
   max-width: 420px;
   width: 100%;
   min-height: 100vh;
-  background: var(--bg-white);
+  background: var(--bg);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-hover);
   overflow: hidden;
   position: relative;
 }
 
-/* ---- TYPOGRAPHY ---- */
+/* ---- Typography ---- */
 h1,
 h2,
 h3,
@@ -89,7 +89,7 @@ h3,
 }
 
 .brand {
-  font-size: 1.35rem;
+  font-size: 1.3rem;
   font-weight: 400;
 }
 .brand span {
@@ -99,21 +99,20 @@ h3,
 .section-label {
   padding: var(--space-lg) var(--space-lg) var(--space-sm);
 }
-.section-label h2 {
-  font-size: 1.2rem;
-  font-weight: 300;
-  color: var(--gray-600);
-  letter-spacing: 0.02em;
+.section-label span {
+  font-size: 0.7rem;
   text-transform: uppercase;
-  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--gray-400);
+  font-weight: 500;
 }
 
-/* ---- HEADER ---- */
+/* ---- Header ---- */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-lg) var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
   border-bottom: 1px solid rgba(0, 0, 0, 0.02);
 }
 
@@ -140,15 +139,15 @@ h3,
     transform: scale(1);
   }
   50% {
-    opacity: 0.4;
+    opacity: 0.3;
     transform: scale(0.85);
   }
 }
-.status-text {
+#storeStatus {
   font-weight: 500;
 }
 
-/* ---- HERO ---- */
+/* ---- Hero ---- */
 .hero {
   padding: 0 var(--space-lg) var(--space-lg);
 }
@@ -157,9 +156,10 @@ h3,
   border-radius: var(--radius);
   display: block;
   margin-bottom: var(--space-md);
+  box-shadow: var(--shadow);
 }
 .hero h1 {
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   line-height: 1.1;
   color: var(--green);
   margin-bottom: var(--space-xs);
@@ -180,19 +180,19 @@ h3,
   background: var(--green);
   color: white;
   border: none;
-  padding: 12px 32px;
+  padding: 12px 36px;
   border-radius: var(--radius-full);
   font-weight: 500;
   font-size: 0.85rem;
   cursor: pointer;
-  transition: background var(--transition), transform var(--transition);
+  transition: background 0.25s, transform 0.25s;
 }
 .btn-hero:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
   background: var(--green-dark);
 }
 
-/* ---- PRODUCT GRID ---- */
+/* ---- Product Grid ---- */
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -201,12 +201,12 @@ h3,
 }
 
 .card {
-  background: var(--bg-white);
+  background: var(--white);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   overflow: hidden;
   cursor: pointer;
-  transition: transform var(--transition), box-shadow var(--transition);
+  transition: transform 0.25s, box-shadow 0.25s;
 }
 .card:active {
   transform: scale(0.97);
@@ -231,19 +231,8 @@ h3,
   font-weight: 500;
   color: var(--black);
 }
-.card .info .badge {
-  font-size: 0.55rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  background: var(--gold);
-  color: white;
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
-  display: inline-block;
-  margin-top: 4px;
-}
 
-/* ---- ADDON SCROLL ---- */
+/* ---- Addon ---- */
 .addon-scroll {
   display: flex;
   gap: var(--space-sm);
@@ -257,14 +246,13 @@ h3,
 
 .addon-item {
   flex-shrink: 0;
-  background: var(--bg-white);
+  background: var(--white);
   border-radius: var(--radius);
   padding: var(--space-sm) var(--space-md);
   box-shadow: var(--shadow);
   min-width: 110px;
   text-align: center;
-  border: 1px solid rgba(0, 0, 0, 0.02);
-  transition: transform var(--transition);
+  transition: transform 0.2s;
 }
 .addon-item:active {
   transform: scale(0.96);
@@ -280,25 +268,29 @@ h3,
   margin: 2px 0 var(--space-xs);
 }
 .addon-item button {
-  background: var(--green-pale, #E8F0EB);
+  background: var(--bg);
   border: none;
   border-radius: var(--radius-full);
-  padding: 2px 12px;
+  padding: 2px 14px;
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--green);
   cursor: pointer;
+  transition: background 0.2s;
+}
+.addon-item button:active {
+  background: var(--gray-200);
 }
 
-/* ---- BOTTOM BAR ---- */
+/* ---- Bottom Bar ---- */
 .bottom-bar {
   position: sticky;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   padding: var(--space-sm) var(--space-lg);
-  border-top: 1px solid rgba(0, 0, 0, 0.03);
+  border-top: 1px solid rgba(0, 0, 0, 0.02);
   display: none;
   justify-content: space-between;
   align-items: center;
@@ -327,20 +319,20 @@ h3,
   font-weight: 500;
   font-size: 0.85rem;
   cursor: pointer;
-  transition: background var(--transition), transform var(--transition);
+  transition: background 0.25s, transform 0.25s;
 }
 .btn-primary:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
   background: var(--green-dark);
 }
 
-/* ---- DETAIL OVERLAY ---- */
+/* ---- Detail Overlay ---- */
 .detail-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   display: none;
   justify-content: center;
   align-items: center;
@@ -380,12 +372,7 @@ h3,
   color: var(--green);
   margin-bottom: 2px;
 }
-.detail-sheet .detail-meta {
-  font-size: 0.8rem;
-  color: var(--gray-500);
-  margin-bottom: var(--space-sm);
-}
-.detail-sheet .detail-price {
+.detail-sheet #detailPrice {
   font-size: 1.3rem;
   font-weight: 500;
   color: var(--black);
@@ -395,13 +382,13 @@ h3,
   width: 100%;
 }
 
-/* ---- CHECKOUT OVERLAY ---- */
+/* ---- Checkout Overlay ---- */
 .checkout-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   display: none;
   justify-content: center;
   align-items: flex-end;
@@ -450,7 +437,7 @@ h3,
   font-family: inherit;
   font-size: 0.9rem;
   background: var(--gray-50);
-  transition: border-color var(--transition);
+  transition: border-color 0.25s;
 }
 .form-group input:focus,
 .form-group textarea:focus {
@@ -467,7 +454,7 @@ h3,
   margin-top: var(--space-sm);
 }
 
-/* ---- TOAST ---- */
+/* ---- Toast ---- */
 .toast {
   position: fixed;
   top: 20px;
@@ -479,7 +466,7 @@ h3,
   border-radius: var(--radius-full);
   font-size: 0.8rem;
   opacity: 0;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity 0.3s, transform 0.3s;
   z-index: 999;
   pointer-events: none;
   box-shadow: var(--shadow-hover);
@@ -489,7 +476,7 @@ h3,
   transform: translateX(-50%) translateY(0);
 }
 
-/* ---- RESPONSIVE ---- */
+/* ---- Responsive ---- */
 @media (min-width: 640px) {
   #app {
     border-radius: var(--radius);
@@ -509,14 +496,14 @@ h3,
   }
 }
 
-/* ---- FOCUS ---- */
+/* ---- Focus ---- */
 :focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 2px;
   border-radius: 4px;
 }
 
-/* ---- REDUCED MOTION ---- */
+/* ---- Reduced Motion ---- */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
