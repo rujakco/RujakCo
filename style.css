@@ -54,7 +54,7 @@ p { line-height: 1.8; }
   top: 0; 
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - 48px); /* Lebar identik dengan gambar hero */
+  width: calc(100% - 48px); 
   max-width: 432px; 
   display: flex; 
   align-items: center; 
@@ -77,27 +77,17 @@ p { line-height: 1.8; }
 
 .luxury-header .header-left, .luxury-header .header-right { pointer-events: auto; }
 
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px; 
-}
+.header-left { display: flex; align-items: center; gap: 12px; }
 
 .brand-logo img { width: 32px; height: 32px; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 .brand-name { font-size: 18px; letter-spacing: -0.01em; color: #FFFFFF; font-weight: 600; text-shadow: 0 2px 8px rgba(0,0,0,0.4); transition: color 0.4s ease, text-shadow 0.4s ease; }
 .luxury-header.scrolled .brand-name { color: var(--green); text-shadow: none; }
 
-.header-right {
-  display: flex;
-  flex-direction: row; /* Dibuat sejajar horizontal */
-  align-items: center;
-  gap: 6px;
-}
+.header-right { display: flex; flex-direction: row; align-items: center; gap: 6px; }
 
 .user-name { font-size: 13px; font-weight: 700; color: #FFFFFF; text-shadow: 0 2px 8px rgba(0,0,0,0.4); transition: color 0.4s ease, text-shadow 0.4s ease; }
 .user-loc { font-size: 13px; font-weight: 500; color: rgba(255, 255, 255, 0.9); text-shadow: 0 2px 8px rgba(0,0,0,0.4); transition: color 0.4s ease, text-shadow 0.4s ease; }
 
-/* Tambahan titik pemisah antara Nama dan Lokasi */
 .user-loc::before { content: '•'; margin-right: 6px; opacity: 0.7; }
 
 .luxury-header.scrolled .user-name { color: var(--green); text-shadow: none; }
@@ -109,7 +99,8 @@ p { line-height: 1.8; }
 .hero-editorial { padding: 0 24px 0; margin-top: -50px; position: relative; z-index: 1; }
 .hero-img-wrap { width: 100%; aspect-ratio: 4 / 3; position: relative; border-radius: 0 0 32px 32px; overflow: hidden; box-shadow: 0 12px 40px rgba(10,58,42,0.15); }
 .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(8,46,33,0.7) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 32px; text-align: left; }
+/* Overlay dengan padding-bottom: 72px agar teks naik 40px */
+.hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(8,46,33,0.7) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 32px 32px 72px; text-align: left; }
 .hero-overlay h2 { font-size: 32px; line-height: 1.15; letter-spacing: -0.01em; color: var(--ivory); font-weight: 300; text-shadow: 0 2px 20px rgba(0,0,0,0.2); }
 .hero-overlay h2 em { font-style: italic; color: var(--gold); font-weight: 400; }
 .hero-caption { padding: 16px 4px 8px; display: flex; align-items: center; }
@@ -126,8 +117,8 @@ p { line-height: 1.8; }
 
 .btq-img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 20px; margin-bottom: 12px; background: var(--gray-100); border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 20px 40px rgba(8, 46, 33, 0.08); }
 
-/* Nama produk turun 15px menjauhi gambar */
-.btq-name { font-size: 24px; color: var(--green); margin-top: 15px; margin-bottom: 8px; }
+/* Nama produk dengan margin-top: 30px (menjauh dari produk) & letter-spacing lebih renggang */
+.btq-name { font-size: 24px; color: var(--green); margin-top: 30px; margin-bottom: 8px; letter-spacing: 0.06em; }
 
 /* Menyembunyikan Teks untuk Item Non-Tengah */
 .boutique-item .btq-name, 
@@ -140,8 +131,8 @@ p { line-height: 1.8; }
 .boutique-item .hairline { width: 24px; margin: 6px auto 10px; }
 .btq-price { font-size: 14px; color: var(--gray-500); font-weight: 500; letter-spacing: 0.02em; }
 
-/* FOOTER RATA TENGAH (Garis Batas Turun) */
-.luxury-footer { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 48px 24px 96px; border-top: 1px solid var(--gray-200); background: var(--ivory); margin-top: 64px; /* Garis batas footer turun sejauh 48px dari sebelumnya */ }
+/* FOOTER RATA TENGAH */
+.luxury-footer { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 48px 24px 96px; border-top: 1px solid var(--gray-200); background: var(--ivory); margin-top: 64px; }
 .footer-grid { display: flex; flex-direction: column; align-items: center; gap: 24px; margin-bottom: 32px; width: 100%; }
 .footer-brand { display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .footer-brand img { width: 32px; height: 32px; border-radius: 50%; filter: grayscale(100%); opacity: 0.3; }
