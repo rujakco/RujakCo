@@ -2,7 +2,7 @@
   'use strict';
 
   // ============================================================
-  // RUJAK.CO — ULTIMATE SILENT LUXURY ENGINE (INFINITE SWIPE)
+  // RUJAK.CO — ULTIMATE SILENT LUXURY ENGINE (2-STEP DETAIL)
   // ============================================================
 
   const SUPABASE_URL = "https://ghhnnfrmftttptcejizp.supabase.co";
@@ -10,12 +10,12 @@
   const SYSTEM = { WA_NUMBER: '6289677161680', STORE_LAT: -6.2165414, STORE_LNG: 107.0177395, DEFAULT_DISTANCE: 2 };
 
   const PRODUCTS = [
-    { id:'p_m1', name:'Rujak Segar', desc:'Kombinasi buah pilihan dengan sambal original Rujak.Co. Disiapkan seketika.', price:35000, container:'Thinwall 1000ml Presisi', size:'Porsi Reguler', sambal:'Original Signature (1 Cup)', buah:['Mangga Mengkel','Nanas Hutan','Bengkoang','Jambu Air','Kedondong'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp' },
-    { id:'p_m2', name:'Rujak Serut', desc:'Buah diserut halus secara presisi untuk pengalaman rasa yang lebih intim.', price:26000, container:'Thinwall 750ml', size:'Porsi Reguler', sambal:'Original Terbawa', buah:['Mangga Muda Jawa','Bengkoang Garing','Nanas Madu','Ubi Ungu Manis'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp' },
-    { id:'p_m3', name:'Rujak Gaco', desc:'Enam buah eksklusif pilihan dengan sambal mete premium. Mahakarya harmoni rasa.', price:40000, container:'Thinwall 1000ml Tersiegel', size:'Porsi Eksklusif', sambal:'Karamelisasi Mete (1 Cup)', buah:['Jambu Kristal','Mangga Indramayu','Nanas Subang','Bengkoang','Jambu Air Premium','Kedondong'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-hd.webp' },
-    { id:'p_m4', name:'Rujak Rama', desc:'Formula porsi melimpah yang dikonsepkan khusus untuk momentum kebersamaan.', price:48000, container:'Jumbo Thinwall 1000ml', size:'Porsi Sharing', sambal:'Karamelisasi Mete (2 Cup)', buah:['Jambu Kristal','Mangga Mengkel','Nanas Madu','Bengkoang','Jambu Air','Kedondong'], defaultSpice:4, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-hd.webp' },
-    { id:'p_m5', name:'Rujak Mahkota', desc:'Koleksi premium dengan anggur Shine Muscat impor pilihan.', price:85000, container:'Premium Luxury Box', size:'Vault Single', sambal:'Mete Grand Reserve (2 Cup)', buah:['Shine Muscat Grade A','Jambu Kristal','Mangga Mengkel','Nanas','Bengkoang'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp' },
-    { id:'p_m6', name:'Tampah Nusantara', desc:'Representasi kemegahan tradisi rasa Indonesia dalam wadah tampah bambu.', price:200000, container:'Tampah Bambu Ø40cm', size:'Perjamuan (8-10 Orang)', sambal:'Original & Mete (4 Cup)', buah:['Shine Muscat','Jambu Kristal','Mangga Pilihan','Nanas Subang','Bengkoang','Jambu Air','Kedondong','Ubi Ungu'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp' }
+    { id:'p_m1', name:'Rujak Segar', desc:'Kombinasi buah pilihan dengan sambal original Rujak.Co. Disiapkan seketika sesaat sebelum pengantaran untuk menjaga tekstur renyah alami.', price:35000, container:'Thinwall 1000ml Presisi', size:'Porsi Reguler', sambal:'Original Signature (1 Cup)', buah:['Mangga Mengkel','Nanas Hutan','Bengkoang','Jambu Air','Kedondong Kebun'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp' },
+    { id:'p_m2', name:'Rujak Serut', desc:'Buah diserut halus secara presisi untuk pengalaman rasa yang lebih menyatu secara intim dengan saus karamelisasi mete.', price:26000, container:'Thinwall 750ml', size:'Porsi Reguler', sambal:'Original Terbawa', buah:['Mangga Muda Jawa','Bengkoang Garing','Nanas Madu','Ubi Ungu Manis'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp' },
+    { id:'p_m3', name:'Rujak Gaco', desc:'Enam buah eksklusif pilihan dengan sambal mete premium. Sebuah mahakarya harmoni rasa gurih, pedas, dan manis.', price:40000, container:'Thinwall 1000ml Tersiegel', size:'Porsi Eksklusif', sambal:'Karamelisasi Mete (1 Cup)', buah:['Jambu Kristal Tanpa Biji','Mangga Indramayu Mengkel','Nanas Subang','Bengkoang Air','Jambu Air Premium','Kedondong'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-hd.webp' },
+    { id:'p_m4', name:'Rujak Rama', desc:'Formula porsi melimpah yang dikonsepkan khusus untuk momentum kebersamaan atau perjamuan formal kerabat terdekat.', price:48000, container:'Jumbo Thinwall 1000ml', size:'Porsi Sharing', sambal:'Karamelisasi Mete (2 Cup)', buah:['Varian Jambu Kristal','Mangga Mengkel Pilihan','Nanas Madu','Bengkoang Super','Jambu Air','Kedondong'], defaultSpice:4, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-hd.webp' },
+    { id:'p_m5', name:'Rujak Mahkota', desc:'Koleksi premium dengan anggur Shine Muscat impor pilihan. Menggabungkan kemewahan tekstur tanpa biji dengan buah tropis terbaik.', price:85000, container:'Premium Luxury Box', size:'Vault Single', sambal:'Mete Grand Reserve (2 Cup)', buah:['Shine Muscat Impor Jepang Grade A','Jambu Kristal Garing','Mangga Mengkel Kurasi','Nanas Hutan','Bengkoang Garing'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp' },
+    { id:'p_m6', name:'Tampah Nusantara', desc:'Representasi kemegahan tradisi rasa Indonesia dalam wadah tampah bambu rajutan tangan untuk perjamuan istimewa Anda.', price:200000, container:'Tampah Bambu Ø40cm', size:'Perjamuan (8-10 Orang)', sambal:'Original & Mete (4 Cup)', buah:['Shine Muscat Premium','Jambu Kristal Vault','Mangga Pilihan Utama','Nanas Hutan Subang','Bengkoang Garing','Jambu Air Rose','Kedondong Pilihan','Ubi Ungu Manis'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp' }
   ];
 
   const DISTRICT_MAP = { 'bekasi barat':5, 'bekasi timur':7, 'bekasi selatan':9, 'bekasi utara':11, 'rawalumbu':8, 'jatiasih':12, 'pondokgede':14, 'cikarang':23, 'tambun':16, 'cibitung':20, 'gambir':18, 'menteng':19, 'tebet':20, 'pancoran':21, 'pasar minggu':22, 'kebayoran lama':24, 'kebayoran baru':22, 'mampang prapatan':21, 'pulo gadung':16, 'jatinegara':18, 'duren sawit':15, 'kramat jati':19, 'pasar rebo':20, 'cakung':12, 'kembangan':25, 'kelapa gading':27, 'depok':35, 'tangerang':38, 'bogor':50 };
@@ -26,7 +26,6 @@
     shippingProvider: 'rujakco', vehicleType: 'motor'
   };
 
-  // MULTIPLIER UNTUK EFEK INFINITE LOOP (Menduplikasi array 50x agar sangat panjang)
   const LOOP_MULTIPLIER = 50; 
   let loopedProducts = [];
   for(let i=0; i<LOOP_MULTIPLIER; i++) { loopedProducts = loopedProducts.concat(PRODUCTS); }
@@ -51,8 +50,16 @@
   function applyPersonalization() {
     const name = state.customerName || 'Klien';
     document.getElementById('headerGreeting').textContent = `Koleksi Eksklusif, ${name}`;
+    const heroGreet = document.getElementById('heroGreeting');
+    if(heroGreet) heroGreet.innerHTML = `Asem, Pedes,<br><em>Manis, Seger.</em>`;
+    const heroSub = document.getElementById('heroSubGreeting');
+    if(heroSub) heroSub.textContent = `Kurasi buah Nusantara untuk Anda, ${name}.`;
+    
     if(document.getElementById('customerName')) document.getElementById('customerName').value = name;
     if(document.getElementById('districtInput') && state.selectedDistrict) { document.getElementById('districtInput').value = state.selectedDistrict.replace(/\b\w/g, l=>l.toUpperCase()); }
+    
+    const aiWelcome = document.getElementById('aiWelcomeMsg');
+    if(aiWelcome) aiWelcome.textContent = `Selamat datang kembali, ${name}. Ada preferensi khusus yang bisa saya bantu hari ini?`;
     updateShippingUI();
   }
 
@@ -136,9 +143,7 @@
   function updateShippingUI() {
     const sum = getCartSummary();
     const dist = state.selectedDistrict ? (DISTRICT_MAP[state.selectedDistrict] || 10) : (state.userDistance || null);
-    
     if (dist !== null) { document.getElementById('shippingSection').style.display = 'block'; }
-
     const ship = calculateShipping(dist || SYSTEM.DEFAULT_DISTANCE, sum.mainProductQty || 1);
     
     document.getElementById('shippingDistance').textContent = dist ? `${dist} km` : '';
@@ -146,11 +151,9 @@
     document.getElementById('finalTotal').textContent = ship.cost ? fmt(sum.subtotal + ship.cost) : fmt(sum.subtotal);
   }
 
-  // --- RENDER 3D CAROUSEL HOMEPAGE (TRUE INFINITE) ---
   function initCarousel() {
     const track = document.getElementById('menuList');
     if (!track) return;
-
     const updateCenter = () => {
       const items = track.querySelectorAll('.boutique-item');
       if(!items.length) return;
@@ -169,11 +172,9 @@
       requestAnimationFrame(updateCenter);
       window.clearTimeout(isScrolling);
       isScrolling = setTimeout(() => {
-        const itemWidth = track.children[0].offsetWidth + 24; // Width + gap
+        const itemWidth = track.children[0].offsetWidth + 32;
         const currentIndex = Math.round(track.scrollLeft / itemWidth);
         const baseCount = PRODUCTS.length;
-        
-        // Jika scroll sudah mendekati ujung kiri atau ujung kanan, kembalikan ke tengah
         if (currentIndex < baseCount * 10 || currentIndex > baseCount * 40) {
           const modulo = currentIndex % baseCount;
           const middleTarget = Math.floor(LOOP_MULTIPLIER / 2) * baseCount + modulo;
@@ -198,8 +199,8 @@
 
   function renderMenu() {
     const container = document.getElementById('menuList'); if (!container) return;
+    document.getElementById('emptyState').style.display = loopedProducts.length ? 'none' : 'block';
     
-    // MURNI GALERI: MENGGUNAKAN ARRAY DUPLIKAT (loopedProducts)
     container.innerHTML = loopedProducts.map((p, index) => `
       <div class="boutique-item" data-id="${p.id}" data-idx="${index}">
         <img src="${p.thumbnail}" class="btq-img" loading="lazy" alt="${p.name}">
@@ -211,7 +212,7 @@
     initCarousel();
   }
 
-  // --- RENDER SWIPER FULLSCREEN DETAIL (INFINITE LOOP & REORDERED LAYOUT) ---
+  // --- RENDER SWIPER (TWO-STEP ACTION & REORDERED LAYOUT) ---
   function renderProductSwiper() {
     const track = document.getElementById('productSwiperTrack');
     if(!track) return;
@@ -224,26 +225,35 @@
           <p class="detail-price">${fmt(p.price)}</p>
           <p class="detail-desc">${p.desc}</p>
           
+          <!-- PROGRESSIVE DISCLOSURE ACTION AREA -->
+          <div class="action-area">
+            <div id="step1_${index}_${p.id}" class="action-step-1">
+              <button class="step-1-btn btn-lanjutkan" data-idx="${index}" data-pid="${p.id}">Lanjutkan</button>
+            </div>
+            
+            <div id="step2_${index}_${p.id}" class="step-2-content">
+              <div class="spice-selector">
+                <label>Intensitas Pedas</label>
+                <div class="spice-options" id="spice_${index}_${p.id}">
+                  ${[1,2,3,4,5].map(i => `<button class="spice-option ${i===(state.drafts[p.id].spice)?'active':''}" data-spice="${i}" data-pid="${p.id}">${i}</button>`).join('')}
+                </div>
+              </div>
+              <div class="detail-actions" style="margin-bottom:0;">
+                <div class="qty-minimal">
+                  <button class="qty-minus" data-pid="${p.id}">−</button>
+                  <span class="qty-num" data-valpid="${p.id}">${state.drafts[p.id].qty}</span>
+                  <button class="qty-plus" data-pid="${p.id}">+</button>
+                </div>
+                <button class="btn-dark add-to-cart-btn" data-pid="${p.id}" data-idx="${index}">Konfirmasi</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- LAINNYA MENYINGKIR DI BAWAH -->
           <label class="section-label">Komposisi Buah</label>
           <ul class="fruit-list">
             ${p.buah.map(b => `<li>${b}</li>`).join('')}
           </ul>
-
-          <div class="spice-selector">
-            <label>Intensitas Pedas</label>
-            <div class="spice-options" id="spice_${index}_${p.id}">
-              ${[1,2,3,4,5].map(i => `<button class="spice-option ${i===(state.drafts[p.id].spice)?'active':''}" data-spice="${i}" data-pid="${p.id}">${i}</button>`).join('')}
-            </div>
-          </div>
-          
-          <div class="detail-actions">
-            <div class="qty-minimal">
-              <button class="qty-minus" data-pid="${p.id}">−</button>
-              <span class="qty-num" data-valpid="${p.id}">${state.drafts[p.id].qty}</span>
-              <button class="qty-plus" data-pid="${p.id}">+</button>
-            </div>
-            <button class="btn-dark add-to-cart-btn" data-pid="${p.id}">Tambahkan ke Koleksi</button>
-          </div>
 
           <div class="detail-specs">
             <div><span>Wadah</span> <span>${p.container}</span></div>
@@ -253,14 +263,13 @@
           
           <div class="detail-manifesto">
             <h4><i data-lucide="shield-check" class="w-4 h-4 inline" style="margin-bottom:-2px;"></i> Filosofi Fresh-Prep</h4>
-            <p>Kerenyahan adalah prioritas. Kami memotong buah tepat 15 menit sebelum diberangkatkan. Sambal dikemas secara terpisah dalam wadah tersegel rapat.</p>
+            <p>Kerenyahan adalah prioritas utama. Kami memotong buah tepat 15 menit sebelum diberangkatkan.</p>
           </div>
         </div>
       </div>
     `).join('');
     if(window.lucide) window.lucide.createIcons();
 
-    // Logika Infinite Loop untuk Swiper Detail
     let isScrollingDetail;
     track.addEventListener('scroll', () => {
       window.clearTimeout(isScrollingDetail);
@@ -290,7 +299,7 @@
   function renderMiniCart() {
     const sum = getCartSummary();
     const list = document.getElementById('miniCartList');
-    list.innerHTML = sum.items.length === 0 ? '<p style="text-align:center; color:var(--gray-500); padding:32px 0;">Tas belanja Anda kosong.</p>' : sum.items.map(i => `
+    list.innerHTML = sum.items.length === 0 ? '<p style="text-align:center; color:var(--gray-500); padding:32px 0;">Tas belanja kosong.</p>' : sum.items.map(i => `
       <div class="cart-item-row">
         <div class="cart-item-info">
           <h4>${i.name}${i.spice?' (Lv '+i.spice+')':''}</h4>
@@ -308,17 +317,15 @@
     updateShippingUI();
   }
 
-  function updateUI() { try{localStorage.setItem('rj_crt_v6', JSON.stringify(state.cart));}catch(e){} renderCart(); if(document.getElementById('miniCartModal')?.classList.contains('active')) renderMiniCart(); }
+  function updateUI() { try{localStorage.setItem('rj_crt_v7', JSON.stringify(state.cart));}catch(e){} renderCart(); if(document.getElementById('miniCartModal')?.classList.contains('active')) renderMiniCart(); }
 
-  // --- Buka Halaman Detail (Langsung Jump ke Index yang Sama di Swiper) ---
   function openProductPage(globalIndex) {
     document.getElementById('productPage').style.display = 'flex';
     document.body.style.overflow = 'hidden'; 
-    
     const targetSlide = document.querySelector(`.product-slide[data-idx="${globalIndex}"]`);
     if(targetSlide) { 
       const track = document.getElementById('productSwiperTrack');
-      track.style.scrollBehavior = 'auto'; // Matikan animasi agar instan masuk
+      track.style.scrollBehavior = 'auto'; 
       track.scrollLeft = targetSlide.offsetLeft;
       track.style.scrollBehavior = 'smooth';
     }
@@ -329,12 +336,9 @@
     document.body.style.overflow = '';
   }
 
-  // --- Gestur: Tarik Layar ke Bawah untuk Tutup ---
   function initSwipeToClose() {
     const overlay = document.getElementById('productPage');
-    let startY = 0, startX = 0;
-    let isPulling = false;
-    let activeSlide = null;
+    let startY = 0, startX = 0, isPulling = false, activeSlide = null;
 
     overlay.addEventListener('touchstart', e => {
       if(e.touches.length > 1) return;
@@ -346,9 +350,7 @@
     overlay.addEventListener('touchmove', e => {
       if(!isPulling || !activeSlide) return;
       const dy = e.touches[0].clientY - startY; const dx = e.touches[0].clientX - startX;
-      // Jangan tarik ke bawah jika pengguna menggeser ke samping (swipe kiri/kanan antar produk)
       if (Math.abs(dx) > Math.abs(dy)) { isPulling = false; activeSlide.style.transform = 'translateY(0)'; return; }
-
       if (isPulling === 'down' && dy > 0) {
         activeSlide.style.transform = `translateY(${dy * 0.4}px)`;
         if(e.cancelable) e.preventDefault(); 
@@ -369,11 +371,22 @@
     document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
   }
 
+  function initAIChat() {
+    const box = document.getElementById('aiChatBox'), input = document.getElementById('aiChatInput'), send = document.getElementById('aiChatSend'), messages = document.getElementById('aiChatMessages');
+    const processMsg = () => {
+      const txt = input.value.trim(); if(!txt) return;
+      messages.innerHTML += `<div class="msg-user"><span>${escapeHTML(txt)}</span></div>`;
+      input.value = ''; messages.scrollTop = messages.scrollHeight;
+      setTimeout(() => { messages.innerHTML += `<div class="msg-bot" style="margin-bottom:12px;"><span>Pesan Anda telah kami terima, ${state.customerName || 'Bapak/Ibu'}. Pramutamu kami akan membalas segera.</span></div>`; messages.scrollTop = messages.scrollHeight; }, 800);
+    };
+    if(send) send.addEventListener('click', processMsg);
+    if(input) input.addEventListener('keydown', e => { if(e.key === 'Enter') processMsg(); });
+  }
+
   function bindEvents() {
     document.getElementById('backFromProduct')?.addEventListener('click', closeProductPage);
 
     const openCart = () => { document.getElementById('miniCartModal').classList.add('active'); document.body.style.overflow='hidden'; renderMiniCart(); };
-    document.getElementById('topCartBtn')?.addEventListener('click', openCart);
     document.getElementById('navCartBtn')?.addEventListener('click', (e) => { e.preventDefault(); openCart(); });
     document.getElementById('miniCartClose')?.addEventListener('click', () => { document.getElementById('miniCartModal').classList.remove('active'); document.body.style.overflow=''; });
 
@@ -388,25 +401,17 @@
       updateShippingUI();
     });
 
-    document.getElementById('btnAutoDetect')?.addEventListener('click', function() {
-      if(navigator.geolocation) {
-        showToast('Sinkronisasi sinyal satelit...');
-        navigator.geolocation.getCurrentPosition(pos => {
-          state.userDistance = estimateRoadDistance(haversineDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, pos.coords.latitude, pos.coords.longitude));
-          state.selectedDistrict = ''; if(di) di.value = 'Titik Satelit Terhubung';
-          updateShippingUI();
-          showToast('Jarak berhasil disinkronisasi.');
-        }, () => { showToast('Akses lokasi ditolak perangkat.'); }, { timeout: 8000 });
-      }
-    });
-
-    // MASTER CLICK DELEGATION
     document.addEventListener('click', e => {
-      // Masuk ke Detail dari Homepage
       const mi = e.target.closest('.boutique-item');
       if (mi) { openProductPage(mi.dataset.idx); }
 
-      // Ganti Bumbu (Sinkronisasi ke semua DOM)
+      // ACTION 1: Lanjutkan
+      if (e.target.classList.contains('btn-lanjutkan')) {
+        const idx = e.target.dataset.idx; const pid = e.target.dataset.pid;
+        document.getElementById(`step1_${idx}_${pid}`).style.display = 'none';
+        document.getElementById(`step2_${idx}_${pid}`).style.display = 'block';
+      }
+
       if (e.target.classList.contains('spice-option')) {
         const pid = e.target.dataset.pid; const val = parseInt(e.target.dataset.spice);
         state.drafts[pid].spice = val;
@@ -416,7 +421,6 @@
         });
       }
 
-      // Ganti Kuantitas (Sinkronisasi ke semua DOM)
       if (e.target.classList.contains('qty-plus') && e.target.closest('.detail-actions')) {
         const pid = e.target.dataset.pid; state.drafts[pid].qty++; 
         document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = state.drafts[pid].qty);
@@ -429,30 +433,33 @@
         }
       }
 
-      // Tambah ke Keranjang dari Halaman Detail
+      // ACTION 2: Konfirmasi
       if (e.target.classList.contains('add-to-cart-btn')) {
-        const pid = e.target.dataset.pid; const draft = state.drafts[pid];
+        const pid = e.target.dataset.pid; const draft = state.drafts[pid]; const idx = e.target.dataset.idx;
         const cartKey = pid + '_spice' + draft.spice;
         if(!state.cart[cartKey]) state.cart[cartKey] = {qty: 0, spice: draft.spice};
         state.cart[cartKey].qty += draft.qty;
         updateUI(); showToast('Sajian tersimpan di Tas Belanja.');
         closeProductPage();
+        
+        // Reset state step 1 untuk pembelian berikutnya
+        setTimeout(() => {
+          document.getElementById(`step1_${idx}_${pid}`).style.display = 'block';
+          document.getElementById(`step2_${idx}_${pid}`).style.display = 'none';
+        }, 500);
       }
 
-      // Modifikasi Qty dari dalam Tas Belanja
       const act = e.target.closest('[data-action]');
-      if(act && !e.target.classList.contains('add-to-cart-btn')) { 
+      if(act && !e.target.classList.contains('add-to-cart-btn') && !e.target.classList.contains('btn-lanjutkan')) { 
         const id = act.dataset.id, type = act.dataset.action;
         if(type === 'increase') { state.cart[id].qty++; updateUI(); }
         else if(type === 'decrease') { state.cart[id].qty--; if(state.cart[id].qty<=0) delete state.cart[id]; updateUI(); }
       }
 
-      // Logistik Checkout
       if(e.target.classList.contains('log-btn')) { document.querySelectorAll('.log-btn').forEach(b => b.classList.remove('active')); e.target.classList.add('active'); state.shippingProvider = e.target.dataset.provider; document.getElementById('rujakcoOptions').style.display = state.shippingProvider === 'paxel' ? 'none' : 'block'; document.getElementById('paxelOptions').style.display = state.shippingProvider === 'paxel' ? 'block' : 'none'; updateShippingUI(); }
       if(e.target.classList.contains('veh-btn')) { document.querySelectorAll('.veh-btn').forEach(b => b.classList.remove('active')); e.target.classList.add('active'); state.vehicleType = e.target.dataset.vehicle; updateShippingUI(); }
       if(e.target.id === 'priorityToggleMini') { state.isPriority = e.target.checked; updateShippingUI(); }
 
-      // Buka Gerbang Pembayaran
       if(e.target.id === 'btnOpenPayment') {
         const name = document.getElementById('customerName')?.value.trim(), phone = document.getElementById('customerPhone')?.value.trim(), address = document.getElementById('customerAddress')?.value.trim();
         if(!name || !phone || !address || (!state.selectedDistrict && !state.userDistance)) { showToast('Mohon lengkapi formulir pengiriman.'); return; }
@@ -490,11 +497,15 @@
           document.getElementById('miniCartModal').classList.remove('active'); document.body.style.overflow='';
         }, 500);
       }
+
+      if(e.target.closest('#aiChatToggle')) { e.preventDefault(); document.getElementById('aiChatBox').classList.add('active'); }
+      if(e.target.id === 'aiChatClose') { document.getElementById('aiChatBox').classList.remove('active'); }
     });
   }
 
   function init() {
-    try { const s = localStorage.getItem('rj_crt_v6'); if(s) state.cart = JSON.parse(s); } catch(e){}
+    try { const s = localStorage.getItem('rj_crt_v7'); if(s) state.cart = JSON.parse(s); } catch(e){}
+    initAIChat();
     renderMenu();
     renderProductSwiper(); 
     initSwipeToClose();    
