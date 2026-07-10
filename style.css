@@ -95,7 +95,9 @@ p { line-height: 1.8; }
 
 /* HERO */
 .content-wrapper { padding-bottom: 80px; overflow-x: hidden; }
-.hero-editorial { padding: 0 24px 0; margin-top: -50px; position: relative; z-index: 1; }
+
+/* Margin atas ditarik menjadi -70px (Naik 20px dari sebelumnya -50px) */
+.hero-editorial { padding: 0 24px 0; margin-top: -70px; position: relative; z-index: 1; }
 .hero-img-wrap { width: 100%; aspect-ratio: 4 / 3; position: relative; border-radius: 0 0 32px 32px; overflow: hidden; box-shadow: 0 12px 40px rgba(10,58,42,0.15); }
 .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .hero-overlay { 
@@ -105,7 +107,7 @@ p { line-height: 1.8; }
   display: flex; 
   flex-direction: column; 
   justify-content: flex-end; 
-  padding: 32px 32px 27px; /* Teks turun mendekati garis batas bawah */
+  padding: 32px 32px 27px; 
   text-align: left; 
 }
 .hero-overlay h2 { font-size: 32px; line-height: 1.15; letter-spacing: -0.01em; color: var(--ivory); font-weight: 300; text-shadow: 0 2px 20px rgba(0,0,0,0.2); }
@@ -132,20 +134,22 @@ p { line-height: 1.8; }
 }
 .hero-caption-text #heroNameDisplay { color: var(--gold); font-weight: 600; }
 
-/* CAROUSEL */
+/* CAROUSEL TUMPANG TINDIH (COVER FLOW) */
 .carousel-container { 
   width: 100%; 
   overflow: hidden; 
   padding: 12px 0 40px; 
   margin-top: 40px; 
 }
-.carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; padding: 0 24px; gap: 20px; }
+
+/* Padding trek disesuaikan (52px) untuk mengkompensasi margin negatif dari item pertama, gap dihapus */
+.carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; padding: 0 52px; gap: 0; }
 .carousel-track::-webkit-scrollbar { display: none; }
 
-/* WADAH KACA HIJAU (GREEN GLASS) SELEBAR HERO */
 .boutique-item { 
   flex: 0 0 calc(100% - 48px); 
   max-width: 432px; 
+  margin: 0 -28px; /* Margin negatif super ekstrim agar kartu bertumpuk/menyelinap ke belakang */
   scroll-snap-align: center; 
   display: flex; 
   flex-direction: column; 
@@ -153,34 +157,32 @@ p { line-height: 1.8; }
   text-align: center; 
   cursor: pointer; 
   text-decoration: none; 
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease; 
-  transform: scale(0.9); 
-  opacity: 0.4; 
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease, box-shadow 0.5s ease; 
+  transform: scale(0.82); /* Kartu non-aktif dibuat menyusut lebih kecil */
+  opacity: 0.45; 
   will-change: transform; 
   
   /* Efek Green Glass Transparan */
-  background: linear-gradient(145deg, rgba(8, 46, 33, 0.06) 0%, rgba(8, 46, 33, 0.02) 100%);
+  background: linear-gradient(145deg, rgba(8, 46, 33, 0.08) 0%, rgba(8, 46, 33, 0.02) 100%);
   backdrop-filter: blur(16px) saturate(120%);
   -webkit-backdrop-filter: blur(16px) saturate(120%);
   border: 1px solid rgba(8, 46, 33, 0.08);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 16px 32px rgba(8, 46, 33, 0.04);
   border-radius: 32px;
-  padding: 24px 24px 36px; /* Memberi jarak agar isi tidak menempel ke tepi kaca */
-}
-.boutique-item.active-center { transform: scale(1); opacity: 1; z-index: 10; }
-
-/* THUMBNAIL KEMBALI KE SQUARE 1:1 */
-.btq-img { 
-  width: 100%; 
-  aspect-ratio: 1 / 1; 
-  object-fit: cover; 
-  border-radius: 20px; 
-  margin-bottom: 0; /* Margin dipindah ke bungkus teks di bawahnya */
-  background: var(--gray-100); 
-  box-shadow: 0 16px 32px rgba(8, 46, 33, 0.12); /* Bayangan pop-out */
+  padding: 16px 16px 32px; /* Padding ditipiskan agar gambar Rujak lebih besar/penuh */
+  z-index: 1; /* Tertumpuk di belakang */
 }
 
-/* WADAH TEKS DAN GARIS HARGA */
+/* Saat kartu menjadi fokus di tengah layar */
+.boutique-item.active-center { 
+  transform: scale(1); 
+  opacity: 1; 
+  z-index: 10; /* Melompat ke tumpukan paling depan */
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3), 0 24px 48px rgba(8, 46, 33, 0.12); /* Bayangan pop out */
+}
+
+.btq-img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 20px; margin-bottom: 0; background: var(--gray-100); box-shadow: 0 16px 32px rgba(8, 46, 33, 0.12); }
+
 .btq-text-container {
   display: flex;
   flex-direction: column;
@@ -201,7 +203,7 @@ p { line-height: 1.8; }
 .btq-name { 
   font-size: 24px; 
   color: var(--green); 
-  margin-top: 24px; /* Teks turun menjauh dari gambar kotak */
+  margin-top: 30px; 
   margin-bottom: 12px; 
   letter-spacing: 0.06em; 
   text-align: center;
@@ -244,7 +246,6 @@ p { line-height: 1.8; }
   overflow: hidden; 
 }
 
-/* Trik 4 lapis background dengan bilangan prima agar sangat acak */
 .luxury-footer::before {
   content: '';
   position: absolute;
@@ -257,7 +258,7 @@ p { line-height: 1.8; }
   background-size: 113px 113px, 67px 67px, 43px 43px, 157px 157px; 
   background-position: 0 0, 31px 53px, 89px 17px, 11px 137px;
   background-repeat: repeat;
-  opacity: 0.03; /* Sangat tipis/pucat */
+  opacity: 0.03; 
   filter: sepia(1) hue-rotate(10deg) saturate(3) brightness(0.9);
   pointer-events: none;
   z-index: 0;
