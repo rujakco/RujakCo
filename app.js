@@ -1,5 +1,5 @@
 // ============================================================
-// RUJAK.CO — MAIN JAVASCRIPT
+// RUJAK.CO — MAIN JAVASCRIPT (App.js)
 // ============================================================
 
 // ===== DATA PRODUK =====
@@ -64,10 +64,8 @@ function showStep(step) {
 
 function finishOnboarding() {
   onboarding.classList.add('hidden');
-  // Simpan ke localStorage agar tidak muncul lagi
   localStorage.setItem('rujak_onboarded', 'true');
   localStorage.setItem('rujak_user', JSON.stringify(userData));
-  // Update header
   headerName.textContent = userData.name;
   heroNameDisplay.textContent = userData.name;
   if (userData.location) {
@@ -75,7 +73,6 @@ function finishOnboarding() {
   } else {
     headerLoc.textContent = '📍';
   }
-  // Mulai auto-slide setelah onboarding selesai
   setTimeout(() => {
     if (typeof startCarouselAutoSlide === 'function') {
       startCarouselAutoSlide();
@@ -108,7 +105,7 @@ onbLoc.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') onbLocBtn.click();
 });
 
-// Cek apakah sudah onboarding sebelumnya
+// Cek onboarding
 const onboarded = localStorage.getItem('rujak_onboarded');
 if (onboarded === 'true') {
   try {
@@ -122,7 +119,6 @@ if (onboarded === 'true') {
   } catch (e) {}
   onboarding.classList.add('hidden');
 } else {
-  // Tampilkan onboarding
   showStep(1);
   setTimeout(() => onbName.focus(), 500);
 }
@@ -198,7 +194,7 @@ function resetCarouselAutoSlide() {
   startCarouselAutoSlide();
 }
 
-// Event: scroll manual
+// Event scroll manual
 track.addEventListener('scroll', function() {
   const items = track.querySelectorAll('.boutique-item');
   const rect = track.getBoundingClientRect();
@@ -226,11 +222,11 @@ track.addEventListener('scroll', function() {
   }
 }, { passive: true });
 
-// Event: hover pause
+// Event pause saat hover
 track.addEventListener('mouseenter', stopCarouselAutoSlide);
 track.addEventListener('mouseleave', startCarouselAutoSlide);
 
-// Event: touch pause
+// Event pause saat sentuh
 track.addEventListener('touchstart', stopCarouselAutoSlide, { passive: true });
 track.addEventListener('touchend', function() {
   setTimeout(startCarouselAutoSlide, 3000);
@@ -288,26 +284,21 @@ function openProductDetail(productId) {
   const product = products.find(p => p.id === productId);
   if (!product) return;
 
-  // Buat overlay
   const overlay = document.createElement('div');
   overlay.className = 'product-swiper-overlay';
   overlay.id = 'productOverlay';
 
-  // Close button
   const closeBtn = document.createElement('div');
   closeBtn.className = 'floating-close';
   closeBtn.innerHTML = `<button class="glass-btn" id="closeDetail">✕</button>`;
   overlay.appendChild(closeBtn);
 
-  // Track untuk swiper
   const swiperTrack = document.createElement('div');
   swiperTrack.className = 'product-swiper-track';
 
-  // Buat slide untuk setiap produk
-  products.forEach((p, idx) => {
+  products.forEach((p) => {
     const slide = document.createElement('div');
     slide.className = 'product-slide';
-    // Tampilkan hanya slide yang sesuai, tapi kita tetap render semua
     slide.innerHTML = `
       <div class="detail-image-wrap">
         <img src="${p.image}" alt="${p.name}" loading="lazy" />
@@ -339,7 +330,6 @@ function openProductDetail(productId) {
   overlay.appendChild(swiperTrack);
   document.body.appendChild(overlay);
 
-  // Scroll ke slide yang sesuai
   setTimeout(() => {
     const slides = swiperTrack.querySelectorAll('.product-slide');
     const targetSlide = slides[product.id - 1];
@@ -348,26 +338,22 @@ function openProductDetail(productId) {
     }
   }, 100);
 
-  // Event close
   document.getElementById('closeDetail').addEventListener('click', () => {
     document.body.removeChild(overlay);
   });
 
-  // Event klik di luar close (tapi tetap pakai tombol)
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) {
       document.body.removeChild(overlay);
     }
   });
 
-  // Event tombol pesan
   overlay.querySelectorAll('.step-1-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const pid = parseInt(btn.dataset.id);
       const prod = products.find(p => p.id === pid);
       showToast(`🛒 ${prod.name} ditambahkan ke keranjang!`);
-      // Update badge
       const badge = document.getElementById('cartBadge');
       let count = parseInt(badge.textContent) || 0;
       count++;
