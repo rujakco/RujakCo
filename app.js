@@ -117,8 +117,16 @@
       let qty = 0, firstKey = p.id + '_spice3';
       Object.keys(state.cart).forEach(k => { if(k.startsWith(p.id)) { qty += state.cart[k].qty; firstKey = k; } });
       const badge = p.badge ? `<span class="item-badge-right ${p.badgeColor}">${p.badge}</span>` : '';
-      const control = qty === 0 ? `<button class="btn-add-unified" data-action="open-modal" data-id="${p.id}"><i data-lucide="plus" class="w-4 h-4"></i></button>` : `<div class="qty-control"><button class="qty-btn" data-action="decrease" data-id="${firstKey}">-</button><span class="qty-num">${qty}</span><button class="qty-btn" data-action="increase" data-id="${firstKey}">+</button></div>`;
-      return `<div class="menu-item" data-id="${p.id}"><div class="item-img-wrap"><img src="${p.thumbnail}" loading="lazy"></div><div class="item-body"><div class="item-name-row"><span class="item-name">${p.name}</span>${badge}</div><p class="item-desc">${p.desc}</p><div class="item-footer"><span class="item-price">${fmt(p.price)}</span>${control}</div></div></div>`;
+      const control = qty === 0 ? `<button class="btn-add-unified" data-action="open-modal" data-id="${p.id}">Tambahkan</button>` : `<div class="qty-control"><button class="qty-btn" data-action="decrease" data-id="${firstKey}">-</button><span class="qty-num">${qty}</span><button class="qty-btn" data-action="increase" data-id="${firstKey}">+</button></div>`;
+      
+      // DESKRIPSI HILANG DI SINI UNTUK TAMPILAN BERSIH
+      return `<div class="menu-item" data-id="${p.id}">
+        <div class="item-img-wrap"><img src="${p.thumbnail}" loading="lazy"></div>
+        <div class="item-body" style="justify-content:center;">
+          <div class="item-name-row" style="margin-bottom:12px;"><span class="item-name" style="margin:0;">${p.name}</span>${badge}</div>
+          <div class="item-footer"><span class="item-price">${fmt(p.price)}</span>${control}</div>
+        </div>
+      </div>`;
     }).join('');
     container.style.display = 'block';
     if(window.lucide) window.lucide.createIcons();
@@ -128,8 +136,14 @@
     const container = document.getElementById('addonList'); if (!container) return;
     container.innerHTML = ADDONS.map(a => {
       const qty = state.cart[a.id]?.qty || 0;
-      const control = qty === 0 ? `<button class="addon-add" data-action="add-addon" data-id="${a.id}"><i data-lucide="plus" class="w-4 h-4"></i></button>` : `<div class="qty-control"><button class="qty-btn" data-action="decrease" data-id="${a.id}">-</button><span class="qty-num">${qty}</span><button class="qty-btn" data-action="increase" data-id="${a.id}">+</button></div>`;
-      return `<div class="addon-card"><div class="addon-icon ${a.iconColor}"><i data-lucide="${a.icon}" class="w-6 h-6"></i></div><div class="addon-name">${a.name}</div><div class="addon-desc">${a.desc}</div><div class="addon-footer"><span class="addon-price">${fmt(a.price)}</span>${control}</div></div>`;
+      const control = qty === 0 ? `<button class="btn-add-unified" data-action="add-addon" data-id="${a.id}">Tambahkan</button>` : `<div class="qty-control"><button class="qty-btn" data-action="decrease" data-id="${a.id}">-</button><span class="qty-num">${qty}</span><button class="qty-btn" data-action="increase" data-id="${a.id}">+</button></div>`;
+      
+      // DESKRIPSI HILANG DI SINI JUGA
+      return `<div class="addon-card">
+        <span class="addon-name" style="margin-bottom:8px;">${a.name}</span>
+        <span class="addon-price" style="margin-bottom:16px;">${fmt(a.price)}</span>
+        <div style="margin-top:auto; display:flex; justify-content:flex-end;">${control}</div>
+      </div>`;
     }).join('');
     if(window.lucide) window.lucide.createIcons();
   }
@@ -138,7 +152,7 @@
     const sum = getCartSummaryCached(), bar = document.getElementById('bottom-bar');
     if (sum.totalQty > 0) {
       if(bar) bar.classList.add('visible');
-      const prev = document.getElementById('cartPreview'); if(prev) prev.textContent = `${sum.totalQty} item`;
+      const prev = document.getElementById('cartPreview'); if(prev) prev.textContent = `${sum.totalQty} sajian`;
       const tot = document.getElementById('cartTotalDisplay'); if(tot) tot.textContent = fmt(sum.subtotal);
     } else {
       if(bar) bar.classList.remove('visible');
@@ -191,7 +205,6 @@
     if(pp && pp.style.display === 'block') { pp.style.display = 'none'; document.getElementById('mainContent').style.display = 'block'; }
   });
 
-  // --- TRACED FIX 4: Chat AI ---
   function initAIChat() {
     const toggle = document.getElementById('aiChatToggle');
     const box = document.getElementById('aiChatBox');
@@ -239,7 +252,6 @@
       if(dm) { dm.style.display = 'block'; dm.innerHTML = m.map(k => `<div style="padding:14px 16px; border-bottom:1px solid #eee; cursor:pointer;" data-val="${k}">${k.replace(/\b\w/g, l=>l.toUpperCase())}</div>`).join(''); }
     });
     
-    // TRACED FIX 1: Memunculkan Opsi Kurir Setelah Pilih Kecamatan
     if(dm) dm.addEventListener('click', e => {
       const v = e.target.closest('div[data-val]')?.dataset.val; if(!v) return;
       state.selectedDistrict = v; dm.style.display = 'none'; if(di) di.value = v.replace(/\b\w/g, l=>l.toUpperCase());
@@ -250,7 +262,6 @@
       updateShippingUI();
     });
 
-    // TRACED FIX 2: Tombol Waktu Pengiriman
     const times = ['Pagi (09:00 - 11:00 WIB)', 'Siang (11:00 - 13:00 WIB)', 'Sore (14:00 - 17:00 WIB)'];
     let timeIdx = 0;
     document.getElementById('deliveryTimeTrigger')?.addEventListener('click', function() {
@@ -264,7 +275,6 @@
       }
     });
 
-    // TRACED FIX 3: Tombol Lokasi Bawah
     document.getElementById('btnAutoDetect')?.addEventListener('click', function() {
       document.getElementById('btnManualDistrict')?.classList.remove('active'); this.classList.add('active');
       showToast('Mendeteksi GPS...');
@@ -283,12 +293,21 @@
       const dt = document.getElementById('districtTrigger'); if(dt) dt.style.display = 'flex';
     });
 
-    // Tombol Tutup X di Bottom Bar
     document.getElementById('closeBottomBar')?.addEventListener('click', function() {
       document.getElementById('bottom-bar')?.classList.remove('visible');
     });
 
     document.addEventListener('click', e => {
+      // LOGIKA KLIK FAQ (PERTANYAAN UMUM)
+      const faqToggle = e.target.closest('[data-toggle="faq"]');
+      if (faqToggle) {
+        const item = faqToggle.closest('.faq-item');
+        const isOpen = item.classList.contains('open');
+        document.querySelectorAll('#faqContainer .faq-item').forEach(i => i.classList.remove('open'));
+        if (!isOpen) item.classList.add('open');
+        return;
+      }
+
       if(e.target.closest('[data-action="open-cart"]') || e.target.closest('.cart-summary')) { const m = document.getElementById('miniCartModal'); if(m){ m.classList.add('active'); document.body.style.overflow='hidden'; renderMiniCart(); } return; }
       if(e.target.closest('#miniCartClose') || (e.target.id === 'miniCartModal' && !e.target.closest('.modal-content'))) { const m = document.getElementById('miniCartModal'); if(m){ m.classList.remove('active'); document.body.style.overflow=''; } return; }
       if(e.target.id === 'priorityToggle' || e.target.id === 'priorityToggleMini') { state.isPriority = e.target.checked; const pm = document.getElementById('priorityToggleMini'), pt = document.getElementById('priorityToggle'); if(pm) pm.checked=state.isPriority; if(pt) pt.checked=state.isPriority; updateShippingUI(); return; }
@@ -311,7 +330,6 @@
         const name = document.getElementById('customerName')?.value.trim(), phone = document.getElementById('customerPhone')?.value.trim(), address = document.getElementById('customerAddress')?.value.trim();
         const dist = state.selectedDistrict || state.userDistance;
         if(!name || !phone || !address || !dist) { showToast('Mohon lengkapi alamat dan nama.'); return; }
-        
         state.customerName = name; state.customerPhone = phone; state.customerAddress = address; 
         const pt = document.getElementById('paymentTotalDisplay'), ft = document.getElementById('finalTotal');
         if(pt && ft) pt.textContent = ft.textContent;
@@ -330,10 +348,10 @@
         const orderId = 'RJ' + Date.now().toString(36).toUpperCase().slice(-6);
         const locLabel = state.selectedDistrict ? `Kec. ${state.selectedDistrict.replace(/\b\w/g, l=>l.toUpperCase())}` : 'Lokasi GPS';
         const fullAddress = `${state.customerAddress}, ${locLabel}`;
-        const timeDel = document.getElementById('deliveryTime')?.value || 'Belum dipilih';
+        const timeDel = document.getElementById('deliveryTime')?.value || 'As Soon As Prepared (Esok Hari)';
         const notes = document.getElementById('orderNotes')?.value || '-';
         
-        let msg = `*PESANAN RUJAK.CO*\n\nOrder: ${orderId}\nNama: ${state.customerName}\nTelp: ${state.customerPhone}\nAlamat: ${fullAddress}\nJam: ${timeDel}\nCatatan: ${notes}\n\n*Sajian:*\n`;
+        let msg = `*PESANAN RUJAK.CO*\n\nOrder: ${orderId}\nNama: ${state.customerName}\nTelp: ${state.customerPhone}\nAlamat: ${fullAddress}\nJam: ${timeDel}\nCatatan: ${notes}\n\n*Pesanan:*\n`;
         sum.items.forEach(i => msg += `- ${i.name} ${i.spice?'(Lv '+i.spice+')':''} x${i.qty}\n`);
         msg += `\nSubtotal: ${fmt(sum.subtotal)}\nOngkir: ${fmt(ship.cost)}\n*TOTAL: ${fmt(sum.subtotal + (ship.cost||0))}*\n\n(Mohon lampirkan bukti transfer QRIS)`;
         
