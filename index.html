@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Rujak.Co — Premium Rujak</title>
-  <meta name="theme-color" content="#0A3A2A" />
+  <meta name="theme-color" content="#FAF8F5" />
   <link rel="icon" type="image/webp" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,7 +19,6 @@
     <div class="onb-content">
       <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" class="onb-logo">
       
-      <!-- PANDANGAN 1: KLIEN BARU -->
       <div id="onbNewUser" style="display:none; width:100%;">
         <h2 class="onb-title">Rujak.Co</h2>
         <p class="onb-subtitle">Eksklusivitas Rasa Nusantara.</p>
@@ -40,20 +39,18 @@
         </div>
       </div>
 
-      <!-- PANDANGAN 2: KLIEN LAMA (WELCOME BACK) -->
       <div id="onbReturningUser" style="display:none; width:100%;">
         <p class="onb-welcome-text">Selamat Datang Kembali,</p>
         <h2 class="onb-title" id="onbWelcomeName">Klien</h2>
         <p class="onb-subtitle" style="margin-bottom:48px;">Destinasi: <span id="onbWelcomeDistrict" style="color:var(--gold);">Bekasi</span></p>
         <button class="btn-gold full-width" id="onbEnterBtn">Masuk Ke Butik</button>
-        <button class="btn-text-gold" id="onbResetBtn" style="margin-top:24px;">Bukan Anda? Ubah Profil</button>
+        <button class="btn-text-gold" id="onbResetBtn" style="margin-top:24px;">Ubah Profil Pengantaran</button>
       </div>
-
     </div>
   </div>
 
   <div id="app">
-    <!-- HEADER EDITORIAL -->
+    <!-- HEADER KACA TRANSPARAN -->
     <header class="luxury-header">
       <div class="brand-logo"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co"></div>
       <div class="header-center">
@@ -65,19 +62,19 @@
 
     <!-- KANVAS UTAMA -->
     <main class="content-wrapper" id="mainContent">
+      <!-- HERO SQUARE (MENTOK ATAS) -->
       <div class="hero-editorial fade-up">
         <div class="hero-img-wrap">
-          <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Sajian Rujak" onerror="this.style.display='none'" />
-        </div>
-        <div class="hero-overlay">
-          <h2 id="heroGreeting">Asem, Pedes,<br><em>Manis, Seger.</em></h2>
-          <p id="heroSubGreeting">Kurasi buah eksklusif untuk Anda.</p>
+          <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Sajian Rujak" />
+          <div class="hero-overlay">
+            <h2 id="heroGreeting">Asem, Pedes,<br><em>Manis, Seger.</em></h2>
+            <p id="heroSubGreeting">Kurasi buah eksklusif untuk Anda.</p>
+          </div>
         </div>
       </div>
 
-      <!-- 3D CAROUSEL TRACK -->
+      <!-- CAROUSEL RAKSASA (INFINITE LOOP) -->
       <div class="carousel-container fade-up">
-        <div class="empty-state" id="emptyState" style="display:none;">Koleksi tidak ditemukan.</div>
         <div class="carousel-track" id="menuList"></div>
       </div>
 
@@ -90,11 +87,11 @@
       </footer>
     </main>
 
-    <!-- PRODUCT SWIPER OVERLAY (FULLSCREEN DETAIL SCROLL HORIZONTAL) -->
+    <!-- PRODUCT SWIPER OVERLAY (INFINITE SWIPE KIRI/KANAN) -->
     <div class="product-swiper-overlay" id="productPage" style="display:none;">
       <button id="backFromProduct" class="glass-btn floating-close"><i data-lucide="x" class="w-5 h-5"></i></button>
       <div class="product-swiper-track" id="productSwiperTrack">
-        <!-- Dirender oleh JS -->
+        <!-- Dirender oleh JS (Infinite Loop) -->
       </div>
     </div>
 
@@ -198,7 +195,7 @@
       </div>
     </div>
 
-    <!-- BOTTOM NAVIGATION (DENGAN KERANJANG DI SINI) -->
+    <!-- BOTTOM NAVIGATION (DENGAN KERANJANG) -->
     <nav class="bottom-nav" id="bottomNav">
       <a href="#" class="nav-item active" data-tab="home"><i data-lucide="home" class="nav-icon"></i><span class="nav-label">Koleksi</span></a>
       <a href="#" class="nav-item" id="navCartBtn">
