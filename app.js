@@ -1,11 +1,6 @@
 (function() {
   'use strict';
 
-  // ============================================================
-  // RUJAK.CO — APPLICATION CORE
-  // Premium, Minimal, Performant
-  // ============================================================
-
   // ---- Data ----
   const PRODUCTS = [
     { id: 'p1', name: 'Rujak Segar', price: 35000, img: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp' },
@@ -35,10 +30,10 @@
     el.textContent = msg;
     el.classList.add('show');
     clearTimeout(el._timer);
-    el._timer = setTimeout(() => el.classList.remove('show'), 2200);
+    el._timer = setTimeout(() => el.classList.remove('show'), 2000);
   };
 
-  // ---- Render Functions ----
+  // ---- Render ----
   const renderProducts = () => {
     const grid = document.getElementById('productGrid');
     if (!grid) return;
@@ -74,34 +69,20 @@
     const total = items.reduce((s, i) => s + i.price * i.qty, 0);
     const count = items.reduce((s, i) => s + i.qty, 0);
 
-    if (countEl) countEl.textContent = count + ' sajian';
+    if (countEl) countEl.textContent = count + ' item';
     if (totalEl) totalEl.textContent = fmt(total);
 
-    if (bar) {
-      if (count > 0) {
-        bar.classList.add('visible');
-      } else {
-        bar.classList.remove('visible');
-      }
-    }
+    bar.classList.toggle('visible', count > 0);
   };
 
   // ---- Cart Actions ----
   const addToCart = (id, qty) => {
     const item = PRODUCTS.find(p => p.id === id) || ADDONS.find(a => a.id === id);
     if (!item) return;
-    if (cart[id]) {
-      cart[id].qty += qty;
-    } else {
-      cart[id] = { ...item, qty };
-    }
+    cart[id] = cart[id] || { ...item, qty: 0 };
+    cart[id].qty += qty;
     updateCartUI();
     toast('Ditambahkan');
-  };
-
-  const removeFromCart = (id) => {
-    delete cart[id];
-    updateCartUI();
   };
 
   // ---- Detail ----
@@ -112,7 +93,6 @@
     const modal = document.getElementById('detailModal');
     document.getElementById('detailImg').src = p.img;
     document.getElementById('detailName').textContent = p.name;
-    document.getElementById('detailMeta').textContent = 'Kurasi rasa premium';
     document.getElementById('detailPrice').textContent = fmt(p.price);
     modal.classList.add('visible');
   };
@@ -124,10 +104,7 @@
   // ---- Checkout ----
   const openCheckout = () => {
     const items = Object.values(cart);
-    if (items.length === 0) {
-      toast('Keranjang kosong');
-      return;
-    }
+    if (items.length === 0) { toast('Keranjang kosong'); return; }
     const container = document.getElementById('checkoutItems');
     const total = items.reduce((s, i) => s + i.price * i.qty, 0);
     container.innerHTML = items.map(i => `
@@ -148,39 +125,29 @@
     const name = document.getElementById('custName').value.trim();
     const phone = document.getElementById('custPhone').value.trim();
     const address = document.getElementById('custAddress').value.trim();
-
-    if (!name || !phone || !address) {
-      toast('Isi semua data');
-      return;
-    }
+    if (!name || !phone || !address) { toast('Isi semua data'); return; }
 
     const items = Object.values(cart);
     const total = items.reduce((s, i) => s + i.price * i.qty, 0);
-
-    let msg = `*Rujak.Co — Order*\n\n`;
-    msg += `Nama: ${name}\nTelepon: ${phone}\nAlamat: ${address}\n\n`;
-    msg += items.map(i => `${i.name} × ${i.qty}`).join('\n');
-    msg += `\n\nTotal: ${fmt(total)}`;
-
+    const msg = `*Rujak.Co*\nNama: ${name}\nTelepon: ${phone}\nAlamat: ${address}\n\n${items.map(i => `${i.name} × ${i.qty}`).join('\n')}\nTotal: ${fmt(total)}`;
     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
-
     cart = {};
     updateCartUI();
     closeCheckout();
     toast('Pesanan dikirim ✓');
   };
 
-  // ---- Event Delegation ----
+  // ---- Events ----
   const setupEvents = () => {
     document.addEventListener('click', (e) => {
-      // Product card click
+      // Product card
       const card = e.target.closest('.card');
       if (card && !e.target.closest('button')) {
         openDetail(card.dataset.id);
         return;
       }
 
-      // Addon button
+      // Addon
       const addonBtn = e.target.closest('[data-action="add-addon"]');
       if (addonBtn) {
         addToCart(addonBtn.dataset.id, 1);
@@ -188,7 +155,7 @@
       }
 
       // Detail close
-      if (e.target.closest('#detailClose') || e.target.closest('.detail-overlay') && !e.target.closest('.detail-sheet')) {
+      if (e.target.closest('#detailClose') || (e.target.closest('.detail-overlay') && !e.target.closest('.detail-sheet'))) {
         closeDetail();
         return;
       }
@@ -200,39 +167,21 @@
         return;
       }
 
-      // Checkout button (bottom bar)
-      if (e.target.closest('#checkoutBtn')) {
-        openCheckout();
-        return;
-      }
+      // Checkout
+      if (e.target.closest('#checkoutBtn')) { openCheckout(); return; }
+      if (e.target.closest('.checkout-overlay') && !e.target.closest('.checkout-sheet')) { closeCheckout(); return; }
+      if (e.target.closest('#confirmOrder')) { confirmOrder(); return; }
 
-      // Checkout close (overlay click)
-      if (e.target.closest('.checkout-overlay') && !e.target.closest('.checkout-sheet')) {
-        closeCheckout();
-        return;
-      }
-
-      // Confirm order
-      if (e.target.closest('#confirmOrder')) {
-        confirmOrder();
-        return;
-      }
-
-      // Hero scroll button
-      const heroBtn = e.target.closest('[data-scroll="products"]');
-      if (heroBtn) {
-        const grid = document.getElementById('productGrid');
-        if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Hero scroll
+      if (e.target.closest('[data-scroll="products"]')) {
+        document.getElementById('productGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
         return;
       }
     });
 
-    // Keyboard: Escape to close modals
+    // Keyboard
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeDetail();
-        closeCheckout();
-      }
+      if (e.key === 'Escape') { closeDetail(); closeCheckout(); }
     });
   };
 
@@ -244,14 +193,10 @@
     setupEvents();
 
     // Store status
-    const now = new Date();
-    const hour = now.getHours();
+    const hour = new Date().getHours();
     const statusEl = document.getElementById('storeStatus');
-    if (statusEl) {
-      statusEl.textContent = (hour >= 10 && hour < 20) ? 'Buka' : 'Tutup';
-    }
+    if (statusEl) statusEl.textContent = (hour >= 10 && hour < 20) ? 'Buka' : 'Tutup';
 
-    // Small delay toast
     setTimeout(() => toast('Selamat datang'), 400);
   };
 
@@ -260,5 +205,4 @@
   } else {
     init();
   }
-
 })();
