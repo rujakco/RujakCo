@@ -14,6 +14,7 @@
 </head>
 <body>
   
+  <!-- TIRAI SAMBUTAN (VIP ONBOARDING) -->
   <div id="onboardingOverlay" class="onboarding-overlay">
     <div class="onb-content">
       <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" class="onb-logo">
@@ -47,10 +48,11 @@
   </div>
 
   <div id="app">
+    <!-- HEADER STICKY KACA TRANSLUSEN -->
     <header class="luxury-header" id="mainHeader">
       <div class="header-left">
         <div class="brand-logo"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co"></div>
-        <h1 class="brand-name">Rujak.Co</h1>
+        <h1 class="brand-name">RUJAK.Co</h1>
       </div>
       <div class="header-right">
         <span class="user-name" id="headerNameDisplay">Ngoedi</span>
@@ -59,6 +61,7 @@
     </header>
 
     <main class="content-wrapper" id="mainContent">
+      <!-- HERO -->
       <div class="hero-editorial fade-up">
         <div class="hero-img-wrap">
           <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Sajian Rujak" />
@@ -72,10 +75,12 @@
         </div>
       </div>
 
+      <!-- CAROUSEL (MENU) -->
       <div class="carousel-container fade-up">
         <div class="carousel-track" id="menuList"></div>
       </div>
 
+      <!-- FOOTER -->
       <footer class="luxury-footer fade-up">
         <div class="footer-grid">
           <div class="footer-brand">
@@ -93,15 +98,17 @@
             <a href="#" aria-label="Email"><i data-lucide="mail" class="w-4 h-4"></i></a>
           </div>
         </div>
-        <p class="footer-copy">© 2024 Rujak.Co — Premium Rujak</p>
+        <p class="footer-copy">© 2024 RUJAK.Co — Premium Rujak</p>
       </footer>
     </main>
 
+    <!-- PRODUCT SWIPER OVERLAY (DETAIL) -->
     <div class="product-swiper-overlay" id="productPage" style="display:none;" aria-hidden="true">
       <button id="backFromProduct" class="glass-btn floating-close"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
       <div class="product-swiper-track" id="productSwiperTrack"></div>
     </div>
 
+    <!-- CART & CHECKOUT DRAWER -->
     <div class="modal-overlay" id="miniCartModal" aria-hidden="true">
       <div class="drawer-content">
         <div class="drawer-header">
@@ -159,6 +166,7 @@
       </div>
     </div>
 
+    <!-- PAYMENT MODAL -->
     <div class="modal-overlay" id="paymentModal" aria-hidden="true">
       <div class="drawer-content" style="height:auto;">
         <div class="drawer-header"><h3>QRIS Pembayaran</h3><button id="paymentClose" class="glass-btn-dark"><i data-lucide="x" class="w-4 h-4"></i></button></div>
@@ -172,6 +180,7 @@
       </div>
     </div>
 
+    <!-- AI CHAT PRAMUTAMU -->
     <div class="modal-overlay" id="aiChatBox" style="display:none; z-index:2000;" aria-hidden="true">
       <div class="drawer-content" style="height:70vh;">
         <div class="drawer-header"><h3>Pramutamu Rujak.Co</h3><button id="aiChatClose" class="glass-btn-dark"><i data-lucide="x" class="w-4 h-4"></i></button></div>
@@ -187,6 +196,7 @@
       </div>
     </div>
 
+    <!-- BOTTOM NAVIGATION -->
     <nav class="bottom-nav" id="bottomNav">
       <a href="#" class="nav-item active" data-tab="home"><i data-lucide="home" class="nav-icon"></i><span class="nav-label">Beranda</span></a>
       <a href="#" class="nav-item" id="navCartBtn">
