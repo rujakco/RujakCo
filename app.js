@@ -1,10 +1,6 @@
 (function() {
   'use strict';
 
-  // ============================================================
-  // RUJAK.CO — ULTIMATE SILENT LUXURY ENGINE (STABLE & PROGRESSIVE)
-  // ============================================================
-
   const SUPABASE_URL = "https://ghhnnfrmftttptcejizp.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoaG5uZnJtZnR0dHB0Y2VqaXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNjA1ODksImV4cCI6MjA5NzgzNjU4OX0.FM-sPvJJzviX2kA0GEHnznOppivm4JNyC4IPFv_RkdE";
   const SYSTEM = { WA_NUMBER: '6289677161680', STORE_LAT: -6.2165414, STORE_LNG: 107.0177395, DEFAULT_DISTANCE: 2 };
@@ -53,7 +49,6 @@
     return null;
   }
 
-  // --- Onboarding & Personalisasi ---
   function applyPersonalization() {
     const name = state.customerName || 'Klien';
     const heroName = document.getElementById('heroNameDisplay');
@@ -125,7 +120,6 @@
     });
   }
 
-  // --- Keranjang & Logistik ---
   function getCartSummary() {
     const items = []; let subtotal = 0, totalQty = 0, mainProductQty = 0;
     Object.keys(state.cart).forEach(id => {
@@ -163,7 +157,6 @@
     document.getElementById('finalTotal').textContent = ship.cost ? fmt(sum.subtotal + ship.cost) : fmt(sum.subtotal);
   }
 
-  // --- RENDER CAROUSEL ---
   function initCarousel() {
     const track = document.getElementById('menuList');
     if (!track) return;
@@ -225,7 +218,6 @@
     initCarousel();
   }
 
-  // --- RENDER SWIPER ---
   function renderProductSwiper() {
     const track = document.getElementById('productSwiperTrack');
     if(!track) return;
@@ -335,7 +327,6 @@
 
   function updateUI() { try{localStorage.setItem('rj_crt_v7', JSON.stringify(state.cart));}catch(e){} renderCart(); if(document.getElementById('miniCartModal')?.classList.contains('active')) renderMiniCart(); }
 
-  // --- Buka Halaman Detail ---
   function openProductPage(globalIndex) {
     document.getElementById('productPage').style.display = 'flex';
     document.body.style.overflow = 'hidden'; 
@@ -353,7 +344,6 @@
     document.body.style.overflow = '';
   }
 
-  // --- Gestur: Tarik ke Bawah untuk Tutup ---
   function initSwipeToClose() {
     const overlay = document.getElementById('productPage');
     let startY = 0, startX = 0, isPulling = false, activeSlide = null;
