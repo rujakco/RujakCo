@@ -56,8 +56,14 @@
   // --- Onboarding & Personalisasi ---
   function applyPersonalization() {
     const name = state.customerName || 'Klien';
-    const greetingEl = document.getElementById('greetingText');
-    if (greetingEl) greetingEl.textContent = `Selamat berbelanja, ${name}`;
+    
+    // Sapaan personal (nama)
+    const greetingNameEl = document.getElementById('greetingName');
+    if (greetingNameEl) greetingNameEl.textContent = name;
+    
+    // Hero name
+    const heroName = document.getElementById('heroNameDisplay');
+    if (heroName) heroName.textContent = name;
     
     if(document.getElementById('customerName')) document.getElementById('customerName').value = name;
     if(document.getElementById('districtInput') && state.selectedDistrict) { document.getElementById('districtInput').value = state.selectedDistrict.replace(/\b\w/g, l=>l.toUpperCase()); }
@@ -83,7 +89,6 @@
       document.getElementById('onbWelcomeDistrict').textContent = savedDistrict.replace(/\b\w/g, l=>l.toUpperCase());
     } else {
       document.getElementById('onbNewUser').style.display = 'block';
-      // Pastikan step1 aktif
       const step1 = document.getElementById('onbStep1');
       if (step1) step1.classList.add('active');
     }
@@ -404,16 +409,9 @@
     document.getElementById('navCartBtn')?.addEventListener('click', (e) => { e.preventDefault(); openCart(); });
     document.getElementById('miniCartClose')?.addEventListener('click', () => { document.getElementById('miniCartModal').classList.remove('active'); document.body.style.overflow=''; });
 
+    // District dropdown di checkout (jika diperlukan)
     const di = document.getElementById('districtInput'), dm = document.getElementById('customDistrictDropdown');
-    if (di) {
-      // Hapus event listener input karena readonly, tapi kita bisa tambahkan dropdown jika diubah menjadi tidak readonly
-      // Untuk sekarang, kita biarkan saja
-    }
-    if(dm) dm.addEventListener('click', e => {
-      const v = e.target.closest('div[data-val]')?.dataset.val; if(!v) return;
-      state.selectedDistrict = v; dm.style.display = 'none'; if(di) di.value = v.replace(/\b\w/g, l=>l.toUpperCase());
-      updateShippingUI();
-    });
+    // Untuk saat ini, districtInput readonly, tidak perlu listener input
 
     document.addEventListener('click', e => {
       const mi = e.target.closest('.boutique-item');
