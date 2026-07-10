@@ -179,7 +179,7 @@
       requestAnimationFrame(updateCenter);
       window.clearTimeout(isScrolling);
       isScrolling = setTimeout(() => {
-        const itemWidth = track.children[0]?.offsetWidth ? track.children[0].offsetWidth + 20 : 0; // updated gap 20px
+        const itemWidth = track.children[0]?.offsetWidth ? track.children[0].offsetWidth + 20 : 0; 
         if(itemWidth === 0) return;
         const currentIndex = Math.round(track.scrollLeft / itemWidth);
         const baseCount = PRODUCTS.length;
