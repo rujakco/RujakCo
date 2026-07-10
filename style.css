@@ -86,7 +86,9 @@ p { line-height: 1.8; }
 .header-right { display: flex; flex-direction: row; align-items: center; gap: 6px; }
 .user-name { font-size: 13px; font-weight: 700; color: #FFFFFF; text-shadow: 0 2px 8px rgba(0,0,0,0.4); transition: color 0.4s ease, text-shadow 0.4s ease; }
 .user-loc { font-size: 13px; font-weight: 500; color: rgba(255, 255, 255, 0.9); text-shadow: 0 2px 8px rgba(0,0,0,0.4); transition: color 0.4s ease, text-shadow 0.4s ease; }
+
 .user-loc::before { content: '•'; margin-right: 6px; opacity: 0.7; }
+
 .luxury-header.scrolled .user-name { color: var(--green); text-shadow: none; }
 .luxury-header.scrolled .user-loc { color: var(--gray-500); text-shadow: none; }
 .luxury-header.scrolled .user-loc::before { color: var(--gray-400); }
@@ -96,8 +98,6 @@ p { line-height: 1.8; }
 .hero-editorial { padding: 0 24px 0; margin-top: -50px; position: relative; z-index: 1; }
 .hero-img-wrap { width: 100%; aspect-ratio: 4 / 3; position: relative; border-radius: 0 0 32px 32px; overflow: hidden; box-shadow: 0 12px 40px rgba(10,58,42,0.15); }
 .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-/* Teks Turun 45px (Padding bawah dikurangi drastis dari 72px menjadi 27px) */
 .hero-overlay { 
   position: absolute; 
   inset: 0; 
@@ -132,19 +132,17 @@ p { line-height: 1.8; }
 }
 .hero-caption-text #heroNameDisplay { color: var(--gold); font-weight: 600; }
 
-/* CAROUSEL & TATA LETAK MENU TENGAH */
+/* CAROUSEL */
 .carousel-container { 
   width: 100%; 
   overflow: hidden; 
   padding: 12px 0 40px; 
   margin-top: 40px; 
 }
-
-/* Padding track disejajarkan presisi dengan Hero margin (24px) */
 .carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; padding: 0 24px; gap: 20px; }
 .carousel-track::-webkit-scrollbar { display: none; }
 
-/* Lebar kartu Carousel kini 100% selebar area hero (100% minus 48px padding layar) */
+/* WADAH KACA HIJAU (GREEN GLASS) SELEBAR HERO */
 .boutique-item { 
   flex: 0 0 calc(100% - 48px); 
   max-width: 432px; 
@@ -159,17 +157,35 @@ p { line-height: 1.8; }
   transform: scale(0.9); 
   opacity: 0.4; 
   will-change: transform; 
+  
+  /* Efek Green Glass Transparan */
+  background: linear-gradient(145deg, rgba(8, 46, 33, 0.06) 0%, rgba(8, 46, 33, 0.02) 100%);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  border: 1px solid rgba(8, 46, 33, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 16px 32px rgba(8, 46, 33, 0.04);
+  border-radius: 32px;
+  padding: 24px 24px 36px; /* Memberi jarak agar isi tidak menempel ke tepi kaca */
 }
 .boutique-item.active-center { transform: scale(1); opacity: 1; z-index: 10; }
 
-/* Tinggi gambar dikunci di 320px agar ukuran fisik tidak mengecil */
-.btq-img { width: 100%; height: 320px; object-fit: cover; border-radius: 20px; margin-bottom: 12px; background: var(--gray-100); border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 20px 40px rgba(8, 46, 33, 0.08); }
+/* THUMBNAIL KEMBALI KE SQUARE 1:1 */
+.btq-img { 
+  width: 100%; 
+  aspect-ratio: 1 / 1; 
+  object-fit: cover; 
+  border-radius: 20px; 
+  margin-bottom: 0; /* Margin dipindah ke bungkus teks di bawahnya */
+  background: var(--gray-100); 
+  box-shadow: 0 16px 32px rgba(8, 46, 33, 0.12); /* Bayangan pop-out */
+}
 
+/* WADAH TEKS DAN GARIS HARGA */
 .btq-text-container {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  width: max-content; 
+  width: 100%; 
   margin: 0 auto;
   opacity: 0; 
   transform: translateY(12px); 
@@ -185,7 +201,7 @@ p { line-height: 1.8; }
 .btq-name { 
   font-size: 24px; 
   color: var(--green); 
-  margin-top: 30px; 
+  margin-top: 24px; /* Teks turun menjauh dari gambar kotak */
   margin-bottom: 12px; 
   letter-spacing: 0.06em; 
   text-align: center;
@@ -214,7 +230,7 @@ p { line-height: 1.8; }
   white-space: nowrap; 
 }
 
-/* FOOTER RATA TENGAH DENGAN MONOGRAM EMAS ACAK */
+/* FOOTER DENGAN RANDOM SCATTER LOGO SEAMLESS */
 .luxury-footer { 
   display: flex; 
   flex-direction: column; 
@@ -228,7 +244,7 @@ p { line-height: 1.8; }
   overflow: hidden; 
 }
 
-/* Pseudo-element Pattern Monogram Rujak.Co (Gold Sangat Tipis) */
+/* Trik 4 lapis background dengan bilangan prima agar sangat acak */
 .luxury-footer::before {
   content: '';
   position: absolute;
@@ -236,13 +252,12 @@ p { line-height: 1.8; }
   background-image: 
     url('https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp'),
     url('https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp'),
+    url('https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp'),
     url('https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp');
-  /* Tiga ukuran berbeda untuk efek random scatter */
-  background-size: 80px 80px, 40px 40px, 60px 60px;
-  background-position: 0 0, 30px 50px, 80px 20px;
+  background-size: 113px 113px, 67px 67px, 43px 43px, 157px 157px; 
+  background-position: 0 0, 31px 53px, 89px 17px, 11px 137px;
   background-repeat: repeat;
-  opacity: 0.03; /* Warna sangat pucat tipis */
-  /* Efek filter untuk mencetak nuansa keemasan */
+  opacity: 0.03; /* Sangat tipis/pucat */
   filter: sepia(1) hue-rotate(10deg) saturate(3) brightness(0.9);
   pointer-events: none;
   z-index: 0;
