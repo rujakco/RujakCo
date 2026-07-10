@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Rujak.Co — Premium Rujak Experience</title>
   <meta name="description" content="Rujak premium dengan sambal mete terpisah — tetap renyah sampai tujuan." />
-  <meta name="theme-color" content="#F5F3F0" />
+  <meta name="theme-color" content="#F8F7F5" />
   <link rel="icon" type="image/webp" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,7 +15,7 @@
 </head>
 <body>
   <div id="app">
-    <!-- HEADER — Minimalis -->
+    <!-- HEADER -->
     <header id="header">
       <div class="header-inner">
         <div class="brand">
@@ -34,7 +34,7 @@
       </div>
     </header>
 
-    <!-- HERO — Foto penuh, teks tipis -->
+    <!-- HERO -->
     <section class="hero">
       <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Rujak segar dengan sambal mete" />
       <div class="hero-overlay">
@@ -43,7 +43,7 @@
       </div>
     </section>
 
-    <!-- CATEGORY — Tetap ada, tapi lebih halus -->
+    <!-- CATEGORY -->
     <nav class="cat-scroll no-sb" id="catScroll">
       <button class="cat-pill active" data-cat="all">Semua</button>
       <button class="cat-pill" data-cat="signature">Signature</button>
@@ -51,7 +51,7 @@
       <button class="cat-pill" data-cat="reserve">Reserve</button>
     </nav>
 
-    <!-- MENU LIST — Hanya nama, harga, foto -->
+    <!-- MENU -->
     <div class="menu-section">
       <div class="menu-header">
         <h2 class="section-title">Koleksi</h2>
@@ -67,13 +67,13 @@
       <div class="empty-state" id="emptyState">Tidak ada menu yang cocok.</div>
     </div>
 
-    <!-- ADDONS — Minimalis -->
+    <!-- ADDONS -->
     <div class="addon-section" id="addonSection">
       <h2 class="section-title">Tambahan</h2>
       <div class="addon-grid" id="addonList"></div>
     </div>
 
-    <!-- TESTIMONIAL — Tenang, tanpa flip otomatis -->
+    <!-- TESTIMONIAL -->
     <section class="testimonial">
       <h2 class="section-title">Apa kata mereka</h2>
       <div class="testi-card" id="testiCard">
@@ -83,7 +83,7 @@
       </div>
     </section>
 
-    <!-- FAQ — Ringkas -->
+    <!-- FAQ -->
     <section class="faq">
       <h2 class="section-title">Tanya Rujak</h2>
       <div class="faq-container" id="faqContainer">
@@ -102,7 +102,7 @@
       </div>
     </section>
 
-    <!-- FOOTER — Elegan -->
+    <!-- FOOTER -->
     <footer class="footer">
       <div class="footer-inner">
         <div class="footer-brand">
@@ -125,7 +125,7 @@
       </div>
     </footer>
 
-    <!-- BOTTOM BAR — Ringkas -->
+    <!-- BOTTOM BAR -->
     <div id="bottom-bar">
       <button class="close-bottom-bar" id="closeBottomBar">✕</button>
       <div class="cart-summary" id="cartSummary" tabindex="0">
@@ -135,147 +135,173 @@
       <button class="wa-btn" data-action="open-cart">Pesan Sekarang</button>
     </div>
 
-    <!-- FLOATING CART BTN -->
+    <!-- FLOATING CART -->
     <button id="floatingCartBtn"><i data-lucide="shopping-bag" class="w-6 h-6"></i><span class="badge-cart" id="floatingBadge">0</span></button>
-  </div>
 
-  <!-- MODALS (tetap sama strukturnya, tapi CSS baru) -->
-  <!-- Product Modal -->
-  <div class="modal-overlay" id="productModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <span class="modal-title">Detail</span>
-        <button class="modal-close" id="modalClose">&times;</button>
-      </div>
-      <div class="modal-body" id="modalBody">
-        <div class="modal-img" id="modalImg"></div>
-        <h2 class="modal-product-name" id="modalTitle">Nama</h2>
-        <div class="modal-tabs">
-          <button class="tab-btn active" data-tab="desc">Deskripsi</button>
-          <button class="tab-btn" data-tab="detail">Bahan</button>
-          <button class="tab-btn" data-tab="story">Cerita</button>
-        </div>
-        <div class="tab-content active" id="tabDesc">
-          <p id="modalDesc">Deskripsi</p>
-          <div class="modal-spice" id="modalSpice"></div>
-        </div>
-        <div class="tab-content" id="tabDetail">
-          <div class="modal-detail-grid">
-            <div><span>Wadah</span><span id="modalContainer">-</span></div>
-            <div><span>Porsi</span><span id="modalSize">-</span></div>
-            <div><span>Sambal</span><span id="modalSambal">-</span></div>
-            <div><span>Buah</span><span id="modalBuahText">-</span></div>
-          </div>
-        </div>
-        <div class="tab-content" id="tabStory">
-          <p class="modal-story">Rujak ini terinspirasi dari warisan kuliner Nusantara yang dipadukan dengan sentuhan modern. Setiap buah dipilih langsung dari petani terbaik.</p>
-        </div>
-        <div class="modal-footer">
-          <span class="modal-price" id="btnPrice">Rp0</span>
-          <button class="modal-add" id="modalAdd">Tambah ke Keranjang</button>
-        </div>
-      </div>
-    </div>
-  </div>
+    <!-- ========================================================= -->
+    <!-- ELEMEN TERSEMBUNYI (dibutuhkan oleh JavaScript, tidak terlihat) -->
+    <!-- ========================================================= -->
+    <div id="districtLabel" style="display:none;"></div>
+    <div id="locationDisplay" style="display:none;"></div>
+    <div id="shippingCost" style="display:none;"></div>
+    <div id="shippingDistance" style="display:none;"></div>
+    <div id="outOfRange" style="display:none;"></div>
+    <div id="breakdownContent" style="display:none;"></div>
+    <div id="giftToggle" style="display:none;"></div>
+    <div id="giftSender" style="display:none;"></div>
+    <div id="giftMessage" style="display:none;"></div>
+    <div id="giftFields" style="display:none;"></div>
+    <div id="step1Progress" style="display:none;"></div>
+    <div id="step1Upsell" style="display:none;"></div>
+    <div id="shareBtnModal" style="display:none;"></div>
+    <div id="promoTrigger" style="display:none;"></div>
+    <div id="promoModal" style="display:none;"></div>
+    <div id="aiRecommendationContainer" style="display:none;"></div>
+    <div id="progressContainer" style="display:none;"></div>
+    <div id="storeStatus" style="display:none;"></div>
+    <div id="storeStatusText" style="display:none;"></div>
+    <div id="storeStatusBanner" style="display:none;"></div>
+    <div id="searchToggleWrap" style="display:none;"></div>
+    <!-- selesai elemen tersembunyi -->
 
-  <!-- Mini Cart Modal -->
-  <div class="modal-overlay" id="miniCartModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <span class="modal-title">Keranjang</span>
-        <button class="modal-close" id="miniCartClose">&times;</button>
-      </div>
-      <div class="modal-body" id="miniCartBody">
-        <div id="miniCartList"></div>
-        <div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotalDisplay">Rp0</span></div>
-        <hr />
-        <div class="form-group">
-          <label>Nama</label>
-          <input type="text" id="customerName" placeholder="Nama lengkap" />
+    <!-- MODALS -->
+    <!-- Product Modal -->
+    <div class="modal-overlay" id="productModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="modal-title">Detail</span>
+          <button class="modal-close" id="modalClose">&times;</button>
         </div>
-        <div class="form-group">
-          <label>HP</label>
-          <input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" />
-        </div>
-        <div class="form-group">
-          <label>Alamat</label>
-          <input type="text" id="customerAddress" placeholder="Jalan, RT/RW" />
-        </div>
-        <div class="form-group">
-          <label>Kecamatan</label>
-          <input type="text" id="districtInput" placeholder="Ketik kecamatan..." />
-          <div id="customDistrictDropdown" style="display:none;"></div>
-        </div>
-        <div class="form-group">
-          <label>Jam Kirim (Besok)</label>
-          <div id="deliveryTimeTrigger" class="custom-select-trigger">
-            <span id="deliveryTimeLabel">Pilih jam...</span>
-            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+        <div class="modal-body" id="modalBody">
+          <div class="modal-img" id="modalImg"></div>
+          <h2 class="modal-product-name" id="modalTitle">Nama</h2>
+          <div class="modal-tabs">
+            <button class="tab-btn active" data-tab="desc">Deskripsi</button>
+            <button class="tab-btn" data-tab="detail">Bahan</button>
+            <button class="tab-btn" data-tab="story">Cerita</button>
           </div>
-          <input type="hidden" id="deliveryTime" />
-        </div>
-        <div class="form-group">
-          <label>Catatan</label>
-          <textarea id="orderNotes" rows="2" placeholder="Opsional"></textarea>
-        </div>
-        <div class="shipping-section" id="shippingSection">
-          <div class="form-group">
-            <label>Kurir</label>
-            <div class="shipping-options">
-              <button class="ship-btn active" data-provider="rujakco">Rujak.Co</button>
-              <button class="ship-btn" data-provider="paxel">Paxel</button>
-              <button class="ship-btn" data-provider="pembeli">Kurir Saya</button>
+          <div class="tab-content active" id="tabDesc">
+            <p id="modalDesc">Deskripsi</p>
+            <div class="modal-spice" id="modalSpice"></div>
+          </div>
+          <div class="tab-content" id="tabDetail">
+            <div class="modal-detail-grid">
+              <div><span>Wadah</span><span id="modalContainer">-</span></div>
+              <div><span>Porsi</span><span id="modalSize">-</span></div>
+              <div><span>Sambal</span><span id="modalSambal">-</span></div>
+              <div><span>Buah</span><span id="modalBuahText">-</span></div>
             </div>
           </div>
-          <div id="shippingBreakdown" style="font-size:13px;color:#888;margin-bottom:12px;"></div>
+          <div class="tab-content" id="tabStory">
+            <p class="modal-story">Rujak ini terinspirasi dari warisan kuliner Nusantara yang dipadukan dengan sentuhan modern. Setiap buah dipilih langsung dari petani terbaik.</p>
+          </div>
+          <div class="modal-footer">
+            <span class="modal-price" id="btnPrice">Rp0</span>
+            <button class="modal-add" id="modalAdd">Tambah ke Keranjang</button>
+          </div>
         </div>
-        <div class="final-summary">
-          <div><span>Subtotal</span><span id="finalSubtotal">Rp0</span></div>
-          <div class="discount"><span>Diskon</span><span id="finalDiscount">Rp0</span></div>
-          <div><span>Ongkir</span><span id="finalShipping">Rp0</span></div>
-          <div class="total"><span>Total</span><span id="finalTotal">Rp0</span></div>
-        </div>
-        <button class="btn-checkout" id="btnOpenPayment">Bayar Via QRIS</button>
       </div>
     </div>
-  </div>
 
-  <!-- Payment Modal -->
-  <div class="modal-overlay" id="paymentModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <span class="modal-title">QRIS</span>
-        <button class="modal-close" id="paymentClose">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div class="qris-container">
-          <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS" id="qrisImagePayment" />
+    <!-- Mini Cart Modal -->
+    <div class="modal-overlay" id="miniCartModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="modal-title">Keranjang</span>
+          <button class="modal-close" id="miniCartClose">&times;</button>
         </div>
-        <div class="payment-total">
-          <span>Total</span>
-          <span id="paymentTotalDisplay">Rp0</span>
+        <div class="modal-body" id="miniCartBody">
+          <div id="miniCartList"></div>
+          <div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotalDisplay">Rp0</span></div>
+          <hr />
+          <div class="form-group">
+            <label>Nama</label>
+            <input type="text" id="customerName" placeholder="Nama lengkap" />
+          </div>
+          <div class="form-group">
+            <label>HP</label>
+            <input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" />
+          </div>
+          <div class="form-group">
+            <label>Alamat</label>
+            <input type="text" id="customerAddress" placeholder="Jalan, RT/RW" />
+          </div>
+          <div class="form-group">
+            <label>Kecamatan</label>
+            <input type="text" id="districtInput" placeholder="Ketik kecamatan..." />
+            <div id="customDistrictDropdown" style="display:none;"></div>
+          </div>
+          <div class="form-group">
+            <label>Jam Kirim (Besok)</label>
+            <div id="deliveryTimeTrigger" class="custom-select-trigger">
+              <span id="deliveryTimeLabel">Pilih jam...</span>
+              <i data-lucide="chevron-down" class="w-4 h-4"></i>
+            </div>
+            <input type="hidden" id="deliveryTime" />
+          </div>
+          <div class="form-group">
+            <label>Catatan</label>
+            <textarea id="orderNotes" rows="2" placeholder="Opsional"></textarea>
+          </div>
+          <div class="shipping-section" id="shippingSection">
+            <div class="form-group">
+              <label>Kurir</label>
+              <div class="shipping-options">
+                <button class="ship-btn active" data-provider="rujakco">Rujak.Co</button>
+                <button class="ship-btn" data-provider="paxel">Paxel</button>
+                <button class="ship-btn" data-provider="pembeli">Kurir Saya</button>
+              </div>
+            </div>
+            <div id="shippingBreakdown" style="font-size:13px;color:#888;margin-bottom:12px;"></div>
+          </div>
+          <div class="final-summary">
+            <div><span>Subtotal</span><span id="finalSubtotal">Rp0</span></div>
+            <div class="discount"><span>Diskon</span><span id="finalDiscount">Rp0</span></div>
+            <div><span>Ongkir</span><span id="finalShipping">Rp0</span></div>
+            <div class="total"><span>Total</span><span id="finalTotal">Rp0</span></div>
+          </div>
+          <button class="btn-checkout" id="btnOpenPayment">Bayar Via QRIS</button>
         </div>
-        <button class="btn-copy" id="copyAmountBtn">Salin Nominal</button>
-        <button class="btn-confirm-wa" data-action="confirm-wa">Kirim Bukti via WhatsApp</button>
       </div>
     </div>
-  </div>
 
-  <!-- Toast -->
-  <div id="toast"></div>
-
-  <!-- AI Chat (ikon kecil di footer) -->
-  <button id="aiChatToggle" class="ai-chat-btn" aria-label="Bantuan AI">
-    <i data-lucide="message-circle" class="w-5 h-5"></i>
-  </button>
-  <div id="aiChatBox" style="display:none;">
-    <div class="ai-header">Jakco — AI Assistant</div>
-    <div class="ai-messages" id="aiChatMessages">
-      <div>👋 Ada yang bisa saya bantu?</div>
+    <!-- Payment Modal -->
+    <div class="modal-overlay" id="paymentModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="modal-title">QRIS</span>
+          <button class="modal-close" id="paymentClose">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="qris-container">
+            <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS" id="qrisImagePayment" />
+          </div>
+          <div class="payment-total">
+            <span>Total</span>
+            <span id="paymentTotalDisplay">Rp0</span>
+          </div>
+          <button class="btn-copy" id="copyAmountBtn">Salin Nominal</button>
+          <button class="btn-confirm-wa" data-action="confirm-wa">Kirim Bukti via WhatsApp</button>
+        </div>
+      </div>
     </div>
-    <div class="ai-input">
-      <input id="aiChatInput" type="text" placeholder="Tanya..." />
-      <button id="aiChatSend">Kirim</button>
+
+    <!-- Toast -->
+    <div id="toast"></div>
+
+    <!-- AI Chat Button -->
+    <button id="aiChatToggle" class="ai-chat-btn" aria-label="Bantuan AI">
+      <i data-lucide="message-circle" class="w-5 h-5"></i>
+    </button>
+    <div id="aiChatBox" style="display:none;">
+      <div class="ai-header">Jakco — AI Assistant</div>
+      <div class="ai-messages" id="aiChatMessages">
+        <div>👋 Ada yang bisa saya bantu?</div>
+      </div>
+      <div class="ai-input">
+        <input id="aiChatInput" type="text" placeholder="Tanya..." />
+        <button id="aiChatSend">Kirim</button>
+      </div>
     </div>
   </div>
 
