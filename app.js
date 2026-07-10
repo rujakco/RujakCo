@@ -192,7 +192,7 @@
       requestAnimationFrame(updateCenter);
       window.clearTimeout(isScrolling);
       isScrolling = setTimeout(() => {
-        const itemWidth = track.children[0]?.offsetWidth ? track.children[0].offsetWidth + 32 : 0;
+        const itemWidth = track.children[0]?.offsetWidth ? track.children[0].offsetWidth + 28 : 0;
         if(itemWidth === 0) return;
         const currentIndex = Math.round(track.scrollLeft / itemWidth);
         const baseCount = PRODUCTS.length;
@@ -409,10 +409,6 @@
     document.getElementById('navCartBtn')?.addEventListener('click', (e) => { e.preventDefault(); openCart(); });
     document.getElementById('miniCartClose')?.addEventListener('click', () => { document.getElementById('miniCartModal').classList.remove('active'); document.body.style.overflow=''; });
 
-    // District dropdown di checkout (jika diperlukan)
-    const di = document.getElementById('districtInput'), dm = document.getElementById('customDistrictDropdown');
-    // Untuk saat ini, districtInput readonly, tidak perlu listener input
-
     document.addEventListener('click', e => {
       const mi = e.target.closest('.boutique-item');
       if (mi) { openProductPage(mi.dataset.idx); }
@@ -517,7 +513,7 @@
     });
   }
 
-  // --- Tambahan: Konfirmasi sebelum meninggalkan halaman ---
+  // --- Konfirmasi sebelum meninggalkan halaman ---
   window.addEventListener('beforeunload', function (e) {
     const hasCart = Object.keys(state.cart).length > 0;
     if (hasCart) {
