@@ -94,7 +94,10 @@ p { line-height: 1.8; }
 .luxury-header.scrolled .user-loc::before { color: var(--gray-400); }
 
 /* HERO */
-.content-wrapper { padding-bottom: 80px; overflow-x: hidden; }
+.content-wrapper { 
+  padding-bottom: 40px; /* DIKURANGI DARI 80px AGAR FOOTER NAIK */
+  overflow-x: hidden; 
+}
 .hero-editorial { padding: 0 24px 0; margin-top: -70px; position: relative; z-index: 1; }
 .hero-img-wrap { width: 100%; aspect-ratio: 4 / 3; position: relative; border-radius: 0 0 32px 32px; overflow: hidden; box-shadow: 0 12px 40px rgba(10,58,42,0.15); }
 .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -136,8 +139,9 @@ p { line-height: 1.8; }
 .carousel-container { 
   width: 100%; 
   overflow: hidden; 
-  padding: 12px 0 0px; /* Padding bawah dihapus karena insight menggantikannya */
-  margin-top: 25px; /* NAIK 15PX DARI SEBELUMNYA (40px) */
+  padding: 12px 0 0px;
+  margin-top: 25px;
+  margin-bottom: -20px; /* DIKURANGI 20px AGAR DEKAT DENGAN INSIGHT */
   container-type: inline-size; 
 }
 
@@ -177,7 +181,6 @@ p { line-height: 1.8; }
   transform: scale(1); 
   opacity: 1; 
   z-index: 10; 
-  /* Bayangan hijau kembali aktif */
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3), 0 24px 48px rgba(8, 46, 33, 0.12); 
 }
 
@@ -236,8 +239,9 @@ p { line-height: 1.8; }
 .product-insight-container {
   text-align: center;
   padding: 0 32px;
-  margin-top: 8px; /* Dekat dengan carousel */
-  min-height: 60px; /* Menyediakan ruang agar UI tidak melompat */
+  margin-top: 8px;
+  min-height: 20px; /* DIKURANGI DARI 60px */
+  margin-bottom: -20px; /* DIKURANGI 20px AGAR DEKAT DENGAN FOOTER */
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -264,7 +268,7 @@ p { line-height: 1.8; }
   50% { opacity: 0; }
 }
 
-/* FOOTER DENGAN RANDOM SCATTER LOGO SEAMLESS */
+/* FOOTER DENGAN RANDOM SCATTER LOGO SEAMLESS (MENGGUNAKAN SVG DATA URI) */
 .luxury-footer { 
   display: flex; 
   flex-direction: column; 
@@ -273,10 +277,9 @@ p { line-height: 1.8; }
   padding: 48px 24px 96px; 
   border-top: 1px solid var(--gray-200); 
   background-color: var(--ivory); 
-  margin-top: 24px; /* FOOTER NAIK 40PX DARI SEBELUMNYA (64px - 40px = 24px) */
+  margin-top: -16px; /* NAIK 40px DARI 24px (24-40 = -16) */
   position: relative; 
   overflow: hidden; 
-  /* Memotong bagian atas sebesar 30px agar terlihat terpotong rapi */
   clip-path: inset(30px 0px 0px 0px); 
 }
 
@@ -284,15 +287,10 @@ p { line-height: 1.8; }
   content: '';
   position: absolute;
   inset: 0;
-  background-image: 
-    url('https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp'),
-    url('https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp'),
-    url('https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp'),
-    url('https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp');
-  background-size: 113px 113px, 67px 67px, 43px 43px, 157px 157px; 
-  background-position: 0 0, 31px 53px, 89px 17px, 11px 137px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='12' y='34' width='84' height='84' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='143' y='8' width='52' height='52' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='267' y='55' width='121' height='121' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='389' y='22' width='67' height='67' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='44' y='156' width='139' height='139' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='198' y='178' width='48' height='48' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='320' y='142' width='94' height='94' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='442' y='189' width='76' height='76' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='78' y='312' width='63' height='63' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='189' y='280' width='108' height='108' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='301' y='356' width='88' height='88' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='401' y='268' width='133' height='133' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='0' y='420' width='57' height='57' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='145' y='438' width='112' height='112' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='299' y='464' width='42' height='42' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='425' y='412' width='95' height='95' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='212' y='112' width='154' height='154' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='376' y='94' width='45' height='45' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='19' y='246' width='72' height='72' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='456' y='318' width='68' height='68' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='321' y='222' width='127' height='127' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='58' y='385' width='99' height='99' opacity='0.03'/%3E%3Cimage href='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp' x='268' y='392' width='55' height='55' opacity='0.03'/%3E%3C/svg%3E");
+  background-size: 500px 500px;
   background-repeat: repeat;
-  opacity: 0.03; 
+  opacity: 1;
   filter: sepia(1) hue-rotate(10deg) saturate(3) brightness(0.9);
   pointer-events: none;
   z-index: 0;
