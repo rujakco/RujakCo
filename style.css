@@ -84,12 +84,9 @@ p { line-height: 1.8; }
 .luxury-header.scrolled .brand-name { color: var(--green); text-shadow: none; }
 
 .header-right { display: flex; flex-direction: row; align-items: center; gap: 6px; }
-
 .user-name { font-size: 13px; font-weight: 700; color: #FFFFFF; text-shadow: 0 2px 8px rgba(0,0,0,0.4); transition: color 0.4s ease, text-shadow 0.4s ease; }
 .user-loc { font-size: 13px; font-weight: 500; color: rgba(255, 255, 255, 0.9); text-shadow: 0 2px 8px rgba(0,0,0,0.4); transition: color 0.4s ease, text-shadow 0.4s ease; }
-
 .user-loc::before { content: '•'; margin-right: 6px; opacity: 0.7; }
-
 .luxury-header.scrolled .user-name { color: var(--green); text-shadow: none; }
 .luxury-header.scrolled .user-loc { color: var(--gray-500); text-shadow: none; }
 .luxury-header.scrolled .user-loc::before { color: var(--gray-400); }
@@ -99,39 +96,105 @@ p { line-height: 1.8; }
 .hero-editorial { padding: 0 24px 0; margin-top: -50px; position: relative; z-index: 1; }
 .hero-img-wrap { width: 100%; aspect-ratio: 4 / 3; position: relative; border-radius: 0 0 32px 32px; overflow: hidden; box-shadow: 0 12px 40px rgba(10,58,42,0.15); }
 .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-/* Overlay dengan padding-bottom: 72px agar teks naik 40px */
-.hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(8,46,33,0.7) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 32px 32px 72px; text-align: left; }
+
+/* Overlay ditambahkan padding bawah yang seimbang karena caption kini di dalam */
+.hero-overlay { 
+  position: absolute; 
+  inset: 0; 
+  background: linear-gradient(180deg, transparent 40%, rgba(8,46,33,0.85) 100%); 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: flex-end; 
+  padding: 32px; /* Pad 32px rata ke semua arah di dalam box */
+  text-align: left; 
+}
 .hero-overlay h2 { font-size: 32px; line-height: 1.15; letter-spacing: -0.01em; color: var(--ivory); font-weight: 300; text-shadow: 0 2px 20px rgba(0,0,0,0.2); }
 .hero-overlay h2 em { font-style: italic; color: var(--gold); font-weight: 400; }
-.hero-caption { padding: 16px 4px 8px; display: flex; align-items: center; }
-.hairline { display: inline-block; width: 28px; height: 1px; background: var(--gold); vertical-align: middle; margin-right: 12px; flex-shrink: 0; }
-.hero-caption-text { font-family: 'DM Sans', sans-serif; font-size: 12.5px; letter-spacing: 0.06em; color: var(--gray-500); }
-.hero-caption-text #heroNameDisplay { color: var(--green); font-weight: 600; }
+
+/* Posisi dan Style Caption (Sapaan) yang Masuk ke Dalam Hero */
+.hero-caption { 
+  margin-top: 20px; 
+  display: flex; 
+  align-items: center; 
+}
+.hero-caption .hairline { 
+  display: inline-block; 
+  width: 24px; 
+  height: 1px; 
+  background: var(--gold); 
+  margin-right: 12px; 
+  opacity: 0.8;
+}
+.hero-caption-text { 
+  font-family: 'DM Sans', sans-serif; 
+  font-size: 12.5px; 
+  letter-spacing: 0.04em; 
+  color: rgba(253, 251, 247, 0.9); 
+}
+.hero-caption-text #heroNameDisplay { color: var(--gold); font-weight: 600; }
 
 /* CAROUSEL & TATA LETAK MENU TENGAH */
 .carousel-container { width: 100%; overflow: hidden; padding: 12px 0 40px; }
 .carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; padding: 0 10%; gap: 20px; }
 .carousel-track::-webkit-scrollbar { display: none; }
-.boutique-item { flex: 0 0 80%; max-width: 320px; scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; text-decoration: none; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease; transform: scale(0.9); opacity: 0.4; will-change: transform; }
+
+.boutique-item { 
+  flex: 0 0 80%; max-width: 320px; scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; text-decoration: none; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease; transform: scale(0.9); opacity: 0.4; will-change: transform; 
+}
 .boutique-item.active-center { transform: scale(1); opacity: 1; z-index: 10; }
 
 .btq-img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 20px; margin-bottom: 12px; background: var(--gray-100); border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 20px 40px rgba(8, 46, 33, 0.08); }
 
-/* Nama produk dengan margin-top: 30px (menjauh dari produk) & letter-spacing lebih renggang */
-.btq-name { font-size: 24px; color: var(--green); margin-top: 30px; margin-bottom: 8px; letter-spacing: 0.06em; }
+/* WADAH TEKS DAN GARIS HARGA BARU */
+.btq-text-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: max-content; /* Memaksa kotak teks dan harga sebesar judul rujak */
+  margin: 0 auto;
+  opacity: 0; 
+  transform: translateY(12px); 
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
+  pointer-events: none;
+}
+.boutique-item.active-center .btq-text-container {
+  opacity: 1; 
+  transform: translateY(0); 
+  pointer-events: auto;
+}
 
-/* Menyembunyikan Teks untuk Item Non-Tengah */
-.boutique-item .btq-name, 
-.boutique-item .hairline, 
-.boutique-item .btq-price { opacity: 0; transform: translateY(12px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; }
-.boutique-item.active-center .btq-name, 
-.boutique-item.active-center .hairline, 
-.boutique-item.active-center .btq-price { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.btq-name { 
+  font-size: 24px; 
+  color: var(--green); 
+  margin-top: 30px; /* Jarak atas diatur menjadi 30px ke bawah menjauhi foto */
+  margin-bottom: 12px; 
+  letter-spacing: 0.06em; /* Jarak huruf lebih renggang mewah */
+  text-align: center;
+}
 
-.boutique-item .hairline { width: 24px; margin: 6px auto 10px; }
-.btq-price { font-size: 14px; color: var(--gray-500); font-weight: 500; letter-spacing: 0.02em; }
+/* Pembungkus Harga dengan Garis Kiri Kanan */
+.btq-price-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.btq-price-wrap::before, .btq-price-wrap::after {
+  content: '';
+  flex: 1; /* Garis meregang selebar sisa kolom */
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.5;
+}
+.btq-price { 
+  font-size: 14px; 
+  color: var(--gray-500); 
+  font-weight: 500; 
+  letter-spacing: 0.02em; 
+  white-space: nowrap; /* Mencegah harga pecah dua baris */
+}
 
-/* FOOTER RATA TENGAH */
+/* FOOTER RATA TENGAH (Garis Batas Turun) */
 .luxury-footer { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 48px 24px 96px; border-top: 1px solid var(--gray-200); background: var(--ivory); margin-top: 64px; }
 .footer-grid { display: flex; flex-direction: column; align-items: center; gap: 24px; margin-bottom: 32px; width: 100%; }
 .footer-brand { display: flex; flex-direction: column; align-items: center; gap: 12px; }
@@ -194,8 +257,25 @@ p { line-height: 1.8; }
 .detail-manifesto h4 { font-size: 12px; color: var(--gold); margin-bottom: 16px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; }
 .detail-manifesto p { font-size: 14px; line-height: 1.8; color: var(--gray-900); font-family: 'Fraunces', serif; font-style: italic; margin: 0; }
 
-/* BOTTOM NAV BAR */
-.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; max-width: 480px; margin: 0 auto; z-index: var(--z-nav); background: rgba(253,251,247,0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); display: flex; justify-content: space-around; align-items: center; padding: 14px 0 calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid rgba(0,0,0,0.05); }
+/* BOTTOM NAV BAR (FROSTED GLASS GOLD) */
+.bottom-nav { 
+  position: fixed; 
+  bottom: 0; 
+  left: 0; 
+  right: 0; 
+  max-width: 480px; 
+  margin: 0 auto; 
+  z-index: var(--z-nav); 
+  background: rgba(197, 160, 89, 0.08); /* Lapisan emas tipis */
+  backdrop-filter: blur(16px) saturate(120%); 
+  -webkit-backdrop-filter: blur(16px) saturate(120%); 
+  display: flex; 
+  justify-content: space-around; 
+  align-items: center; 
+  padding: 14px 0 calc(14px + env(safe-area-inset-bottom)); 
+  border-top: 1px solid rgba(197, 160, 89, 0.25); /* Pantulan garis atas */
+  border-radius: 20px 20px 0 0; /* Lengkungan atas */
+}
 .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--gray-400); font-size: 10px; font-weight: 600; gap: 6px; transition: color 0.2s; }
 .nav-item.active { color: var(--green); }
 .nav-cart-wrapper { position: relative; display: inline-block; }
