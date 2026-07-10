@@ -2,8 +2,7 @@
   'use strict';
 
   // ============================================================
-  // RUJAK.CO v2.3 — FINAL: KOORDINAT BARU, ONGKIR AKURAT,
-  // DISTRICT MAP KALIBRASI, FALLBACK CERDAS, SWIPE, VALIDASI, PWA
+  // RUJAK.CO v2.4 — FINAL LUXURY EDITION (ALL ELEMENTS SAFE)
   // ============================================================
 
   function safeGet(id) {
@@ -43,13 +42,10 @@
   const SUPABASE_URL = "https://ghhnnfrmftttptcejizp.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoaG5uZnJtZnR0dHB0Y2VqaXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNjA1ODksImV4cCI6MjA5NzgzNjU4OX0.FM-sPvJJzviX2kA0GEHnznOppivm4JNyC4IPFv_RkdE";
 
-  // ============================================================
-  // OPENROUTESERVICE (ORS) — jarak jalan raya akurat (opsional)
-  // ============================================================
   const ORS_API_KEY = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjAyYTNkOWQyZjk4ZDQ1YWQ5ZTk2Mzc1OWFkODA3Yzg5IiwiaCI6Im11cm11cjY0In0=';
   const ORS_BASE_URL = 'https://api.openrouteservice.org';
   const ORS_CACHE_KEY = 'rujak_road_distance_cache';
-  const ORS_CACHE_MAX_AGE_MS = 1000 * 60 * 60 * 24 * 30; // 30 hari
+  const ORS_CACHE_MAX_AGE_MS = 1000 * 60 * 60 * 24 * 30;
   const ORS_TIMEOUT_MS = 6000;
 
   function loadRoadDistanceCache() {
@@ -109,26 +105,43 @@
   }
 
   let supabase = null;
+  let supabasePromise = null;
 
   function getSupabase() {
-    return new Promise((resolve) => {
-      if (supabase) return resolve(supabase);
-      if (window.supabase?.createClient) { supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); return resolve(supabase); }
+    if (supabase) return Promise.resolve(supabase);
+    if (supabasePromise) return supabasePromise;
+
+    supabasePromise = new Promise((resolve) => {
+      if (window.supabase?.createClient) {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        return resolve(supabase);
+      }
       let attempts = 0;
       const maxAttempts = 50;
       const interval = setInterval(() => {
         attempts++;
-        if (window.supabase?.createClient) { clearInterval(interval); supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); resolve(supabase); }
-        else if (attempts >= maxAttempts) {
+        if (window.supabase?.createClient) {
+          clearInterval(interval);
+          supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+          resolve(supabase);
+        } else if (attempts >= maxAttempts) {
           clearInterval(interval);
           const script = document.createElement('script');
           script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
-          script.onload = () => { if (window.supabase?.createClient) { supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); resolve(supabase); } else { resolve(null); } };
+          script.onload = () => {
+            if (window.supabase?.createClient) {
+              supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+              resolve(supabase);
+            } else {
+              resolve(null);
+            }
+          };
           script.onerror = () => resolve(null);
           document.head.appendChild(script);
         }
       }, 100);
     });
+    return supabasePromise;
   }
 
   const PRODUCTS = [
@@ -160,8 +173,6 @@
     LOCATION_TIMEOUT: 12000
   };
 
-  // DISTRICT_MAP dengan estimasi jarak jalan raya yang sudah dikalibrasi ulang
-  // berdasarkan koordinat toko baru. Nilai dalam kilometer.
   const DISTRICT_MAP = {
     'bekasi barat':5, 'bekasi timur':7, 'bekasi selatan':9, 'bekasi utara':11,
     'rawalumbu':8, 'jatiasih':12, 'pondokgede':14, 'cikarang':23,
@@ -202,7 +213,7 @@
     isGift: false, giftSender: '', giftMessage: '',
     useManualDistrict: false, selectedDistrict: '', hasShared: false,
     shippingProvider: 'rujakco', vehicleType: 'motor', currentStep: 1,
-    shippingCalculated: false
+    shippingCalculated: false, currentSurge: null
   };
 
   let addToCartLocked = false, checkoutLocked = false, locationFallbackShown = false;
@@ -253,9 +264,10 @@
   }
 
   function showWhatsAppFallbackModal() {
-    var oldModal = document.getElementById('whatsappFallbackModal');
-    if (oldModal) oldModal.remove();
-    var modal = document.createElement('div');
+    let modal = document.getElementById('whatsappFallbackModal');
+    if (modal) modal.remove();
+
+    modal = document.createElement('div');
     modal.id = 'whatsappFallbackModal';
     modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:100000;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;';
     modal.innerHTML = '<div style="background:white;border-radius:20px;padding:24px;max-width:360px;width:90%;text-align:center;">' +
@@ -266,6 +278,7 @@
       '<button id="closeWaFallback" style="background:none;border:1px solid #ddd;color:#666;padding:10px;border-radius:8px;margin-top:8px;width:100%;">Tutup</button>' +
       '</div>';
     document.body.appendChild(modal);
+
     document.getElementById('openWaManualBtn').addEventListener('click', function() {
       if (pendingWhatsAppMessage) {
         var waUrl = 'https://wa.me/' + pendingWhatsAppMessage.phone + '?text=' + encodeURIComponent(pendingWhatsAppMessage.message);
@@ -274,7 +287,10 @@
       }
       modal.remove();
     });
-    document.getElementById('closeWaFallback').addEventListener('click', function() { modal.remove(); pendingWhatsAppMessage = null; });
+    document.getElementById('closeWaFallback').addEventListener('click', function() {
+      modal.remove();
+      pendingWhatsAppMessage = null;
+    });
   }
 
   function shareToWhatsApp() {
@@ -305,10 +321,17 @@
   }
 
   function showToast(msg) {
-    const el = document.getElementById('toast'); if (!el) return;
-    el.textContent = msg; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+    const el = document.getElementById('toast');
+    if (!el) return;
     if (toastTimer) clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { el.classList.remove('show'); }, SYSTEM.TOAST_DURATION);
+    el.textContent = msg;
+    el.classList.remove('show');
+    void el.offsetWidth;
+    el.classList.add('show');
+    toastTimer = setTimeout(() => {
+      el.classList.remove('show');
+      toastTimer = null;
+    }, SYSTEM.TOAST_DURATION);
   }
 
   function lockAddToCart() { addToCartLocked = true; setTimeout(() => { addToCartLocked = false; }, 300); }
@@ -353,7 +376,7 @@
       if (dist <= 10) return 8000 + (dist - 3) * 1800;
       if (dist <= 20) return 20600 + (dist - 10) * 1600;
       if (dist <= 30) return 36600 + (dist - 20) * 1400;
-      if (dist <= 50) return 50600 + (dist - 30) * 1150;   // 42 km = 64.400
+      if (dist <= 50) return 50600 + (dist - 30) * 1150;
       return 73600 + (dist - 50) * 1000;
     }
     if (vehicleType === 'mobil') {
@@ -384,7 +407,10 @@
   }
 
   function getSurgeMultiplier() {
-    if (!isPeakHour()) { state.currentSurge = null; return 1.0; }
+    if (!isPeakHour()) {
+      state.currentSurge = null;
+      return 1.0;
+    }
     if (state.currentSurge) return state.currentSurge;
     state.currentSurge = 1.3;
     return state.currentSurge;
@@ -597,7 +623,6 @@
     if (state.selectedDistrict && DISTRICT_MAP[state.selectedDistrict]) {
       distance = DISTRICT_MAP[state.selectedDistrict];
     } else if (state.selectedDistrict && !DISTRICT_MAP[state.selectedDistrict]) {
-      // fallback jika kecamatan tidak dikenal (seharusnya tidak terjadi)
       distance = estimateRoadDistance(
         haversineDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, -6.2, 106.8)
       );
@@ -905,7 +930,7 @@
   }
 
   // ============================================================
-  // VALIDASI FORM DENGAN PESAN ERROR DI BAWAH INPUT
+  // VALIDASI FORM
   // ============================================================
   function showFieldError(inputEl, message) {
     const existingErr = inputEl.parentElement.querySelector('.field-error');
@@ -951,10 +976,12 @@
     else clearFieldError(districtEl);
 
     const deliveryTime = timeEl.value;
-    if (!deliveryTime || (deliveryTime === 'Same Day (Besok)' && state.shippingProvider !== 'paxel')) {
-      if (state.shippingProvider !== 'paxel') { showFieldError(timeTrigger || timeEl, 'Pilih jam pengiriman'); valid = false; }
-      else clearFieldError(timeTrigger || timeEl);
-    } else clearFieldError(timeTrigger || timeEl);
+    if (state.shippingProvider !== 'paxel' && (!deliveryTime || deliveryTime === 'Same Day (Besok)')) {
+      showFieldError(timeTrigger || timeEl, 'Pilih jam pengiriman');
+      valid = false;
+    } else {
+      clearFieldError(timeTrigger || timeEl);
+    }
 
     if (!valid) {
       showToast('❌ Mohon periksa kembali isian bertanda merah');
@@ -1054,7 +1081,12 @@
   }
 
   function showOrderConfirmation(waMessage) {
-    state.cart = {}; invalidateCache(); saveCart(); updateUI();
+    state.cart = {};
+    state.isCartMinimized = false;
+    localStorage.setItem('rujak_cart_minimized', 'false');
+    invalidateCache(); saveCart(); updateUI();
+    updateFloatingButton();
+
     var oldModal = document.getElementById('orderConfirmationModal');
     if (oldModal) oldModal.remove();
     var modal = document.createElement('div');
@@ -1076,7 +1108,7 @@
   }
 
   // ============================================================
-  // UI & RENDER FUNCTIONS (termasuk renderMenu, renderAddons, dll)
+  // UI & RENDER FUNCTIONS
   // ============================================================
   function updateStoreStatus() {
     const el = document.getElementById('storeStatusText');
@@ -1209,11 +1241,10 @@
 
   function updateShippingDisplay() {
     const shippingData = calculateShippingCost();
-    if (!shippingData) {
-      document.getElementById('shippingSection').style.display = 'none';
-      return;
-    }
-    document.getElementById('shippingSection').style.display = 'block';
+    const section = document.getElementById('shippingSection');
+    if (!section) return;
+    if (!shippingData) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
     const breakdownContent = document.getElementById('breakdownContent');
     let html = '';
     if (shippingData.isOutOfRange) {
@@ -1238,12 +1269,16 @@
         html += '<div>Total Ongkir: <strong>Gratis (Kurir Pembeli)</strong></div>';
       }
     }
-    breakdownContent.innerHTML = html;
+    if (breakdownContent) breakdownContent.innerHTML = html;
     const summary = getCartSummaryCached();
-    document.getElementById('finalSubtotal').textContent = fmt(summary.subtotal);
-    document.getElementById('finalDiscount').textContent = summary.discount > 0 ? '-Rp' + summary.discount.toLocaleString('id-ID') : 'Rp0';
-    document.getElementById('finalShipping').textContent = shippingData.isOutOfRange ? 'Konfirmasi Admin' : fmt(shippingData.shippingCost);
-    document.getElementById('finalTotal').textContent = shippingData.isOutOfRange ? 'Konfirmasi' : fmt(shippingData.total);
+    const subEl = document.getElementById('finalSubtotal');
+    if (subEl) subEl.textContent = fmt(summary.subtotal);
+    const discEl = document.getElementById('finalDiscount');
+    if (discEl) discEl.textContent = summary.discount > 0 ? '-Rp' + summary.discount.toLocaleString('id-ID') : 'Rp0';
+    const shipEl = document.getElementById('finalShipping');
+    if (shipEl) shipEl.textContent = shippingData.isOutOfRange ? 'Konfirmasi Admin' : fmt(shippingData.shippingCost);
+    const totalEl = document.getElementById('finalTotal');
+    if (totalEl) totalEl.textContent = shippingData.isOutOfRange ? 'Konfirmasi' : fmt(shippingData.total);
   }
 
   function renderMiniCart() {
@@ -1259,7 +1294,8 @@
       });
     }
     list.innerHTML = html;
-    document.getElementById('cartSubtotalDisplay').textContent = fmt(summary.subtotal);
+    const subtotalEl = document.getElementById('cartSubtotalDisplay');
+    if (subtotalEl) subtotalEl.textContent = fmt(summary.subtotal);
 
     const step1Progress = document.getElementById('step1Progress');
     if (step1Progress && summary.items.length > 0) {
@@ -1279,9 +1315,12 @@
       step1Upsell.innerHTML = renderAIUpsell(summary);
     }
 
-    document.getElementById('customerName').value = state.customerName;
-    document.getElementById('customerPhone').value = state.customerPhone;
-    document.getElementById('customerAddress').value = state.customerAddress;
+    const nameEl = document.getElementById('customerName');
+    if (nameEl) nameEl.value = state.customerName;
+    const phoneEl = document.getElementById('customerPhone');
+    if (phoneEl) phoneEl.value = state.customerPhone;
+    const addrEl = document.getElementById('customerAddress');
+    if (addrEl) addrEl.value = state.customerAddress;
 
     if (state.selectedDistrict) {
       const displayStr = state.selectedDistrict.replace(/\b\w/g, l => l.toUpperCase());
@@ -1291,10 +1330,14 @@
       if (distLabel) distLabel.textContent = displayStr + ' (~' + DISTRICT_MAP[state.selectedDistrict] + ' km)';
     }
 
-    document.getElementById('giftToggle').checked = state.isGift;
-    document.getElementById('giftSender').value = state.giftSender;
-    document.getElementById('giftMessage').value = state.giftMessage;
-    document.getElementById('giftFields').style.display = state.isGift ? 'block' : 'none';
+    const giftToggleEl = document.getElementById('giftToggle');
+    if (giftToggleEl) giftToggleEl.checked = state.isGift;
+    const giftSenderEl = document.getElementById('giftSender');
+    if (giftSenderEl) giftSenderEl.value = state.giftSender;
+    const giftMsgEl = document.getElementById('giftMessage');
+    if (giftMsgEl) giftMsgEl.value = state.giftMessage;
+    const giftFieldsEl = document.getElementById('giftFields');
+    if (giftFieldsEl) giftFieldsEl.style.display = state.isGift ? 'block' : 'none';
 
     if (state.selectedDistrict || state.userDistance !== null) {
       updateShippingDisplay();
@@ -1359,30 +1402,44 @@
       parent.appendChild(fallback);
     });
     const modalImg = document.getElementById('modalImg');
-    modalImg.innerHTML = '';
-    modalImg.appendChild(imgEl);
+    if (modalImg) {
+      modalImg.innerHTML = '';
+      modalImg.appendChild(imgEl);
+    }
 
     const be = document.getElementById('modalBadge');
-    if (product.badge) {
-      be.style.display = 'inline-block';
-      be.textContent = product.badge;
-      be.className = 'modal-badge-eyebrow ' + (product.badgeColor || '');
-    } else {
-      be.style.display = 'none';
+    if (be) {
+      if (product.badge) {
+        be.style.display = 'inline-block';
+        be.textContent = product.badge;
+        be.className = 'modal-badge-eyebrow ' + (product.badgeColor || '');
+      } else {
+        be.style.display = 'none';
+      }
     }
-    document.getElementById('modalTitle').textContent = product.name;
-    document.getElementById('modalDesc').textContent = product.desc;
-    document.getElementById('modalContainer').textContent = product.container || '-';
-    document.getElementById('modalSize').textContent = product.size || '-';
-    document.getElementById('modalSambal').textContent = product.sambal || '-';
-    document.getElementById('modalBuahText').textContent = (product.buah || []).join(', ');
-    document.getElementById('modalTags').innerHTML = (product.tags || []).map(t => '<span class="modal-tag">' + escapeHTML(t) + '</span>').join('');
+    const titleEl = document.getElementById('modalTitle');
+    if (titleEl) titleEl.textContent = product.name;
+    const descEl = document.getElementById('modalDesc');
+    if (descEl) descEl.textContent = product.desc;
+    const containerEl = document.getElementById('modalContainer');
+    if (containerEl) containerEl.textContent = product.container || '-';
+    const sizeEl = document.getElementById('modalSize');
+    if (sizeEl) sizeEl.textContent = product.size || '-';
+    const sambalEl = document.getElementById('modalSambal');
+    if (sambalEl) sambalEl.textContent = product.sambal || '-';
+    const buahEl = document.getElementById('modalBuahText');
+    if (buahEl) buahEl.textContent = (product.buah || []).join(', ');
+    const tagsEl = document.getElementById('modalTags');
+    if (tagsEl) tagsEl.innerHTML = (product.tags || []).map(t => '<span class="modal-tag">' + escapeHTML(t) + '</span>').join('');
 
     const ritualDiv = document.createElement('div');
     ritualDiv.className = 'ritual-box';
     ritualDiv.style.cssText = 'background:var(--ivory);border:1px solid var(--green-pale);border-radius:10px;padding:10px 12px;margin:8px 0;';
     ritualDiv.innerHTML = '<div style="font-size:10px;font-weight:700;color:var(--green);">🎯 Ritual Nikmat</div><div style="font-size:11px;color:var(--gray-700);margin-top:4px;">① Tuang sambal ke wadah<br>② Aduk rata dengan buah, lalu nikmati!</div>';
-    document.getElementById('modalTags').after(ritualDiv);
+    const tagsParent = document.getElementById('modalTags');
+    if (tagsParent && tagsParent.parentNode) {
+      tagsParent.parentNode.insertBefore(ritualDiv, tagsParent.nextSibling);
+    }
 
     const breakdown = product.price <= 30000 ? (product.buah || []).length + ' jenis buah • sambal homemade • wadah food grade' :
       product.price <= 85000 ? (product.buah || []).length + ' jenis buah premium • sambal spesial • wadah jumbo' :
@@ -1392,9 +1449,12 @@
     hargaDiv.style.cssText = 'font-size:10px;color:var(--gray-500);margin:4px 0 6px;text-align:center;';
     hargaDiv.innerHTML = '💰 <strong>' + fmt(product.price) + '</strong> sudah termasuk:<br>' + breakdown;
     const detailGrid = document.getElementById('modalDetailGrid');
-    if (detailGrid) detailGrid.after(hargaDiv);
+    if (detailGrid && detailGrid.parentNode) {
+      detailGrid.parentNode.insertBefore(hargaDiv, detailGrid.nextSibling);
+    }
 
-    document.getElementById('btnPrice').textContent = fmt(product.price);
+    const priceBtn = document.getElementById('btnPrice');
+    if (priceBtn) priceBtn.textContent = fmt(product.price);
     const modalAddEl = document.getElementById('modalAdd');
     if (modalAddEl) modalAddEl.dataset.id = product.id;
 
@@ -1428,8 +1488,8 @@
     const spiceHidden = document.getElementById('spiceHidden');
     const spiceLabel = document.getElementById('spiceLabel');
     const dv = product.defaultSpice || 3;
-    spiceHidden.value = dv;
-    spiceLabel.innerHTML = getSpiceLabelHTML(dv);
+    if (spiceHidden) spiceHidden.value = dv;
+    if (spiceLabel) spiceLabel.innerHTML = getSpiceLabelHTML(dv);
     const spiceTrigger = document.getElementById('spiceTrigger');
     if (spiceTrigger) spiceTrigger.classList.add('selected');
 
@@ -1440,8 +1500,10 @@
       modalBody.style.opacity = '1';
     }
 
-    productModal.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    if (productModal) {
+      productModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
 
     updateProductIndicator(id);
   }
@@ -1464,8 +1526,10 @@
   }
 
   function closeProductModal() {
-    productModal.classList.remove('active');
-    document.body.style.overflow = '';
+    if (productModal) {
+      productModal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
   }
 
   // ============================================================
@@ -1554,7 +1618,7 @@
   }
 
   // ============================================================
-  // AUTOCOMPLETE KECAMATAN
+  // AUTOCOMPLETE KECAMATAN (FIXED)
   // ============================================================
   function createDistrictAutocomplete() {
     const input = document.getElementById('districtInput');
@@ -1573,9 +1637,18 @@
         return;
       }
       dropdown.innerHTML = matches.slice(0, 15).map(name =>
-        `<div data-value="${name}" style="padding:10px 12px; cursor:pointer; border-bottom:1px solid var(--gray-100); font-size:14px; transition:background 0.1s;" onmouseover="this.style.background='#EAF2EE'" onmouseout="this.style.background='white'">${name.replace(/\b\w/g, l => l.toUpperCase())}</div>`
+        `<div data-value="${name}" style="padding:10px 12px; cursor:pointer; border-bottom:1px solid var(--gray-100); font-size:14px; transition:background 0.1s;">${name.replace(/\b\w/g, l => l.toUpperCase())}</div>`
       ).join('');
       dropdown.style.display = 'block';
+    });
+
+    dropdown.addEventListener('mouseover', function(e) {
+      const target = e.target.closest('[data-value]');
+      if (target) target.style.background = '#EAF2EE';
+    });
+    dropdown.addEventListener('mouseout', function(e) {
+      const target = e.target.closest('[data-value]');
+      if (target) target.style.background = 'white';
     });
 
     dropdown.addEventListener('click', function(e) {
@@ -1649,7 +1722,6 @@
     if (state.useManualDistrict && state.selectedDistrict) {
       var dist = DISTRICT_MAP[state.selectedDistrict];
       if (!dist) {
-        // fallback aman: estimasi dari haversine
         dist = estimateRoadDistance(haversineDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, -6.2, 106.8));
       }
       state.userDistance = dist;
@@ -1738,7 +1810,7 @@
       const dy = endY - startY;
 
       if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 80) {
-        const currentId = document.getElementById('modalAdd').dataset.id;
+        const currentId = document.getElementById('modalAdd')?.dataset.id;
         if (!currentId) return;
         const visible = PRODUCTS.filter(p => !p.isHidden);
         const idx = visible.findIndex(p => p.id === currentId);
@@ -1801,7 +1873,7 @@
   }
 
   // ============================================================
-  // BIND EVENTS
+  // BIND EVENTS (FIXED)
   // ============================================================
   function bindEvents() {
     const ma = document.getElementById('modalAdd');
@@ -1812,7 +1884,7 @@
         lockAddToCart();
         const baseId = this.dataset.id;
         if (baseId) {
-          const spice = parseInt(document.getElementById('spiceHidden').value, 10) || 3;
+          const spice = parseInt(document.getElementById('spiceHidden')?.value, 10) || 3;
           const cartKey = baseId + '_spice' + spice;
           const entry = state.cart[cartKey] || { qty: 0, spice: spice };
           entry.qty += 1;
@@ -1884,8 +1956,10 @@
         if (wrap && !wrap.contains(e.target)) siw.classList.remove('open');
       });
     }
-    searchInput.addEventListener('input', updateClearButton);
-    searchInput.addEventListener('input', debounce(function() { state.searchQuery = this.value; invalidateCache(); updateUI(); }, 300));
+    if (searchInput) {
+      searchInput.addEventListener('input', updateClearButton);
+      searchInput.addEventListener('input', debounce(function() { state.searchQuery = this.value; invalidateCache(); updateUI(); }, 300));
+    }
 
     const btnAuto = document.getElementById('btnAutoDetect');
     if (btnAuto) {
@@ -1918,8 +1992,10 @@
           return { value: key, label: key.replace(/\b\w/g, l => l.toUpperCase()) + ' (~' + DISTRICT_MAP[key] + ' km)' };
         });
         openCustomSelect('Pilih Kecamatan Tujuan', options, function(value, label) {
-          document.getElementById('districtSelect').value = value;
-          document.getElementById('districtLabel').textContent = label;
+          const ds = document.getElementById('districtSelect');
+          if (ds) ds.value = value;
+          const dl = document.getElementById('districtLabel');
+          if (dl) dl.textContent = label;
           state.selectedDistrict = value;
           state.useManualDistrict = true;
           const locDisplay = document.getElementById('locationDisplay');
@@ -1934,6 +2010,7 @@
       btn.addEventListener('click', function() {
         document.querySelectorAll('.ship-btn').forEach(b => b.classList.remove('active'));
         this.classList.add('active');
+        const prevProvider = state.shippingProvider;
         state.shippingProvider = this.dataset.provider;
         const paxelOpt = document.getElementById('paxelOptions');
         const deliveryTrigger = document.getElementById('deliveryTimeTrigger');
@@ -1944,20 +2021,21 @@
           if (paxelOpt) paxelOpt.style.display = 'block';
           if (deliveryTrigger) deliveryTrigger.style.display = 'none';
           if (deliveryLabel) deliveryLabel.style.display = 'none';
-          deliveryTime.value = 'Same Day (Besok)';
+          if (deliveryTime) deliveryTime.value = 'Same Day (Besok)';
           const ptMini = document.getElementById('priorityToggleMini');
           if(ptMini && ptMini.checked) { ptMini.checked = false; state.isPriority = false; }
         } else {
           if (paxelOpt) paxelOpt.style.display = 'none';
           if (deliveryTrigger) deliveryTrigger.style.display = 'flex';
           if (deliveryLabel) deliveryLabel.style.display = 'block';
-          if (deliveryTime.value === 'Same Day (Besok)') {
-            deliveryTime.value = '';
+          if (prevProvider === 'paxel' || (deliveryTime && deliveryTime.value === 'Same Day (Besok)')) {
+            if (deliveryTime) deliveryTime.value = '';
             if (deliveryTimeLabel) deliveryTimeLabel.textContent = 'Pilih jam pengiriman...';
             if (deliveryTrigger) deliveryTrigger.classList.remove('selected');
           }
         }
-        document.getElementById('rujakcoOptions').style.display = state.shippingProvider === 'rujakco' ? 'block' : 'none';
+        const rujakcoOpt = document.getElementById('rujakcoOptions');
+        if (rujakcoOpt) rujakcoOpt.style.display = state.shippingProvider === 'rujakco' ? 'block' : 'none';
         if (state.selectedDistrict || state.userDistance !== null) updateShippingDisplay();
         invalidateCache();
         renderMiniCart();
@@ -1984,8 +2062,10 @@
           { value: 'Sore (14:00 - 17:00)', label: 'Sore (14:00 - 17:00 WIB)' }
         ];
         openCustomSelect('Jam Pengiriman Besok', options, function(value, label) {
-          document.getElementById('deliveryTime').value = value;
-          document.getElementById('deliveryTimeLabel').textContent = label;
+          const dt = document.getElementById('deliveryTime');
+          if (dt) dt.value = value;
+          const dtl = document.getElementById('deliveryTimeLabel');
+          if (dtl) dtl.textContent = label;
           deliveryTrigger.classList.add('selected');
           deliveryTrigger.classList.remove('input-error');
         });
@@ -2074,10 +2154,13 @@
       if (e.target.closest('#btnOpenPayment')) {
         const validData = validateOrderForm();
         if (!validData) return;
-        const ft = document.getElementById('finalTotal').textContent;
-        document.getElementById('paymentTotalDisplay').textContent = ft;
-        document.getElementById('paymentTotalDisplay2').textContent = ft;
-        document.getElementById('paymentModal').classList.add('active');
+        const ft = document.getElementById('finalTotal')?.textContent || 'Rp0';
+        const pt1 = document.getElementById('paymentTotalDisplay');
+        if (pt1) pt1.textContent = ft;
+        const pt2 = document.getElementById('paymentTotalDisplay2');
+        if (pt2) pt2.textContent = ft;
+        const pmt = document.getElementById('paymentModal');
+        if (pmt) pmt.classList.add('active');
       }
 
       if (e.target.closest('#clearCartBtn')) { clearCart(); return; }
@@ -2107,7 +2190,7 @@
       }
 
       if (e.target.closest('#clearSearchBtn')) {
-        searchInput.value = ''; state.searchQuery = '';
+        if (searchInput) { searchInput.value = ''; state.searchQuery = ''; }
         invalidateCache(); updateUI(); updateClearButton(); return;
       }
     });
@@ -2161,7 +2244,10 @@
     try { state.isCartMinimized = localStorage.getItem('rujak_cart_minimized') === 'true'; } catch(_) {}
     createDistrictAutocomplete();
     if (state.selectedDistrict) {
-      document.getElementById('districtLabel').textContent = state.selectedDistrict.replace(/\b\w/g, l => l.toUpperCase()) + ' (~' + DISTRICT_MAP[state.selectedDistrict] + ' km)';
+      var distLabel = document.getElementById('districtLabel');
+      if (distLabel) {
+        distLabel.textContent = state.selectedDistrict.replace(/\b\w/g, l => l.toUpperCase()) + ' (~' + DISTRICT_MAP[state.selectedDistrict] + ' km)';
+      }
     }
     detectLocation();
     updateUI();
@@ -2170,12 +2256,10 @@
     initProductSwipe();
     initCartSwipe();
 
-    // Service worker untuk PWA
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch(e => console.log('SW gagal:', e));
     }
 
-    // Deep-link product
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('product');
     if (productId) {
