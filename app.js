@@ -54,6 +54,15 @@
     const heroName = document.getElementById('heroNameDisplay');
     if (heroName) heroName.textContent = name;
 
+    const headerName = document.getElementById('headerNameDisplay');
+    if (headerName) headerName.textContent = name;
+
+    const headerLoc = document.getElementById('headerLocDisplay');
+    if (headerLoc) {
+      let loc = state.selectedDistrict || 'Bekasi';
+      headerLoc.textContent = loc.replace(/\b\w/g, l => l.toUpperCase());
+    }
+
     if(document.getElementById('customerName')) document.getElementById('customerName').value = name;
     if(document.getElementById('districtInput') && state.selectedDistrict) { document.getElementById('districtInput').value = state.selectedDistrict.replace(/\b\w/g, l=>l.toUpperCase()); }
     
