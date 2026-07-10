@@ -2,7 +2,7 @@
   'use strict';
 
   // ============================================================
-  // RUJAK.CO — ULTIMATE SILENT LUXURY ENGINE (POLISHED)
+  // RUJAK.CO — ULTIMATE SILENT LUXURY ENGINE (SPACIOUS & SQUARE)
   // ============================================================
 
   const SUPABASE_URL = "https://ghhnnfrmftttptcejizp.supabase.co";
@@ -10,12 +10,12 @@
   const SYSTEM = { WA_NUMBER: '6289677161680', STORE_LAT: -6.2165414, STORE_LNG: 107.0177395, DEFAULT_DISTANCE: 2 };
 
   const PRODUCTS = [
-    { id:'p_m1', name:'Rujak Segar', desc:'Kombinasi buah pilihan dengan sambal original Rujak.Co. Disiapkan seketika sesaat sebelum pengantaran untuk menjaga tekstur renyah alami.', price:35000, cat:'classic', container:'Thinwall 1000ml Presisi', size:'Porsi Reguler', sambal:'Original Signature (1 Cup)', defaultSpice:3, image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp' },
-    { id:'p_m2', name:'Rujak Serut', desc:'Buah diserut halus secara presisi untuk pengalaman rasa yang lebih menyatu secara intim dengan saus karamelisasi mete.', price:26000, cat:'classic', container:'Thinwall 750ml', size:'Porsi Reguler', sambal:'Original Terbawa', defaultSpice:3, image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp' },
-    { id:'p_m3', name:'Rujak Gaco', desc:'Enam buah eksklusif pilihan dengan sambal mete premium. Sebuah mahakarya harmoni rasa gurih, pedas, dan manis.', price:40000, cat:'signature', container:'Thinwall 1000ml Tersiegel', size:'Porsi Eksklusif', sambal:'Karamelisasi Mete (1 Cup)', defaultSpice:3, image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-hd.webp' },
-    { id:'p_m4', name:'Rujak Rama', desc:'Formula porsi melimpah yang dikonsepkan khusus untuk momentum kebersamaan atau perjamuan formal kerabat terdekat.', price:48000, cat:'signature', container:'Jumbo Thinwall 1000ml', size:'Porsi Sharing', sambal:'Karamelisasi Mete (2 Cup)', defaultSpice:4, image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-hd.webp' },
-    { id:'p_m5', name:'Rujak Mahkota', desc:'Koleksi premium dengan anggur Shine Muscat impor pilihan. Menggabungkan kemewahan tekstur tanpa biji dengan buah tropis terbaik.', price:85000, cat:'reserve', container:'Premium Luxury Box', size:'Vault Single', sambal:'Mete Grand Reserve (2 Cup)', defaultSpice:3, image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp' },
-    { id:'p_m6', name:'Tampah Nusantara', desc:'Representasi kemegahan tradisi rasa Indonesia dalam wadah tampah bambu rajutan tangan untuk perjamuan istimewa Anda.', price:200000, cat:'reserve', container:'Tampah Bambu Ø40cm', size:'Perjamuan (8-10 Orang)', sambal:'Original & Mete (4 Cup)', defaultSpice:3, image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp' }
+    { id:'p_m1', name:'Rujak Segar', desc:'Kombinasi buah pilihan dengan sambal original Rujak.Co. Disiapkan seketika sesaat sebelum pengantaran untuk menjaga tekstur renyah alami.', price:35000, cat:'classic', container:'Thinwall 1000ml Presisi', size:'Porsi Reguler', sambal:'Original Signature (1 Cup)', defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp' },
+    { id:'p_m2', name:'Rujak Serut', desc:'Buah diserut halus secara presisi untuk pengalaman rasa yang lebih menyatu secara intim dengan saus karamelisasi mete.', price:26000, cat:'classic', container:'Thinwall 750ml', size:'Porsi Reguler', sambal:'Original Terbawa', defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp' },
+    { id:'p_m3', name:'Rujak Gaco', desc:'Enam buah eksklusif pilihan dengan sambal mete premium. Sebuah mahakarya harmoni rasa gurih, pedas, dan manis.', price:40000, cat:'signature', container:'Thinwall 1000ml Tersiegel', size:'Porsi Eksklusif', sambal:'Karamelisasi Mete (1 Cup)', defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-hd.webp' },
+    { id:'p_m4', name:'Rujak Rama', desc:'Formula porsi melimpah yang dikonsepkan khusus untuk momentum kebersamaan atau perjamuan formal kerabat terdekat.', price:48000, cat:'signature', container:'Jumbo Thinwall 1000ml', size:'Porsi Sharing', sambal:'Karamelisasi Mete (2 Cup)', defaultSpice:4, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-hd.webp' },
+    { id:'p_m5', name:'Rujak Mahkota', desc:'Koleksi premium dengan anggur Shine Muscat impor pilihan. Menggabungkan kemewahan tekstur tanpa biji dengan buah tropis terbaik.', price:85000, cat:'reserve', container:'Premium Luxury Box', size:'Vault Single', sambal:'Mete Grand Reserve (2 Cup)', defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp' },
+    { id:'p_m6', name:'Tampah Nusantara', desc:'Representasi kemegahan tradisi rasa Indonesia dalam wadah tampah bambu rajutan tangan untuk perjamuan istimewa Anda.', price:200000, cat:'reserve', container:'Tampah Bambu Ø40cm', size:'Perjamuan (8-10 Orang)', sambal:'Original & Mete (4 Cup)', defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp' }
   ];
 
   const DISTRICT_MAP = { 'bekasi barat':5, 'bekasi timur':7, 'bekasi selatan':9, 'bekasi utara':11, 'rawalumbu':8, 'jatiasih':12, 'pondokgede':14, 'cikarang':23, 'tambun':16, 'cibitung':20, 'gambir':18, 'menteng':19, 'tebet':20, 'pancoran':21, 'pasar minggu':22, 'kebayoran lama':24, 'kebayoran baru':22, 'mampang prapatan':21, 'pulo gadung':16, 'jatinegara':18, 'duren sawit':15, 'kramat jati':19, 'pasar rebo':20, 'cakung':12, 'kembangan':25, 'kelapa gading':27, 'depok':35, 'tangerang':38, 'bogor':50 };
@@ -87,9 +87,10 @@
     
     document.getElementById('emptyState').style.display = items.length ? 'none' : 'block';
     
+    // PERHATIKAN: Pemanggilan eksplisit p.thumbnail untuk etalase
     container.innerHTML = items.map((p, index) => `
       <div class="boutique-item" data-id="${p.id}" style="animation-delay: ${index * 0.05}s">
-        <img src="${p.thumbnail || p.image}" class="btq-img" loading="lazy" alt="${p.name}">
+        <img src="${p.thumbnail}" class="btq-img" loading="lazy" alt="${p.name}">
         <h3 class="btq-name">${p.name}</h3>
         <span class="btq-price">${fmt(p.price)}</span>
       </div>
@@ -132,6 +133,8 @@
   // --- Navigasi Detail Produk ---
   function openProductPage(id) {
     const p = PRODUCTS.find(x => x.id === id); if(!p) return;
+    
+    // PERHATIKAN: Pemanggilan eksplisit p.image (High-Res) untuk detail produk
     document.getElementById('productPageImg').innerHTML = `<img src="${p.image}">`;
     document.getElementById('productPageName').textContent = p.name;
     document.getElementById('productPageDesc').textContent = p.desc;
@@ -160,8 +163,6 @@
       entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } });
     }, { threshold: 0.1 });
     document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-    
-    // Trigger hero animation immediately
     setTimeout(() => { document.querySelector('.hero-editorial')?.classList.add('visible'); }, 100);
   }
 
@@ -189,7 +190,7 @@
       const cartKey = id + '_spice' + spice;
       const entry = state.cart[cartKey] || { qty: 0, spice: spice };
       entry.qty += qty; entry.spice = spice; state.cart[cartKey] = entry;
-      updateUI(); showToast('Sajian ditambahkan ke keranjang.');
+      updateUI(); showToast('Sajian ditambahkan ke tas belanja.');
       closeProductPage();
     });
 
@@ -203,13 +204,11 @@
     document.getElementById('qtyMinusPage')?.addEventListener('click', () => { if (state.currentProductPage.qty > 1) { state.currentProductPage.qty--; document.getElementById('qtyNumPage').textContent = state.currentProductPage.qty; } });
     document.getElementById('qtyPlusPage')?.addEventListener('click', () => { state.currentProductPage.qty++; document.getElementById('qtyNumPage').textContent = state.currentProductPage.qty; });
 
-    // Modals
     const openCart = () => { document.getElementById('miniCartModal').classList.add('active'); document.body.style.overflow='hidden'; renderMiniCart(); };
     document.getElementById('topCartBtn')?.addEventListener('click', openCart);
     document.getElementById('floatingCartBtn')?.addEventListener('click', openCart);
     document.getElementById('miniCartClose')?.addEventListener('click', () => { document.getElementById('miniCartModal').classList.remove('active'); document.body.style.overflow=''; });
 
-    // Autocomplete Kecamatan
     const di = document.getElementById('districtInput'), dm = document.getElementById('customDistrictDropdown');
     if(di) di.addEventListener('input', e => {
       const v = e.target.value.toLowerCase(), m = Object.keys(DISTRICT_MAP).filter(k => k.includes(v));
@@ -221,13 +220,12 @@
       updateShippingUI();
     });
 
-    // Sinkronisasi GPS
     document.getElementById('btnAutoDetect')?.addEventListener('click', function() {
       if(navigator.geolocation) {
-        showToast('Sinkronisasi sinyal satelit...');
+        showToast('Menghubungkan ke satelit GPS...');
         navigator.geolocation.getCurrentPosition(pos => {
           state.userDistance = estimateRoadDistance(haversineDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, pos.coords.latitude, pos.coords.longitude));
-          state.selectedDistrict = ''; if(di) di.value = 'Titik Satelit Ditemukan';
+          state.selectedDistrict = ''; if(di) di.value = 'Titik Satelit Terhubung';
           updateShippingUI();
           showToast('Jarak berhasil disinkronisasi.');
         }, () => { showToast('Akses lokasi ditolak perangkat.'); }, { timeout: 8000 });
@@ -235,17 +233,14 @@
     });
 
     document.addEventListener('click', e => {
-      // Filter Kategori
       if(e.target.classList.contains('cat-link')) { 
         document.querySelectorAll('.cat-link').forEach(b => b.classList.remove('active')); e.target.classList.add('active'); 
         state.activeFilter = e.target.dataset.cat; updateUI(); 
       }
 
-      // Buka Produk
       const mi = e.target.closest('.boutique-item');
       if (mi) { openProductPage(mi.dataset.id); }
 
-      // Modifikasi Kuantitas di Keranjang
       const act = e.target.closest('[data-action]');
       if(act) {
         const id = act.dataset.id, type = act.dataset.action;
@@ -253,12 +248,10 @@
         else if(type === 'decrease') { state.cart[id].qty--; if(state.cart[id].qty<=0) delete state.cart[id]; updateUI(); }
       }
 
-      // Logistik
       if(e.target.classList.contains('log-btn')) { document.querySelectorAll('.log-btn').forEach(b => b.classList.remove('active')); e.target.classList.add('active'); state.shippingProvider = e.target.dataset.provider; document.getElementById('rujakcoOptions').style.display = state.shippingProvider === 'paxel' ? 'none' : 'block'; document.getElementById('paxelOptions').style.display = state.shippingProvider === 'paxel' ? 'block' : 'none'; updateShippingUI(); }
       if(e.target.classList.contains('veh-btn')) { document.querySelectorAll('.veh-btn').forEach(b => b.classList.remove('active')); e.target.classList.add('active'); state.vehicleType = e.target.dataset.vehicle; updateShippingUI(); }
       if(e.target.id === 'priorityToggleMini') { state.isPriority = e.target.checked; updateShippingUI(); }
 
-      // Payment Modal Trigger
       if(e.target.id === 'btnOpenPayment') {
         const name = document.getElementById('customerName')?.value.trim(), phone = document.getElementById('customerPhone')?.value.trim(), address = document.getElementById('customerAddress')?.value.trim();
         if(!name || !phone || !address || (!state.selectedDistrict && !state.userDistance)) { showToast('Mohon lengkapi formulir pengiriman.'); return; }
@@ -269,7 +262,6 @@
 
       if(e.target.id === 'paymentClose') { document.getElementById('paymentModal').classList.remove('active'); }
       
-      // WhatsApp Checkout Final
       if(e.target.closest('[data-action="confirm-wa"]')) {
         if (checkoutLocked) return; checkoutLocked = true;
         const sum = getCartSummary();
@@ -298,7 +290,6 @@
         }, 500);
       }
 
-      // AI Chat Trigger
       if(e.target.id === 'aiChatToggle') { e.preventDefault(); document.getElementById('aiChatBox').classList.add('active'); }
       if(e.target.id === 'aiChatClose') { document.getElementById('aiChatBox').classList.remove('active'); }
     });
