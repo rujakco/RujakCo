@@ -48,18 +48,18 @@
   </div>
 
   <div id="app">
-    <!-- HEADER EDITORIAL (KINI LEBIH BERSIH DAN LEGA) -->
+    <!-- HEADER EDITORIAL -->
     <header class="luxury-header">
       <div class="brand-logo"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co"></div>
       <div class="header-center">
         <h1 class="brand-name">Rujak.Co</h1>
         <span class="header-greeting" id="headerGreeting">Eksklusif</span>
       </div>
-      <div style="width:36px;"></div> <!-- Spacer -->
+      <div style="width:36px;"></div> 
     </header>
 
     <main class="content-wrapper" id="mainContent">
-      <!-- HERO LANSKAP (4:3) DENGAN RUANG NAPAS DI KIRI KANAN -->
+      <!-- HERO LANSKAP (4:3) BERBINGKAI -->
       <div class="hero-editorial fade-up">
         <div class="hero-img-wrap">
           <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Sajian Rujak" />
@@ -70,7 +70,7 @@
         </div>
       </div>
 
-      <!-- CAROUSEL RAKSASA (INFINITE LOOP) -->
+      <!-- CAROUSEL RAKSASA (OPTIMIZED INFINITE LOOP) -->
       <div class="carousel-container fade-up">
         <div class="carousel-track" id="menuList"></div>
       </div>
@@ -81,11 +81,11 @@
       </footer>
     </main>
 
-    <!-- PRODUCT SWIPER OVERLAY (INFINITE SWIPE) -->
+    <!-- PRODUCT SWIPER OVERLAY (FULLSCREEN) -->
     <div class="product-swiper-overlay" id="productPage" style="display:none;">
       <button id="backFromProduct" class="glass-btn floating-close"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
       <div class="product-swiper-track" id="productSwiperTrack">
-        <!-- Dirender oleh JS (Infinite Loop dengan 2 Tahap Checkout) -->
+        <!-- Dirender oleh JS (Dengan fitur Lanjutkan) -->
       </div>
     </div>
 
@@ -141,7 +141,7 @@
               <label class="priority-label"><input type="checkbox" id="priorityToggleMini"> Layanan Eksekusi Prioritas (+Rp8.000)</label>
             </div>
             
-            <div id="paxelOptions" style="display:none; margin-top:24px; font-size:13px; color:var(--gold); font-style:italic; line-height:1.6;">* Layanan Paxel Same Day. Sajian akan tiba esok hari.</div>
+            <div id="paxelOptions" style="display:none; margin-top:24px; font-size:13px; color:var(--gold); font-style:italic; line-height:1.6;">* Layanan Paxel Same Day. Sajian tiba esok hari.</div>
             
             <div class="drawer-breakdown">
               <span id="shippingDistance"></span>
@@ -179,7 +179,7 @@
         <div class="drawer-header"><h3>Pramutamu</h3><button id="aiChatClose" class="glass-btn-dark"><i data-lucide="x" class="w-4 h-4"></i></button></div>
         <div class="drawer-body chat-body">
           <div id="aiChatMessages" class="chat-messages">
-            <div class="msg-bot"><span id="aiWelcomeMsg">Salam hormat. Ada preferensi khusus atau bantuan yang Anda perlukan untuk pesanan hari ini?</span></div>
+            <div class="msg-bot"><span id="aiWelcomeMsg">Salam hormat. Ada preferensi khusus yang Anda perlukan untuk pesanan hari ini?</span></div>
           </div>
           <div class="chat-input-row">
             <input type="text" id="aiChatInput" class="input-minimal" placeholder="Ketik pesan untuk pramutamu...">
@@ -189,7 +189,7 @@
       </div>
     </div>
 
-    <!-- BOTTOM NAVIGATION (DENGAN KERANJANG DI SINI) -->
+    <!-- BOTTOM NAVIGATION -->
     <nav class="bottom-nav" id="bottomNav">
       <a href="#" class="nav-item active" data-tab="home"><i data-lucide="home" class="nav-icon"></i><span class="nav-label">Koleksi</span></a>
       <a href="#" class="nav-item" id="navCartBtn">
