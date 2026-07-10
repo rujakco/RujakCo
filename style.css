@@ -136,8 +136,8 @@ p { line-height: 1.8; }
 .carousel-container { 
   width: 100%; 
   overflow: hidden; 
-  padding: 12px 0 0px; /* Padding bawah dihapus karena insight menggantikannya */
-  margin-top: 25px; /* NAIK 15PX DARI SEBELUMNYA (40px) */
+  padding: 12px 0 0px; 
+  margin-top: 25px; 
   container-type: inline-size; 
 }
 
@@ -161,7 +161,7 @@ p { line-height: 1.8; }
   opacity: 0.45; 
   will-change: transform; 
   
-  /* DIKEMBALIKAN KE GREEN GLASS TRANSPARAN SEPERTI AWAL */
+  /* Efek Green Glass Transparan Dipertahankan */
   background: linear-gradient(145deg, rgba(8, 46, 33, 0.08) 0%, rgba(8, 46, 33, 0.02) 100%);
   backdrop-filter: blur(16px) saturate(120%);
   -webkit-backdrop-filter: blur(16px) saturate(120%);
@@ -177,7 +177,6 @@ p { line-height: 1.8; }
   transform: scale(1); 
   opacity: 1; 
   z-index: 10; 
-  /* Bayangan hijau kembali aktif */
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3), 0 24px 48px rgba(8, 46, 33, 0.12); 
 }
 
@@ -236,8 +235,8 @@ p { line-height: 1.8; }
 .product-insight-container {
   text-align: center;
   padding: 0 32px;
-  margin-top: 8px; /* Dekat dengan carousel */
-  min-height: 60px; /* Menyediakan ruang agar UI tidak melompat */
+  margin-top: 8px; 
+  min-height: 60px; 
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -270,10 +269,10 @@ p { line-height: 1.8; }
   flex-direction: column; 
   align-items: center; 
   text-align: center; 
-  padding: 48px 24px 96px; 
+  padding: 18px 24px 96px; /* Padding atas dikurangi 30px (dari 48px jadi 18px) */
   border-top: 1px solid var(--gray-200); 
   background-color: var(--ivory); 
-  margin-top: 34px; /* FOOTER NAIK 30PX DARI SEBELUMNYA 64px */
+  margin-top: -6px; /* Margin atas dikurangi 40px (dari 34px jadi -6px) */
   position: relative; 
   overflow: hidden; 
 }
