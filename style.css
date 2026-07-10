@@ -97,7 +97,6 @@ p { line-height: 1.8; }
 .hero-img-wrap { width: 100%; aspect-ratio: 4 / 3; position: relative; border-radius: 0 0 32px 32px; overflow: hidden; box-shadow: 0 12px 40px rgba(10,58,42,0.15); }
 .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-/* Overlay ditambahkan padding bawah yang seimbang karena caption kini di dalam */
 .hero-overlay { 
   position: absolute; 
   inset: 0; 
@@ -105,13 +104,12 @@ p { line-height: 1.8; }
   display: flex; 
   flex-direction: column; 
   justify-content: flex-end; 
-  padding: 32px; /* Pad 32px rata ke semua arah di dalam box */
+  padding: 32px 32px 72px; /* Pad bawah lebih besar (72px) agar teks Asam Pedas naik ke atas */
   text-align: left; 
 }
 .hero-overlay h2 { font-size: 32px; line-height: 1.15; letter-spacing: -0.01em; color: var(--ivory); font-weight: 300; text-shadow: 0 2px 20px rgba(0,0,0,0.2); }
 .hero-overlay h2 em { font-style: italic; color: var(--gold); font-weight: 400; }
 
-/* Posisi dan Style Caption (Sapaan) yang Masuk ke Dalam Hero */
 .hero-caption { 
   margin-top: 20px; 
   display: flex; 
@@ -133,8 +131,13 @@ p { line-height: 1.8; }
 }
 .hero-caption-text #heroNameDisplay { color: var(--gold); font-weight: 600; }
 
-/* CAROUSEL & TATA LETAK MENU TENGAH */
-.carousel-container { width: 100%; overflow: hidden; padding: 12px 0 40px; }
+/* CAROUSEL TURUN 40PX */
+.carousel-container { 
+  width: 100%; 
+  overflow: hidden; 
+  padding: 12px 0 40px; 
+  margin-top: 40px; /* Menurunkan carousel sejauh 40px dari hero */
+}
 .carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; padding: 0 10%; gap: 20px; }
 .carousel-track::-webkit-scrollbar { display: none; }
 
@@ -145,12 +148,12 @@ p { line-height: 1.8; }
 
 .btq-img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 20px; margin-bottom: 12px; background: var(--gray-100); border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 20px 40px rgba(8, 46, 33, 0.08); }
 
-/* WADAH TEKS DAN GARIS HARGA BARU */
+/* WADAH TEKS DAN GARIS HARGA YANG PRESISI */
 .btq-text-container {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  width: max-content; /* Memaksa kotak teks dan harga sebesar judul rujak */
+  width: max-content; /* Memaksa kotak selebar teks judul rujak */
   margin: 0 auto;
   opacity: 0; 
   transform: translateY(12px); 
@@ -166,22 +169,24 @@ p { line-height: 1.8; }
 .btq-name { 
   font-size: 24px; 
   color: var(--green); 
-  margin-top: 30px; /* Jarak atas diatur menjadi 30px ke bawah menjauhi foto */
+  margin-top: 30px; 
   margin-bottom: 12px; 
-  letter-spacing: 0.06em; /* Jarak huruf lebih renggang mewah */
+  letter-spacing: 0.06em; 
   text-align: center;
 }
 
-/* Pembungkus Harga dengan Garis Kiri Kanan */
+/* Pembungkus Harga dengan Garis Emas (Flanking Lines) */
 .btq-price-wrap {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%; /* Memastikan wrapper harga membentang penuh di bawah judul */
   gap: 12px;
 }
 .btq-price-wrap::before, .btq-price-wrap::after {
   content: '';
-  flex: 1; /* Garis meregang selebar sisa kolom */
+  flex: 1 1 0%; /* Memaksa garis mengisi ruang sisa */
+  min-width: 16px; /* Memberikan panjang minimum agar garis pasti muncul */
   height: 1px;
   background: var(--gold);
   opacity: 0.5;
@@ -191,10 +196,10 @@ p { line-height: 1.8; }
   color: var(--gray-500); 
   font-weight: 500; 
   letter-spacing: 0.02em; 
-  white-space: nowrap; /* Mencegah harga pecah dua baris */
+  white-space: nowrap; 
 }
 
-/* FOOTER RATA TENGAH (Garis Batas Turun) */
+/* FOOTER RATA TENGAH */
 .luxury-footer { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 48px 24px 96px; border-top: 1px solid var(--gray-200); background: var(--ivory); margin-top: 64px; }
 .footer-grid { display: flex; flex-direction: column; align-items: center; gap: 24px; margin-bottom: 32px; width: 100%; }
 .footer-brand { display: flex; flex-direction: column; align-items: center; gap: 12px; }
@@ -257,24 +262,24 @@ p { line-height: 1.8; }
 .detail-manifesto h4 { font-size: 12px; color: var(--gold); margin-bottom: 16px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; }
 .detail-manifesto p { font-size: 14px; line-height: 1.8; color: var(--gray-900); font-family: 'Fraunces', serif; font-style: italic; margin: 0; }
 
-/* BOTTOM NAV BAR (FROSTED GLASS GOLD) */
+/* BOTTOM NAV BAR (FROSTED GLASS GOLD SEJAJAR HEADER) */
 .bottom-nav { 
   position: fixed; 
   bottom: 0; 
-  left: 0; 
-  right: 0; 
-  max-width: 480px; 
-  margin: 0 auto; 
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 48px); /* Lebar identik dengan header */
+  max-width: 432px; /* Lebar maksimal identik dengan header */
   z-index: var(--z-nav); 
-  background: rgba(197, 160, 89, 0.08); /* Lapisan emas tipis */
+  background: rgba(197, 160, 89, 0.08); /* Emas tipis dan lembut */
   backdrop-filter: blur(16px) saturate(120%); 
   -webkit-backdrop-filter: blur(16px) saturate(120%); 
   display: flex; 
   justify-content: space-around; 
   align-items: center; 
   padding: 14px 0 calc(14px + env(safe-area-inset-bottom)); 
-  border-top: 1px solid rgba(197, 160, 89, 0.25); /* Pantulan garis atas */
-  border-radius: 20px 20px 0 0; /* Lengkungan atas */
+  border-top: 1px solid rgba(197, 160, 89, 0.25); 
+  border-radius: 16px 16px 0 0; /* Lengkungan sudut atas, simetris dengan header */
 }
 .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--gray-400); font-size: 10px; font-weight: 600; gap: 6px; transition: color 0.2s; }
 .nav-item.active { color: var(--green); }
