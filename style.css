@@ -98,7 +98,6 @@ p { line-height: 1.8; }
 .hero-editorial { padding: 0 24px 0; margin-top: -70px; position: relative; z-index: 1; }
 .hero-img-wrap { width: 100%; aspect-ratio: 4 / 3; position: relative; border-radius: 0 0 32px 32px; overflow: hidden; box-shadow: 0 12px 40px rgba(10,58,42,0.15); }
 .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
 .hero-overlay { 
   position: absolute; 
   inset: 0; 
@@ -137,8 +136,8 @@ p { line-height: 1.8; }
 .carousel-container { 
   width: 100%; 
   overflow: hidden; 
-  padding: 12px 0 40px; 
-  margin-top: 40px; 
+  padding: 12px 0 0px; /* Padding bawah dihapus karena insight menggantikannya */
+  margin-top: 25px; /* NAIK 15PX DARI SEBELUMNYA (40px) */
   container-type: inline-size; 
 }
 
@@ -162,15 +161,14 @@ p { line-height: 1.8; }
   opacity: 0.45; 
   will-change: transform; 
   
-  /* Efek Kaca Emas Tipis (Identik dengan warna Bottom Nav Bar) */
-  background: rgba(197, 160, 89, 0.08); 
-  backdrop-filter: blur(16px) saturate(120%); 
-  -webkit-backdrop-filter: blur(16px) saturate(120%); 
-  border: 1px solid rgba(197, 160, 89, 0.25); 
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 16px 32px rgba(197, 160, 89, 0.08);
-  border-radius: 32px;
+  /* DIKEMBALIKAN KE GREEN GLASS TRANSPARAN SEPERTI AWAL */
+  background: linear-gradient(145deg, rgba(8, 46, 33, 0.08) 0%, rgba(8, 46, 33, 0.02) 100%);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  border: 1px solid rgba(8, 46, 33, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 16px 32px rgba(8, 46, 33, 0.04);
   
-  /* Jarak persis 40px antara tepi kartu dan gambar thumbnail */
+  border-radius: 32px;
   padding: 40px 40px 48px; 
   z-index: 1; 
 }
@@ -179,10 +177,11 @@ p { line-height: 1.8; }
   transform: scale(1); 
   opacity: 1; 
   z-index: 10; 
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3), 0 24px 48px rgba(197, 160, 89, 0.15); 
+  /* Bayangan hijau kembali aktif */
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3), 0 24px 48px rgba(8, 46, 33, 0.12); 
 }
 
-.btq-img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 20px; margin-bottom: 0; background: var(--gray-100); box-shadow: 0 16px 32px rgba(197, 160, 89, 0.15); }
+.btq-img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 20px; margin-bottom: 0; background: var(--gray-100); box-shadow: 0 16px 32px rgba(8, 46, 33, 0.12); }
 
 .btq-text-container {
   display: flex;
@@ -233,6 +232,38 @@ p { line-height: 1.8; }
   white-space: nowrap; 
 }
 
+/* TYPING ANIMATION INSIGHT */
+.product-insight-container {
+  text-align: center;
+  padding: 0 32px;
+  margin-top: 8px; /* Dekat dengan carousel */
+  min-height: 60px; /* Menyediakan ruang agar UI tidak melompat */
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.typing-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: var(--gray-500);
+  font-style: italic;
+  letter-spacing: 0.03em;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.typing-text::after {
+  content: '|';
+  animation: blink 1s step-end infinite;
+  color: var(--gold);
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
 /* FOOTER DENGAN RANDOM SCATTER LOGO SEAMLESS */
 .luxury-footer { 
   display: flex; 
@@ -242,7 +273,7 @@ p { line-height: 1.8; }
   padding: 48px 24px 96px; 
   border-top: 1px solid var(--gray-200); 
   background-color: var(--ivory); 
-  margin-top: 64px; 
+  margin-top: 34px; /* FOOTER NAIK 30PX DARI SEBELUMNYA 64px */
   position: relative; 
   overflow: hidden; 
 }
