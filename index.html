@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Rujak.Co — Premium Rujak Experience</title>
-  <meta name="description" content="Rujak premium dengan sambal mete terpisah — tetap renyah sampai tujuan." />
-  <meta name="theme-color" content="#F8F7F5" />
+  <title>Rujak.Co — Premium Rujak</title>
+  <meta name="description" content="Rujak premium dengan sambal mete terpisah." />
   <link rel="icon" type="image/webp" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <script defer src="https://unpkg.com/lucide@0.383.0"></script>
 </head>
 <body>
   <div id="app">
+
     <!-- HEADER -->
-    <header id="header">
+    <header>
       <div class="header-inner">
         <div class="brand">
           <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" />
@@ -36,7 +36,7 @@
 
     <!-- HERO -->
     <section class="hero">
-      <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Rujak segar dengan sambal mete" />
+      <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Rujak segar" />
       <div class="hero-overlay">
         <h1 class="hero-title">Rujak.<br>Dengan sambal mete.<br>Terpisah.</h1>
         <p class="hero-sub">Tetap renyah sampai tujuan.</p>
@@ -44,7 +44,7 @@
     </section>
 
     <!-- CATEGORY -->
-    <nav class="cat-scroll no-sb" id="catScroll">
+    <nav class="cat-scroll">
       <button class="cat-pill active" data-cat="all">Semua</button>
       <button class="cat-pill" data-cat="signature">Signature</button>
       <button class="cat-pill" data-cat="classic">Classic</button>
@@ -52,51 +52,51 @@
     </nav>
 
     <!-- MENU -->
-    <div class="menu-section">
+    <section class="menu-section">
       <div class="menu-header">
         <h2 class="section-title">Koleksi</h2>
-        <button class="icon-btn" id="searchIconBtn" aria-label="Cari">
+        <button class="icon-btn" id="searchIconBtn">
           <i data-lucide="search" class="w-5 h-5"></i>
         </button>
       </div>
       <div class="search-wrap" id="searchInputWrap">
-        <input type="text" id="searchInput" placeholder="Cari menu..." autocomplete="off" />
+        <input type="text" id="searchInput" placeholder="Cari menu..." />
         <button class="clear-search" id="clearSearchBtn">✕</button>
       </div>
       <div class="menu-list" id="menuList"></div>
-      <div class="empty-state" id="emptyState">Tidak ada menu yang cocok.</div>
-    </div>
+      <div class="empty-state" id="emptyState">Tidak ada menu.</div>
+    </section>
 
     <!-- ADDONS -->
-    <div class="addon-section" id="addonSection">
+    <section class="addon-section">
       <h2 class="section-title">Tambahan</h2>
       <div class="addon-grid" id="addonList"></div>
-    </div>
+    </section>
 
     <!-- TESTIMONIAL -->
     <section class="testimonial">
-      <h2 class="section-title">Apa kata mereka</h2>
-      <div class="testi-card" id="testiCard">
+      <h2 class="section-title">Kata mereka</h2>
+      <div class="testi-card">
         <div class="testi-stars">★★★★★</div>
-        <p class="testi-text">"Sambel metenya berasa banget, nggak pelit. Buah masih renyah."</p>
+        <p class="testi-text">"Sambel metenya berasa banget. Buah masih renyah."</p>
         <span class="testi-author">— Dina, Bekasi</span>
       </div>
     </section>
 
     <!-- FAQ -->
     <section class="faq">
-      <h2 class="section-title">Tanya Rujak</h2>
-      <div class="faq-container" id="faqContainer">
+      <h2 class="section-title">Tanya</h2>
+      <div class="faq-container">
         <div class="faq-item open">
           <div class="faq-question" data-toggle="faq">Kenapa sambal dipisahkan?</div>
-          <div class="faq-answer">Agar buah tetap segar dan renyah saat diterima.</div>
+          <div class="faq-answer">Agar buah tetap segar dan renyah.</div>
         </div>
         <div class="faq-item">
-          <div class="faq-question" data-toggle="faq">Kenapa pesanan baru dikirim besok?</div>
-          <div class="faq-answer">Karena kami menerapkan standar Fresh-Prep. Buah dipotong 15 menit sebelum dikirim.</div>
+          <div class="faq-question" data-toggle="faq">Kenapa dikirim besok?</div>
+          <div class="faq-answer">Fresh-Prep: buah dipotong 15 menit sebelum dikirim.</div>
         </div>
         <div class="faq-item">
-          <div class="faq-question" data-toggle="faq">Berapa ongkirnya?</div>
+          <div class="faq-question" data-toggle="faq">Berapa ongkir?</div>
           <div class="faq-answer">Mulai Rp8.000, dihitung dari jarak.</div>
         </div>
       </div>
@@ -111,24 +111,18 @@
         </div>
         <p class="footer-desc">Rujak premium dengan sambal mete terpisah — tetap renyah sampai tujuan.</p>
         <div class="footer-social">
-          <a href="https://wa.me/6289677161680" target="_blank" rel="noopener" aria-label="WhatsApp">
-            <i data-lucide="phone" class="w-5 h-5"></i>
-          </a>
-          <a href="https://www.instagram.com/rujakco.id" target="_blank" rel="noopener" aria-label="Instagram">
-            <i data-lucide="instagram" class="w-5 h-5"></i>
-          </a>
-          <a href="https://www.tiktok.com/@rujakco" target="_blank" rel="noopener" aria-label="TikTok">
-            <i data-lucide="music" class="w-5 h-5"></i>
-          </a>
+          <a href="https://wa.me/6289677161680" target="_blank"><i data-lucide="phone" class="w-5 h-5"></i></a>
+          <a href="https://www.instagram.com/rujakco.id" target="_blank"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+          <a href="https://www.tiktok.com/@rujakco" target="_blank"><i data-lucide="music" class="w-5 h-5"></i></a>
         </div>
-        <div class="footer-bottom">&copy; 2026 Rujak.Co — Premium Rujak Experience.</div>
+        <div class="footer-bottom">&copy; 2026 Rujak.Co</div>
       </div>
     </footer>
 
     <!-- BOTTOM BAR -->
     <div id="bottom-bar">
       <button class="close-bottom-bar" id="closeBottomBar">✕</button>
-      <div class="cart-summary" id="cartSummary" tabindex="0">
+      <div class="cart-summary" id="cartSummary">
         <span class="cart-items-preview" id="cartPreview">0 item</span>
         <span class="cart-total" id="cartTotalDisplay">Rp0</span>
       </div>
@@ -138,9 +132,7 @@
     <!-- FLOATING CART -->
     <button id="floatingCartBtn"><i data-lucide="shopping-bag" class="w-6 h-6"></i><span class="badge-cart" id="floatingBadge">0</span></button>
 
-    <!-- ========================================================= -->
-    <!-- ELEMEN TERSEMBUNYI (dibutuhkan oleh JavaScript, tidak terlihat) -->
-    <!-- ========================================================= -->
+    <!-- ===== ELEMEN TERSEMBUNYI (dibutuhkan JS) ===== -->
     <div id="districtLabel" style="display:none;"></div>
     <div id="locationDisplay" style="display:none;"></div>
     <div id="shippingCost" style="display:none;"></div>
@@ -162,15 +154,13 @@
     <div id="storeStatusText" style="display:none;"></div>
     <div id="storeStatusBanner" style="display:none;"></div>
     <div id="searchToggleWrap" style="display:none;"></div>
-    <!-- selesai elemen tersembunyi -->
 
-    <!-- MODALS -->
-    <!-- Product Modal -->
+    <!-- PRODUCT MODAL -->
     <div class="modal-overlay" id="productModal">
       <div class="modal-content">
         <div class="modal-header">
           <span class="modal-title">Detail</span>
-          <button class="modal-close" id="modalClose">&times;</button>
+          <button class="modal-close" id="modalClose">✕</button>
         </div>
         <div class="modal-body" id="modalBody">
           <div class="modal-img" id="modalImg"></div>
@@ -193,65 +183,35 @@
             </div>
           </div>
           <div class="tab-content" id="tabStory">
-            <p class="modal-story">Rujak ini terinspirasi dari warisan kuliner Nusantara yang dipadukan dengan sentuhan modern. Setiap buah dipilih langsung dari petani terbaik.</p>
+            <p class="modal-story">Rujak ini terinspirasi dari warisan kuliner Nusantara.</p>
           </div>
           <div class="modal-footer">
             <span class="modal-price" id="btnPrice">Rp0</span>
-            <button class="modal-add" id="modalAdd">Tambah ke Keranjang</button>
+            <button class="modal-add" id="modalAdd">Tambah</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Mini Cart Modal -->
+    <!-- MINI CART MODAL -->
     <div class="modal-overlay" id="miniCartModal">
       <div class="modal-content">
         <div class="modal-header">
           <span class="modal-title">Keranjang</span>
-          <button class="modal-close" id="miniCartClose">&times;</button>
+          <button class="modal-close" id="miniCartClose">✕</button>
         </div>
         <div class="modal-body" id="miniCartBody">
           <div id="miniCartList"></div>
           <div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotalDisplay">Rp0</span></div>
           <hr />
-          <div class="form-group">
-            <label>Nama</label>
-            <input type="text" id="customerName" placeholder="Nama lengkap" />
-          </div>
-          <div class="form-group">
-            <label>HP</label>
-            <input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" />
-          </div>
-          <div class="form-group">
-            <label>Alamat</label>
-            <input type="text" id="customerAddress" placeholder="Jalan, RT/RW" />
-          </div>
-          <div class="form-group">
-            <label>Kecamatan</label>
-            <input type="text" id="districtInput" placeholder="Ketik kecamatan..." />
-            <div id="customDistrictDropdown" style="display:none;"></div>
-          </div>
-          <div class="form-group">
-            <label>Jam Kirim (Besok)</label>
-            <div id="deliveryTimeTrigger" class="custom-select-trigger">
-              <span id="deliveryTimeLabel">Pilih jam...</span>
-              <i data-lucide="chevron-down" class="w-4 h-4"></i>
-            </div>
-            <input type="hidden" id="deliveryTime" />
-          </div>
-          <div class="form-group">
-            <label>Catatan</label>
-            <textarea id="orderNotes" rows="2" placeholder="Opsional"></textarea>
-          </div>
+          <div class="form-group"><label>Nama</label><input type="text" id="customerName" placeholder="Nama lengkap" /></div>
+          <div class="form-group"><label>HP</label><input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" /></div>
+          <div class="form-group"><label>Alamat</label><input type="text" id="customerAddress" placeholder="Jalan, RT/RW" /></div>
+          <div class="form-group"><label>Kecamatan</label><input type="text" id="districtInput" placeholder="Ketik kecamatan..." /><div id="customDistrictDropdown" style="display:none;"></div></div>
+          <div class="form-group"><label>Jam Kirim (Besok)</label><div id="deliveryTimeTrigger" class="custom-select-trigger"><span id="deliveryTimeLabel">Pilih jam</span><i data-lucide="chevron-down" class="w-4 h-4"></i></div><input type="hidden" id="deliveryTime" /></div>
+          <div class="form-group"><label>Catatan</label><textarea id="orderNotes" rows="2" placeholder="Opsional"></textarea></div>
           <div class="shipping-section" id="shippingSection">
-            <div class="form-group">
-              <label>Kurir</label>
-              <div class="shipping-options">
-                <button class="ship-btn active" data-provider="rujakco">Rujak.Co</button>
-                <button class="ship-btn" data-provider="paxel">Paxel</button>
-                <button class="ship-btn" data-provider="pembeli">Kurir Saya</button>
-              </div>
-            </div>
+            <div class="form-group"><label>Kurir</label><div class="shipping-options"><button class="ship-btn active" data-provider="rujakco">Rujak.Co</button><button class="ship-btn" data-provider="paxel">Paxel</button><button class="ship-btn" data-provider="pembeli">Kurir Saya</button></div></div>
             <div id="shippingBreakdown" style="font-size:13px;color:#888;margin-bottom:12px;"></div>
           </div>
           <div class="final-summary">
@@ -260,58 +220,39 @@
             <div><span>Ongkir</span><span id="finalShipping">Rp0</span></div>
             <div class="total"><span>Total</span><span id="finalTotal">Rp0</span></div>
           </div>
-          <button class="btn-checkout" id="btnOpenPayment">Bayar Via QRIS</button>
+          <button class="btn-checkout" id="btnOpenPayment">Bayar via QRIS</button>
         </div>
       </div>
     </div>
 
-    <!-- Payment Modal -->
+    <!-- PAYMENT MODAL -->
     <div class="modal-overlay" id="paymentModal">
       <div class="modal-content">
-        <div class="modal-header">
-          <span class="modal-title">QRIS</span>
-          <button class="modal-close" id="paymentClose">&times;</button>
-        </div>
+        <div class="modal-header"><span class="modal-title">QRIS</span><button class="modal-close" id="paymentClose">✕</button></div>
         <div class="modal-body">
-          <div class="qris-container">
-            <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS" id="qrisImagePayment" />
-          </div>
-          <div class="payment-total">
-            <span>Total</span>
-            <span id="paymentTotalDisplay">Rp0</span>
-          </div>
+          <div class="qris-container"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS" id="qrisImagePayment" /></div>
+          <div class="payment-total"><span>Total</span><span id="paymentTotalDisplay">Rp0</span></div>
           <button class="btn-copy" id="copyAmountBtn">Salin Nominal</button>
-          <button class="btn-confirm-wa" data-action="confirm-wa">Kirim Bukti via WhatsApp</button>
+          <button class="btn-confirm-wa" data-action="confirm-wa">Kirim Bukti</button>
         </div>
       </div>
     </div>
 
-    <!-- Toast -->
+    <!-- TOAST -->
     <div id="toast"></div>
 
-    <!-- AI Chat Button -->
-    <button id="aiChatToggle" class="ai-chat-btn" aria-label="Bantuan AI">
-      <i data-lucide="message-circle" class="w-5 h-5"></i>
-    </button>
+    <!-- AI CHAT -->
+    <button id="aiChatToggle" class="ai-chat-btn"><i data-lucide="message-circle" class="w-5 h-5"></i></button>
     <div id="aiChatBox" style="display:none;">
-      <div class="ai-header">Jakco — AI Assistant</div>
-      <div class="ai-messages" id="aiChatMessages">
-        <div>👋 Ada yang bisa saya bantu?</div>
-      </div>
-      <div class="ai-input">
-        <input id="aiChatInput" type="text" placeholder="Tanya..." />
-        <button id="aiChatSend">Kirim</button>
-      </div>
+      <div class="ai-header">Jakco — AI</div>
+      <div class="ai-messages" id="aiChatMessages"><div>👋 Ada yang bisa dibantu?</div></div>
+      <div class="ai-input"><input id="aiChatInput" type="text" placeholder="Tanya..." /><button id="aiChatSend">Kirim</button></div>
     </div>
+
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="app.js"></script>
-  <script>
-    // Inisialisasi ulang lucide setelah konten dimuat
-    document.addEventListener('DOMContentLoaded', function() {
-      if (window.lucide) lucide.createIcons();
-    });
-  </script>
+  <script>document.addEventListener('DOMContentLoaded', function(){ if(window.lucide) lucide.createIcons(); });</script>
 </body>
 </html>
