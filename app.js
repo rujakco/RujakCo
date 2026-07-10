@@ -50,7 +50,7 @@
   }
 
   function applyPersonalization() {
-    const name = state.customerName || 'Klien';
+    const name = state.customerName || 'Ngoedi'; 
     const heroName = document.getElementById('heroNameDisplay');
     if (heroName) heroName.textContent = name;
 
@@ -530,14 +530,6 @@
     });
   }
 
-  window.addEventListener('beforeunload', function (e) {
-    const hasCart = Object.keys(state.cart).length > 0;
-    if (hasCart) {
-      e.preventDefault();
-      e.returnValue = '';
-    }
-  });
-
   function init() {
     try { const s = localStorage.getItem('rj_crt_v7'); if(s) state.cart = JSON.parse(s); } catch(e){}
     initAIChat();
@@ -547,6 +539,17 @@
     bindEvents();
     initOnboarding(); 
     updateUI(); 
+
+    // Header Frosted Glass Effect
+    window.addEventListener('scroll', () => {
+      const header = document.getElementById('mainHeader');
+      if (!header) return;
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
