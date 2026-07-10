@@ -9,6 +9,8 @@
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoaG5uZnJtZnR0dHB0Y2VqaXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNjA1ODksImV4cCI6MjA5NzgzNjU4OX0.FM-sPvJJzviX2kA0GEHnznOppivm4JNyC4IPFv_RkdE";
   const SYSTEM = { WA_NUMBER: '6289677161680', STORE_LAT: -6.2165414, STORE_LNG: 107.0177395, DEFAULT_DISTANCE: 2 };
 
+  const SPICE_LABELS = { 1: 'Ringan', 2: 'Sedang', 3: 'Pedas', 4: 'Sangat Pedas', 5: 'Neraka' };
+
   const PRODUCTS = [
     { id:'p_m1', name:'Rujak Segar', desc:'Kombinasi buah pilihan dengan sambal original Rujak.Co. Disiapkan seketika sesaat sebelum pengantaran untuk menjaga tekstur renyah alami.', price:35000, container:'Thinwall 1000ml Presisi', size:'Porsi Reguler', sambal:'Original Signature (1 Cup)', buah:['Mangga Mengkel','Nanas Hutan','Bengkoang','Jambu Air','Kedondong Kebun'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp' },
     { id:'p_m2', name:'Rujak Serut', desc:'Buah diserut halus secara presisi untuk pengalaman rasa yang lebih menyatu secara intim dengan saus karamelisasi mete.', price:26000, container:'Thinwall 750ml', size:'Porsi Reguler', sambal:'Original Terbawa', buah:['Mangga Muda Jawa','Bengkoang Garing','Nanas Madu','Ubi Ungu Manis'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp' },
@@ -56,15 +58,11 @@
   // --- Onboarding & Personalisasi ---
   function applyPersonalization() {
     const name = state.customerName || 'Klien';
-    
-    // Sapaan personal (nama)
-    const greetingNameEl = document.getElementById('greetingName');
-    if (greetingNameEl) greetingNameEl.textContent = name;
-    
-    // Hero name
+
+    // Hero name (satu-satunya sapaan di beranda, di dalam eyebrow hero)
     const heroName = document.getElementById('heroNameDisplay');
     if (heroName) heroName.textContent = name;
-    
+
     if(document.getElementById('customerName')) document.getElementById('customerName').value = name;
     if(document.getElementById('districtInput') && state.selectedDistrict) { document.getElementById('districtInput').value = state.selectedDistrict.replace(/\b\w/g, l=>l.toUpperCase()); }
     
@@ -192,7 +190,7 @@
       requestAnimationFrame(updateCenter);
       window.clearTimeout(isScrolling);
       isScrolling = setTimeout(() => {
-        const itemWidth = track.children[0]?.offsetWidth ? track.children[0].offsetWidth + 28 : 0;
+        const itemWidth = track.children[0]?.offsetWidth ? track.children[0].offsetWidth + 24 : 0;
         if(itemWidth === 0) return;
         const currentIndex = Math.round(track.scrollLeft / itemWidth);
         const baseCount = PRODUCTS.length;
@@ -250,7 +248,10 @@
             
             <div id="step2_${index}_${p.id}" class="step-2-content">
               <div class="spice-selector">
-                <label>Tingkat Pedas</label>
+                <label>
+                  <span>Tingkat Pedas</span>
+                  <span class="spice-current" id="spiceLabel_${index}_${p.id}">${SPICE_LABELS[state.drafts[p.id].spice]}</span>
+                </label>
                 <div class="spice-options" id="spice_${index}_${p.id}">
                   ${[1,2,3,4,5].map(i => `<button class="spice-option ${i===(state.drafts[p.id].spice)?'active':''}" data-spice="${i}" data-pid="${p.id}">${i}</button>`).join('')}
                 </div>
@@ -427,6 +428,7 @@
           b.classList.remove('active');
           if(parseInt(b.dataset.spice) === val) b.classList.add('active');
         });
+        document.querySelectorAll(`[id^="spiceLabel_"][id$="_${pid}"]`).forEach(el => { el.textContent = SPICE_LABELS[val]; });
       }
 
       if (e.target.classList.contains('qty-plus') && e.target.closest('.detail-actions')) {
