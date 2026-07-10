@@ -3,441 +3,327 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Rujak.Co — Kurasi Rujak Premium & Buah Eksklusif</title>
-  <meta name="description" content="Menghadirkan pengalaman menikmati rujak Indonesia dalam standar kemewahan baru. Dipotong segar melalui prinsip Fresh-Prep sebelum pengantaran." />
+  <title>Rujak.Co — Premium Rujak Experience</title>
+  <meta name="description" content="Rujak premium dengan sambal mete terpisah — tetap renyah sampai tujuan." />
   <meta name="theme-color" content="#0B3A25" />
   
-  <!-- Apple Mobile Web App Meta -->
+  <!-- Apple Touch Icon & Web App -->
+  <link rel="apple-touch-icon" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  
-  <!-- Preconnect Fonts -->
+
+  <!-- Preconnect to Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&display=swap" rel="stylesheet" />
   
+  <!-- Styles -->
   <link rel="stylesheet" href="style.css" />
+  
+  <!-- Icons (defer) -->
   <script defer src="https://unpkg.com/lucide@0.383.0"></script>
 </head>
 <body>
   <div id="app">
-    <!-- HEADER BUTIK DIGITAL -->
-    <header id="header" role="banner">
-      <div class="header-top">
-        <div class="header-left">
-          <a href="#" class="brand-logo" aria-label="Rujak.Co Beranda">
-            <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Logo Rujak.Co" class="img-round" />
-            <span class="brand-name">Rujak<span>.Co</span></span>
-          </a>
-        </div>
-        <div class="header-right">
-          <div class="store-status" id="storeStatus" aria-live="polite">
-            <span class="status-dot"></span>
-            <span class="status-text" id="storeStatusText">Membuka Layanan</span>
+    <!-- Header -->
+    <header class="header" role="banner">
+      <div class="header__inner">
+        <a href="/" class="brand" aria-label="Rujak.Co Beranda">
+          <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="" width="34" height="34" class="brand__logo" />
+          <span class="brand__name">Rujak<span class="brand__accent">.Co</span></span>
+        </a>
+        <div class="header__actions">
+          <div class="store-status">
+            <span class="store-status__dot"></span>
+            <span class="store-status__label" id="storeStatusLabel">Buka</span>
           </div>
-          <button class="location-pill" id="locationPill" aria-label="Ubah lokasi pengiriman">
-            <i data-lucide="map-pin" class="w-4 h-4 text-emerald" aria-hidden="true"></i>
-            <div class="location-text">
-              <span class="location-label">Kurasi Untuk</span>
-              <span class="location-value" id="locationDisplay">Mendeteksi... ▾</span>
-            </div>
+          <button class="location-pill" id="locationPill" aria-label="Ubah lokasi">
+            <span class="location-pill__icon" aria-hidden="true">📍</span>
+            <span class="location-pill__text" id="locationDisplay">Mendeteksi...</span>
           </button>
         </div>
       </div>
     </header>
 
-    <!-- KONTEN UTAMA FLUIDA — Gunakan elemen <main> untuk landmark -->
-    <main class="content-wrapper" id="mainContent">
-      
-      <!-- HERO EXPERIENCE RESTYLED -->
-      <section class="hero-premium" aria-labelledby="hero-heading">
-        <div class="hero-media">
-          <img class="hero-img img-cover" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Sajian Buah Segar Rujak.Co" loading="lazy" />
-          <div class="hero-gradient"></div>
+    <!-- Main Content -->
+    <main class="main" id="mainContent">
+      <!-- Hero -->
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero__media">
+          <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="" class="hero__image" loading="lazy" />
+          <div class="hero__gradient"></div>
         </div>
-        <div class="hero-content-premium">
-          <span class="hero-eyebrow">The Art of Indonesian Fresh‑Prep</span>
-          <h2 class="hero-title" id="hero-heading">Asem, Pedes,<br><em>Manis, Seger.</em></h2>
-          <p class="hero-subtitle">Simfoni rasa buah Nusantara yang dikurasi khusus untuk selera mapan Anda.</p>
-          <button class="hero-cta" onclick="document.getElementById('menuHeader').scrollIntoView({behavior:'smooth'})">
-            Jelajahi Koleksi Rasa
-            <i data-lucide="arrow-right" class="w-4 h-4" aria-hidden="true"></i>
-          </button>
+        <div class="hero__content">
+          <p class="hero__eyebrow">The Art of Indonesian Fresh-Prep</p>
+          <h1 class="hero__title" id="hero-title">Asem, Pedes, <em>Manis, Seger.</em></h1>
+          <p class="hero__subtitle">Simfoni rasa buah Nusantara yang dikurasi khusus untuk selera mapan Anda.</p>
+          <button class="hero__cta" data-scroll-to="menu">Jelajahi Koleksi →</button>
         </div>
       </section>
 
-      <!-- TRUST EMBLEM & VALUE MANIFESTO -->
-      <section class="trust-section reveal-on-scroll" aria-label="Keunggulan Layanan">
-        <div class="trust-stats stagger-children">
-          <div class="trust-stat">
-            <div class="trust-stat-number">4.9</div>
-            <div class="trust-stat-label">Akreditasi Klien</div>
-          </div>
-          <div class="trust-stat">
-            <div class="trust-stat-number">100%</div>
-            <div class="trust-stat-label">Jaminan Kesegaran</div>
-          </div>
-          <div class="trust-stat">
-            <div class="trust-stat-number">
-              <i data-lucide="sparkles" class="w-5 h-5 text-emerald inline" aria-hidden="true"></i>
-            </div>
-            <div class="trust-stat-label">Kurasi Kebun Eksklusif</div>
-          </div>
+      <!-- Trust Bar -->
+      <section class="trust" aria-label="Keunggulan Layanan">
+        <div class="trust__item">
+          <span class="trust__number">4.9</span>
+          <span class="trust__label">Akreditasi Klien</span>
+        </div>
+        <div class="trust__item">
+          <span class="trust__number">100%</span>
+          <span class="trust__label">Jaminan Kesegaran</span>
+        </div>
+        <div class="trust__item">
+          <span class="trust__number">✦</span>
+          <span class="trust__label">Kurasi Kebun Eksklusif</span>
         </div>
       </section>
 
-      <!-- FRESH-PREP PRIVILEGE STRIP -->
-      <div id="freshBanner" class="fresh-banner">
-        <i data-lucide="info" class="w-4 h-4 text-emerald" aria-hidden="true"></i>
-        <span><strong>Prosedur Fresh-Prep:</strong> Setiap buah dipetik dan dipotong 15 menit sebelum kurir pribadi diberangkatkan demi menjaga integritas tekstur.</span>
+      <!-- Fresh Prep Banner -->
+      <div class="fresh-banner">
+        <span class="fresh-banner__icon">⏱</span>
+        <p class="fresh-banner__text"><strong>Fresh-Prep:</strong> Buah dipotong 15 menit sebelum kurir berangkat.</p>
       </div>
 
-      <!-- REKOMENDASI PRAMUTAMU (AI CONCIERGE PRE-RENDER CAPABILITY) -->
-      <div id="aiRecommendationContainer" class="ai-recommendation" style="display:none;" aria-live="polite"></div>
-
-      <!-- KATEGORI SENSORIK — perbaikan: tambahkan tag penutup </nav> -->
-      <nav class="cat-scroll no-sb" aria-label="Navigasi Koleksi" id="catScroll">
-        <button type="button" class="cat-pill active" data-cat="all">Semua Sajian</button>
-        <button type="button" class="cat-pill" data-cat="signature">Signature Collection</button>
-        <button type="button" class="cat-pill" data-cat="classic">Classic Taste</button>
-        <button type="button" class="cat-pill" data-cat="reserve">Reserve Vault</button>
-        <button type="button" class="cat-pill" data-cat="addon">Elemen Pelengkap</button>
+      <!-- Category Filter -->
+      <nav class="category-nav" aria-label="Kategori Produk">
+        <button class="category-nav__pill is-active" data-category="all">Semua</button>
+        <button class="category-nav__pill" data-category="signature">Signature</button>
+        <button class="category-nav__pill" data-category="classic">Classic</button>
+        <button class="category-nav__pill" data-category="reserve">Reserve</button>
+        <button class="category-nav__pill" data-category="addon">Pelengkap</button>
       </nav>
 
-      <!-- ETALASE UTAMA -->
-      <section aria-labelledby="menuHeader">
-        <div class="sec-header" id="menuHeader">
-          <span class="sec-title">Koleksi Rasa</span>
-          <div class="search-toggle-wrap" id="searchToggleWrap">
-            <button class="search-icon-btn" id="searchIconBtn" aria-label="Aktifkan pencarian kurasi"><i data-lucide="search" class="w-5 h-5" aria-hidden="true"></i></button>
-            <div class="search-input-wrap" id="searchInputWrap">
-              <input type="text" id="searchInput" placeholder="Cari sajian rasa..." autocomplete="off" aria-label="Kolom pencarian produk" />
-              <button type="button" class="clear-search" id="clearSearchBtn" aria-label="Bersihkan kata kunci">✕</button>
-            </div>
-          </div>
+      <!-- Product Grid -->
+      <section class="product-section" aria-labelledby="section-menu">
+        <div class="section-header">
+          <h2 class="section-header__title" id="section-menu">Koleksi Rasa</h2>
+          <button class="section-header__search" id="searchToggle" aria-label="Cari sajian">🔍</button>
         </div>
-
-        <div class="empty-state" id="emptyState" style="display:none;">Sajian rasa tidak ditemukan dalam kurasi kami.</div>
-        <div id="skeletonContainer">
-          <div class="skeleton-item">
-            <div class="skeleton-img skeleton"></div>
-            <div class="skeleton-body">
-              <div class="skeleton-line skeleton"></div>
-              <div class="skeleton-line skeleton medium"></div>
-            </div>
-          </div>
-        </div>
-        <div class="menu-list" id="menuList" style="display:none;"></div>
-      </section>
-
-      <!-- SECTION ELEMEN PELENGKAP — perbaikan: tutup section dengan benar -->
-      <section aria-labelledby="addonHeader" id="addonSection">
-        <div class="divider" id="addonDivider"></div>
-        <div class="sec-header" id="addonHeader">
-          <span class="sec-title">Varian Aksentuasi</span>
-        </div>
-        <div class="addon-grid" id="addonList"></div>
-      </section>
-
-      <!-- EXPERIENTIAL MARKETING MANIFESTO -->
-      <div class="divider" aria-hidden="true"></div>
-      <section class="edu-section" aria-labelledby="experienceHeader">
-        <div class="sec-header"><span class="sec-title" id="experienceHeader">Komitmen Filosofis Kami</span></div>
-        <div class="edu-container reveal-on-scroll stagger-children">
-          <div class="edu-card">
-            <div class="edu-icon-wrap"><i data-lucide="shield-check" class="w-5 h-5" aria-hidden="true"></i></div>
-            <div>
-              <h4 class="edu-title">Arsitektur Fresh-Lock™</h4>
-              <p class="edu-desc">Sajian sambal mete eksklusif disegel secara hermetis dalam wadah terpisah, mencegah degradasi enzimatis buah.</p>
-            </div>
-          </div>
-          <div class="edu-card">
-            <div class="edu-icon-wrap"><i data-lucide="layers" class="w-5 h-5" aria-hidden="true"></i></div>
-            <div>
-              <h4 class="edu-title">Seleksi Komoditas Eksklusif</h4>
-              <p class="edu-desc">Dari mangga pilihan hingga Shine Muscat premium, seluruh material dipasok dari perkebunan bersertifikasi kualitas ekspor.</p>
-            </div>
-          </div>
+        <div class="product-grid" id="productGrid" role="list">
+          <!-- Products rendered by JS -->
         </div>
       </section>
 
-      <!-- TESTIMONI PENGALANGAN KLIEN -->
-      <div class="divider" aria-hidden="true"></div>
-      <section aria-label="Ulasan Klien">
-        <div class="sec-header"><span class="sec-title">Apresiasi Klien Terpilih</span></div>
-        <div class="testi-flip-container reveal-on-scroll" id="testiFlipContainer">
-          <div class="testi-card active" data-index="0">
-            <div class="testi-stars">✦ ✦ ✦ ✦ ⭐️</div>
-            <p class="testi-text">"Sebuah kemewahan rasa sejati. Sambal metenya memiliki kedalaman rasa yang belum pernah saya temukan sebelumnya di tempat lain."</p>
-            <span class="testi-author">— Madame Dina, Kawasan Residansial Bekasi</span>
-          </div>
-          <div class="testi-card" data-index="1">
-            <div class="testi-stars">✦ ✦ ✦ ✦ ⭐️</div>
-            <p class="testi-text">"Prosedur pengemasan yang luar biasa higienis, pengantaran sangat terjaga, rasa buah tetap renyah optimal layaknya baru dipetik."</p>
-            <span class="testi-author">— Dr. Rina, Jakarta Timur</span>
-          </div>
+      <!-- Add-ons -->
+      <section class="addon-section" aria-labelledby="section-addon">
+        <div class="divider"></div>
+        <div class="section-header">
+          <h2 class="section-header__title" id="section-addon">Pelengkap Sajian</h2>
+        </div>
+        <div class="addon-grid" id="addonGrid" role="list"></div>
+      </section>
+
+      <!-- Educational Manifesto -->
+      <section class="manifesto">
+        <div class="divider"></div>
+        <div class="section-header">
+          <h2 class="section-header__title">Komitmen Filosofis</h2>
+        </div>
+        <div class="manifesto__grid">
+          <article class="manifesto__card">
+            <div class="manifesto__icon">🛡</div>
+            <h3 class="manifesto__title">Fresh-Lock™</h3>
+            <p class="manifesto__desc">Sambal mete disegel secara hermetis, mencegah degradasi enzimatis buah.</p>
+          </article>
+          <article class="manifesto__card">
+            <div class="manifesto__icon">🌿</div>
+            <h3 class="manifesto__title">Seleksi Eksklusif</h3>
+            <p class="manifesto__desc">Dari mangga pilihan hingga Shine Muscat, semua dari perkebunan bersertifikasi.</p>
+          </article>
         </div>
       </section>
 
-      <!-- JAMINAN INTEGRITAS -->
-      <div class="guarantee-badge reveal-on-scroll">
-        <i data-lucide="award" class="w-8 h-8 text-emerald" aria-hidden="true"></i>
+      <!-- Testimonials -->
+      <section class="testimonials" aria-label="Ulasan Klien">
+        <div class="divider"></div>
+        <div class="section-header">
+          <h2 class="section-header__title">Apresiasi Klien</h2>
+        </div>
+        <div class="testimonial-slider" id="testimonialSlider">
+          <blockquote class="testimonial is-active">
+            <p class="testimonial__text">"Sebuah kemewahan rasa sejati. Sambal metenya memiliki kedalaman rasa yang belum pernah saya temukan sebelumnya."</p>
+            <cite class="testimonial__author">— Madame Dina, Bekasi</cite>
+          </blockquote>
+          <blockquote class="testimonial">
+            <p class="testimonial__text">"Pengemasan higienis, pengantaran terjaga, buah tetap renyah optimal layaknya baru dipetik."</p>
+            <cite class="testimonial__author">— Dr. Rina, Jakarta</cite>
+          </blockquote>
+        </div>
+      </section>
+
+      <!-- Guarantee -->
+      <div class="guarantee">
+        <div class="guarantee__icon">🏅</div>
         <div>
-          <strong>Privilege Quality Guarantee</strong>
-          <span>Jika kualitas buah melenceng dari standar kemewahan yang kami janjikan, tim pramutamu kami akan melakukan penggantian penuh tanpa retur menyulitkan.</span>
+          <strong class="guarantee__title">Privilege Quality Guarantee</strong>
+          <p class="guarantee__desc">Jika kualitas buah tidak memenuhi standar kami, tim pramutamu akan mengganti penuh tanpa retur rumit.</p>
         </div>
       </div>
-    </main> <!-- akhir main -->
+    </main>
 
-    <!-- NATIVE-FEEL DETAILED PRODUCT VIEWPAGE -->
-    <div class="product-page" id="productPage" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="productPageName">
-      <div class="product-page-header">
-        <button class="back-btn" id="backFromProduct" aria-label="Kembali ke etalase utama"><i data-lucide="arrow-left" class="w-6 h-6" aria-hidden="true"></i></button>
-        <span class="product-page-title">Detail Sajian Kulinari</span>
-        <button class="share-btn-page" aria-label="Bagikan mahakarya rasa ini"><i data-lucide="share-2" class="w-5 h-5" aria-hidden="true"></i></button>
+    <!-- Product Detail Page (overlay) -->
+    <div class="product-detail" id="productDetail" role="dialog" aria-modal="true" aria-labelledby="detail-name" hidden>
+      <div class="product-detail__header">
+        <button class="product-detail__back" id="detailBack" aria-label="Kembali">←</button>
+        <span class="product-detail__title">Detail Sajian</span>
+        <button class="product-detail__share" aria-label="Bagikan">↗</button>
       </div>
-      <div class="product-page-img" id="productPageImg"></div>
-      <div class="product-page-body">
-        <div class="product-page-badge" id="productPageBadge" style="display:none;"></div>
-        <h1 class="product-page-name" id="productPageName"></h1>
-        <p class="product-page-desc" id="productPageDesc"></p>
-        <div class="product-page-meta">
-          <div class="meta-row"><span>Arsitektur Wadah</span><span id="productPageContainer">-</span></div>
-          <div class="meta-row"><span>Sajian Rekomendasi</span><span id="productPageSize">-</span></div>
-          <div class="meta-row"><span>Sistem Sambal</span><span id="productPageSambal">-</span></div>
+      <div class="product-detail__image" id="detailImage"></div>
+      <div class="product-detail__body">
+        <div class="product-detail__badge" id="detailBadge"></div>
+        <h2 class="product-detail__name" id="detailName"></h2>
+        <p class="product-detail__desc" id="detailDesc"></p>
+        <dl class="product-detail__meta">
+          <div><dt>Wadah</dt><dd id="detailContainer">-</dd></div>
+          <div><dt>Porsi</dt><dd id="detailSize">-</dd></div>
+          <div><dt>Sambal</dt><dd id="detailSambal">-</dd></div>
+        </dl>
+        <div class="product-detail__spice">
+          <span class="product-detail__spice-label">Level Pedas</span>
+          <div class="spice-selector" id="spiceSelector" role="radiogroup"></div>
         </div>
-        <div class="product-page-buah" id="productPageBuah"></div>
-        <div class="product-page-tags" id="productPageTags"></div>
-        
-        <div class="spice-row-page">
-          <span>Intensitas Pedas Sesuai Selera</span>
-          <div class="spice-options" id="spiceOptionsPage" role="radiogroup" aria-label="Pilihan level pedas"></div>
-        </div>
-        
-        <div class="product-page-actions">
-          <div class="product-page-price" id="productPagePrice"></div>
+        <div class="product-detail__actions">
+          <span class="product-detail__price" id="detailPrice"></span>
           <div class="qty-control">
-            <button class="qty-btn" id="qtyMinusPage" aria-label="Kurangi kuantitas">−</button>
-            <span class="qty-num" id="qtyNumPage" aria-live="polite">1</span>
-            <button class="qty-btn" id="qtyPlusPage" aria-label="Tambah kuantitas">+</button>
+            <button class="qty-control__btn" id="detailQtyMinus" aria-label="Kurangi">−</button>
+            <span class="qty-control__number" id="detailQty">1</span>
+            <button class="qty-control__btn" id="detailQtyPlus" aria-label="Tambah">+</button>
           </div>
-          <button class="add-to-cart-page" id="addToCartPage">Tambahkan Ke Sajian</button>
+          <button class="product-detail__add" id="detailAdd">Tambahkan</button>
         </div>
       </div>
     </div>
-  </div> <!-- akhir #app -->
 
-  <!-- PRIV PRIVATE CONCIERGE / BUTIK FOOTER OVERLAY -->
-  <footer class="footer-brand" role="contentinfo">
-    <div class="footer-brand-inner">
-      <div class="footer-brand-row">
-        <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co Corporate Identity" class="img-round" loading="lazy" />
-        <span class="footer-brand-name">Rujak<span>.Co</span></span>
+    <!-- Bottom Bar (Cart) -->
+    <div class="bottom-bar" id="bottomBar" hidden>
+      <div class="bottom-bar__shipping">
+        <span>🚚 <span id="shippingCost">⏳</span> <span id="shippingDistance"></span></span>
+        <button class="bottom-bar__gps" id="gpsTrigger">📍 GPS</button>
       </div>
-      <div class="footer-grid">
-        <div class="footer-col">
-          <h4>Layanan Pramutamu</h4>
-          <ul>
-            <li><i data-lucide="clock" class="w-3 h-3 inline" aria-hidden="true"></i> Eksklusif: 10.00 – 20.00 WIB</li>
-            <li><i data-lucide="map-pin" class="w-3 h-3 inline" aria-hidden="true"></i> Bekasi Raya Utama, Jawa Barat</li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>Kanal Komunikasi</h4>
-          <div class="footer-social">
-            <a href="https://www.instagram.com/rujakco.id" target="_blank" rel="noopener" aria-label="Ikuti perjalanan rasa kami di Instagram">
-              <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Instagram-icon.webp" alt="Instagram Icon Curated" loading="lazy" />
-            </a>
-          </div>
-        </div>
+      <div class="bottom-bar__summary" id="cartSummary" role="button" tabindex="0">
+        <span id="cartCount">0 sajian</span>
+        <span class="bottom-bar__total" id="cartTotal">Rp0</span>
       </div>
-      <div class="footer-bottom">&copy; 2026 Rujak.Co Privilege Digital Suite. Hak Cipta Dilindungi Sepenuhnya.</div>
+      <button class="bottom-bar__checkout" id="checkoutTrigger">Selesaikan Pesanan →</button>
     </div>
-  </footer>
 
-  <!-- FLOATING INTERACTIVE BOTTOM CHECKOUT SHEET -->
-  <!-- Perbaikan: pindahkan aria-live ke elemen yang lebih spesifik (pada cart-summary atau shipping-estimate) -->
-  <div id="bottom-bar">
-    <div class="shipping-estimate" id="shippingEstimate">
-      <div class="shipping-left">
-        <i data-lucide="truck" class="w-4 h-4 text-emerald" aria-hidden="true"></i>
-        <span>Biaya Logistik Pribadi:</span>
-        <span class="shipping-cost" id="shippingCost">⏳</span>
-        <span class="shipping-distance" id="shippingDistance"></span>
-      </div>
-      <div id="btnAutoDetect" class="gps-trigger-link" role="button" tabindex="0">
-        <i data-lucide="navigation" class="w-3 h-3 inline" aria-hidden="true"></i> Sinkronisasi GPS
-      </div>
-    </div>
-    <div class="shipping-out-of-range" id="outOfRange" style="display:none;">⚠️ Lokasi Anda melampaui perimeter jangkauan pengiriman termodifikasi kurir instan kami.</div>
-    
-    <div class="cart-summary" id="cartSummary" role="button" aria-label="Akses detail lembar checkout" tabindex="0">
-      <span class="cart-items-preview" id="cartPreview">0 sajian terpilih</span>
-      <div class="cart-total-wrap">
-        <span id="discountLabel" class="cart-discount-label" style="display:none;">Privilege Applied</span>
-        <span class="cart-total" id="cartTotalDisplay">Rp0</span>
-      </div>
-    </div>
-    <button type="button" class="wa-btn" data-action="open-cart" aria-label="Luncurkan lembar checkout utama">
-      <div class="wa-btn-left">
-        <span class="wa-btn-sub">Reservasi Pembelian</span>
-        <span>Selesaikan Pesanan Premium</span>
-      </div>
-      <i data-lucide="chevron-right" class="w-5 h-5 text-white" aria-hidden="true"></i>
-    </button>
-  </div>
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav" aria-label="Navigasi">
+      <a href="#" class="bottom-nav__item is-active" data-tab="home">🏠<span>Koleksi</span></a>
+      <a href="#" class="bottom-nav__item" data-tab="explore">🧭<span>Jelajah</span></a>
+      <a href="#" class="bottom-nav__item" data-tab="orders">📦<span>Pesanan</span></a>
+      <a href="#" class="bottom-nav__item" id="conciergeToggle">✨<span>Pramutamu</span></a>
+    </nav>
 
-  <!-- FIXED ACCESS LAYER BAR NAVIGATION -->
-  <nav class="bottom-nav" id="bottomNav" role="navigation" aria-label="Menu navigasi utama butik">
-    <a href="#" class="nav-item active" data-tab="home" aria-current="page"><i data-lucide="home" class="nav-icon" aria-hidden="true"></i><span class="nav-label">Koleksi</span></a>
-    <a href="#" class="nav-item" data-tab="explore"><i data-lucide="compass" class="nav-icon" aria-hidden="true"></i><span class="nav-label">Eksplorasi</span></a>
-    <a href="#" class="nav-item" data-tab="orders"><i data-lucide="package" class="nav-icon" aria-hidden="true"></i><span class="nav-label">Garis Rasa</span></a>
-    <a href="#" class="nav-item" id="aiChatToggle" aria-haspopup="true"><i data-lucide="sparkles" class="nav-icon" aria-hidden="true"></i><span class="nav-label">Pramutamu</span></a>
-  </nav>
-
-  <!-- PRAMUTAMU LUXURY CHAT INTERACTION OVERLAY (CONCIERGE VAULT) -->
-  <div id="aiChatBox" class="ai-chat-box" style="display:none;" role="dialog" aria-label="Asisten Pramutamu Rujak.Co">
-    <div class="ai-chat-header">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <i data-lucide="concierge-bell" class="w-5 h-5" aria-hidden="true"></i>
-        <div>
-          <div style="font-size:14px; font-weight:600; letter-spacing:-0.2px;">Rujak.Co Concierge</div>
-          <div style="font-size:9px; opacity:0.8; font-weight:400; font-family:'DM Sans',sans-serif;">Asisten Klien Eksklusif</div>
-        </div>
+    <!-- AI Concierge -->
+    <div class="concierge" id="conciergeBox" hidden role="dialog" aria-label="Asisten Pramutamu">
+      <div class="concierge__header">
+        <span>✨ Rujak.Co Concierge</span>
+        <button class="concierge__close" id="conciergeClose">✕</button>
       </div>
-      <button id="aiChatClose" class="ai-chat-close" aria-label="Tutup jendela asisten">✕</button>
-    </div>
-    <div id="aiChatMessages" class="ai-chat-messages">
-      <div style="margin-bottom:12px;">
-        <span class="chat-bubble bot">Selamat datang dalam ruang personal Rujak.Co. Izinkan saya memandu Anda mengurasi intensitas kepedasan atau memilih varian boks buah terbaik hari ini. Ada preferensi spesifik yang ingin Anda sampaikan?</span>
+      <div class="concierge__messages" id="conciergeMessages">
+        <div class="concierge__bubble bot">Selamat datang. Ada yang bisa saya bantu rekomendasikan untuk Anda?</div>
       </div>
-    </div>
-    <div class="ai-chat-input-area">
-      <input id="aiChatInput" type="text" placeholder="Sampaikan preferensi rasa Anda di sini..." aria-label="Pesan preferensi rasa" />
-      <button id="aiChatSend" aria-label="Kirim instruksi rasa"><i data-lucide="send" class="w-4 h-4" aria-hidden="true"></i></button>
+      <div class="concierge__input">
+        <input type="text" id="conciergeInput" placeholder="Tanyakan preferensi rasa..." aria-label="Pesan" />
+        <button id="conciergeSend" aria-label="Kirim">→</button>
+      </div>
     </div>
   </div>
 
-  <!-- MODAL CHECKOUT OVERLAY DIBAWAKAN SECARA MASESTERFUL (BOTTOM SHEET SYSTEM) -->
-  <div class="modal-overlay" id="miniCartModal" role="dialog" aria-modal="true" aria-labelledby="checkout-sheet-title">
-    <div class="modal-content bottom-sheet" style="max-width:480px;">
-      <div class="modal-header">
-        <span class="modal-header-title" id="checkout-sheet-title">Reservasi Pembelian</span>
-        <button class="modal-close" id="miniCartClose" aria-label="Tutup lembar checkout">✕</button>
+  <!-- Modals -->
+  <div class="modal" id="cartModal" role="dialog" aria-modal="true" aria-labelledby="cartTitle" hidden>
+    <div class="modal__sheet">
+      <div class="modal__header">
+        <h2 class="modal__title" id="cartTitle">Reservasi Pembelian</h2>
+        <button class="modal__close" id="cartModalClose">✕</button>
       </div>
-      <div class="modal-body">
-        
-        <!-- BLOK KARTU 1: RESUME DETAIL SAJIAN -->
-        <div class="checkout-card animate-slide-up">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-            <div class="card-title">Kurasi Keranjang Anda</div>
-            <button class="clear-cart-btn" id="clearCartBtn" aria-label="Kosongkan seluruh isi pilihan">Kosongkan Koleksi</button>
-          </div>
-          <div id="miniCartList"></div>
-          <div class="cart-subtotal">
-            <span>Subtotal Nilai Sajian</span>
-            <span id="cartSubtotalDisplay">Rp0</span>
-          </div>
+      <div class="modal__body">
+        <!-- Cart items -->
+        <div class="cart-items" id="cartItems"></div>
+        <div class="cart-subtotal">
+          <span>Subtotal</span>
+          <span id="cartSubtotal">Rp0</span>
         </div>
 
-        <div id="step1Upsell"></div>
-
-        <!-- BLOK KARTU 2: REGISTRASI PENGIRIMAN ELEGAN -->
-        <div class="checkout-card animate-slide-up" style="animation-delay: 50ms;">
-          <div class="card-title">Destinasi & Penerima Manfaat</div>
-          <div class="form-section">
-            <input type="text" id="customerName" placeholder="Nama Lengkap Yang Mulia Penerima" aria-label="Nama Lengkap Penerima" />
+        <!-- Customer form -->
+        <div class="form-group">
+          <input type="text" id="customerName" placeholder="Nama Lengkap" aria-label="Nama" />
+        </div>
+        <div class="form-group">
+          <input type="tel" id="customerPhone" placeholder="Nomor Telepon (08xx)" aria-label="Telepon" />
+        </div>
+        <div class="form-group">
+          <textarea id="customerAddress" placeholder="Alamat Lengkap (Jalan, Blok, Patokan)" rows="2" aria-label="Alamat"></textarea>
+        </div>
+        <div class="form-group">
+          <input type="text" id="districtInput" placeholder="Kecamatan" autocomplete="off" aria-label="Kecamatan" />
+          <div class="district-dropdown" id="districtDropdown" hidden role="listbox"></div>
+        </div>
+        <div class="form-group">
+          <div class="custom-select" id="deliveryTrigger" role="button" tabindex="0">
+            <span id="deliveryLabel">Preferensi Waktu (Besok)...</span>
+            <span aria-hidden="true">▼</span>
           </div>
-          <div class="form-section">
-            <input type="tel" id="customerPhone" placeholder="Nomor Telepon Penghubung (08xx)" aria-label="Nomor HP Aktif" />
-          </div>
-          <div class="form-section">
-            <textarea id="customerAddress" placeholder="Detail Alamat Pengantaran Spesifik (Nama Jalan, Kompleks, Nomor Rumah, Patokan)" rows="2" aria-label="Alamat lengkap tujuan"></textarea>
-          </div>
-          
-          <div class="form-section" style="position:relative;">
-            <input type="text" id="districtInput" placeholder="Ketik wilayah kecamatan pengantaran..." autocomplete="off" aria-label="Kolom input wilayah kecamatan" />
-            <div id="customDistrictDropdown" style="display:none;" role="listbox"></div>
-          </div>
-          
-          <div class="form-section">
-            <div id="deliveryTimeTrigger" class="custom-select-trigger" role="button" tabindex="0" aria-label="Pilih preferensi interval waktu pengiriman">
-              <span id="deliveryTimeLabel">Preferensi Waktu Pengantaran (Esok Hari)...</span>
-              <i data-lucide="chevron-down" class="w-4 h-4" aria-hidden="true"></i>
-            </div>
-            <input type="hidden" id="deliveryTime" name="deliveryTime" value="" />
-          </div>
-          
-          <div class="form-section">
-            <input type="text" id="orderNotes" placeholder="Instruksi Khusus Kepada Chef / Kurir (Opsional)" aria-label="Catatan kustom pesanan" />
-          </div>
+          <input type="hidden" id="deliveryTime" />
+        </div>
+        <div class="form-group">
+          <input type="text" id="orderNotes" placeholder="Catatan Khusus (Opsional)" aria-label="Catatan" />
         </div>
 
-        <!-- BLOK KARTU 3: MANIFESTO LOGISTIK BUTIK -->
-        <div id="shippingSection" class="checkout-card animate-slide-up" style="display:none; animation-delay: 100ms;">
-          <div class="card-title">Metode Pengantaran Butik</div>
+        <!-- Shipping options -->
+        <div class="shipping-section" id="shippingSection" hidden>
           <div class="shipping-options">
-            <button type="button" class="ship-btn active" data-provider="rujakco">Kurir Instan Korporat</button>
-            <button type="button" class="ship-btn" data-provider="paxel">Paxel Premium Same Day</button>
+            <button class="shipping-option active" data-provider="rujakco">🛵 Lalamove</button>
+            <button class="shipping-option" data-provider="paxel">📦 Paxel</button>
           </div>
-          
-          <div id="rujakcoOptions" style="margin-top:14px;">
-            <div class="vehicle-options">
-              <button type="button" class="veh-btn active" data-vehicle="motor">Armada Roda Dua</button>
-              <button type="button" class="veh-btn" data-vehicle="mobil">Secure Vault Roda Empat</button>
-            </div>
-            <div class="priority-container-mini">
-              <span style="font-size:13px; font-weight:600; color:var(--gray-700);">Pengiriman Skema Prioritas Utama (+Rp8.000)</span>
-              <input type="checkbox" id="priorityToggleMini" aria-label="Aktifkan pengantaran prioritas kilat" />
-            </div>
+          <div class="vehicle-options" id="vehicleOptions">
+            <button class="vehicle-option active" data-vehicle="motor">Motor</button>
+            <button class="vehicle-option" data-vehicle="mobil">Mobil</button>
           </div>
-          
-          <div id="breakdownContent" class="breakdown-details-box"></div>
+          <div class="priority-toggle">
+            <span>Prioritas (+Rp8.000)</span>
+            <input type="checkbox" id="priorityToggle" />
+          </div>
+          <div class="shipping-breakdown" id="shippingBreakdown"></div>
         </div>
 
-        <!-- REKAPITULASI FINANSIAL -->
-        <div class="checkout-card final-summary animate-slide-up" style="animation-delay: 150ms;">
-          <div class="final-row"><span>Subtotal Nilai Sajian</span><span id="finalSubtotal">Rp0</span></div>
-          <div class="final-row discount" id="discountRow" style="display:none;"><span>Privilege Loyalty Deduction</span><span id="finalDiscount">-Rp0</span></div>
-          <div class="final-row"><span>Alokasi Proteksi Logistik</span><span id="finalShipping">Rp0</span></div>
-          <div class="final-row total"><span>Total Investasi Rasa</span><span id="finalTotal">Rp0</span></div>
+        <!-- Final summary -->
+        <div class="final-summary">
+          <div><span>Subtotal</span><span id="finalSubtotal">Rp0</span></div>
+          <div id="discountRow" hidden><span>Privilege</span><span id="finalDiscount">-Rp0</span></div>
+          <div><span>Ongkir</span><span id="finalShipping">Rp0</span></div>
+          <div class="final-total"><span>Total</span><span id="finalTotal">Rp0</span></div>
         </div>
 
-        <button class="btn-step primary" id="btnOpenPayment" aria-label="Eksekusi final menuju modul gerbang pembayaran digital">Lanjutkan Ke Validasi Pembayaran</button>
+        <button class="btn-primary" id="paymentBtn">Lanjutkan Pembayaran</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL GERBANG VALIDASI PEMBAYARAN ELEGAN -->
-  <div class="modal-overlay" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="payment-gate-title">
-    <div class="modal-content bottom-sheet" style="max-width:480px;">
-      <div class="modal-header">
-        <span class="modal-header-title" id="payment-gate-title">Validasi Autentikasi QRIS</span>
-        <button class="modal-close" id="paymentClose" aria-label="Batalkan modul pembayaran">✕</button>
+  <!-- Payment Modal -->
+  <div class="modal" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentTitle" hidden>
+    <div class="modal__sheet">
+      <div class="modal__header">
+        <h2 class="modal__title" id="paymentTitle">QRIS Payment</h2>
+        <button class="modal__close" id="paymentModalClose">✕</button>
       </div>
-      <div class="modal-body" style="padding:24px 20px;">
-        <div class="qris-holder-frame">
-          <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="Enkripsi Kode QRIS Rujak.Co Resmi" id="qrisImagePayment" loading="lazy" />
+      <div class="modal__body">
+        <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS" class="qris-image" loading="lazy" />
+        <div class="payment-total">
+          <span>Total</span>
+          <strong id="paymentTotal">Rp0</strong>
         </div>
-        <div class="payment-invoice-badge">
-          <div style="font-size:11px; opacity:0.8; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">Nilai Likuidasi Akhir</div>
-          <div style="font-size:28px; font-family:'Fraunces', serif; font-weight:500;" id="paymentTotalDisplay">Rp0</div>
-        </div>
-        <button id="copyAmountBtn" class="btn-step" style="background:var(--ivory); border:1px solid var(--green-pale); color:var(--green); margin-bottom:16px; font-size:13px; font-weight:600; padding:12px;">Salin Nominal Presisi Ke Papan Klip</button>
-        <div class="payment-instruction-luxury-box">
-          <strong>Prosedur Akses Finansial:</strong><br>
-          Silakan pindai kode QRIS terenkripsi di atas menggunakan aplikasi perbankan digital premium atau e-wallet pilihan Anda. Setelah transaksi diverifikasi berhasil oleh jaringan bank Anda, tekan tombol konfirmasi butik di bawah untuk mengirimkan struk bukti autentikasi langsung kepada pramutamu kami.
-        </div>
-        <button type="button" class="btn-step primary" data-action="confirm-wa" style="margin-top:20px; display:flex; align-items:center; justify-content:center; gap:8px;">
-          <i data-lucide="check-circle" class="w-5 h-5" aria-hidden="true"></i> Konfirmasi Pembayaran Ke Pramutamu
-        </button>
+        <button class="btn-secondary" id="copyAmount">Salin Nominal</button>
+        <p class="payment-note">Pindai QRIS, lalu konfirmasi pembayaran.</p>
+        <button class="btn-primary" data-action="confirm-wa">Kirim Bukti Transfer</button>
       </div>
     </div>
   </div>
 
-  <!-- Toast notification -->
-  <div id="toast" role="alert" aria-live="polite"></div>
+  <!-- Toast -->
+  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 
+  <!-- Scripts -->
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="app.js"></script>
 </body>
