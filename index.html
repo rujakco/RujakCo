@@ -14,7 +14,7 @@
 </head>
 <body>
   
-  <!-- TIRAI SAMBUTAN (VIP ONBOARDING) -->
+  <!-- TIRAI SAMBUTAN (ONBOARDING) -->
   <div id="onboardingOverlay" class="onboarding-overlay">
     <div class="onb-content">
       <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" class="onb-logo">
@@ -22,13 +22,11 @@
       <div id="onbNewUser" style="display:none; width:100%;">
         <h2 class="onb-title">Rujak.Co</h2>
         <p class="onb-subtitle">Eksklusivitas Rasa Nusantara.</p>
-
         <div id="onbStep1" class="onb-step active">
           <label class="onb-label">Atas nama siapa sajian ini disiapkan?</label>
           <input type="text" id="onbName" class="onb-input" placeholder="Nama Anda" autocomplete="off">
           <button class="btn-gold full-width" id="onbNextBtn">Selanjutnya</button>
         </div>
-
         <div id="onbStep2" class="onb-step">
           <label class="onb-label">Destinasi pengantaran (Kecamatan)</label>
           <div style="position:relative;">
@@ -50,19 +48,18 @@
   </div>
 
   <div id="app">
-    <!-- HEADER KACA TRANSPARAN -->
+    <!-- HEADER KACA TRANSPARAN MENTOK ATAS -->
     <header class="luxury-header">
       <div class="brand-logo"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co"></div>
       <div class="header-center">
         <h1 class="brand-name">Rujak.Co</h1>
         <span class="header-greeting" id="headerGreeting">Eksklusif</span>
       </div>
-      <div style="width:36px;"></div> <!-- Spacer -->
+      <div style="width:36px;"></div> <!-- Area keranjang dipindah ke Bottom Nav -->
     </header>
 
-    <!-- KANVAS UTAMA -->
     <main class="content-wrapper" id="mainContent">
-      <!-- HERO SQUARE (MENTOK ATAS) -->
+      <!-- HERO SQUARE EDGE-TO-EDGE -->
       <div class="hero-editorial fade-up">
         <div class="hero-img-wrap">
           <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Sajian Rujak" />
@@ -81,15 +78,12 @@
       <footer class="luxury-footer fade-up">
         <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co">
         <p>EST. 2024 &nbsp;•&nbsp; BEKASI, INDONESIA</p>
-        <div class="footer-links">
-          <a href="https://www.instagram.com/rujakco.id" target="_blank">Instagram</a>
-        </div>
       </footer>
     </main>
 
     <!-- PRODUCT SWIPER OVERLAY (INFINITE SWIPE KIRI/KANAN) -->
     <div class="product-swiper-overlay" id="productPage" style="display:none;">
-      <button id="backFromProduct" class="glass-btn floating-close"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <button id="backFromProduct" class="glass-btn floating-close"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
       <div class="product-swiper-track" id="productSwiperTrack">
         <!-- Dirender oleh JS (Infinite Loop) -->
       </div>
@@ -195,9 +189,10 @@
       </div>
     </div>
 
-    <!-- BOTTOM NAVIGATION (DENGAN KERANJANG) -->
+    <!-- BOTTOM NAVIGATION (DENGAN KERANJANG DI SINI) -->
     <nav class="bottom-nav" id="bottomNav">
       <a href="#" class="nav-item active" data-tab="home"><i data-lucide="home" class="nav-icon"></i><span class="nav-label">Koleksi</span></a>
+      <!-- KERANJANG DIPUSATKAN DI SINI -->
       <a href="#" class="nav-item" id="navCartBtn">
         <div class="nav-cart-wrapper">
           <i data-lucide="shopping-bag" class="nav-icon"></i>
