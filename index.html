@@ -48,38 +48,51 @@
   </div>
 
   <div id="app">
-    <!-- HEADER EDITORIAL (STICKY) -->
-    <header class="luxury-header">
-      <div class="brand-logo"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co"></div>
-      <div class="header-center">
-        <h1 class="brand-name">Rujak.Co</h1>
+    <!-- HEADER + HERO DIGABUNG -->
+    <header class="hero-header" id="heroHeader">
+      <div class="header-top">
+        <div class="brand-logo"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co"></div>
+        <div class="header-center">
+          <h1 class="brand-name">Rujak.Co</h1>
+        </div>
+        <div style="width:36px;"></div>
       </div>
-      <div style="width:36px;"></div> 
+      <div class="hero-img-wrap">
+        <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Sajian Rujak" />
+        <div class="hero-overlay">
+          <h2>Asam, Pedas,<br><em>Manis, Segar.</em></h2>
+        </div>
+      </div>
+      <div class="hero-caption">
+        <span class="hairline"></span>
+        <span class="hero-caption-text">Selamat berbelanja, <span id="heroNameDisplay">Ngoedi</span></span>
+      </div>
     </header>
 
     <main class="content-wrapper" id="mainContent">
-      <!-- HERO LANSKAP (4:2) BERBINGKAI -->
-      <div class="hero-editorial fade-up">
-        <div class="hero-img-wrap">
-          <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Sajian Rujak" />
-          <div class="hero-overlay">
-            <h2 id="heroGreeting">Asam, Pedas,<br><em>Manis, Segar.</em></h2>
-          </div>
-        </div>
-        <div class="hero-caption">
-          <span class="hairline"></span>
-          <span class="hero-caption-text">Selamat berbelanja, <span id="heroNameDisplay">Ngoedi</span></span>
-        </div>
-      </div>
-
-      <!-- CAROUSEL RAKSASA -->
+      <!-- CAROUSEL RAKSASA — thumbnail selebar hero -->
       <div class="carousel-container fade-up">
         <div class="carousel-track" id="menuList"></div>
       </div>
 
       <footer class="luxury-footer fade-up">
-        <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co">
-        <p>EST. 2024 &nbsp;•&nbsp; BEKASI, INDONESIA</p>
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co">
+            <p>EST. 2024 &nbsp;•&nbsp; BEKASI, INDONESIA</p>
+          </div>
+          <div class="footer-links">
+            <a href="#">Tentang</a>
+            <a href="#">Kontak</a>
+            <a href="#">Kebijakan</a>
+          </div>
+          <div class="footer-social">
+            <a href="#" aria-label="Instagram"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+            <a href="#" aria-label="WhatsApp"><i data-lucide="phone" class="w-4 h-4"></i></a>
+            <a href="#" aria-label="Email"><i data-lucide="mail" class="w-4 h-4"></i></a>
+          </div>
+        </div>
+        <p class="footer-copy">© 2024 Rujak.Co — Premium Rujak</p>
       </footer>
     </main>
 
