@@ -3,328 +3,516 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Rujak.Co — Premium Rujak Experience</title>
-  <meta name="description" content="Rujak premium dengan sambal mete terpisah — tetap renyah sampai tujuan." />
-  <meta name="theme-color" content="#0B3A25" />
-  
-  <!-- Apple Touch Icon & Web App -->
-  <link rel="apple-touch-icon" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-
-  <!-- Preconnect to Google Fonts -->
+  <title>Rujak.Co — Privé</title>
+  <meta name="description" content="Rujak premium, disajikan dengan kemewahan." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&display=swap" rel="stylesheet" />
-  
-  <!-- Styles -->
-  <link rel="stylesheet" href="style.css" />
-  
-  <!-- Icons (defer) -->
-  <script defer src="https://unpkg.com/lucide@0.383.0"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* --- Reset & Base --- */
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --bg: #F7F5F0;
+      --green: #0F3A2A;
+      --gold: #B8944A;
+      --black: #1A1815;
+      --gray: #8A8782;
+      --space: 24px;
+      --radius: 16px;
+      --shadow: 0 8px 40px rgba(0,0,0,0.04);
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      display: flex;
+      justify-content: center;
+      padding: var(--space) 0;
+      min-height: 100vh;
+    }
+    #app {
+      max-width: 420px;
+      width: 100%;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+    /* --- Typography --- */
+    h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 300; }
+    .brand { font-family: 'Fraunces', serif; font-size: 1.4rem; color: var(--green); letter-spacing: -0.02em; }
+    .brand span { color: var(--gold); }
+    /* --- Header --- */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space) var(--space);
+      border-bottom: 1px solid rgba(0,0,0,0.03);
+    }
+    .header .status {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--gray);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .header .status .dot {
+      width: 6px; height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      display: inline-block;
+    }
+    /* --- Hero --- */
+    .hero {
+      padding: var(--space) var(--space) 0;
+      position: relative;
+    }
+    .hero img {
+      width: 100%;
+      border-radius: var(--radius);
+      display: block;
+    }
+    .hero h1 {
+      font-size: 2.4rem;
+      line-height: 1.1;
+      margin-top: var(--space);
+      color: var(--green);
+    }
+    .hero h1 em { font-style: italic; color: var(--gold); font-weight: 300; }
+    .hero p {
+      font-size: 0.9rem;
+      color: var(--gray);
+      margin: 8px 0 var(--space);
+    }
+    .hero button {
+      background: var(--green);
+      color: white;
+      border: none;
+      padding: 12px 32px;
+      border-radius: 40px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-bottom: var(--space);
+    }
+    /* --- Product Grid (2 kolom) --- */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      padding: 0 var(--space) var(--space);
+    }
+    .card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+    .card:active { transform: scale(0.97); }
+    .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
+    .card .info { padding: 12px; }
+    .card .info h3 { font-size: 1rem; font-weight: 400; color: var(--green); }
+    .card .info .price { font-size: 0.9rem; font-weight: 500; color: var(--black); }
+    .card .info .badge {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: var(--gold);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-top: 4px;
+    }
+    /* --- Addon horizontal --- */
+    .addon-scroll {
+      display: flex;
+      gap: 12px;
+      padding: 0 var(--space) var(--space);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .addon-scroll::-webkit-scrollbar { display: none; }
+    .addon-item {
+      flex-shrink: 0;
+      background: white;
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      box-shadow: var(--shadow);
+      min-width: 120px;
+      text-align: center;
+    }
+    .addon-item .name { font-size: 0.8rem; font-weight: 500; }
+    .addon-item .price { font-size: 0.75rem; color: var(--gray); }
+    /* --- Bottom Bar --- */
+    .bottom-bar {
+      position: sticky;
+      bottom: 0;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(12px);
+      padding: 12px var(--space);
+      border-top: 1px solid rgba(0,0,0,0.03);
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .bottom-bar.visible { display: flex; }
+    .bottom-bar .total { font-family: 'Fraunces', serif; font-size: 1.2rem; color: var(--green); }
+    .bottom-bar button {
+      background: var(--green);
+      color: white;
+      border: none;
+      padding: 8px 24px;
+      border-radius: 40px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    /* --- Detail Modal --- */
+    .detail {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(4px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+    .detail.visible { display: flex; }
+    .detail .sheet {
+      background: white;
+      max-width: 420px;
+      width: 90%;
+      border-radius: var(--radius);
+      padding: var(--space);
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    .detail .sheet .close {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--gray);
+    }
+    .detail .sheet img { width: 100%; border-radius: var(--radius); }
+    .detail .sheet h2 { font-size: 1.6rem; margin: 12px 0 4px; color: var(--green); }
+    .detail .sheet .meta { font-size: 0.8rem; color: var(--gray); margin-bottom: 12px; }
+    .detail .sheet .price { font-size: 1.4rem; font-weight: 500; color: var(--black); }
+    .detail .sheet .actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 16px;
+    }
+    .detail .sheet .actions button {
+      background: var(--green);
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 500;
+      cursor: pointer;
+      flex: 1;
+    }
+    /* --- Checkout Modal --- */
+    .checkout {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(4px);
+      display: none;
+      justify-content: center;
+      align-items: flex-end;
+      z-index: 20;
+    }
+    .checkout.visible { display: flex; }
+    .checkout .sheet {
+      background: white;
+      width: 100%;
+      max-width: 420px;
+      border-radius: var(--radius) var(--radius) 0 0;
+      padding: var(--space);
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .checkout .sheet h2 { font-family: 'Fraunces', serif; font-size: 1.4rem; color: var(--green); margin-bottom: 12px; }
+    .checkout .sheet .item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+    .checkout .sheet .form-group { margin: 12px 0; }
+    .checkout .sheet .form-group input, .checkout .sheet .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+    .checkout .sheet .total { font-weight: 600; font-size: 1.2rem; margin: 16px 0; }
+    .checkout .sheet .btn-primary {
+      background: var(--green);
+      color: white;
+      border: none;
+      padding: 14px;
+      width: 100%;
+      border-radius: 40px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    /* --- Toast --- */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--black);
+      color: white;
+      padding: 8px 24px;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      opacity: 0;
+      transition: 0.3s ease;
+      z-index: 100;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; }
+  </style>
 </head>
 <body>
-  <div id="app">
-    <!-- Header -->
-    <header class="header" role="banner">
-      <div class="header__inner">
-        <a href="/" class="brand" aria-label="Rujak.Co Beranda">
-          <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="" width="34" height="34" class="brand__logo" />
-          <span class="brand__name">Rujak<span class="brand__accent">.Co</span></span>
-        </a>
-        <div class="header__actions">
-          <div class="store-status">
-            <span class="store-status__dot"></span>
-            <span class="store-status__label" id="storeStatusLabel">Buka</span>
-          </div>
-          <button class="location-pill" id="locationPill" aria-label="Ubah lokasi">
-            <span class="location-pill__icon" aria-hidden="true">📍</span>
-            <span class="location-pill__text" id="locationDisplay">Mendeteksi...</span>
-          </button>
-        </div>
-      </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="main" id="mainContent">
-      <!-- Hero -->
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="hero__media">
-          <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="" class="hero__image" loading="lazy" />
-          <div class="hero__gradient"></div>
-        </div>
-        <div class="hero__content">
-          <p class="hero__eyebrow">The Art of Indonesian Fresh-Prep</p>
-          <h1 class="hero__title" id="hero-title">Asem, Pedes, <em>Manis, Seger.</em></h1>
-          <p class="hero__subtitle">Simfoni rasa buah Nusantara yang dikurasi khusus untuk selera mapan Anda.</p>
-          <button class="hero__cta" data-scroll-to="menu">Jelajahi Koleksi →</button>
-        </div>
-      </section>
-
-      <!-- Trust Bar -->
-      <section class="trust" aria-label="Keunggulan Layanan">
-        <div class="trust__item">
-          <span class="trust__number">4.9</span>
-          <span class="trust__label">Akreditasi Klien</span>
-        </div>
-        <div class="trust__item">
-          <span class="trust__number">100%</span>
-          <span class="trust__label">Jaminan Kesegaran</span>
-        </div>
-        <div class="trust__item">
-          <span class="trust__number">✦</span>
-          <span class="trust__label">Kurasi Kebun Eksklusif</span>
-        </div>
-      </section>
-
-      <!-- Fresh Prep Banner -->
-      <div class="fresh-banner">
-        <span class="fresh-banner__icon">⏱</span>
-        <p class="fresh-banner__text"><strong>Fresh-Prep:</strong> Buah dipotong 15 menit sebelum kurir berangkat.</p>
-      </div>
-
-      <!-- Category Filter -->
-      <nav class="category-nav" aria-label="Kategori Produk">
-        <button class="category-nav__pill is-active" data-category="all">Semua</button>
-        <button class="category-nav__pill" data-category="signature">Signature</button>
-        <button class="category-nav__pill" data-category="classic">Classic</button>
-        <button class="category-nav__pill" data-category="reserve">Reserve</button>
-        <button class="category-nav__pill" data-category="addon">Pelengkap</button>
-      </nav>
-
-      <!-- Product Grid -->
-      <section class="product-section" aria-labelledby="section-menu">
-        <div class="section-header">
-          <h2 class="section-header__title" id="section-menu">Koleksi Rasa</h2>
-          <button class="section-header__search" id="searchToggle" aria-label="Cari sajian">🔍</button>
-        </div>
-        <div class="product-grid" id="productGrid" role="list">
-          <!-- Products rendered by JS -->
-        </div>
-      </section>
-
-      <!-- Add-ons -->
-      <section class="addon-section" aria-labelledby="section-addon">
-        <div class="divider"></div>
-        <div class="section-header">
-          <h2 class="section-header__title" id="section-addon">Pelengkap Sajian</h2>
-        </div>
-        <div class="addon-grid" id="addonGrid" role="list"></div>
-      </section>
-
-      <!-- Educational Manifesto -->
-      <section class="manifesto">
-        <div class="divider"></div>
-        <div class="section-header">
-          <h2 class="section-header__title">Komitmen Filosofis</h2>
-        </div>
-        <div class="manifesto__grid">
-          <article class="manifesto__card">
-            <div class="manifesto__icon">🛡</div>
-            <h3 class="manifesto__title">Fresh-Lock™</h3>
-            <p class="manifesto__desc">Sambal mete disegel secara hermetis, mencegah degradasi enzimatis buah.</p>
-          </article>
-          <article class="manifesto__card">
-            <div class="manifesto__icon">🌿</div>
-            <h3 class="manifesto__title">Seleksi Eksklusif</h3>
-            <p class="manifesto__desc">Dari mangga pilihan hingga Shine Muscat, semua dari perkebunan bersertifikasi.</p>
-          </article>
-        </div>
-      </section>
-
-      <!-- Testimonials -->
-      <section class="testimonials" aria-label="Ulasan Klien">
-        <div class="divider"></div>
-        <div class="section-header">
-          <h2 class="section-header__title">Apresiasi Klien</h2>
-        </div>
-        <div class="testimonial-slider" id="testimonialSlider">
-          <blockquote class="testimonial is-active">
-            <p class="testimonial__text">"Sebuah kemewahan rasa sejati. Sambal metenya memiliki kedalaman rasa yang belum pernah saya temukan sebelumnya."</p>
-            <cite class="testimonial__author">— Madame Dina, Bekasi</cite>
-          </blockquote>
-          <blockquote class="testimonial">
-            <p class="testimonial__text">"Pengemasan higienis, pengantaran terjaga, buah tetap renyah optimal layaknya baru dipetik."</p>
-            <cite class="testimonial__author">— Dr. Rina, Jakarta</cite>
-          </blockquote>
-        </div>
-      </section>
-
-      <!-- Guarantee -->
-      <div class="guarantee">
-        <div class="guarantee__icon">🏅</div>
-        <div>
-          <strong class="guarantee__title">Privilege Quality Guarantee</strong>
-          <p class="guarantee__desc">Jika kualitas buah tidak memenuhi standar kami, tim pramutamu akan mengganti penuh tanpa retur rumit.</p>
-        </div>
-      </div>
-    </main>
-
-    <!-- Product Detail Page (overlay) -->
-    <div class="product-detail" id="productDetail" role="dialog" aria-modal="true" aria-labelledby="detail-name" hidden>
-      <div class="product-detail__header">
-        <button class="product-detail__back" id="detailBack" aria-label="Kembali">←</button>
-        <span class="product-detail__title">Detail Sajian</span>
-        <button class="product-detail__share" aria-label="Bagikan">↗</button>
-      </div>
-      <div class="product-detail__image" id="detailImage"></div>
-      <div class="product-detail__body">
-        <div class="product-detail__badge" id="detailBadge"></div>
-        <h2 class="product-detail__name" id="detailName"></h2>
-        <p class="product-detail__desc" id="detailDesc"></p>
-        <dl class="product-detail__meta">
-          <div><dt>Wadah</dt><dd id="detailContainer">-</dd></div>
-          <div><dt>Porsi</dt><dd id="detailSize">-</dd></div>
-          <div><dt>Sambal</dt><dd id="detailSambal">-</dd></div>
-        </dl>
-        <div class="product-detail__spice">
-          <span class="product-detail__spice-label">Level Pedas</span>
-          <div class="spice-selector" id="spiceSelector" role="radiogroup"></div>
-        </div>
-        <div class="product-detail__actions">
-          <span class="product-detail__price" id="detailPrice"></span>
-          <div class="qty-control">
-            <button class="qty-control__btn" id="detailQtyMinus" aria-label="Kurangi">−</button>
-            <span class="qty-control__number" id="detailQty">1</span>
-            <button class="qty-control__btn" id="detailQtyPlus" aria-label="Tambah">+</button>
-          </div>
-          <button class="product-detail__add" id="detailAdd">Tambahkan</button>
-        </div>
-      </div>
+<div id="app">
+  <!-- Header -->
+  <header class="header">
+    <span class="brand">Rujak<span>.Co</span></span>
+    <div class="status">
+      <span class="dot"></span> Buka
     </div>
+  </header>
 
-    <!-- Bottom Bar (Cart) -->
-    <div class="bottom-bar" id="bottomBar" hidden>
-      <div class="bottom-bar__shipping">
-        <span>🚚 <span id="shippingCost">⏳</span> <span id="shippingDistance"></span></span>
-        <button class="bottom-bar__gps" id="gpsTrigger">📍 GPS</button>
-      </div>
-      <div class="bottom-bar__summary" id="cartSummary" role="button" tabindex="0">
-        <span id="cartCount">0 sajian</span>
-        <span class="bottom-bar__total" id="cartTotal">Rp0</span>
-      </div>
-      <button class="bottom-bar__checkout" id="checkoutTrigger">Selesaikan Pesanan →</button>
-    </div>
+  <!-- Hero -->
+  <section class="hero">
+    <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Rujak" />
+    <h1>Asem, Pedes, <em>Manis, Seger.</em></h1>
+    <p>Rujak premium dengan sambal mete terpisah.</p>
+    <button onclick="document.querySelector('.grid').scrollIntoView({behavior:'smooth'})">Lihat Koleksi →</button>
+  </section>
 
-    <!-- Bottom Navigation -->
-    <nav class="bottom-nav" aria-label="Navigasi">
-      <a href="#" class="bottom-nav__item is-active" data-tab="home">🏠<span>Koleksi</span></a>
-      <a href="#" class="bottom-nav__item" data-tab="explore">🧭<span>Jelajah</span></a>
-      <a href="#" class="bottom-nav__item" data-tab="orders">📦<span>Pesanan</span></a>
-      <a href="#" class="bottom-nav__item" id="conciergeToggle">✨<span>Pramutamu</span></a>
-    </nav>
+  <!-- Product Grid -->
+  <div class="grid" id="productGrid">
+    <!-- JS akan render di sini -->
+  </div>
 
-    <!-- AI Concierge -->
-    <div class="concierge" id="conciergeBox" hidden role="dialog" aria-label="Asisten Pramutamu">
-      <div class="concierge__header">
-        <span>✨ Rujak.Co Concierge</span>
-        <button class="concierge__close" id="conciergeClose">✕</button>
-      </div>
-      <div class="concierge__messages" id="conciergeMessages">
-        <div class="concierge__bubble bot">Selamat datang. Ada yang bisa saya bantu rekomendasikan untuk Anda?</div>
-      </div>
-      <div class="concierge__input">
-        <input type="text" id="conciergeInput" placeholder="Tanyakan preferensi rasa..." aria-label="Pesan" />
-        <button id="conciergeSend" aria-label="Kirim">→</button>
+  <!-- Addon Scroll -->
+  <div class="addon-scroll" id="addonScroll">
+    <!-- JS akan render di sini -->
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="bottom-bar" id="bottomBar">
+    <span class="total" id="cartTotal">Rp0</span>
+    <button id="checkoutBtn">Checkout</button>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="detail" id="detailModal">
+    <div class="sheet">
+      <button class="close" id="detailClose">×</button>
+      <img id="detailImg" src="" alt="" />
+      <h2 id="detailName"></h2>
+      <div class="meta" id="detailMeta"></div>
+      <div class="price" id="detailPrice"></div>
+      <div class="actions">
+        <button id="detailAddBtn">Tambahkan</button>
       </div>
     </div>
   </div>
 
-  <!-- Modals -->
-  <div class="modal" id="cartModal" role="dialog" aria-modal="true" aria-labelledby="cartTitle" hidden>
-    <div class="modal__sheet">
-      <div class="modal__header">
-        <h2 class="modal__title" id="cartTitle">Reservasi Pembelian</h2>
-        <button class="modal__close" id="cartModalClose">✕</button>
+  <!-- Checkout Modal -->
+  <div class="checkout" id="checkoutModal">
+    <div class="sheet">
+      <h2>Reservasi</h2>
+      <div id="checkoutItems"></div>
+      <div class="total" id="checkoutTotal">Total: Rp0</div>
+      <div class="form-group">
+        <input type="text" id="custName" placeholder="Nama" />
       </div>
-      <div class="modal__body">
-        <!-- Cart items -->
-        <div class="cart-items" id="cartItems"></div>
-        <div class="cart-subtotal">
-          <span>Subtotal</span>
-          <span id="cartSubtotal">Rp0</span>
-        </div>
-
-        <!-- Customer form -->
-        <div class="form-group">
-          <input type="text" id="customerName" placeholder="Nama Lengkap" aria-label="Nama" />
-        </div>
-        <div class="form-group">
-          <input type="tel" id="customerPhone" placeholder="Nomor Telepon (08xx)" aria-label="Telepon" />
-        </div>
-        <div class="form-group">
-          <textarea id="customerAddress" placeholder="Alamat Lengkap (Jalan, Blok, Patokan)" rows="2" aria-label="Alamat"></textarea>
-        </div>
-        <div class="form-group">
-          <input type="text" id="districtInput" placeholder="Kecamatan" autocomplete="off" aria-label="Kecamatan" />
-          <div class="district-dropdown" id="districtDropdown" hidden role="listbox"></div>
-        </div>
-        <div class="form-group">
-          <div class="custom-select" id="deliveryTrigger" role="button" tabindex="0">
-            <span id="deliveryLabel">Preferensi Waktu (Besok)...</span>
-            <span aria-hidden="true">▼</span>
-          </div>
-          <input type="hidden" id="deliveryTime" />
-        </div>
-        <div class="form-group">
-          <input type="text" id="orderNotes" placeholder="Catatan Khusus (Opsional)" aria-label="Catatan" />
-        </div>
-
-        <!-- Shipping options -->
-        <div class="shipping-section" id="shippingSection" hidden>
-          <div class="shipping-options">
-            <button class="shipping-option active" data-provider="rujakco">🛵 Lalamove</button>
-            <button class="shipping-option" data-provider="paxel">📦 Paxel</button>
-          </div>
-          <div class="vehicle-options" id="vehicleOptions">
-            <button class="vehicle-option active" data-vehicle="motor">Motor</button>
-            <button class="vehicle-option" data-vehicle="mobil">Mobil</button>
-          </div>
-          <div class="priority-toggle">
-            <span>Prioritas (+Rp8.000)</span>
-            <input type="checkbox" id="priorityToggle" />
-          </div>
-          <div class="shipping-breakdown" id="shippingBreakdown"></div>
-        </div>
-
-        <!-- Final summary -->
-        <div class="final-summary">
-          <div><span>Subtotal</span><span id="finalSubtotal">Rp0</span></div>
-          <div id="discountRow" hidden><span>Privilege</span><span id="finalDiscount">-Rp0</span></div>
-          <div><span>Ongkir</span><span id="finalShipping">Rp0</span></div>
-          <div class="final-total"><span>Total</span><span id="finalTotal">Rp0</span></div>
-        </div>
-
-        <button class="btn-primary" id="paymentBtn">Lanjutkan Pembayaran</button>
+      <div class="form-group">
+        <input type="tel" id="custPhone" placeholder="Telepon" />
       </div>
-    </div>
-  </div>
-
-  <!-- Payment Modal -->
-  <div class="modal" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentTitle" hidden>
-    <div class="modal__sheet">
-      <div class="modal__header">
-        <h2 class="modal__title" id="paymentTitle">QRIS Payment</h2>
-        <button class="modal__close" id="paymentModalClose">✕</button>
+      <div class="form-group">
+        <input type="text" id="custAddress" placeholder="Alamat" />
       </div>
-      <div class="modal__body">
-        <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS" class="qris-image" loading="lazy" />
-        <div class="payment-total">
-          <span>Total</span>
-          <strong id="paymentTotal">Rp0</strong>
-        </div>
-        <button class="btn-secondary" id="copyAmount">Salin Nominal</button>
-        <p class="payment-note">Pindai QRIS, lalu konfirmasi pembayaran.</p>
-        <button class="btn-primary" data-action="confirm-wa">Kirim Bukti Transfer</button>
-      </div>
+      <button class="btn-primary" id="confirmOrder">Kirim Pesanan</button>
     </div>
   </div>
 
   <!-- Toast -->
-  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+  <div class="toast" id="toast"></div>
+</div>
 
-  <!-- Scripts -->
-  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script defer src="app.js"></script>
+<script>
+  (function() {
+    'use strict';
+
+    // --- Data ---
+    const products = [
+      { id: 'p1', name: 'Rujak Segar', price: 35000, cat: 'classic', img: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp' },
+      { id: 'p2', name: 'Rujak Serut', price: 26000, cat: 'classic', img: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp' },
+      { id: 'p3', name: 'Gaco Premium', price: 40000, cat: 'signature', img: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-thumb.webp' },
+      { id: 'p4', name: 'Rama Sharing', price: 48000, cat: 'signature', img: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-thumb.webp' },
+      { id: 'p5', name: 'Mahkota', price: 85000, cat: 'reserve', img: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp' },
+    ];
+    const addons = [
+      { id: 'a1', name: 'Sambal Ekstra', price: 8000 },
+      { id: 'a2', name: 'Mete Ekstra', price: 12000 },
+    ];
+
+    // --- State ---
+    let cart = {};
+    let currentProduct = null;
+
+    // --- Helpers ---
+    const fmt = n => 'Rp' + n.toLocaleString('id-ID');
+    const toast = msg => {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
+    };
+
+    // --- Render ---
+    function renderProducts() {
+      const grid = document.getElementById('productGrid');
+      grid.innerHTML = products.map(p => `
+        <div class="card" data-id="${p.id}">
+          <img src="${p.img}" alt="${p.name}" loading="lazy" />
+          <div class="info">
+            <h3>${p.name}</h3>
+            <div class="price">${fmt(p.price)}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderAddons() {
+      const container = document.getElementById('addonScroll');
+      container.innerHTML = addons.map(a => `
+        <div class="addon-item" data-id="${a.id}">
+          <div class="name">${a.name}</div>
+          <div class="price">${fmt(a.price)}</div>
+          <button onclick="addToCart('${a.id}', 1)">+</button>
+        </div>
+      `).join('');
+    }
+
+    function updateCartUI() {
+      const bar = document.getElementById('bottomBar');
+      const total = Object.values(cart).reduce((s, i) => s + i.price * i.qty, 0);
+      document.getElementById('cartTotal').textContent = fmt(total);
+      if (Object.keys(cart).length > 0) {
+        bar.classList.add('visible');
+      } else {
+        bar.classList.remove('visible');
+      }
+    }
+
+    function addToCart(id, qty) {
+      const item = products.find(p => p.id === id) || addons.find(a => a.id === id);
+      if (!item) return;
+      if (cart[id]) {
+        cart[id].qty += qty;
+      } else {
+        cart[id] = { ...item, qty };
+      }
+      updateCartUI();
+      toast('Ditambahkan');
+    }
+
+    // --- Detail ---
+    function openDetail(id) {
+      const p = products.find(prod => prod.id === id);
+      if (!p) return;
+      currentProduct = p;
+      document.getElementById('detailImg').src = p.img;
+      document.getElementById('detailName').textContent = p.name;
+      document.getElementById('detailMeta').textContent = p.cat || 'Classic';
+      document.getElementById('detailPrice').textContent = fmt(p.price);
+      document.getElementById('detailModal').classList.add('visible');
+    }
+
+    function closeDetail() {
+      document.getElementById('detailModal').classList.remove('visible');
+    }
+
+    // --- Checkout ---
+    function openCheckout() {
+      const modal = document.getElementById('checkoutModal');
+      const container = document.getElementById('checkoutItems');
+      const items = Object.values(cart);
+      if (items.length === 0) { toast('Keranjang kosong'); return; }
+      container.innerHTML = items.map(i => `<div class="item"><span>${i.name} x${i.qty}</span><span>${fmt(i.price * i.qty)}</span></div>`).join('');
+      const total = items.reduce((s, i) => s + i.price * i.qty, 0);
+      document.getElementById('checkoutTotal').textContent = 'Total: ' + fmt(total);
+      modal.classList.add('visible');
+    }
+
+    function closeCheckout() {
+      document.getElementById('checkoutModal').classList.remove('visible');
+    }
+
+    function confirmOrder() {
+      const name = document.getElementById('custName').value.trim();
+      const phone = document.getElementById('custPhone').value.trim();
+      const address = document.getElementById('custAddress').value.trim();
+      if (!name || !phone || !address) {
+        toast('Isi semua data');
+        return;
+      }
+      const items = Object.values(cart);
+      const total = items.reduce((s, i) => s + i.price * i.qty, 0);
+      const msg = `*Rujak.Co Order*\nNama: ${name}\nTelepon: ${phone}\nAlamat: ${address}\n\n${items.map(i => `${i.name} x${i.qty}`).join('\n')}\nTotal: ${fmt(total)}`;
+      window.open(`https://wa.me/6289677161680?text=${encodeURIComponent(msg)}`, '_blank');
+      cart = {};
+      updateCartUI();
+      closeCheckout();
+      toast('Pesanan dikirim');
+    }
+
+    // --- Events ---
+    document.addEventListener('click', function(e) {
+      const card = e.target.closest('.card');
+      if (card && !e.target.closest('button')) {
+        openDetail(card.dataset.id);
+        return;
+      }
+      if (e.target.closest('#detailClose')) { closeDetail(); return; }
+      if (e.target.closest('#detailAddBtn')) {
+        if (currentProduct) {
+          addToCart(currentProduct.id, 1);
+          closeDetail();
+        }
+        return;
+      }
+      if (e.target.closest('#checkoutBtn')) { openCheckout(); return; }
+      if (e.target.closest('#checkoutModal') && !e.target.closest('.sheet')) { closeCheckout(); return; }
+      if (e.target.closest('#confirmOrder')) { confirmOrder(); return; }
+    });
+
+    // --- Init ---
+    renderProducts();
+    renderAddons();
+    updateCartUI();
+
+    // Tambahkan fungsi ke global untuk inline onclick di addon
+    window.addToCart = addToCart;
+
+  })();
+</script>
 </body>
 </html>
