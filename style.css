@@ -273,9 +273,11 @@ p { line-height: 1.8; }
   padding: 48px 24px 96px; 
   border-top: 1px solid var(--gray-200); 
   background-color: var(--ivory); 
-  margin-top: 34px; /* FOOTER NAIK 30PX DARI SEBELUMNYA 64px */
+  margin-top: 24px; /* FOOTER NAIK 40PX DARI SEBELUMNYA (64px - 40px = 24px) */
   position: relative; 
   overflow: hidden; 
+  /* Memotong bagian atas sebesar 30px agar terlihat terpotong rapi */
+  clip-path: inset(30px 0px 0px 0px); 
 }
 
 .luxury-footer::before {
