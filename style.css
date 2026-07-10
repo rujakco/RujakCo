@@ -265,3 +265,24 @@ h1, h2, h3, .sec-title, .product-page-name, .hero-title, .card-title, .item-name
 .footer-col h4 { font-family: 'Fraunces', serif; font-size: 16px; color: var(--green); margin-bottom: 12px; font-weight: 600; }
 .footer-col ul { list-style: none; padding: 0; color: var(--gray-500); font-size: 13px; line-height: 2; margin: 0; }
 .footer-bottom { border-top: 1px solid var(--gray-200); padding-top: 24px; margin-top: 32px; font-size: 12px; color: var(--gray-400); text-align: center; }
+/* ============================================================
+   PERBAIKAN LAYOUT (FAQ & FOOTER YANG HILANG)
+   ============================================================ */
+
+/* 1. Mengembalikan Desain Kotak FAQ */
+.faq-container { padding: 0 24px 24px; display: flex; flex-direction: column; gap: 8px; }
+.faq-item { background: white; border: 1px solid var(--gray-200); border-radius: 14px; padding: 14px 16px; cursor: pointer; transition: border-color .2s; }
+.faq-question { display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 14px; color: var(--green); }
+.faq-question svg { color: var(--green); transition: transform .3s; pointer-events: none; }
+.faq-answer { font-size: 13px; color: var(--gray-500); line-height: 1.6; margin-top: 0; max-height: 0; overflow: hidden; transition: max-height .3s ease, margin-top .3s ease; }
+.faq-item.open .faq-answer { max-height: 500px; margin-top: 8px; }
+.faq-item.open .faq-question svg { transform: rotate(180deg); }
+
+/* 2. Menjinakkan Logo Raksasa di Footer */
+.footer-brand-row { display: flex; align-items: center; gap: 12px; }
+.footer-brand-row img { height: 44px; width: 44px; border-radius: 50%; object-fit: cover; }
+.footer-brand-name { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 800; color: var(--green); letter-spacing: -0.5px; }
+.footer-brand-name span { color: var(--gold); }
+.footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 12px; }
+.footer-social { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 6px; margin-bottom: 16px; }
+.footer-social a { color: var(--green); padding: 8px; border: 1px solid var(--gray-200); border-radius: 50%; display: inline-flex; transition: all 0.2s; }
