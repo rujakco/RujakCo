@@ -1,141 +1,862 @@
-/* ============================================================
-   RUJAK.CO — LUXURY MINIMALIST
-   ============================================================ */
-:root {
-  --green: #2D2D2D;
-  --green-dark: #1A1A1A;
-  --green-light: #4A4A4A;
-  --green-pale: #F5F3EF;
-  --red: #C5A059;
-  --gold: #C5A059;
-  --ivory: #FAF9F6;
-  --text-main: #2D2D2D;
-  --gray-100: #F5F5F5;
-  --gray-200: #E5E7EB;
-  --gray-300: #D1D5DB;
-  --gray-400: #9CA3AF;
-  --gray-500: #6B7280;
-  --gray-700: #374151;
-  --gray-900: #111827;
-  --radius-card: 8px;
-  --radius-pill: 100px;
-}
+(function() {
+  'use strict';
 
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  // ============================================================
+  // RUJAK.CO v3.2 — LUXURY MINIMALIST + FULL FEATURES
+  // ============================================================
 
-body {
-  margin: 0; padding: 0; background: var(--ivory); font-family: 'Inter', sans-serif;
-  -webkit-font-smoothing: antialiased; letter-spacing: 0.03em;
-}
+  // ---------- HELPER ----------
+  const $ = (id) => document.getElementById(id);
+  const escapeHTML = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  const fmt = (num) => 'Rp' + Number(num).toLocaleString('id-ID');
+  const debounce = (fn, delay) => { let t; return function(...args) { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), delay); }; };
 
-#app { max-width: 480px; margin: 0 auto; background: var(--ivory); min-height: 100vh; display: flex; flex-direction: column; }
+  function normalizePhone(phone) {
+    const cleaned = String(phone || '').replace(/[\s\-\(\)\.]/g, '');
+    if (/^08[1-9][0-9]{7,10}$/.test(cleaned)) return '62' + cleaned.slice(1);
+    if (/^\+628[1-9][0-9]{7,10}$/.test(cleaned)) return cleaned.slice(1);
+    if (/^628[1-9][0-9]{7,10}$/.test(cleaned)) return cleaned;
+    return cleaned;
+  }
 
-/* Header */
-#header { position: sticky; top: 0; background: rgba(250,249,246,0.95); backdrop-filter: blur(8px); z-index: 100; padding: 12px 20px; border-bottom: 0.5px solid rgba(45,45,45,0.08); }
-.header-top { display: flex; align-items: center; justify-content: space-between; }
-.brand-logo { display: flex; align-items: center; gap: 8px; }
-.brand-logo img { height: 32px; width: 32px; border-radius: 50%; }
-.brand-name { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 800; color: var(--text-main); letter-spacing: 0.03em; }
-.brand-name span { color: var(--gold); }
-.header-right { display: flex; align-items: center; gap: 8px; }
-.store-status { display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; color: var(--gray-500); }
-.status-dot { width: 6px; height: 6px; border-radius: 50%; background: #4CAF50; }
-.location-pill { display: flex; align-items: center; gap: 4px; background: var(--green-pale); border-radius: 20px; padding: 4px 10px; font-size: 11px; font-weight: 600; color: var(--text-main); cursor: pointer; }
-.location-label { font-size: 9px; text-transform: uppercase; opacity: 0.6; }
+  function isValidPhone(phone) {
+    const cleaned = String(phone || '').replace(/[\s\-\(\)\.]/g, '');
+    return /^(08[1-9][0-9]{7,10}|\+628[1-9][0-9]{7,10}|628[1-9][0-9]{7,10})$/.test(cleaned);
+  }
 
-/* Hero */
-.hero-wrap { padding: 12px 20px 0; }
-.hero { width: 100%; aspect-ratio: 16/7; border-radius: 12px; overflow: hidden; position: relative; }
-.hero-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
-.hero-grad { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to top, rgba(0,0,0,0.4), transparent 60%); }
-.hero-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; }
-.hero-title { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 800; color: white; text-shadow: 0 2px 8px rgba(0,0,0,0.3); margin: 0; line-height: 1.2; }
+  // ---------- SUPABASE ----------
+  const SUPABASE_URL = "https://ghhnnfrmftttptcejizp.supabase.co";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoaG5uZnJtZnR0dHB0Y2VqaXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNjA1ODksImV4cCI6MjA5NzgzNjU4OX0.FM-sPvJJzviX2kA0GEHnznOppivm4JNyC4IPFv_RkdE";
+  let supabase = null;
+  async function getSupabase() {
+    if (supabase) return supabase;
+    if (window.supabase?.createClient) {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      return supabase;
+    }
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+      script.onload = () => {
+        if (window.supabase?.createClient) {
+          supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+          resolve(supabase);
+        } else resolve(null);
+      };
+      script.onerror = () => resolve(null);
+      document.head.appendChild(script);
+    });
+  }
 
-/* Category */
-.cat-scroll { display: flex; gap: 8px; padding: 16px 20px; overflow-x: auto; }
-.cat-pill { background: transparent; border: 0.5px solid rgba(45,45,45,0.12); color: var(--text-main); font-family: inherit; font-size: 12px; font-weight: 500; padding: 6px 16px; border-radius: 20px; cursor: pointer; white-space: nowrap; }
-.cat-pill.active { background: var(--text-main); color: var(--ivory); border-color: var(--text-main); }
+  // ---------- DATA ----------
+  const PRODUCTS = [
+    { id:'p_m1', name:'Rujak Segar', desc:'Kombinasi buah pilihan dengan sambal original Rujak.Co.', price:35000, cat:'classic', container:'Thinwall 1000ml', size:'Reguler', sambal:'Sambal Original (1 Cup)', buah:['Mangga Mengkel','Nanas','Bengkoang','Jambu Air','Kedondong'], flavor:'Segar & Autentik', defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp', isHidden:false },
+    { id:'p_m2', name:'Rujak Serut', desc:'Buah diserut halus untuk pengalaman rasa yang lebih menyatu.', price:26000, cat:'classic', container:'Thinwall 750ml', size:'Reguler', sambal:'Sambal Original (1 Cup)', buah:['Mangga Muda','Bengkoang','Nanas','Ubi Merah'], flavor:'Renyah Segar', defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp', isHidden:false },
+    { id:'p_m3', name:'Rujak Gaco', desc:'Enam buah pilihan dengan sambal mete premium.', price:40000, cat:'signature', container:'Thinwall 1000ml', size:'Reguler', sambal:'Sambal Mete Premium (1 Cup)', buah:['Jambu Kristal','Mangga Mengkel','Nanas','Bengkoang','Jambu Air','Kedondong'], flavor:'Gurih Mete', defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-hd.webp', isHidden:false },
+    { id:'p_m4', name:'Rujak Rama', desc:'Porsi melimpah untuk dua hingga tiga orang.', price:48000, cat:'signature', container:'Thinwall Jumbo 1000ml', size:'Sharing', sambal:'Sambal Mete Premium (2 Cup)', buah:['Jambu Kristal','Mangga Mengkel','Nanas','Bengkoang','Jambu Air','Kedondong'], flavor:'Gurih Extra', defaultSpice:4, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-hd.webp', isHidden:false },
+    { id:'p_m5', name:'Rujak Mahkota', desc:'Koleksi premium dengan Shine Muscat.', price:85000, cat:'reserve', container:'Thinwall Jumbo + Paper Bag', size:'Premium', sambal:'Sambal Mete Premium (2 Cup)', buah:['Shine Muscat','Jambu Kristal','Mangga Mengkel','Nanas','Bengkoang','Jambu Air','Kedondong'], flavor:'Eksklusif', defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp', isHidden:false },
+    { id:'p_m6', name:'Tampah Nusantara', desc:'Sajian kebersamaan dalam tampah bambu.', price:200000, cat:'reserve', container:'Tampah Bambu Ø40cm', size:'Besar', sambal:'Varian Original & Mete (4 Cup)', buah:['Shine Muscat','Jambu Kristal','Mangga Mengkel','Nanas','Bengkoang','Jambu Air','Kedondong','Ubi Merah'], flavor:'Megah', defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp', isHidden:false },
+    { id:'p_vip', name:'Mahkota VIP', desc:'Menu rahasia eksklusif dengan komposisi premium.', price:125000, cat:'reserve', container:'Box Premium', size:'Eksklusif', sambal:'Sambal Mete Spesial (2 Cup)', buah:['Shine Muscat','Jambu Kristal','Mangga Harum Manis','Nanas Madu','Bengkoang','Strawberry'], flavor:'Premium', defaultSpice:2, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp', isHidden:true }
+  ];
 
-/* Section title */
-.sec-header { padding: 8px 20px 12px; }
-.sec-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 800; color: var(--text-main); letter-spacing: 0.03em; }
+  const ADDONS = [
+    { id:'a_sambal1', name:'Sambal Original', price:8000 },
+    { id:'a_sambal2', name:'Sambal Mete Premium', price:12000 },
+    { id:'a_extra_jambu', name:'Extra Jambu Kristal', price:10000 },
+    { id:'a_extra_muscat', name:'Extra Shine Muscat', price:15000 }
+  ];
 
-/* Menu Grid */
-.menu-list { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 0 20px 24px; }
-.menu-item { position: relative; cursor: pointer; background: transparent; border: none; }
-.item-img-wrap { width: 100%; aspect-ratio: 1/1; border-radius: 8px; overflow: hidden; background: #F3F1EC; margin-bottom: 8px; position: relative; }
-.item-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-.more-dot { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,0.9); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--text-main); cursor: pointer; z-index: 2; }
-.item-name { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 2px; }
-.item-price { font-size: 13px; color: var(--gray-500); font-weight: 500; }
+  const SYSTEM = {
+    STORE_LAT: -6.2165414,
+    STORE_LNG: 107.0177395,
+    WA_NUMBER: '6289677161680',
+    TOAST_DURATION: 3000,
+    PRIORITY_SURCHARGE: 8000,
+    MAX_DISTANCE: 9999,
+    DEFAULT_DISTANCE: 2,
+    LOCATION_TIMEOUT: 12000
+  };
 
-/* Addon Grid */
-.addon-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 20px 24px; }
-.addon-card { background: transparent; border: 0.5px solid rgba(45,45,45,0.08); border-radius: 8px; padding: 12px; }
-.addon-name { font-size: 13px; font-weight: 600; color: var(--text-main); }
-.addon-price { font-size: 12px; color: var(--gray-500); }
-.addon-add { width: 24px; height: 24px; background: transparent; border: 0.5px solid rgba(45,45,45,0.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  // ---------- DISTRICT MAP & SHIPPING (lengkap, sama seperti sebelumnya) ----------
+  const DISTRICT_MAP = {
+    'bekasi barat':5, 'bekasi timur':7, 'bekasi selatan':9, 'bekasi utara':11,
+    'rawalumbu':8, 'jatiasih':12, 'pondokgede':14, 'cikarang':23,
+    'tambun':16, 'cibitung':20, 'karawang':44, 'cikampek':60,
+    'serang':63, 'cilegon':80,
+    'gambir':18, 'menteng':19, 'senen':18, 'cempaka putih':19,
+    'kemayoran':20, 'sawah besar':20, 'taman sari':21, 'tanah abang':20,
+    'setiabudi':19, 'tebet':20, 'pancoran':21, 'pasar minggu':22,
+    'kebayoran lama':24, 'kebayoran baru':22, 'mampang prapatan':21,
+    'jagakarsa':23, 'cilandak':24, 'pesanggrahan':25,
+    'pulo gadung':16, 'jatinegara':18, 'duren sawit':15,
+    'kramat jati':19, 'pasar rebo':20, 'ciracas':22,
+    'cipayung':23, 'makasar':16, 'cakung':12,
+    'tambora':24, 'grogol petamburan':23, 'palmerah':22,
+    'kembangan':25, 'cengkareng':28, 'kalideres':30,
+    'kemanggisan':23, 'kedoya':25, 'meruya':25,
+    'penjaringan':30, 'pademangan':28, 'tanjung priok':29,
+    'koja':30, 'cilincing':31, 'kelapa gading':27,
+    'depok':35, 'beji':36, 'pancoran mas':36, 'cipayung depok':38,
+    'sukmajaya':38, 'cilodong':39, 'limo':40, 'cinere':41,
+    'cimanggis':34, 'tapos':36, 'sawangan':42, 'bojongsari':44,
+    'tangerang':38, 'tangerang selatan':34, 'batuceper':39,
+    'benda':40, 'cibodas':39, 'ciledug':35, 'cipondoh':38,
+    'jatiuwung':41, 'karawaci':39, 'periuk':40, 'pinang':38,
+    'serpong':40, 'serpong utara':41, 'pamulang':38,
+    'pondok aren':36, 'ciputat':35, 'ciputat timur':36,
+    'bogor':50, 'bogor barat':50, 'bogor selatan':49,
+    'bogor timur':50, 'bogor utara':48, 'tanah sareal':49,
+    'ciawi':54, 'cibinong':47, 'citeureup':50,
+    'gunung putri':44, 'cileungsi':41, 'jonggol':56,
+    'parung':52, 'dramaga':60
+  };
 
-/* Footer */
-.footer-brand { background: var(--text-main); color: var(--ivory); padding: 24px 20px; text-align: center; }
-.footer-brand-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; }
-.footer-brand-row img { height: 24px; width: 24px; }
-.footer-brand-name { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 800; color: white; }
-.footer-brand-name span { color: var(--gold); }
-.footer-bottom { font-size: 10px; opacity: 0.5; }
+  // Fungsi shipping (lengkap) - lanjut di bagian 2
 
-/* Bottom Bar */
-#bottom-bar { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: rgba(250,249,246,0.95); backdrop-filter: blur(8px); border-top: 0.5px solid rgba(45,45,45,0.08); padding: 10px 20px max(10px,env(safe-area-inset-bottom,10px)); z-index: 200; display: flex; flex-direction: column; gap: 6px; transform: translateY(100%); transition: transform 0.3s; }
-#bottom-bar.visible { transform: translateY(0); }
-.cart-summary { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 600; }
-.cart-total { font-weight: 700; color: var(--text-main); }
-.wa-btn { background: var(--text-main); color: var(--ivory); border: none; border-radius: 8px; padding: 12px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-.wa-btn-left span { display: block; }
-.wa-btn-sub { font-size: 9px; text-transform: uppercase; opacity: 0.7; }
+  // ============================================================
+  // STATE
+  // ============================================================
+  const state = {
+    cart: {},
+    activeFilter: 'all',
+    searchQuery: '',
+    userDistance: null,
+    isPriority: false,
+    orderNotes: '',
+    isCartMinimized: false,
+    customerName: '',
+    customerPhone: '',
+    customerAddress: '',
+    isGift: false,
+    giftSender: '',
+    giftMessage: '',
+    useManualDistrict: false,
+    selectedDistrict: '',
+    hasShared: false,
+    shippingProvider: 'rujakco',
+    vehicleType: 'motor',
+    currentStep: 1
+  };
 
-#floatingCartBtn { position: fixed; bottom: 120px; right: 20px; width: 48px; height: 48px; background: var(--text-main); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; z-index: 250; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-.badge-cart { position: absolute; top: -4px; right: -4px; background: var(--red); color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  let addToCartLocked = false;
+  let checkoutLocked = false;
+  let cachedSummary = null;
+  let cachedSummaryKey = '';
+  let toastTimer = null;
 
-/* Modals */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 300; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-.modal-overlay.active { opacity: 1; pointer-events: auto; }
-.modal-content { background: var(--ivory); border-radius: 16px; width: 90%; max-width: 400px; max-height: 90vh; overflow-y: auto; box-shadow: 0 12px 40px rgba(0,0,0,0.2); }
-.modal-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px 8px; border-bottom: 0.5px solid rgba(45,45,45,0.08); }
-.modal-header-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; }
-.modal-close { background: none; border: none; font-size: 24px; color: var(--text-main); cursor: pointer; }
-.modal-body { padding: 16px 20px; }
-.modal-img { width: 100%; aspect-ratio: 1/1; border-radius: 8px; overflow: hidden; margin-bottom: 12px; }
-.modal-img img { width: 100%; height: 100%; object-fit: cover; }
-.modal-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 800; margin: 0 0 4px; }
-.modal-desc { font-size: 13px; color: var(--gray-500); margin-bottom: 12px; }
-.modal-add { width: 100%; background: var(--text-main); color: var(--ivory); border: none; border-radius: 8px; padding: 14px; font-weight: 600; display: flex; justify-content: space-between; cursor: pointer; }
+  // ============================================================
+  // DISTANCE & SHIPPING
+  // ============================================================
+  function haversineDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * Math.sin(dLon/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
 
-/* Mini cart items */
-.mini-cart-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 0.5px solid rgba(45,45,45,0.06); }
-.mini-cart-name { font-weight: 600; }
-.mini-cart-qty button { width: 28px; height: 28px; border-radius: 50%; border: 0.5px solid rgba(45,45,45,0.12); background: transparent; font-weight: 700; }
-.cart-subtotal { display: flex; justify-content: space-between; font-weight: 700; padding: 12px 0; }
+  function estimateRoadDistance(straightKm) {
+    if (straightKm <= 10) return Math.round(straightKm * 1.35);
+    if (straightKm <= 20) return Math.round(straightKm * 1.30);
+    if (straightKm <= 35) return Math.round(straightKm * 1.25);
+    if (straightKm <= 50) return Math.round(straightKm * 1.20);
+    return Math.round(straightKm * 1.15);
+  }
 
-/* Concierge Dot */
-#concierge-dot {
-  position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px;
-  border-radius: 50%; background: #C5A059;
-  box-shadow: 0 0 0 0 rgba(197,160,89,0.6);
-  animation: pulse-concierge 2s infinite;
-  cursor: pointer; z-index: 300;
-}
-@keyframes pulse-concierge {
-  0% { box-shadow: 0 0 0 0 rgba(197,160,89,0.6); }
-  70% { box-shadow: 0 0 0 12px rgba(197,160,89,0); }
-  100% { box-shadow: 0 0 0 0 rgba(197,160,89,0); }
-}
+  function calculatePaxelCost(distance, vehicleType, totalQty) {
+    const qty = totalQty || 1;
+    const numLargeBoxes = Math.floor(qty / 2);
+    const numMediumBoxes = qty % 2;
+    const costLarge = numLargeBoxes * 25000;
+    const costMedium = numMediumBoxes * 20000;
+    const packagingFee = (numLargeBoxes + numMediumBoxes) * 3000;
+    return costLarge + costMedium + packagingFee;
+  }
 
-/* Utility */
-.hidden { display: none !important; }
-.w-4 { width: 1rem; } .h-4 { height: 1rem; } .w-5 { width: 1.25rem; } .h-5 { height: 1.25rem; }
+  function calculateLalamoveCost(distance, vehicleType) {
+    const dist = Math.ceil(distance);
+    if (vehicleType === 'motor') {
+      if (dist <= 3) return 8000;
+      if (dist <= 10) return 8000 + (dist - 3) * 1800;
+      if (dist <= 20) return 20600 + (dist - 10) * 1600;
+      if (dist <= 30) return 36600 + (dist - 20) * 1400;
+      if (dist <= 50) return 50600 + (dist - 30) * 1150;
+      return 73600 + (dist - 50) * 1000;
+    }
+    if (vehicleType === 'mobil') {
+      if (dist <= 3) return 24000;
+      if (dist <= 10) return 24000 + (dist - 3) * 4500;
+      if (dist <= 20) return 55500 + (dist - 10) * 4000;
+      if (dist <= 30) return 95500 + (dist - 20) * 3500;
+      if (dist <= 50) return 130500 + (dist - 30) * 3000;
+      return 190500 + (dist - 50) * 2500;
+    }
+    return 0;
+  }
 
-/* Clean up unwanted elements */
-.badge-priority, .badge-cart, .item-badge-right, .promo-strip, .progress-container,
-#freshBanner, #aiRecommendationContainer, .testi-flip-container, .edu-container,
-.faq-container, .divider, .promo-anim, .shipping-out-of-range, #step1Progress,
-#step1Upsell, .gift-section, #aiChatToggle, #aiChatBox { display: none !important; }
+  function calculateShipping(distance, priority, totalQty) {
+    if (state.shippingProvider === 'pembeli') {
+      return { cost: 0, label: 'Kurir Pembeli', distance: distance, zone: null };
+    }
+    const rawDistance = (distance === null || isNaN(distance)) ? SYSTEM.DEFAULT_DISTANCE : distance;
+    if (rawDistance > SYSTEM.MAX_DISTANCE) {
+      return { cost: null, label: 'Admin Konfirmasi', distance: rawDistance, zone: 'E' };
+    }
+    let lalamoveCost = 0, baseLalamoveCost = 0, totalCost = 0;
+    let zoneLabel = '', zone = 'F';
+    if (state.shippingProvider === 'paxel') {
+      const qty = totalQty || 1;
+      const paxelCost = calculatePaxelCost(rawDistance, state.vehicleType, qty);
+      totalCost = paxelCost;
+      lalamoveCost = paxelCost;
+      baseLalamoveCost = paxelCost;
+      zoneLabel = 'Paxel Same Day';
+      if (rawDistance <= 20) zone = (rawDistance <= 5) ? 'A' : (rawDistance <= 10) ? 'B' : (rawDistance <= 15) ? 'C' : 'D';
+    } else {
+      const lalamoveBase = calculateLalamoveCost(rawDistance, state.vehicleType);
+      baseLalamoveCost = lalamoveBase;
+      lalamoveCost = lalamoveBase; // tanpa surge untuk simplicity
+      const priorityCost = priority ? SYSTEM.PRIORITY_SURCHARGE : 0;
+      totalCost = lalamoveCost + priorityCost;
+      zoneLabel = rawDistance <= 5 ? 'Zona A' : rawDistance <= 10 ? 'Zona B' : rawDistance <= 15 ? 'Zona C' : rawDistance <= 20 ? 'Zona D' : 'Zona Jauh';
+      if (rawDistance <= 20) zone = (rawDistance <= 5) ? 'A' : (rawDistance <= 10) ? 'B' : (rawDistance <= 15) ? 'C' : 'D';
+    }
+    return {
+      cost: totalCost,
+      lalamoveCost,
+      baseLalamoveCost,
+      label: zoneLabel + ' • ' + (state.vehicleType === 'motor' ? 'Motor' : 'Mobil') + (priority && state.shippingProvider !== 'paxel' ? ' • Prioritas' : ''),
+      distance: rawDistance,
+      zone: zone
+    };
+  }
+
+  function calculateShippingCost() {
+    const summary = getCartSummaryCached();
+    if (!state.selectedDistrict && state.userDistance === null) return null;
+    let distance = state.selectedDistrict && DISTRICT_MAP[state.selectedDistrict]
+      ? DISTRICT_MAP[state.selectedDistrict]
+      : state.userDistance || SYSTEM.DEFAULT_DISTANCE;
+    const shipping = calculateShipping(distance, state.isPriority, summary.totalQty);
+    const shippingCost = state.shippingProvider === 'pembeli' ? 0 : (shipping.cost === null ? 0 : shipping.cost);
+    return {
+      shippingCost: shippingCost,
+      shippingLabel: shipping.label,
+      shippingDistance: shipping.distance,
+      isOutOfRange: shipping.zone === 'E',
+      total: summary.subtotal - summary.discount + shippingCost
+    };
+  }
+
+  // ============================================================
+  // CART
+  // ============================================================
+  function loadCart() {
+    try { const s = localStorage.getItem('rujak_cart'); if (s) state.cart = JSON.parse(s); } catch (_) { state.cart = {}; }
+  }
+  function saveCart() { try { localStorage.setItem('rujak_cart', JSON.stringify(state.cart)); } catch(e) {} }
+  function getItemById(id) { return PRODUCTS.find(p => p.id === id) || ADDONS.find(a => a.id === id) || null; }
+
+  function getCartSummary() {
+    const items = []; let subtotal = 0, totalQty = 0;
+    Object.keys(state.cart).forEach(id => {
+      const entry = state.cart[id];
+      const item = getItemById(id);
+      if (item && entry.qty > 0) {
+        const lt = item.price * entry.qty;
+        subtotal += lt; totalQty += entry.qty;
+        items.push({ cartId: id, id, name: item.name, price: item.price, qty: entry.qty, spice: entry.spice, lineTotal: lt });
+      } else delete state.cart[id];
+    });
+    return { items, totalQty, subtotal, discount: 0 };
+  }
+
+  function getCartSummaryCached() {
+    const key = JSON.stringify(state.cart);
+    if (cachedSummary && cachedSummaryKey === key) return cachedSummary;
+    cachedSummary = getCartSummary();
+    cachedSummaryKey = key;
+    return cachedSummary;
+  }
+  function invalidateCache() { cachedSummary = null; }
+
+  // ============================================================
+  // RENDER UI (MINIMALIS)
+  // ============================================================
+  function renderMenu() {
+    const container = $('menuList');
+    if (!container || state.activeFilter === 'addon') return;
+    let filtered = PRODUCTS.filter(p => !p.isHidden);
+    if (state.activeFilter !== 'all') filtered = filtered.filter(p => p.cat === state.activeFilter);
+    let html = '';
+    filtered.forEach(p => {
+      html += `<div class="menu-item" data-id="${p.id}">
+        <div class="item-img-wrap">
+          <img src="${p.thumbnail}" alt="${escapeHTML(p.name)}" loading="lazy" />
+          <div class="more-dot" data-action="open-modal" data-id="${p.id}">…</div>
+        </div>
+        <div class="item-name">${escapeHTML(p.name)}</div>
+        <div class="item-price">${fmt(p.price)}</div>
+      </div>`;
+    });
+    container.innerHTML = html || '<div style="padding:40px;text-align:center;color:var(--gray-500);">Tidak ada produk.</div>';
+  }
+
+  function renderAddons() {
+    const container = $('addonList');
+    if (!container) return;
+    let html = '';
+    ADDONS.forEach(a => {
+      const qty = (state.cart[a.id]?.qty) || 0;
+      const btn = qty === 0
+        ? `<button class="addon-add" data-action="add-addon" data-id="${a.id}">+</button>`
+        : `<div class="qty-control" style="display:flex;align-items:center;gap:4px;margin-top:8px;"><button data-action="decrease" data-id="${a.id}">−</button><span style="font-weight:700;">${qty}</span><button data-action="increase" data-id="${a.id}">+</button></div>`;
+      html += `<div class="addon-card">
+        <div class="addon-name">${escapeHTML(a.name)}</div>
+        <div class="addon-price">${fmt(a.price)}</div>
+        ${btn}
+      </div>`;
+    });
+    container.innerHTML = html;
+  }
+
+  function renderCart() {
+    const summary = getCartSummaryCached();
+    const bar = $('bottom-bar');
+    const preview = $('cartPreview');
+    const totalEl = $('cartTotalDisplay');
+    if (summary.totalQty > 0 && !state.isCartMinimized) {
+      bar.classList.add('visible');
+      preview.textContent = summary.totalQty + ' item';
+      totalEl.textContent = fmt(summary.subtotal);
+      $('floatingCartBtn').style.display = 'none';
+    } else {
+      bar.classList.remove('visible');
+    }
+    saveCart();
+    updateFloatingButton();
+  }
+
+  function updateFloatingButton() {
+    const btn = $('floatingCartBtn'), badge = $('floatingBadge');
+    if (!btn) return;
+    const summary = getCartSummaryCached();
+    const barVisible = $('bottom-bar').classList.contains('visible');
+    if (summary.totalQty > 0 && !barVisible) {
+      btn.style.display = 'flex';
+      badge.textContent = summary.totalQty;
+    } else {
+      btn.style.display = 'none';
+    }
+  }
+
+  function updateUI() {
+    invalidateCache();
+    renderMenu();
+    renderAddons();
+    renderCart();
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+  }
+
+  // ============================================================
+  // PRODUCT MODAL (DETAIL)
+  // ============================================================
+  const SPICE_NAMES = ['Mild Sweet', 'Light Spice', 'Signature', 'Bold', 'Extreme'];
+  function getSpiceEmoji(level) { return ['🌶️','🌶️🌶️','🌶️🌶️🌶️','🌶️🌶️🌶️🌶️','🌶️🌶️🌶️🌶️🌶️'][level-1] || '🌶️🌶️🌶️'; }
+
+  function openProductModal(id) {
+    const product = PRODUCTS.find(p => p.id === id);
+    if (!product) return;
+    $('modalImg').innerHTML = `<img src="${product.image}" alt="${escapeHTML(product.name)}">`;
+    $('modalTitle').textContent = product.name;
+    $('modalDesc').textContent = product.desc;
+    $('modalContainer').textContent = product.container;
+    $('modalSize').textContent = product.size;
+    $('modalSambal').textContent = product.sambal;
+    $('modalBuahText').textContent = (product.buah || []).join(' • ');
+    $('btnPrice').textContent = fmt(product.price);
+    $('modalAdd').dataset.id = product.id;
+    const spice = product.defaultSpice || 3;
+    $('spiceHidden').value = spice;
+    $('spiceLabel').innerHTML = spice + ' - ' + SPICE_NAMES[spice-1] + ' ' + getSpiceEmoji(spice);
+    $('spiceTrigger').classList.add('selected');
+    $('productModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeProductModal() {
+    $('productModal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  // Spice selector
+  $('spiceTrigger').addEventListener('click', function(e) {
+    e.stopPropagation();
+    $('spiceModal').classList.add('active');
+  });
+  $('spiceModal').querySelectorAll('.select-option').forEach(opt => {
+    opt.addEventListener('click', function() {
+      const value = this.dataset.value;
+      $('spiceHidden').value = value;
+      $('spiceLabel').innerHTML = value + ' - ' + SPICE_NAMES[value-1] + ' ' + getSpiceEmoji(value);
+      $('spiceModal').classList.remove('active');
+    });
+  });
+  document.addEventListener('click', function(e) {
+    if (!$('spiceTrigger').contains(e.target) && !$('spiceModal').contains(e.target)) {
+      $('spiceModal').classList.remove('active');
+    }
+  });
+
+  // ============================================================
+  // MINI CART & CHECKOUT
+  // ============================================================
+  const miniCartModal = $('miniCartModal');
+  function openMiniCart() {
+    miniCartModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    renderMiniCart();
+  }
+  function closeMiniCart() {
+    state.customerName = $('customerName').value.trim();
+    state.customerPhone = $('customerPhone').value.trim();
+    state.customerAddress = $('customerAddress').value.trim();
+    state.orderNotes = $('orderNotes').value.trim();
+    miniCartModal.classList.remove('active');
+    document.body.style.overflow = '';
+    saveCustomerData();
+  }
+
+  function updateShippingDisplay() {
+    const data = calculateShippingCost();
+    if (!data) { $('shippingSection').style.display = 'none'; return; }
+    $('shippingSection').style.display = 'block';
+    $('breakdownContent').innerHTML = data.isOutOfRange
+      ? '<div>⚠️ Di luar jangkauan. Pilih "Kurir Pembeli" atau hubungi admin.</div>'
+      : `<div>Jarak: <strong>${Math.ceil(data.shippingDistance)} km</strong> — ${data.shippingLabel}</div><div>Ongkir: <strong>${fmt(data.shippingCost)}</strong></div>`;
+    $('finalSubtotal').textContent = fmt(getCartSummaryCached().subtotal);
+    $('finalShipping').textContent = data.isOutOfRange ? 'Konfirmasi' : fmt(data.shippingCost);
+    $('finalTotal').textContent = data.isOutOfRange ? 'Konfirmasi' : fmt(data.total);
+  }
+
+  function renderMiniCart() {
+    const summary = getCartSummaryCached();
+    let html = '';
+    summary.items.forEach(item => {
+      html += `<div class="mini-cart-item"><div class="mini-cart-info"><div class="mini-cart-name">${escapeHTML(item.name)} ${item.spice ? '(Lv.'+item.spice+')' : ''}</div><div>${fmt(item.price)}</div></div><div class="mini-cart-qty"><button data-action="decrease" data-id="${item.cartId}">−</button><span>${item.qty}</span><button data-action="increase" data-id="${item.cartId}">+</button><button data-action="remove" data-id="${item.cartId}">🗑️</button></div></div>`;
+    });
+    $('miniCartList').innerHTML = html || '<p style="color:var(--gray-500);text-align:center;">Keranjang kosong</p>';
+    $('cartSubtotalDisplay').textContent = fmt(summary.subtotal);
+    $('customerName').value = state.customerName;
+    $('customerPhone').value = state.customerPhone;
+    $('customerAddress').value = state.customerAddress;
+    if (state.selectedDistrict) {
+      $('districtInput').value = state.selectedDistrict.replace(/\b\w/g, l => l.toUpperCase());
+    }
+    // Toggle shipping provider buttons
+    document.querySelectorAll('.ship-btn').forEach(b => b.classList.toggle('active', b.dataset.provider === state.shippingProvider));
+    document.querySelectorAll('.veh-btn').forEach(b => b.classList.toggle('active', b.dataset.vehicle === state.vehicleType));
+    $('paxelOptions').style.display = state.shippingProvider === 'paxel' ? 'block' : 'none';
+    $('rujakcoOptions').style.display = state.shippingProvider === 'rujakco' ? 'block' : 'none';
+    $('deliveryTimeSection').style.display = state.shippingProvider === 'paxel' ? 'none' : 'block';
+    if (state.selectedDistrict || state.userDistance !== null) updateShippingDisplay();
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  }
+
+  function validateOrderForm() {
+    const name = $('customerName').value.trim();
+    const phone = $('customerPhone').value.trim().replace(/[\s\-\(\)]/g, '');
+    const address = $('customerAddress').value.trim();
+    let valid = true;
+    if (!name || name.length < 2) { showFieldError($('customerName'), 'Nama minimal 2 karakter'); valid = false; } else clearFieldError($('customerName'));
+    if (!phone || !isValidPhone(phone)) { showFieldError($('customerPhone'), 'Format HP tidak valid'); valid = false; } else clearFieldError($('customerPhone'));
+    if (!address || address.length < 5) { showFieldError($('customerAddress'), 'Alamat terlalu pendek'); valid = false; } else clearFieldError($('customerAddress'));
+    if (!state.selectedDistrict && state.shippingProvider !== 'pembeli') { showFieldError($('districtInput'), 'Pilih kecamatan'); valid = false; } else clearFieldError($('districtInput'));
+    if (!valid) showToast('❌ Mohon periksa isian bertanda merah');
+    return valid ? { name, phone: normalizePhone(phone), address } : null;
+  }
+
+  function showFieldError(el, msg) {
+    el.classList.add('input-error');
+    let err = el.parentElement.querySelector('.field-error');
+    if (!err) {
+      err = document.createElement('div');
+      err.className = 'field-error';
+      err.style.cssText = 'color:#C5A059; font-size:11px; margin-top:4px;';
+      el.parentElement.appendChild(err);
+    }
+    err.textContent = msg;
+  }
+  function clearFieldError(el) {
+    el.classList.remove('input-error');
+    const err = el.parentElement.querySelector('.field-error');
+    if (err) err.remove();
+  }
+
+  function handleCheckout() {
+    if (checkoutLocked) return;
+    const valid = validateOrderForm();
+    if (!valid) return;
+    const summary = getCartSummaryCached();
+    const shippingData = calculateShippingCost();
+    if (!shippingData) { showToast('⚠️ Hitung ongkir gagal.'); return; }
+    if (shippingData.isOutOfRange && state.shippingProvider !== 'pembeli') {
+      showToast('⚠️ Area di luar jangkauan. Pilih "Kurir Pembeli" atau hubungi admin.'); return;
+    }
+    state.customerName = valid.name;
+    state.customerPhone = valid.phone;
+    state.customerAddress = valid.address;
+    saveCustomerData();
+    checkoutLocked = true;
+    const orderNumber = 'RJ' + Date.now().toString(36).slice(-6) + Math.random().toString(36).substring(2,5).toUpperCase();
+    let waMsg = '🍜 *PESANAN RUJAK.CO*\n\n📋 Order: ' + orderNumber + '\n👤 ' + valid.name + '\n📱 ' + valid.phone + '\n📍 ' + valid.address + '\n\n📦 *Pesanan:*\n';
+    summary.items.forEach(i => waMsg += '• ' + i.name + (i.spice ? ' (Lv.'+i.spice+')' : '') + ' x' + i.qty + ' — ' + fmt(i.lineTotal) + '\n');
+    waMsg += '\n💰 *Total: ' + fmt(shippingData.total) + '*\n\n📸 *Sertakan bukti transfer.*';
+    getSupabase().then(client => {
+      if (client) {
+        client.from('orders').insert([{
+          order_id: orderNumber, customer_name: valid.name.substring(0,50), customer_phone: valid.phone, customer_address: valid.address.substring(0,500),
+          items: summary.items.map(({ cartId, ...rest }) => rest), subtotal: summary.subtotal, shipping_cost: shippingData.shippingCost,
+          discount: summary.discount, total: shippingData.total, status: 'pending',
+          shipping_provider: state.shippingProvider, vehicle: state.vehicleType, priority: state.isPriority
+        }]).then(({error}) => { if (error) console.error('Supabase insert error', error); });
+      }
+    });
+    setTimeout(() => {
+      checkoutLocked = false;
+      $('paymentModal').classList.remove('active');
+      document.body.style.overflow = '';
+      state.cart = {}; invalidateCache(); saveCart(); updateUI();
+      openWhatsApp(SYSTEM.WA_NUMBER, waMsg);
+      showToast('✅ Pesanan dikirim via WhatsApp.');
+    }, 500);
+  }
+
+  function openWhatsApp(phone, msg) {
+    window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
+  }
+
+  function saveCustomerData() {
+    try {
+      localStorage.setItem('rujak_customer', JSON.stringify({
+        name: state.customerName, phone: state.customerPhone, address: state.customerAddress,
+        isGift: state.isGift, giftSender: state.giftSender, giftMessage: state.giftMessage,
+        shippingProvider: state.shippingProvider, vehicleType: state.vehicleType,
+        selectedDistrict: state.selectedDistrict, useManualDistrict: state.useManualDistrict
+      }));
+    } catch(_) {}
+  }
+
+  function loadCustomerData() {
+    try {
+      const raw = localStorage.getItem('rujak_customer');
+      if (raw) {
+        const d = JSON.parse(raw);
+        state.customerName = d.name || ''; state.customerPhone = d.phone || ''; state.customerAddress = d.address || '';
+        state.isGift = d.isGift || false; state.giftSender = d.giftSender || ''; state.giftMessage = d.giftMessage || '';
+        if (d.shippingProvider) state.shippingProvider = d.shippingProvider;
+        if (d.vehicleType) state.vehicleType = d.vehicleType;
+        if (d.selectedDistrict) state.selectedDistrict = d.selectedDistrict;
+        if (d.useManualDistrict !== undefined) state.useManualDistrict = d.useManualDistrict;
+      }
+    } catch(_) {}
+  }
+
+  function showToast(msg) {
+    const el = $('toast');
+    if (!el) return;
+    el.textContent = msg; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), SYSTEM.TOAST_DURATION);
+  }
+
+  // ============================================================
+  // LOCATION & DISTRICT
+  // ============================================================
+  function createDistrictAutocomplete() {
+    const input = $('districtInput');
+    const dropdown = $('customDistrictDropdown');
+    if (!input || !dropdown) return;
+    input.addEventListener('input', function() {
+      const val = this.value.toLowerCase().trim();
+      if (!val) { dropdown.style.display = 'none'; return; }
+      const matches = Object.keys(DISTRICT_MAP).filter(k => k.includes(val));
+      dropdown.innerHTML = matches.length ? matches.slice(0,15).map(m => `<div data-value="${m}" style="padding:10px;cursor:pointer;">${m.replace(/\b\w/g, l => l.toUpperCase())}</div>`).join('') : '<div style="padding:10px;color:var(--gray-400);">Tidak ditemukan</div>';
+      dropdown.style.display = 'block';
+    });
+    dropdown.addEventListener('click', function(e) {
+      const t = e.target.closest('[data-value]');
+      if (!t) return;
+      state.selectedDistrict = t.dataset.value;
+      input.value = t.dataset.value.replace(/\b\w/g, l => l.toUpperCase());
+      dropdown.style.display = 'none';
+      detectLocation();
+      renderMiniCart();
+    });
+    document.addEventListener('click', e => { if (!input.parentElement.contains(e.target)) dropdown.style.display = 'none'; });
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        const val = this.value.toLowerCase().trim();
+        if (DISTRICT_MAP[val]) {
+          state.selectedDistrict = val;
+          dropdown.style.display = 'none';
+          detectLocation();
+          renderMiniCart();
+        }
+      }
+    });
+  }
+
+  function detectLocation() {
+    if (state.useManualDistrict && state.selectedDistrict) {
+      const dist = DISTRICT_MAP[state.selectedDistrict] || estimateRoadDistance(haversineDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, -6.2, 106.8));
+      state.userDistance = dist;
+      updateShippingUI(dist, state.isPriority);
+      return;
+    }
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        const dist = estimateRoadDistance(haversineDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, pos.coords.latitude, pos.coords.longitude));
+        state.userDistance = dist;
+        updateShippingUI(dist, state.isPriority);
+        $('locationDisplay').textContent = 'Lokasi GPS ▾';
+      }, () => showToast('📍 GPS tidak aktif. Silakan pilih kecamatan.'));
+    }
+  }
+
+  function updateShippingUI(distance, isPriority) {
+    const summary = getCartSummaryCached();
+    const shipping = calculateShipping(distance, isPriority, summary.totalQty);
+    const costEl = $('shippingCost');
+    if (costEl) costEl.textContent = shipping.zone === 'E' ? 'Konfirmasi' : fmt(shipping.cost || 0);
+  }
+
+  // ============================================================
+  // EVENT BINDING
+  // ============================================================
+  function bindEvents() {
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('[data-action="open-modal"]')) {
+        openProductModal(e.target.closest('[data-action="open-modal"]').dataset.id);
+        return;
+      }
+      if (e.target.closest('#modalClose') || e.target === $('productModal')) { closeProductModal(); return; }
+      if (e.target.closest('#cartSummary') || e.target.closest('[data-action="open-cart"]')) { openMiniCart(); return; }
+      if (e.target.closest('#miniCartClose') || e.target === miniCartModal) { closeMiniCart(); return; }
+      if (e.target.closest('#btnOpenPayment')) {
+        if (validateOrderForm()) {
+          $('paymentTotalDisplay').textContent = $('finalTotal').textContent;
+          $('paymentModal').classList.add('active');
+        }
+        return;
+      }
+      if (e.target.closest('[data-action="confirm-wa"]')) { handleCheckout(); return; }
+      if (e.target.closest('[data-action="add-addon"]')) {
+        if (addToCartLocked) return; lockAddToCart();
+        const id = e.target.closest('[data-action="add-addon"]').dataset.id;
+        state.cart[id] = state.cart[id] || { qty: 0 };
+        state.cart[id].qty++;
+        invalidateCache(); updateUI();
+        if (miniCartModal.classList.contains('active')) renderMiniCart();
+        return;
+      }
+      if (e.target.closest('[data-action="increase"]')) {
+        const id = e.target.closest('[data-action="increase"]').dataset.id;
+        if (state.cart[id]) { state.cart[id].qty++; invalidateCache(); updateUI(); if (miniCartModal.classList.contains('active')) renderMiniCart(); }
+        return;
+      }
+      if (e.target.closest('[data-action="decrease"]')) {
+        const id = e.target.closest('[data-action="decrease"]').dataset.id;
+        if (state.cart[id]) {
+          state.cart[id].qty--;
+          if (state.cart[id].qty <= 0) delete state.cart[id];
+          invalidateCache(); updateUI();
+          if (miniCartModal.classList.contains('active')) renderMiniCart();
+        }
+        return;
+      }
+      if (e.target.closest('[data-action="remove"]')) {
+        const id = e.target.closest('[data-action="remove"]').dataset.id;
+        delete state.cart[id]; invalidateCache(); updateUI();
+        if (miniCartModal.classList.contains('active')) renderMiniCart();
+        return;
+      }
+      if (e.target.closest('.cat-pill')) {
+        document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+        e.target.closest('.cat-pill').classList.add('active');
+        state.activeFilter = e.target.closest('.cat-pill').dataset.cat;
+        updateUI();
+        return;
+      }
+      if (e.target.closest('#floatingCartBtn')) { openMiniCart(); return; }
+      if (e.target.closest('#paymentClose') || e.target === $('paymentModal')) {
+        $('paymentModal').classList.remove('active');
+        document.body.style.overflow = '';
+        checkoutLocked = false;
+        return;
+      }
+      if (e.target.closest('#downloadQrisBtnPayment')) {
+        const qi = $('qrisImagePayment');
+        if (qi) { const a = document.createElement('a'); a.href = qi.src; a.download = 'QRIS-RujakCo.jpg'; a.click(); }
+      }
+      if (e.target.closest('#copyAmountBtn')) {
+        const txt = $('paymentTotalDisplay').textContent.replace(/[^0-9]/g, '');
+        if (txt) navigator.clipboard.writeText(txt).then(() => showToast('✅ Nominal disalin'));
+      }
+      if (e.target.closest('#clearCartBtn')) {
+        state.cart = {}; invalidateCache(); saveCart(); updateUI();
+        if (miniCartModal.classList.contains('active')) renderMiniCart();
+        showToast('🧹 Keranjang dikosongkan');
+        return;
+      }
+    });
+
+    document.querySelectorAll('.ship-btn').forEach(b => {
+      b.addEventListener('click', function() {
+        document.querySelectorAll('.ship-btn').forEach(x => x.classList.remove('active'));
+        this.classList.add('active');
+        state.shippingProvider = this.dataset.provider;
+        $('paxelOptions').style.display = state.shippingProvider === 'paxel' ? 'block' : 'none';
+        $('rujakcoOptions').style.display = state.shippingProvider === 'rujakco' ? 'block' : 'none';
+        $('deliveryTimeSection').style.display = state.shippingProvider === 'paxel' ? 'none' : 'block';
+        if (state.selectedDistrict || state.userDistance !== null) updateShippingDisplay();
+        renderMiniCart();
+      });
+    });
+
+    document.querySelectorAll('.veh-btn').forEach(b => {
+      b.addEventListener('click', function() {
+        document.querySelectorAll('.veh-btn').forEach(x => x.classList.remove('active'));
+        this.classList.add('active');
+        state.vehicleType = this.dataset.vehicle;
+        if (state.selectedDistrict || state.userDistance !== null) updateShippingDisplay();
+        renderMiniCart();
+      });
+    });
+
+    $('deliveryTimeTrigger').addEventListener('click', function() {
+      const options = [
+        { value: 'Pagi (09:00 - 11:00)', label: 'Pagi (09:00 - 11:00)' },
+        { value: 'Siang (11:00 - 13:00)', label: 'Siang (11:00 - 13:00)' },
+        { value: 'Sore (14:00 - 17:00)', label: 'Sore (14:00 - 17:00)' }
+      ];
+      openCustomSelect('Jam Pengiriman Besok', options, (value, label) => {
+        $('deliveryTime').value = value;
+        $('deliveryTimeLabel').textContent = label;
+        $('deliveryTimeTrigger').classList.add('selected');
+      });
+    });
+
+    $('priorityToggleMini').addEventListener('change', function() {
+      state.isPriority = this.checked;
+      if (state.selectedDistrict || state.userDistance !== null) updateShippingDisplay();
+    });
+
+    $('modalAdd').addEventListener('click', function() {
+      if (addToCartLocked) return; lockAddToCart();
+      const baseId = this.dataset.id;
+      const spice = parseInt($('spiceHidden').value, 10);
+      const cartKey = baseId + '_spice' + spice;
+      state.cart[cartKey] = state.cart[cartKey] || { qty: 0, spice: spice };
+      state.cart[cartKey].qty += 1;
+      state.cart[cartKey].spice = spice;
+      invalidateCache(); updateUI();
+      showToast('✅ Ditambahkan!');
+      closeProductModal();
+    });
+
+    // Minimize cart
+    let pressTimer;
+    document.addEventListener('touchstart', function(e) {
+      if (e.target.closest('#bottom-bar') && !e.target.closest('button')) {
+        pressTimer = setTimeout(() => {
+          state.isCartMinimized = true;
+          $('bottom-bar').classList.remove('visible');
+          updateFloatingButton();
+        }, 500);
+      }
+    });
+    document.addEventListener('touchend', () => clearTimeout(pressTimer));
+    document.addEventListener('touchmove', () => clearTimeout(pressTimer));
+
+    // Floating cart button
+    $('floatingCartBtn').addEventListener('click', function() {
+      state.isCartMinimized = false;
+      renderCart();
+    });
+  }
+
+  // ============================================================
+  // CONCIERGE & LONG-PRESS
+  // ============================================================
+  function initConcierge() {
+    const dot = $('concierge-dot');
+    dot.addEventListener('click', () => {
+      const existing = document.getElementById('concierge-panel');
+      if (existing) { existing.remove(); return; }
+      const panel = document.createElement('div');
+      panel.id = 'concierge-panel';
+      panel.style.cssText = 'position:fixed;bottom:80px;right:24px;background:var(--ivory);border:0.5px solid rgba(45,45,45,0.12);border-radius:12px;padding:12px;z-index:301;';
+      panel.innerHTML = `<button data-action="curated" style="display:block;width:100%;background:none;border:none;padding:12px;text-align:left;font-family:Inter,sans-serif;color:var(--text-main);">✨ Curated Selection</button>
+                         <button data-action="gift" style="display:block;width:100%;background:none;border:none;padding:12px;text-align:left;font-family:Inter,sans-serif;color:var(--text-main);">🎁 Gift Consultation</button>
+                         <button data-action="human" style="display:block;width:100%;background:none;border:none;padding:12px;text-align:left;font-family:Inter,sans-serif;color:var(--text-main);">🛎️ Human Help</button>`;
+      document.body.appendChild(panel);
+      panel.querySelectorAll('button').forEach(b => {
+        b.addEventListener('click', (e) => {
+          const a = e.target.dataset.action;
+          if (a === 'curated') showToast('🔍 AI mencari rekomendasi...');
+          if (a === 'gift') showToast('🎁 Pilih menu kado...');
+          if (a === 'human') openWhatsApp(SYSTEM.WA_NUMBER, 'Halo Concierge Rujak.Co');
+          panel.remove();
+        });
+      });
+    });
+  }
+
+  function initLongPress() {
+    document.addEventListener('touchstart', function(e) {
+      const imgWrap = e.target.closest('.item-img-wrap');
+      if (imgWrap) {
+        const menuItem = imgWrap.closest('.menu-item');
+        if (menuItem) {
+          const id = menuItem.dataset.id;
+          window._pressTimer = setTimeout(() => {
+            const p = PRODUCTS.find(p => p.id === id);
+            if (p) showToast(`🌿 ${p.name}: ${p.buah.join(', ')}`);
+          }, 1000);
+        }
+      }
+    }, { passive: true });
+    document.addEventListener('touchend', () => clearTimeout(window._pressTimer));
+    document.addEventListener('touchmove', () => clearTimeout(window._pressTimer));
+  }
+
+  // ============================================================
+  // INIT
+  // ============================================================
+  function init() {
+    loadCart();
+    loadCustomerData();
+    createDistrictAutocomplete();
+    detectLocation();
+    updateUI();
+    bindEvents();
+    initConcierge();
+    initLongPress();
+
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+
+    // Update store status setiap menit
+    setInterval(() => {
+      const el = $('storeStatusText');
+      if (!el) return;
+      const now = new Date(), day = now.getDay(), mins = now.getHours() * 60 + now.getMinutes();
+      const isOpen = (day >= 1 && day <= 5) ? (mins >= 600 && mins < 1200) : (mins >= 540 && mins < 1080);
+      el.textContent = isOpen ? 'Buka' : 'Tutup';
+      document.querySelector('.status-dot').style.background = isOpen ? '#4CAF50' : '#C5A059';
+    }, 60000);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
