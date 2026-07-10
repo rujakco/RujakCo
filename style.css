@@ -1,9 +1,8 @@
-/* RUJAK.CO — ULTIMATE WHITE GLOVE LUXURY */
+/* RUJAK.CO — ULTIMATE SILENT LUXURY (INFINITE & EDGE-TO-EDGE) */
 :root {
   --green: #0A3A2A; 
   --green-light: #EBF2EF;
-  --gold: #C5A059; 
-  --gold-light: #F0E6D2;
+  --gold: #B89650; 
   --ivory: #FCFAF8; 
   --gray-100: #F4F2EE;
   --gray-200: #E6E4DF; 
@@ -18,11 +17,10 @@ html, body { margin: 0; padding: 0; background: var(--ivory); font-family: 'DM S
 
 h1, h2, h3, h4, .brand-name, .font-fraunces { font-family: 'Fraunces', serif; font-weight: 300; margin: 0; }
 
-/* ANIMASI FADE-UP */
 .fade-up { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
 .fade-up.visible { opacity: 1; transform: translateY(0); }
 
-/* TIRAI SAMBUTAN (VIP ONBOARDING) */
+/* ONBOARDING */
 .onboarding-overlay { position: fixed; inset: 0; background: var(--green); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px; text-align: center; transition: opacity 0.6s ease, visibility 0.6s ease; }
 .onboarding-overlay.hidden { opacity: 0; visibility: hidden; }
 .onb-content { width: 100%; max-width: 320px; display: flex; flex-direction: column; align-items: center; color: var(--ivory); }
@@ -41,50 +39,50 @@ h1, h2, h3, h4, .brand-name, .font-fraunces { font-family: 'Fraunces', serif; fo
 .btn-text-gold { background: none; border: none; color: var(--gold); font-size: 13px; margin-top: 24px; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; font-weight: 500; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-/* HEADER */
-.luxury-header { display: flex; align-items: center; justify-content: space-between; padding: 24px 28px; position: sticky; top: 0; background: rgba(252,250,248,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 100; border-bottom: 1px solid rgba(10,58,42,0.03); }
+/* HEADER GLASS TRANSPARAN (MELAYANG DI ATAS GAMBAR) */
+.luxury-header { position: fixed; top: 0; left: 0; right: 0; max-width: 480px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; background: rgba(252,250,248,0.2); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.1); }
 .brand-logo img { width: 36px; height: 36px; border-radius: 50%; box-shadow: 0 4px 12px rgba(10,58,42,0.1); }
 .header-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
-.brand-name { font-size: 22px; letter-spacing: -0.02em; color: var(--green); font-weight: 400; }
-.header-greeting { font-size: 10px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+.brand-name { font-size: 22px; letter-spacing: -0.02em; color: var(--green); font-weight: 400; text-shadow: 0 2px 10px rgba(255,255,255,0.8); }
+.header-greeting { font-size: 10px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; text-shadow: 0 1px 4px rgba(255,255,255,0.8); }
 
-/* HERO LANSKAP (4:3) */
-.hero-editorial { padding: 8px 28px 0; margin-bottom: 48px; }
-.hero-img-wrap { border-radius: 16px; overflow: hidden; box-shadow: 0 12px 32px rgba(10,58,42,0.08); aspect-ratio: 4/3; }
-.hero-img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.02); transition: transform 0.5s; }
-.hero-editorial:hover .hero-img { transform: scale(1); }
-.hero-overlay { padding: 40px 0 0; text-align: center; }
-.hero-overlay h2 { font-size: 38px; line-height: 1.1; letter-spacing: -0.02em; color: var(--green); }
+/* HERO SQUARE (MENTOK ATAS 1:1) */
+.content-wrapper { padding-bottom: 120px; }
+.hero-editorial { margin-bottom: 48px; padding: 0; }
+.hero-img-wrap { width: 100%; aspect-ratio: 1/1; position: relative; border-radius: 0 0 32px 32px; overflow: hidden; box-shadow: 0 16px 40px rgba(10,58,42,0.1); }
+.hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 0%, rgba(10,58,42,0.85) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 48px 32px; text-align: center; }
+.hero-overlay h2 { font-size: 42px; line-height: 1.1; letter-spacing: -0.02em; color: var(--ivory); }
 .hero-overlay h2 em { font-style: italic; color: var(--gold); font-weight: 400; }
-.hero-overlay p { font-size: 14px; color: var(--gray-500); margin-top: 16px; font-weight: 400; }
+.hero-overlay p { font-size: 15px; color: rgba(255,255,255,0.85); margin-top: 12px; font-weight: 400; font-family: 'DM Sans', sans-serif; }
 
-/* SISTEM CAROUSEL 3D */
+/* SISTEM CAROUSEL RAKSASA (INFINITE LOOP) */
 .carousel-container { width: 100%; overflow: hidden; padding: 0 0 64px; }
-.carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; -ms-overflow-style: none; scrollbar-width: none; padding: 0 calc(50% - 130px); align-items: center; gap: 16px; }
+.carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; padding: 0 calc(50% - 150px); align-items: center; gap: 24px; }
 .carousel-track::-webkit-scrollbar { display: none; }
-.boutique-item { flex: 0 0 260px; scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; text-decoration: none; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease; transform: scale(0.85); opacity: 0.4; }
+.boutique-item { flex: 0 0 300px; scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; text-decoration: none; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease; transform: scale(0.85); opacity: 0.3; }
 .boutique-item.active-center { transform: scale(1.05); opacity: 1; z-index: 10; }
-.btq-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 16px; margin-bottom: 20px; background: var(--gray-100); box-shadow: 0 8px 24px rgba(10,58,42,0.06); transition: box-shadow 0.5s ease; }
+.btq-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 16px; margin-bottom: 24px; background: var(--gray-100); box-shadow: 0 8px 24px rgba(10,58,42,0.06); transition: box-shadow 0.5s ease; }
 .boutique-item.active-center .btq-img { box-shadow: 0 24px 48px rgba(10,58,42,0.15); }
-.btq-name { font-family: 'Fraunces', serif; font-size: 20px; color: var(--green); margin-bottom: 8px; line-height: 1.3; font-weight: 400; }
+.btq-name { font-family: 'Fraunces', serif; font-size: 22px; color: var(--green); margin-bottom: 8px; line-height: 1.3; font-weight: 400; }
 .btq-price { font-size: 15px; color: var(--gray-500); font-weight: 500; }
 
 /* FOOTER */
-.luxury-footer { text-align: center; padding: 64px 24px 120px; border-top: 1px solid var(--gray-200); background: var(--gray-100); }
-.luxury-footer img { width: 44px; height: 44px; border-radius: 50%; margin-bottom: 20px; filter: grayscale(100%); opacity: 0.4; }
-.luxury-footer p { font-size: 10px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 32px; font-weight: 500; }
+.luxury-footer { text-align: center; padding: 32px 24px 80px; }
+.luxury-footer img { width: 40px; height: 40px; border-radius: 50%; margin-bottom: 16px; filter: grayscale(100%); opacity: 0.3; }
+.luxury-footer p { font-size: 10px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 24px; font-weight: 500; }
 .footer-links { display: flex; justify-content: center; gap: 32px; }
-.footer-links a { color: var(--green); text-decoration: none; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.footer-links a { color: var(--gray-500); text-decoration: none; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
 
-/* PRODUCT SWIPER OVERLAY (FULLSCREEN DETAIL) */
-.product-swiper-overlay { position: fixed; inset: 0; background: var(--ivory); z-index: 500; display: flex; flex-direction: column; overflow: hidden; }
+/* PRODUCT SWIPER OVERLAY (FULLSCREEN INFINITE DETAIL) */
+.product-swiper-overlay { position: fixed; inset: 0; background: var(--gray-900); z-index: 500; display: flex; flex-direction: column; overflow: hidden; }
 .floating-close { position: fixed; top: 24px; left: 24px; z-index: 510; }
-.glass-btn { background: rgba(252,250,248,0.7); border: 1px solid rgba(255,255,255,0.9); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--green); cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: transform 0.2s; box-shadow: 0 4px 16px rgba(0,0,0,0.05); }
+.glass-btn { background: rgba(252,250,248,0.5); border: 1px solid rgba(255,255,255,0.6); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--green); cursor: pointer; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: transform 0.2s; box-shadow: 0 4px 16px rgba(0,0,0,0.05); }
 .glass-btn:active { transform: scale(0.9); }
 
-.product-swiper-track { display: flex; width: 100%; height: 100%; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: smooth; -ms-overflow-style: none; scrollbar-width: none; }
+.product-swiper-track { display: flex; width: 100vw; max-width: 480px; height: 100dvh; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; }
 .product-swiper-track::-webkit-scrollbar { display: none; }
-.product-slide { flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: start; overflow-y: auto; overflow-x: hidden; background: var(--ivory); position: relative; overscroll-behavior-y: contain; }
+.product-slide { flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: center; overflow-y: auto; overflow-x: hidden; background: var(--ivory); position: relative; overscroll-behavior-y: contain; }
 
 /* Detail Content Inside Slide */
 .detail-image-wrap { width: 100%; aspect-ratio: 1/1; background: var(--gray-100); }
@@ -94,21 +92,13 @@ h1, h2, h3, h4, .brand-name, .font-fraunces { font-family: 'Fraunces', serif; fo
 .detail-price { font-size: 18px; color: var(--gold); margin: 0 0 24px; font-family: 'Fraunces', serif; }
 .detail-desc { font-size: 15px; line-height: 1.7; color: var(--gray-900); margin-bottom: 40px; font-weight: 400; }
 
-/* DAFTAR BUAH */
-.section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray-500); margin-bottom: 16px; font-weight: 600; display: block; }
-.fruit-list { list-style: none; padding: 0; margin: 0 0 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.fruit-list li { font-size: 14px; color: var(--gray-900); display: flex; align-items: center; gap: 8px; font-weight: 500; }
-.fruit-list li::before { content: '•'; color: var(--gold); font-size: 20px; line-height: 1; }
-
-.detail-specs { border-top: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); padding: 24px 0; margin-bottom: 40px; }
-.detail-specs div { display: flex; justify-content: space-between; font-size: 14px; padding: 12px 0; }
-.detail-specs div span:first-child { color: var(--gray-500); font-weight: 500; }
-
-.spice-options { display: flex; gap: 12px; margin-bottom: 56px; }
-.spice-option { width: 48px; height: 48px; border: 1px solid var(--gray-200); background: transparent; border-radius: 50%; font-size: 15px; font-weight: 500; color: var(--gray-900); cursor: pointer; transition: all 0.3s ease; }
+/* RESTRUKTURISASI POSISI: TOMBOL TAMBAH DAN PEDAS DI ATAS */
+.spice-selector label { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-500); margin-bottom: 16px; font-weight: 600; }
+.spice-options { display: flex; gap: 12px; margin-bottom: 32px; }
+.spice-option { width: 44px; height: 44px; border: 1px solid var(--gray-200); background: transparent; border-radius: 50%; font-size: 15px; font-weight: 500; color: var(--gray-900); cursor: pointer; transition: all 0.3s ease; }
 .spice-option.active { background: var(--green); color: white; border-color: var(--green); box-shadow: 0 4px 12px rgba(10,58,42,0.2); }
 
-.detail-actions { display: flex; gap: 20px; margin-bottom: 64px; }
+.detail-actions { display: flex; gap: 20px; margin-bottom: 56px; }
 .qty-minimal { display: flex; align-items: center; border: 1px solid var(--gray-200); border-radius: 100px; padding: 6px; background: white; }
 .qty-minimal button { width: 40px; height: 40px; background: none; border: none; font-size: 20px; color: var(--gray-500); cursor: pointer; }
 .qty-minimal span { width: 28px; text-align: center; font-size: 15px; font-weight: 600; color: var(--green); }
@@ -116,12 +106,22 @@ h1, h2, h3, h4, .brand-name, .font-fraunces { font-family: 'Fraunces', serif; fo
 .btn-dark:active { transform: scale(0.98); box-shadow: 0 4px 12px rgba(10,58,42,0.2); }
 .btn-dark.full-width { width: 100%; padding: 22px; font-size: 16px; }
 
+/* DAFTAR BUAH & SPEK DI BAWAH TOMBOL */
+.section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray-500); margin-bottom: 16px; font-weight: 600; display: block; border-top: 1px solid var(--gray-200); padding-top: 40px; }
+.fruit-list { list-style: none; padding: 0; margin: 0 0 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.fruit-list li { font-size: 14px; color: var(--gray-900); display: flex; align-items: center; gap: 8px; font-weight: 500; }
+.fruit-list li::before { content: '•'; color: var(--gold); font-size: 20px; line-height: 1; }
+
+.detail-specs { border-bottom: 1px solid var(--gray-200); padding-bottom: 24px; margin-bottom: 40px; }
+.detail-specs div { display: flex; justify-content: space-between; font-size: 14px; padding: 12px 0; }
+.detail-specs div span:first-child { color: var(--gray-500); font-weight: 500; }
+
 .detail-manifesto { background: var(--green-light); padding: 32px 24px; border-radius: 16px; border: 1px solid rgba(10,58,42,0.05); }
 .detail-manifesto h4 { font-size: 14px; color: var(--green); margin-bottom: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
 .detail-manifesto p { font-size: 14px; line-height: 1.7; color: var(--green); opacity: 0.85; margin: 0; }
 
 /* BOTTOM NAV BAR (Dengan Tas Belanja) */
-.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 400; background: rgba(252,250,248,0.98); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); display: flex; justify-content: space-around; align-items: center; padding: 12px 0 max(12px, env(safe-area-inset-bottom)); border-top: 1px solid var(--gray-200); box-shadow: 0 -4px 20px rgba(0,0,0,0.02); }
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; max-width: 480px; margin: 0 auto; z-index: 400; background: rgba(252,250,248,0.98); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); display: flex; justify-content: space-around; align-items: center; padding: 16px 0 max(16px, env(safe-area-inset-bottom)); border-top: 1px solid var(--gray-200); box-shadow: 0 -4px 20px rgba(0,0,0,0.02); }
 .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--gray-400); font-size: 10px; font-weight: 600; gap: 6px; transition: color 0.2s; }
 .nav-item.active { color: var(--green); }
 .nav-cart-wrapper { position: relative; display: inline-block; }
@@ -150,6 +150,7 @@ h1, h2, h3, h4, .brand-name, .font-fraunces { font-family: 'Fraunces', serif; fo
 .input-minimal:focus { border-bottom-color: var(--gold); }
 .input-minimal::placeholder { color: var(--gray-400); font-weight: 400; }
 
+.gps-trigger { font-size: 13px; color: var(--gold); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; margin-top: -12px; margin-bottom: 28px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
 .minimal-dropdown { display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--gray-200); z-index: 10; max-height: 180px; overflow-y: auto; box-shadow: 0 12px 32px rgba(0,0,0,0.08); border-radius: 12px; margin-top: 4px; }
 .minimal-dropdown div { padding: 14px 20px; font-size: 14px; cursor: pointer; border-bottom: 1px solid var(--gray-100); transition: background 0.2s; }
 .minimal-dropdown div:hover { background: var(--green-light); color: var(--green); }
@@ -178,7 +179,7 @@ h1, h2, h3, h4, .brand-name, .font-fraunces { font-family: 'Fraunces', serif; fo
 .btn-gold-round { background: var(--gold); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 12px rgba(184,150,80,0.3); }
 .btn-gold-round:active { transform: scale(0.9); }
 
-#toast { position: fixed; top: 40px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--green); color: white; font-size: 14px; font-weight: 500; padding: 16px 32px; border-radius: 100px; z-index: 9999; opacity: 0; pointer-events: none; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 12px 32px rgba(10,58,42,0.2); }
+#toast { position: fixed; top: 100px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--green); color: white; font-size: 14px; font-weight: 500; padding: 16px 32px; border-radius: 100px; z-index: 9999; opacity: 0; pointer-events: none; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 12px 32px rgba(10,58,42,0.2); }
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 
