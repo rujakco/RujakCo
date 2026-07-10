@@ -53,32 +53,36 @@ h1, h2, h3, h4, .brand-name, .font-fraunces { font-family: 'Fraunces', serif; fo
 .header-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
 .brand-name { font-size: 18px; letter-spacing: -0.01em; color: var(--green); font-weight: 500; }
 
-/* HERO LANSKAP (4:2) BERBINGKAI */
+/* HERO — foto berbicara sendiri; sapaan pindah ke bawah sebagai keterangan,
+   bukan menumpuk di atas foto seperti aplikasi f&b pada umumnya. */
 .content-wrapper { padding-bottom: 96px; }
 .hero-editorial { padding: 24px 24px 0; }
-.hero-img-wrap { width: 100%; aspect-ratio: 4 / 2; position: relative; border-radius: 24px; overflow: hidden; box-shadow: 0 16px 40px rgba(10,58,42,0.08); }
-.hero-img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.03); transition: transform 0.8s ease-out; }
-.hero-editorial:hover .hero-img { transform: scale(1); }
-
-/* Overlay tunggal: satu garis sapaan (eyebrow) + satu judul. Gradasi diperhalus
-   agar transisi dari foto ke teks terasa senyap, bukan gelap tiba-tiba. */
-.hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 42%, rgba(10,58,42,0.55) 74%, rgba(10,58,42,0.92) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 40px 32px 36px; text-align: left; }
-.hero-eyebrow { display: block; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.72); margin-bottom: 14px; }
-.hero-eyebrow #heroNameDisplay { color: var(--gold); font-weight: 700; text-transform: none; letter-spacing: 0; }
-.hero-overlay h2 { font-size: 34px; line-height: 1.14; letter-spacing: -0.02em; color: var(--ivory); text-shadow: 0 4px 16px rgba(0,0,0,0.2); font-weight: 300; }
+.hero-img-wrap { width: 100%; aspect-ratio: 4 / 2; position: relative; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(10,58,42,0.06); }
+.hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 60%, rgba(10,58,42,0.62) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 32px; text-align: left; }
+.hero-overlay h2 { font-size: 32px; line-height: 1.15; letter-spacing: -0.01em; color: var(--ivory); font-weight: 300; }
 .hero-overlay h2 em { font-style: italic; color: var(--gold); font-weight: 400; }
 
-/* SISTEM CAROUSEL RAKSASA — item non-aktif tetap cukup terbaca (0.45, bukan 0.3)
-   supaya rak terasa terkurasi, bukan seperti render yang belum selesai. */
-.carousel-container { width: 100%; overflow: hidden; padding: 8px 0 48px; }
+/* Keterangan di bawah foto, seperti label dinding galeri. Garis emas tipis
+   ini adalah tanda tangan visual Rujak.Co — dipakai ulang di seluruh halaman
+   sebagai pemisah, bukan bayangan atau kotak. */
+.hairline { display: inline-block; width: 28px; height: 1px; background: var(--gold); vertical-align: middle; margin-right: 12px; }
+.hero-caption { padding: 18px 4px 0; display: flex; align-items: center; }
+.hero-caption-text { font-family: 'DM Sans', sans-serif; font-size: 12.5px; letter-spacing: 0.06em; color: var(--gray-500); }
+.hero-caption-text #heroNameDisplay { color: var(--green); font-weight: 600; }
+
+/* ETALASE — gerakan ditenangkan; kartu tidak lagi 'memantul', hanya beda
+   ketajaman fokus. Garis emas tipis di bawah nama menggantikan bayangan. */
+.carousel-container { width: 100%; overflow: hidden; padding: 8px 0 44px; }
 .carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; padding: 8px calc(50% - 160px) 0; align-items: center; gap: 24px; }
 .carousel-track::-webkit-scrollbar { display: none; }
-.boutique-item { flex: 0 0 320px; scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; text-decoration: none; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease, filter 0.6s ease; transform: scale(0.86); opacity: 0.45; filter: saturate(0.85); will-change: transform; }
-.boutique-item.active-center { transform: scale(1.04); opacity: 1; filter: saturate(1); z-index: 10; }
-.btq-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 20px; margin-bottom: 20px; background: var(--gray-100); box-shadow: 0 10px 28px rgba(10,58,42,0.06); transition: box-shadow 0.6s ease; }
-.boutique-item.active-center .btq-img { box-shadow: 0 22px 48px rgba(10,58,42,0.16); }
-.btq-name { font-family: 'Fraunces', serif; font-size: 24px; color: var(--green); margin-bottom: 4px; line-height: 1.2; font-weight: 400; }
-.btq-price { font-size: 15px; color: var(--gray-500); font-weight: 500; letter-spacing: 0.01em; }
+.boutique-item { flex: 0 0 320px; scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; text-decoration: none; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease; transform: scale(0.92); opacity: 0.55; will-change: transform; }
+.boutique-item.active-center { transform: scale(1); opacity: 1; z-index: 10; }
+.btq-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 12px; margin-bottom: 18px; background: var(--gray-100); }
+.btq-name { font-family: 'Fraunces', serif; font-size: 23px; color: var(--green); margin-bottom: 8px; line-height: 1.2; font-weight: 400; }
+.boutique-item .hairline { width: 16px; margin: 0 auto 8px; opacity: 0; transition: opacity 0.4s ease; }
+.boutique-item.active-center .hairline { opacity: 1; }
+.btq-price { font-size: 14.5px; color: var(--gray-500); font-weight: 500; letter-spacing: 0.02em; }
 
 /* FOOTER - DIPERKECIL AGAR TIDAK MENGAKAN MENU */
 .luxury-footer { text-align: center; padding: 24px 24px 60px; }
@@ -98,34 +102,33 @@ h1, h2, h3, h4, .brand-name, .font-fraunces { font-family: 'Fraunces', serif; fo
 .product-swiper-track::-webkit-scrollbar { display: none; }
 .product-slide { flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: center; overflow-y: auto; overflow-x: hidden; background: var(--ivory); position: relative; overscroll-behavior-y: contain; }
 
-/* Detail Content Inside Slide */
-.detail-image-wrap { width: 100%; aspect-ratio: 1/1; background: var(--gray-100); position: relative; }
+/* Detail Content Inside Slide — foto mengalir langsung ke teks, dijahit
+   dengan garis emas tipis, bukan lembar putih yang menumpuk ke atas foto. */
+.detail-image-wrap { width: 100%; aspect-ratio: 1/1; background: var(--gray-100); }
 .detail-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
-/* Vignette halus di dasar foto — jahitan antara foto dan lembar putih terasa
-   sengaja, bukan potongan tajam. */
-.detail-image-wrap::after { content: ''; position: absolute; inset: auto 0 0 0; height: 30%; background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.28) 100%); pointer-events: none; }
-.detail-content { padding: 40px 32px 72px; background: var(--ivory); position: relative; margin-top: -32px; border-radius: 32px 32px 0 0; box-shadow: 0 -12px 32px rgba(0,0,0,0.05); min-height: 60vh; }
-.detail-content h2 { font-size: 34px; color: var(--green); margin-bottom: 10px; font-weight: 400; letter-spacing: -0.02em; font-family: 'Fraunces', serif; }
-.detail-price { font-size: 19px; color: var(--gold); margin: 0 0 28px; font-family: 'Fraunces', serif; }
+.detail-content { padding: 28px 32px 72px; background: var(--ivory); position: relative; min-height: 60vh; }
+.detail-content .hairline { width: 28px; margin-bottom: 20px; }
+.detail-content h2 { font-size: 32px; color: var(--green); margin-bottom: 8px; font-weight: 400; letter-spacing: -0.01em; font-family: 'Fraunces', serif; }
+.detail-price { font-size: 18px; color: var(--gold); margin: 0 0 28px; font-family: 'Fraunces', serif; }
 .detail-desc { font-size: 16px; line-height: 1.7; color: var(--gray-900); margin-bottom: 44px; font-weight: 400; }
 
 /* 2-STEP ACTION FLOW */
 .action-area { margin-bottom: 56px; }
-.step-1-btn { width: 100%; padding: 22px; background: var(--green); color: white; border: none; border-radius: 100px; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 12px 32px rgba(10,58,42,0.2); }
-.step-1-btn:active { transform: scale(0.98); box-shadow: 0 4px 16px rgba(10,58,42,0.2); }
+.step-1-btn { width: 100%; padding: 22px; background: var(--green); color: white; border: none; border-radius: 100px; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.15s; box-shadow: 0 4px 14px rgba(10,58,42,0.14); }
+.step-1-btn:active { transform: scale(0.98); }
 
-.step-2-content { display: none; animation: fadeUp 0.4s ease forwards; background: white; padding: 24px; border-radius: 24px; box-shadow: 0 8px 32px rgba(10,58,42,0.06); border: 1px solid var(--gray-200); }
+.step-2-content { display: none; animation: fadeUp 0.4s ease forwards; background: white; padding: 24px; border-radius: 14px; border: 1px solid var(--gray-200); }
 .spice-selector label { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray-500); margin-bottom: 20px; font-weight: 600; }
 .spice-selector label .spice-current { text-transform: none; letter-spacing: 0; font-family: 'Fraunces', serif; font-size: 15px; color: var(--green); font-weight: 500; }
 .spice-options { display: flex; justify-content: space-between; margin-bottom: 28px; }
-.spice-option { width: 48px; height: 48px; border: 1px solid var(--gray-200); background: transparent; border-radius: 50%; font-size: 16px; font-weight: 500; color: var(--gray-900); cursor: pointer; transition: all 0.3s ease; }
-.spice-option.active { background: var(--green); color: white; border-color: var(--green); box-shadow: 0 8px 24px rgba(10,58,42,0.2); transform: scale(1.1); }
+.spice-option { width: 44px; height: 44px; border: 1px solid var(--gray-200); background: transparent; border-radius: 50%; font-size: 15px; font-weight: 500; color: var(--gray-900); cursor: pointer; transition: all 0.2s ease; }
+.spice-option.active { background: var(--green); color: white; border-color: var(--green); }
 
 .detail-actions { display: flex; gap: 16px; }
 .qty-minimal { display: flex; align-items: center; border: 1px solid var(--gray-200); border-radius: 100px; padding: 4px; background: var(--gray-100); }
 .qty-minimal button { width: 44px; height: 44px; background: none; border: none; font-size: 24px; color: var(--gray-500); cursor: pointer; }
 .qty-minimal span { width: 28px; text-align: center; font-size: 16px; font-weight: 600; color: var(--green); }
-.btn-dark { flex: 1; background: var(--green); color: white; border: none; border-radius: 100px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
+.btn-dark { flex: 1; background: var(--green); color: white; border: none; border-radius: 100px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.15s; }
 .btn-dark:active { transform: scale(0.98); }
 
 /* SPESIFIKASI MENGASING KE BAWAH */
@@ -138,9 +141,9 @@ h1, h2, h3, h4, .brand-name, .font-fraunces { font-family: 'Fraunces', serif; fo
 .detail-specs div { display: flex; justify-content: space-between; font-size: 15px; padding: 16px 0; }
 .detail-specs div span:first-child { color: var(--gray-500); font-weight: 500; }
 
-.detail-manifesto { background: var(--green-light); padding: 32px; border-radius: 24px; border: 1px solid rgba(10,58,42,0.05); }
-.detail-manifesto h4 { font-size: 14px; color: var(--green); margin-bottom: 16px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
-.detail-manifesto p { font-size: 15px; line-height: 1.8; color: var(--green); opacity: 0.85; margin: 0; }
+.detail-manifesto { background: var(--green-light); padding: 28px; border-radius: 14px; }
+.detail-manifesto h4 { font-size: 13px; color: var(--green); margin-bottom: 14px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.detail-manifesto p { font-size: 15px; line-height: 1.75; color: var(--green); opacity: 0.85; margin: 0; }
 
 /* BOTTOM NAV BAR */
 .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; max-width: 480px; margin: 0 auto; z-index: var(--z-nav); background: rgba(252,250,248,0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); display: flex; justify-content: space-around; align-items: center; padding: 14px 0 calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid rgba(0,0,0,0.05); }
