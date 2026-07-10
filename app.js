@@ -23,17 +23,17 @@
   const state = {
     cart: {}, drafts: {},
     customerName: '', customerPhone: '', customerAddress: '', selectedDistrict: '',
-    shippingProvider: 'rujakco', vehicleType: 'motor'
+    shippingProvider: 'rujakco', vehicleType: 'motor',
+    isPriority: false,
+    userDistance: null
   };
 
-  // MULTIPLIER UNTUK EFEK INFINITE LOOP (Diturunkan menjadi 5 agar memori HP aman dan stabil)
   const LOOP_MULTIPLIER = 5; 
   let loopedProducts = [];
   for(let i=0; i<LOOP_MULTIPLIER; i++) { loopedProducts = loopedProducts.concat(PRODUCTS); }
 
   let checkoutLocked = false, toastTimer = null;
 
-  // Inisialisasi draft memory untuk semua produk secara otomatis
   PRODUCTS.forEach(p => { state.drafts[p.id] = { spice: p.defaultSpice || 3, qty: 1 }; });
 
   function fmt(num) { return 'Rp' + num.toLocaleString('id-ID'); }
@@ -47,19 +47,23 @@
 
   function haversineDistance(lat1, lon1, lat2, lon2) { const R = 6371; const dLat = (lat2-lat1)*Math.PI/180; const dLon = (lon2-lon1)*Math.PI/180; const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2; return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); }
   function estimateRoadDistance(straightKm) { return Math.round(straightKm * (straightKm <= 10 ? 1.35 : straightKm <= 20 ? 1.30 : 1.20)); }
-  function getSupabase() { return window.supabase?.createClient ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null; }
+  function getSupabase() {
+    if (window.supabase?.createClient) return window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.warn('Supabase belum siap');
+    return null;
+  }
 
   // --- Onboarding & Personalisasi ---
   function applyPersonalization() {
     const name = state.customerName || 'Klien';
-    const headerGreeting = document.getElementById('headerGreeting');
-    if(headerGreeting) headerGreeting.textContent = `Koleksi Eksklusif, ${name}`;
+    const greetingEl = document.getElementById('greetingText');
+    if (greetingEl) greetingEl.textContent = `Selamat berbelanja, ${name}`;
     
     if(document.getElementById('customerName')) document.getElementById('customerName').value = name;
     if(document.getElementById('districtInput') && state.selectedDistrict) { document.getElementById('districtInput').value = state.selectedDistrict.replace(/\b\w/g, l=>l.toUpperCase()); }
     
     const aiWelcome = document.getElementById('aiWelcomeMsg');
-    if(aiWelcome) aiWelcome.textContent = `Selamat datang kembali, ${name}. Ada preferensi khusus yang Anda perlukan untuk pesanan hari ini?`;
+    if(aiWelcome) aiWelcome.textContent = `Selamat siang, ${name}. Ada yang dapat kami bantu untuk pesanan Anda?`;
     updateShippingUI();
   }
 
@@ -79,12 +83,15 @@
       document.getElementById('onbWelcomeDistrict').textContent = savedDistrict.replace(/\b\w/g, l=>l.toUpperCase());
     } else {
       document.getElementById('onbNewUser').style.display = 'block';
+      // Pastikan step1 aktif
+      const step1 = document.getElementById('onbStep1');
+      if (step1) step1.classList.add('active');
     }
 
     const onbName = document.getElementById('onbName'), onbNextBtn = document.getElementById('onbNextBtn'), onbStep1 = document.getElementById('onbStep1'), onbStep2 = document.getElementById('onbStep2'), onbDistrict = document.getElementById('onbDistrict'), onbDropdown = document.getElementById('onbDistrictDropdown'), onbStartBtn = document.getElementById('onbStartBtn');
     
     if(onbNextBtn) onbNextBtn.addEventListener('click', () => {
-      const nameVal = onbName.value.trim(); if(!nameVal) { showToast('Mohon masukkan nama Anda.'); return; }
+      const nameVal = onbName.value.trim(); if(!nameVal) { showToast('Mohon isi nama Anda.'); return; }
       state.customerName = nameVal; onbStep1.classList.remove('active'); setTimeout(() => { onbStep2.classList.add('active'); onbDistrict.focus(); }, 100);
     });
     
@@ -99,7 +106,7 @@
     });
     
     if(onbStartBtn) onbStartBtn.addEventListener('click', () => {
-      if(!state.selectedDistrict) { showToast('Mohon pilih destinasi kecamatan.'); return; }
+      if(!state.selectedDistrict) { showToast('Silakan pilih kecamatan tujuan.'); return; }
       try { localStorage.setItem('rj_client_name', state.customerName); localStorage.setItem('rj_client_district', state.selectedDistrict); } catch(e){}
       overlay.classList.add('hidden'); setTimeout(() => { overlay.style.display = 'none'; }, 600);
       applyPersonalization(); initScrollReveal();
@@ -114,6 +121,8 @@
       try { localStorage.removeItem('rj_client_name'); localStorage.removeItem('rj_client_district'); } catch(e){}
       document.getElementById('onbReturningUser').style.display = 'none';
       document.getElementById('onbNewUser').style.display = 'block';
+      const step1 = document.getElementById('onbStep1');
+      if (step1) step1.classList.add('active');
     });
   }
 
@@ -140,7 +149,7 @@
       let cost = dist<=3?8000:dist<=10?8000+(dist-3)*1800:dist<=20?20600+(dist-10)*1600:dist<=30?36600+(dist-20)*1400:50600+(dist-30)*1150;
       if (state.vehicleType === 'mobil') cost = dist<=3?24000:dist<=10?24000+(dist-3)*4500:dist<=20?55500+(dist-10)*4000:95500+(dist-20)*3500;
       if (state.isPriority) cost += 8000;
-      return { cost, label: state.vehicleType==='motor'?'Kurir Instan':'Secure Vault' };
+      return { cost, label: state.vehicleType==='motor'?'Motor':'Mobil' };
     }
   }
 
@@ -155,7 +164,7 @@
     document.getElementById('finalTotal').textContent = ship.cost ? fmt(sum.subtotal + ship.cost) : fmt(sum.subtotal);
   }
 
-  // --- RENDER 3D CAROUSEL HOMEPAGE (SAFE INFINITE LOOP) ---
+  // --- RENDER CAROUSEL ---
   function initCarousel() {
     const track = document.getElementById('menuList');
     if (!track) return;
@@ -183,7 +192,6 @@
         const currentIndex = Math.round(track.scrollLeft / itemWidth);
         const baseCount = PRODUCTS.length;
         
-        // Cek batasan loop
         if (currentIndex <= baseCount || currentIndex >= baseCount * (LOOP_MULTIPLIER - 2)) {
           const modulo = currentIndex % baseCount;
           const middleTarget = Math.floor(LOOP_MULTIPLIER / 2) * baseCount + modulo;
@@ -195,7 +203,6 @@
       }, 150);
     });
 
-    // Jalankan segera saat halaman dimuat
     setTimeout(() => { 
       track.style.scrollBehavior = 'auto';
       const midPoint = Math.floor(LOOP_MULTIPLIER / 2) * PRODUCTS.length; 
@@ -208,8 +215,6 @@
 
   function renderMenu() {
     const container = document.getElementById('menuList'); if (!container) return;
-    
-    // MURNI GALERI: MENGGUNAKAN ARRAY DUPLIKAT YANG AMAN
     container.innerHTML = loopedProducts.map((p, index) => `
       <div class="boutique-item" data-id="${p.id}" data-idx="${index}">
         <img src="${p.thumbnail}" class="btq-img" loading="lazy" alt="${p.name}">
@@ -217,11 +222,10 @@
         <span class="btq-price">${fmt(p.price)}</span>
       </div>
     `).join('');
-    
     initCarousel();
   }
 
-  // --- RENDER SWIPER FULLSCREEN DETAIL (PROGRESSIVE DISCLOSURE) ---
+  // --- RENDER SWIPER ---
   function renderProductSwiper() {
     const track = document.getElementById('productSwiperTrack');
     if(!track) return;
@@ -234,15 +238,14 @@
           <p class="detail-price">${fmt(p.price)}</p>
           <p class="detail-desc">${p.desc}</p>
           
-          <!-- PROGRESSIVE DISCLOSURE ACTION AREA -->
           <div class="action-area">
             <div id="step1_${index}_${p.id}" class="action-step-1">
-              <button class="step-1-btn btn-lanjutkan" data-idx="${index}" data-pid="${p.id}">Lanjutkan Pilihan</button>
+              <button class="step-1-btn btn-lanjutkan" data-idx="${index}" data-pid="${p.id}">Pilih Sajian Ini</button>
             </div>
             
             <div id="step2_${index}_${p.id}" class="step-2-content">
               <div class="spice-selector">
-                <label>Intensitas Pedas Pilihan</label>
+                <label>Tingkat Pedas</label>
                 <div class="spice-options" id="spice_${index}_${p.id}">
                   ${[1,2,3,4,5].map(i => `<button class="spice-option ${i===(state.drafts[p.id].spice)?'active':''}" data-spice="${i}" data-pid="${p.id}">${i}</button>`).join('')}
                 </div>
@@ -253,13 +256,12 @@
                   <span class="qty-num" data-valpid="${p.id}">${state.drafts[p.id].qty}</span>
                   <button class="qty-plus" data-pid="${p.id}">+</button>
                 </div>
-                <button class="btn-dark add-to-cart-btn" data-pid="${p.id}" data-idx="${index}">Konfirmasi</button>
+                <button class="btn-dark add-to-cart-btn" data-pid="${p.id}" data-idx="${index}">Tambahkan ke Keranjang</button>
               </div>
             </div>
           </div>
 
-          <!-- LAINNYA MENYINGKIR DI BAWAH -->
-          <label class="section-label">Kurasi Buah</label>
+          <label class="section-label">Komposisi Buah</label>
           <ul class="fruit-list">
             ${p.buah.map(b => `<li>${b}</li>`).join('')}
           </ul>
@@ -271,7 +273,7 @@
           </div>
           
           <div class="detail-manifesto">
-            <h4><i data-lucide="shield-check" class="w-4 h-4 inline" style="margin-bottom:-2px;"></i> Filosofi Fresh-Prep</h4>
+            <h4><i data-lucide="shield-check" class="w-4 h-4 inline" style="margin-bottom:-2px;"></i> Komitmen Kesegaran</h4>
             <p>Kerenyahan adalah prioritas. Kami memotong buah tepat 15 menit sebelum diberangkatkan. Sambal dikemas terpisah.</p>
           </div>
         </div>
@@ -279,7 +281,6 @@
     `).join('');
     if(window.lucide) window.lucide.createIcons();
 
-    // Logika Infinite Loop untuk Swiper Detail
     let isScrollingDetail;
     track.addEventListener('scroll', () => {
       window.clearTimeout(isScrollingDetail);
@@ -310,7 +311,7 @@
   function renderMiniCart() {
     const sum = getCartSummary();
     const list = document.getElementById('miniCartList');
-    list.innerHTML = sum.items.length === 0 ? '<p style="text-align:center; color:var(--gray-500); padding:32px 0;">Tas belanja Anda kosong.</p>' : sum.items.map(i => `
+    list.innerHTML = sum.items.length === 0 ? '<p style="text-align:center; color:var(--gray-500); padding:32px 0;">Keranjang Anda kosong.</p>' : sum.items.map(i => `
       <div class="cart-item-row">
         <div class="cart-item-info">
           <h4>${i.name}${i.spice?' (Lv '+i.spice+')':''}</h4>
@@ -330,15 +331,14 @@
 
   function updateUI() { try{localStorage.setItem('rj_crt_v7', JSON.stringify(state.cart));}catch(e){} renderCart(); if(document.getElementById('miniCartModal')?.classList.contains('active')) renderMiniCart(); }
 
-  // --- Buka Halaman Detail (Langsung Jump ke Index yang Sama di Swiper) ---
+  // --- Buka Halaman Detail ---
   function openProductPage(globalIndex) {
     document.getElementById('productPage').style.display = 'flex';
     document.body.style.overflow = 'hidden'; 
-    
     const targetSlide = document.querySelector(`.product-slide[data-idx="${globalIndex}"]`);
     if(targetSlide) { 
       const track = document.getElementById('productSwiperTrack');
-      track.style.scrollBehavior = 'auto'; // Matikan animasi agar instan masuk
+      track.style.scrollBehavior = 'auto';
       track.scrollLeft = targetSlide.offsetLeft;
       track.style.scrollBehavior = 'smooth';
     }
@@ -349,7 +349,7 @@
     document.body.style.overflow = '';
   }
 
-  // --- Gestur: Tarik Layar ke Bawah untuk Tutup ---
+  // --- Gestur: Tarik ke Bawah untuk Tutup ---
   function initSwipeToClose() {
     const overlay = document.getElementById('productPage');
     let startY = 0, startX = 0, isPulling = false, activeSlide = null;
@@ -364,9 +364,7 @@
     overlay.addEventListener('touchmove', e => {
       if(!isPulling || !activeSlide) return;
       const dy = e.touches[0].clientY - startY; const dx = e.touches[0].clientX - startX;
-      // Jangan tarik ke bawah jika pengguna menggeser ke samping (swipe kiri/kanan antar produk)
       if (Math.abs(dx) > Math.abs(dy)) { isPulling = false; activeSlide.style.transform = 'translateY(0)'; return; }
-
       if (isPulling === 'down' && dy > 0) {
         activeSlide.style.transform = `translateY(${dy * 0.4}px)`;
         if(e.cancelable) e.preventDefault(); 
@@ -393,7 +391,7 @@
       const txt = input.value.trim(); if(!txt) return;
       messages.innerHTML += `<div class="msg-user"><span>${escapeHTML(txt)}</span></div>`;
       input.value = ''; messages.scrollTop = messages.scrollHeight;
-      setTimeout(() => { messages.innerHTML += `<div class="msg-bot" style="margin-bottom:12px;"><span>Pesan Anda telah kami terima. Pramutamu kami akan membalas segera.</span></div>`; messages.scrollTop = messages.scrollHeight; }, 800);
+      setTimeout(() => { messages.innerHTML += `<div class="msg-bot" style="margin-bottom:12px;"><span>Pesan Anda telah kami terima. Tim kami akan segera merespons.</span></div>`; messages.scrollTop = messages.scrollHeight; }, 800);
     };
     if(send) send.addEventListener('click', processMsg);
     if(input) input.addEventListener('keydown', e => { if(e.key === 'Enter') processMsg(); });
@@ -407,10 +405,10 @@
     document.getElementById('miniCartClose')?.addEventListener('click', () => { document.getElementById('miniCartModal').classList.remove('active'); document.body.style.overflow=''; });
 
     const di = document.getElementById('districtInput'), dm = document.getElementById('customDistrictDropdown');
-    if(di) di.addEventListener('input', e => {
-      const v = e.target.value.toLowerCase(), m = Object.keys(DISTRICT_MAP).filter(k => k.includes(v));
-      if(dm) { dm.style.display = 'block'; dm.innerHTML = m.map(k => `<div data-val="${k}">${k.replace(/\b\w/g, l=>l.toUpperCase())}</div>`).join(''); }
-    });
+    if (di) {
+      // Hapus event listener input karena readonly, tapi kita bisa tambahkan dropdown jika diubah menjadi tidak readonly
+      // Untuk sekarang, kita biarkan saja
+    }
     if(dm) dm.addEventListener('click', e => {
       const v = e.target.closest('div[data-val]')?.dataset.val; if(!v) return;
       state.selectedDistrict = v; dm.style.display = 'none'; if(di) di.value = v.replace(/\b\w/g, l=>l.toUpperCase());
@@ -455,7 +453,10 @@
         const cartKey = pid + '_spice' + draft.spice;
         if(!state.cart[cartKey]) state.cart[cartKey] = {qty: 0, spice: draft.spice};
         state.cart[cartKey].qty += draft.qty;
-        updateUI(); showToast('Sajian tersimpan di Tas Belanja.');
+        // Reset draft qty
+        state.drafts[pid].qty = 1;
+        document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = 1);
+        updateUI(); showToast('Sajian telah ditambahkan ke keranjang.');
         closeProductPage();
         
         setTimeout(() => {
@@ -478,7 +479,7 @@
 
       if(e.target.id === 'btnOpenPayment') {
         const name = document.getElementById('customerName')?.value.trim(), phone = document.getElementById('customerPhone')?.value.trim(), address = document.getElementById('customerAddress')?.value.trim();
-        if(!name || !phone || !address || (!state.selectedDistrict && !state.userDistance)) { showToast('Mohon lengkapi formulir pengiriman.'); return; }
+        if(!name || !phone || !address || (!state.selectedDistrict && !state.userDistance)) { showToast('Mohon lengkapi data penerima.'); return; }
         state.customerPhone = phone; state.customerAddress = address; 
         document.getElementById('paymentTotalDisplay').textContent = document.getElementById('finalTotal').textContent;
         document.getElementById('paymentModal').classList.add('active');
@@ -499,11 +500,10 @@
         sum.items.forEach(i => msg += `- ${i.name} ${i.spice?'(Lv '+i.spice+')':''} x${i.qty}\n`);
         msg += `\nSajian: ${fmt(sum.subtotal)}\nLogistik: ${fmt(ship.cost)}\n*TOTAL: ${fmt(sum.subtotal + (ship.cost||0))}*\n\n(Mohon lampirkan struk validasi QRIS)`;
         
-        getSupabase().then(client => {
-          if(client) {
-            client.from('orders').insert([{ order_id: orderId, customer_name: state.customerName, customer_phone: state.customerPhone, customer_address: state.customerAddress, items: sum.items, total: sum.subtotal + (ship.cost || 0), status: 'pending' }]).then(({error}) => { if (error) console.error(error); });
-          }
-        });
+        const client = getSupabase();
+        if(client) {
+          client.from('orders').insert([{ order_id: orderId, customer_name: state.customerName, customer_phone: state.customerPhone, customer_address: state.customerAddress, items: sum.items, total: sum.subtotal + (ship.cost || 0), status: 'pending' }]).then(({error}) => { if (error) console.error(error); });
+        }
 
         setTimeout(() => {
           checkoutLocked = false;
@@ -518,6 +518,15 @@
       if(e.target.id === 'aiChatClose') { document.getElementById('aiChatBox').classList.remove('active'); }
     });
   }
+
+  // --- Tambahan: Konfirmasi sebelum meninggalkan halaman ---
+  window.addEventListener('beforeunload', function (e) {
+    const hasCart = Object.keys(state.cart).length > 0;
+    if (hasCart) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
 
   function init() {
     try { const s = localStorage.getItem('rj_crt_v7'); if(s) state.cart = JSON.parse(s); } catch(e){}
