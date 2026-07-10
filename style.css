@@ -48,12 +48,14 @@ p { line-height: 1.8; }
 .btn-text-gold { background: none; border: none; color: var(--gold); font-size: 13px; margin-top: 32px; cursor: pointer; text-decoration: underline; text-underline-offset: 6px; font-weight: 500; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-/* HEADER */
-.luxury-header { position: sticky; top: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; z-index: 100; background: transparent; pointer-events: none; }
+/* HEADER STICKY TRANSLUCENT */
+.luxury-header { position: sticky; top: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; z-index: 100; background: transparent; pointer-events: none; transition: background 0.3s ease, backdrop-filter 0.3s ease; }
+.luxury-header.scrolled { background: rgba(253,251,247,0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid rgba(0,0,0,0.05); }
 .luxury-header .brand-logo, .luxury-header .header-center { pointer-events: auto; }
 .brand-logo img { width: 32px; height: 32px; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
 .header-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
-.brand-name { font-size: 18px; letter-spacing: -0.01em; color: white; font-weight: 500; text-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+.brand-name { font-size: 18px; letter-spacing: -0.01em; color: white; font-weight: 500; text-shadow: 0 2px 12px rgba(0,0,0,0.3); transition: color 0.3s ease, text-shadow 0.3s ease; }
+.luxury-header.scrolled .brand-name { color: var(--green); text-shadow: none; }
 
 /* HERO */
 .content-wrapper { padding-bottom: 80px; overflow-x: hidden; }
@@ -89,7 +91,7 @@ p { line-height: 1.8; }
 .boutique-item .hairline { width: 24px; margin: 6px auto 10px; }
 .btq-price { font-size: 14px; color: var(--gray-500); font-weight: 500; letter-spacing: 0.02em; }
 
-/* FOOTER RATA TENGAH (CENTERED ELEGANT) */
+/* FOOTER RATA TENGAH */
 .luxury-footer { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 48px 24px 96px; border-top: 1px solid var(--gray-200); background: var(--ivory); margin-top: 16px; }
 .footer-grid { display: flex; flex-direction: column; align-items: center; gap: 24px; margin-bottom: 32px; width: 100%; }
 .footer-brand { display: flex; flex-direction: column; align-items: center; gap: 12px; }
