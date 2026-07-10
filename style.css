@@ -97,6 +97,7 @@ p { line-height: 1.8; }
 .hero-img-wrap { width: 100%; aspect-ratio: 4 / 3; position: relative; border-radius: 0 0 32px 32px; overflow: hidden; box-shadow: 0 12px 40px rgba(10,58,42,0.15); }
 .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
+/* Teks Turun 45px (Padding bawah dikurangi drastis dari 72px menjadi 27px) */
 .hero-overlay { 
   position: absolute; 
   inset: 0; 
@@ -104,7 +105,7 @@ p { line-height: 1.8; }
   display: flex; 
   flex-direction: column; 
   justify-content: flex-end; 
-  padding: 32px 32px 72px; /* Pad bawah lebih besar (72px) agar teks Asam Pedas naik ke atas */
+  padding: 32px 32px 27px; /* Teks turun mendekati garis batas bawah */
   text-align: left; 
 }
 .hero-overlay h2 { font-size: 32px; line-height: 1.15; letter-spacing: -0.01em; color: var(--ivory); font-weight: 300; text-shadow: 0 2px 20px rgba(0,0,0,0.2); }
@@ -131,29 +132,44 @@ p { line-height: 1.8; }
 }
 .hero-caption-text #heroNameDisplay { color: var(--gold); font-weight: 600; }
 
-/* CAROUSEL TURUN 40PX */
+/* CAROUSEL & TATA LETAK MENU TENGAH */
 .carousel-container { 
   width: 100%; 
   overflow: hidden; 
   padding: 12px 0 40px; 
-  margin-top: 40px; /* Menurunkan carousel sejauh 40px dari hero */
+  margin-top: 40px; 
 }
-.carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; padding: 0 10%; gap: 20px; }
+
+/* Padding track disejajarkan presisi dengan Hero margin (24px) */
+.carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; padding: 0 24px; gap: 20px; }
 .carousel-track::-webkit-scrollbar { display: none; }
 
+/* Lebar kartu Carousel kini 100% selebar area hero (100% minus 48px padding layar) */
 .boutique-item { 
-  flex: 0 0 80%; max-width: 320px; scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; text-decoration: none; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease; transform: scale(0.9); opacity: 0.4; will-change: transform; 
+  flex: 0 0 calc(100% - 48px); 
+  max-width: 432px; 
+  scroll-snap-align: center; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  text-align: center; 
+  cursor: pointer; 
+  text-decoration: none; 
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease; 
+  transform: scale(0.9); 
+  opacity: 0.4; 
+  will-change: transform; 
 }
 .boutique-item.active-center { transform: scale(1); opacity: 1; z-index: 10; }
 
-.btq-img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 20px; margin-bottom: 12px; background: var(--gray-100); border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 20px 40px rgba(8, 46, 33, 0.08); }
+/* Tinggi gambar dikunci di 320px agar ukuran fisik tidak mengecil */
+.btq-img { width: 100%; height: 320px; object-fit: cover; border-radius: 20px; margin-bottom: 12px; background: var(--gray-100); border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 20px 40px rgba(8, 46, 33, 0.08); }
 
-/* WADAH TEKS DAN GARIS HARGA YANG PRESISI */
 .btq-text-container {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  width: max-content; /* Memaksa kotak selebar teks judul rujak */
+  width: max-content; 
   margin: 0 auto;
   opacity: 0; 
   transform: translateY(12px); 
@@ -175,18 +191,17 @@ p { line-height: 1.8; }
   text-align: center;
 }
 
-/* Pembungkus Harga dengan Garis Emas (Flanking Lines) */
 .btq-price-wrap {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%; /* Memastikan wrapper harga membentang penuh di bawah judul */
+  width: 100%; 
   gap: 12px;
 }
 .btq-price-wrap::before, .btq-price-wrap::after {
   content: '';
-  flex: 1 1 0%; /* Memaksa garis mengisi ruang sisa */
-  min-width: 16px; /* Memberikan panjang minimum agar garis pasti muncul */
+  flex: 1 1 0%; 
+  min-width: 16px; 
   height: 1px;
   background: var(--gold);
   opacity: 0.5;
@@ -199,8 +214,42 @@ p { line-height: 1.8; }
   white-space: nowrap; 
 }
 
-/* FOOTER RATA TENGAH */
-.luxury-footer { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 48px 24px 96px; border-top: 1px solid var(--gray-200); background: var(--ivory); margin-top: 64px; }
+/* FOOTER RATA TENGAH DENGAN MONOGRAM EMAS ACAK */
+.luxury-footer { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  text-align: center; 
+  padding: 48px 24px 96px; 
+  border-top: 1px solid var(--gray-200); 
+  background-color: var(--ivory); 
+  margin-top: 64px; 
+  position: relative; 
+  overflow: hidden; 
+}
+
+/* Pseudo-element Pattern Monogram Rujak.Co (Gold Sangat Tipis) */
+.luxury-footer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    url('https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp'),
+    url('https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp'),
+    url('https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp');
+  /* Tiga ukuran berbeda untuk efek random scatter */
+  background-size: 80px 80px, 40px 40px, 60px 60px;
+  background-position: 0 0, 30px 50px, 80px 20px;
+  background-repeat: repeat;
+  opacity: 0.03; /* Warna sangat pucat tipis */
+  /* Efek filter untuk mencetak nuansa keemasan */
+  filter: sepia(1) hue-rotate(10deg) saturate(3) brightness(0.9);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.footer-grid, .footer-copy { position: relative; z-index: 1; }
+
 .footer-grid { display: flex; flex-direction: column; align-items: center; gap: 24px; margin-bottom: 32px; width: 100%; }
 .footer-brand { display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .footer-brand img { width: 32px; height: 32px; border-radius: 50%; filter: grayscale(100%); opacity: 0.3; }
@@ -268,10 +317,10 @@ p { line-height: 1.8; }
   bottom: 0; 
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - 48px); /* Lebar identik dengan header */
-  max-width: 432px; /* Lebar maksimal identik dengan header */
+  width: calc(100% - 48px); 
+  max-width: 432px; 
   z-index: var(--z-nav); 
-  background: rgba(197, 160, 89, 0.08); /* Emas tipis dan lembut */
+  background: rgba(197, 160, 89, 0.08); 
   backdrop-filter: blur(16px) saturate(120%); 
   -webkit-backdrop-filter: blur(16px) saturate(120%); 
   display: flex; 
@@ -279,7 +328,7 @@ p { line-height: 1.8; }
   align-items: center; 
   padding: 14px 0 calc(14px + env(safe-area-inset-bottom)); 
   border-top: 1px solid rgba(197, 160, 89, 0.25); 
-  border-radius: 16px 16px 0 0; /* Lengkungan sudut atas, simetris dengan header */
+  border-radius: 16px 16px 0 0; 
 }
 .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--gray-400); font-size: 10px; font-weight: 600; gap: 6px; transition: color 0.2s; }
 .nav-item.active { color: var(--green); }
