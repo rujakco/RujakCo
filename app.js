@@ -2,7 +2,7 @@
   'use strict';
 
   // ============================================================
-  // RUJAK.CO — ULTIMATE SILENT LUXURY ENGINE (2-STEP DETAIL)
+  // RUJAK.CO — ULTIMATE SILENT LUXURY ENGINE (STABLE & PROGRESSIVE)
   // ============================================================
 
   const SUPABASE_URL = "https://ghhnnfrmftttptcejizp.supabase.co";
@@ -26,11 +26,14 @@
     shippingProvider: 'rujakco', vehicleType: 'motor'
   };
 
-  const LOOP_MULTIPLIER = 50; 
+  // MULTIPLIER UNTUK EFEK INFINITE LOOP (Diturunkan menjadi 5 agar memori HP aman dan stabil)
+  const LOOP_MULTIPLIER = 5; 
   let loopedProducts = [];
   for(let i=0; i<LOOP_MULTIPLIER; i++) { loopedProducts = loopedProducts.concat(PRODUCTS); }
 
   let checkoutLocked = false, toastTimer = null;
+
+  // Inisialisasi draft memory untuk semua produk secara otomatis
   PRODUCTS.forEach(p => { state.drafts[p.id] = { spice: p.defaultSpice || 3, qty: 1 }; });
 
   function fmt(num) { return 'Rp' + num.toLocaleString('id-ID'); }
@@ -49,23 +52,24 @@
   // --- Onboarding & Personalisasi ---
   function applyPersonalization() {
     const name = state.customerName || 'Klien';
-    document.getElementById('headerGreeting').textContent = `Koleksi Eksklusif, ${name}`;
-    const heroGreet = document.getElementById('heroGreeting');
-    if(heroGreet) heroGreet.innerHTML = `Asem, Pedes,<br><em>Manis, Seger.</em>`;
-    const heroSub = document.getElementById('heroSubGreeting');
-    if(heroSub) heroSub.textContent = `Kurasi buah Nusantara untuk Anda, ${name}.`;
+    const headerGreeting = document.getElementById('headerGreeting');
+    if(headerGreeting) headerGreeting.textContent = `Koleksi Eksklusif, ${name}`;
     
     if(document.getElementById('customerName')) document.getElementById('customerName').value = name;
     if(document.getElementById('districtInput') && state.selectedDistrict) { document.getElementById('districtInput').value = state.selectedDistrict.replace(/\b\w/g, l=>l.toUpperCase()); }
     
     const aiWelcome = document.getElementById('aiWelcomeMsg');
-    if(aiWelcome) aiWelcome.textContent = `Selamat datang kembali, ${name}. Ada preferensi khusus yang bisa saya bantu hari ini?`;
+    if(aiWelcome) aiWelcome.textContent = `Selamat datang kembali, ${name}. Ada preferensi khusus yang Anda perlukan untuk pesanan hari ini?`;
     updateShippingUI();
   }
 
   function initOnboarding() {
     const overlay = document.getElementById('onboardingOverlay');
-    const savedName = localStorage.getItem('rj_client_name'), savedDistrict = localStorage.getItem('rj_client_district');
+    let savedName = null, savedDistrict = null;
+    try {
+      savedName = localStorage.getItem('rj_client_name');
+      savedDistrict = localStorage.getItem('rj_client_district');
+    } catch(e) {}
     
     if (savedName && savedDistrict) {
       state.customerName = savedName; state.selectedDistrict = savedDistrict;
@@ -80,7 +84,7 @@
     const onbName = document.getElementById('onbName'), onbNextBtn = document.getElementById('onbNextBtn'), onbStep1 = document.getElementById('onbStep1'), onbStep2 = document.getElementById('onbStep2'), onbDistrict = document.getElementById('onbDistrict'), onbDropdown = document.getElementById('onbDistrictDropdown'), onbStartBtn = document.getElementById('onbStartBtn');
     
     if(onbNextBtn) onbNextBtn.addEventListener('click', () => {
-      const nameVal = onbName.value.trim(); if(!nameVal) { showToast('Mohon isi nama Anda.'); return; }
+      const nameVal = onbName.value.trim(); if(!nameVal) { showToast('Mohon masukkan nama Anda.'); return; }
       state.customerName = nameVal; onbStep1.classList.remove('active'); setTimeout(() => { onbStep2.classList.add('active'); onbDistrict.focus(); }, 100);
     });
     
@@ -95,8 +99,8 @@
     });
     
     if(onbStartBtn) onbStartBtn.addEventListener('click', () => {
-      if(!state.selectedDistrict) { showToast('Mohon pilih kecamatan pengantaran.'); return; }
-      localStorage.setItem('rj_client_name', state.customerName); localStorage.setItem('rj_client_district', state.selectedDistrict);
+      if(!state.selectedDistrict) { showToast('Mohon pilih destinasi kecamatan.'); return; }
+      try { localStorage.setItem('rj_client_name', state.customerName); localStorage.setItem('rj_client_district', state.selectedDistrict); } catch(e){}
       overlay.classList.add('hidden'); setTimeout(() => { overlay.style.display = 'none'; }, 600);
       applyPersonalization(); initScrollReveal();
     });
@@ -107,7 +111,7 @@
     });
 
     document.getElementById('onbResetBtn')?.addEventListener('click', () => {
-      localStorage.removeItem('rj_client_name'); localStorage.removeItem('rj_client_district');
+      try { localStorage.removeItem('rj_client_name'); localStorage.removeItem('rj_client_district'); } catch(e){}
       document.getElementById('onbReturningUser').style.display = 'none';
       document.getElementById('onbNewUser').style.display = 'block';
     });
@@ -151,9 +155,11 @@
     document.getElementById('finalTotal').textContent = ship.cost ? fmt(sum.subtotal + ship.cost) : fmt(sum.subtotal);
   }
 
+  // --- RENDER 3D CAROUSEL HOMEPAGE (SAFE INFINITE LOOP) ---
   function initCarousel() {
     const track = document.getElementById('menuList');
     if (!track) return;
+
     const updateCenter = () => {
       const items = track.querySelectorAll('.boutique-item');
       if(!items.length) return;
@@ -172,21 +178,24 @@
       requestAnimationFrame(updateCenter);
       window.clearTimeout(isScrolling);
       isScrolling = setTimeout(() => {
-        const itemWidth = track.children[0].offsetWidth + 32;
+        const itemWidth = track.children[0]?.offsetWidth ? track.children[0].offsetWidth + 32 : 0;
+        if(itemWidth === 0) return;
         const currentIndex = Math.round(track.scrollLeft / itemWidth);
         const baseCount = PRODUCTS.length;
-        if (currentIndex < baseCount * 10 || currentIndex > baseCount * 40) {
+        
+        // Cek batasan loop
+        if (currentIndex <= baseCount || currentIndex >= baseCount * (LOOP_MULTIPLIER - 2)) {
           const modulo = currentIndex % baseCount;
           const middleTarget = Math.floor(LOOP_MULTIPLIER / 2) * baseCount + modulo;
           const targetItem = track.children[middleTarget];
           if(targetItem) {
-            const centerPos = targetItem.offsetLeft - (track.clientWidth / 2) + (targetItem.clientWidth / 2);
-            track.scrollTo({ left: centerPos, behavior: 'instant' });
+            track.scrollTo({ left: targetItem.offsetLeft - (track.clientWidth / 2) + (targetItem.clientWidth / 2), behavior: 'instant' });
           }
         }
       }, 150);
     });
 
+    // Jalankan segera saat halaman dimuat
     setTimeout(() => { 
       track.style.scrollBehavior = 'auto';
       const midPoint = Math.floor(LOOP_MULTIPLIER / 2) * PRODUCTS.length; 
@@ -199,8 +208,8 @@
 
   function renderMenu() {
     const container = document.getElementById('menuList'); if (!container) return;
-    document.getElementById('emptyState').style.display = loopedProducts.length ? 'none' : 'block';
     
+    // MURNI GALERI: MENGGUNAKAN ARRAY DUPLIKAT YANG AMAN
     container.innerHTML = loopedProducts.map((p, index) => `
       <div class="boutique-item" data-id="${p.id}" data-idx="${index}">
         <img src="${p.thumbnail}" class="btq-img" loading="lazy" alt="${p.name}">
@@ -212,7 +221,7 @@
     initCarousel();
   }
 
-  // --- RENDER SWIPER (TWO-STEP ACTION & REORDERED LAYOUT) ---
+  // --- RENDER SWIPER FULLSCREEN DETAIL (PROGRESSIVE DISCLOSURE) ---
   function renderProductSwiper() {
     const track = document.getElementById('productSwiperTrack');
     if(!track) return;
@@ -228,12 +237,12 @@
           <!-- PROGRESSIVE DISCLOSURE ACTION AREA -->
           <div class="action-area">
             <div id="step1_${index}_${p.id}" class="action-step-1">
-              <button class="step-1-btn btn-lanjutkan" data-idx="${index}" data-pid="${p.id}">Lanjutkan</button>
+              <button class="step-1-btn btn-lanjutkan" data-idx="${index}" data-pid="${p.id}">Lanjutkan Pilihan</button>
             </div>
             
             <div id="step2_${index}_${p.id}" class="step-2-content">
               <div class="spice-selector">
-                <label>Intensitas Pedas</label>
+                <label>Intensitas Pedas Pilihan</label>
                 <div class="spice-options" id="spice_${index}_${p.id}">
                   ${[1,2,3,4,5].map(i => `<button class="spice-option ${i===(state.drafts[p.id].spice)?'active':''}" data-spice="${i}" data-pid="${p.id}">${i}</button>`).join('')}
                 </div>
@@ -250,7 +259,7 @@
           </div>
 
           <!-- LAINNYA MENYINGKIR DI BAWAH -->
-          <label class="section-label">Komposisi Buah</label>
+          <label class="section-label">Kurasi Buah</label>
           <ul class="fruit-list">
             ${p.buah.map(b => `<li>${b}</li>`).join('')}
           </ul>
@@ -263,22 +272,24 @@
           
           <div class="detail-manifesto">
             <h4><i data-lucide="shield-check" class="w-4 h-4 inline" style="margin-bottom:-2px;"></i> Filosofi Fresh-Prep</h4>
-            <p>Kerenyahan adalah prioritas utama. Kami memotong buah tepat 15 menit sebelum diberangkatkan.</p>
+            <p>Kerenyahan adalah prioritas. Kami memotong buah tepat 15 menit sebelum diberangkatkan. Sambal dikemas terpisah.</p>
           </div>
         </div>
       </div>
     `).join('');
     if(window.lucide) window.lucide.createIcons();
 
+    // Logika Infinite Loop untuk Swiper Detail
     let isScrollingDetail;
     track.addEventListener('scroll', () => {
       window.clearTimeout(isScrollingDetail);
       isScrollingDetail = setTimeout(() => {
         const itemWidth = track.clientWidth;
+        if(itemWidth === 0) return;
         const currentIndex = Math.round(track.scrollLeft / itemWidth);
         const baseCount = PRODUCTS.length;
         
-        if (currentIndex < baseCount * 10 || currentIndex > baseCount * 40) {
+        if (currentIndex <= baseCount || currentIndex >= baseCount * (LOOP_MULTIPLIER - 2)) {
           const modulo = currentIndex % baseCount;
           const middleTarget = Math.floor(LOOP_MULTIPLIER / 2) * baseCount + modulo;
           const targetItem = track.children[middleTarget];
@@ -299,7 +310,7 @@
   function renderMiniCart() {
     const sum = getCartSummary();
     const list = document.getElementById('miniCartList');
-    list.innerHTML = sum.items.length === 0 ? '<p style="text-align:center; color:var(--gray-500); padding:32px 0;">Tas belanja kosong.</p>' : sum.items.map(i => `
+    list.innerHTML = sum.items.length === 0 ? '<p style="text-align:center; color:var(--gray-500); padding:32px 0;">Tas belanja Anda kosong.</p>' : sum.items.map(i => `
       <div class="cart-item-row">
         <div class="cart-item-info">
           <h4>${i.name}${i.spice?' (Lv '+i.spice+')':''}</h4>
@@ -319,13 +330,15 @@
 
   function updateUI() { try{localStorage.setItem('rj_crt_v7', JSON.stringify(state.cart));}catch(e){} renderCart(); if(document.getElementById('miniCartModal')?.classList.contains('active')) renderMiniCart(); }
 
+  // --- Buka Halaman Detail (Langsung Jump ke Index yang Sama di Swiper) ---
   function openProductPage(globalIndex) {
     document.getElementById('productPage').style.display = 'flex';
     document.body.style.overflow = 'hidden'; 
+    
     const targetSlide = document.querySelector(`.product-slide[data-idx="${globalIndex}"]`);
     if(targetSlide) { 
       const track = document.getElementById('productSwiperTrack');
-      track.style.scrollBehavior = 'auto'; 
+      track.style.scrollBehavior = 'auto'; // Matikan animasi agar instan masuk
       track.scrollLeft = targetSlide.offsetLeft;
       track.style.scrollBehavior = 'smooth';
     }
@@ -336,6 +349,7 @@
     document.body.style.overflow = '';
   }
 
+  // --- Gestur: Tarik Layar ke Bawah untuk Tutup ---
   function initSwipeToClose() {
     const overlay = document.getElementById('productPage');
     let startY = 0, startX = 0, isPulling = false, activeSlide = null;
@@ -350,7 +364,9 @@
     overlay.addEventListener('touchmove', e => {
       if(!isPulling || !activeSlide) return;
       const dy = e.touches[0].clientY - startY; const dx = e.touches[0].clientX - startX;
+      // Jangan tarik ke bawah jika pengguna menggeser ke samping (swipe kiri/kanan antar produk)
       if (Math.abs(dx) > Math.abs(dy)) { isPulling = false; activeSlide.style.transform = 'translateY(0)'; return; }
+
       if (isPulling === 'down' && dy > 0) {
         activeSlide.style.transform = `translateY(${dy * 0.4}px)`;
         if(e.cancelable) e.preventDefault(); 
@@ -377,7 +393,7 @@
       const txt = input.value.trim(); if(!txt) return;
       messages.innerHTML += `<div class="msg-user"><span>${escapeHTML(txt)}</span></div>`;
       input.value = ''; messages.scrollTop = messages.scrollHeight;
-      setTimeout(() => { messages.innerHTML += `<div class="msg-bot" style="margin-bottom:12px;"><span>Pesan Anda telah kami terima, ${state.customerName || 'Bapak/Ibu'}. Pramutamu kami akan membalas segera.</span></div>`; messages.scrollTop = messages.scrollHeight; }, 800);
+      setTimeout(() => { messages.innerHTML += `<div class="msg-bot" style="margin-bottom:12px;"><span>Pesan Anda telah kami terima. Pramutamu kami akan membalas segera.</span></div>`; messages.scrollTop = messages.scrollHeight; }, 800);
     };
     if(send) send.addEventListener('click', processMsg);
     if(input) input.addEventListener('keydown', e => { if(e.key === 'Enter') processMsg(); });
@@ -442,10 +458,10 @@
         updateUI(); showToast('Sajian tersimpan di Tas Belanja.');
         closeProductPage();
         
-        // Reset state step 1 untuk pembelian berikutnya
         setTimeout(() => {
-          document.getElementById(`step1_${idx}_${pid}`).style.display = 'block';
-          document.getElementById(`step2_${idx}_${pid}`).style.display = 'none';
+          const step1 = document.getElementById(`step1_${idx}_${pid}`);
+          const step2 = document.getElementById(`step2_${idx}_${pid}`);
+          if(step1 && step2) { step1.style.display = 'block'; step2.style.display = 'none'; }
         }, 500);
       }
 
