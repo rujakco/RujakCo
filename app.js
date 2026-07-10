@@ -179,7 +179,7 @@
       requestAnimationFrame(updateCenter);
       window.clearTimeout(isScrolling);
       isScrolling = setTimeout(() => {
-        const itemWidth = track.children[0]?.offsetWidth ? track.children[0].offsetWidth + 16 : 0;
+        const itemWidth = track.children[0]?.offsetWidth ? track.children[0].offsetWidth + 20 : 0; // updated gap 20px
         if(itemWidth === 0) return;
         const currentIndex = Math.round(track.scrollLeft / itemWidth);
         const baseCount = PRODUCTS.length;
@@ -328,7 +328,9 @@
   function updateUI() { try{localStorage.setItem('rj_crt_v7', JSON.stringify(state.cart));}catch(e){} renderCart(); if(document.getElementById('miniCartModal')?.classList.contains('active')) renderMiniCart(); }
 
   function openProductPage(globalIndex) {
-    document.getElementById('productPage').style.display = 'flex';
+    const page = document.getElementById('productPage');
+    page.style.display = 'flex';
+    page.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden'; 
     const targetSlide = document.querySelector(`.product-slide[data-idx="${globalIndex}"]`);
     if(targetSlide) { 
@@ -340,7 +342,9 @@
   }
   
   function closeProductPage() {
-    document.getElementById('productPage').style.display = 'none'; 
+    const page = document.getElementById('productPage');
+    page.style.display = 'none'; 
+    page.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
   }
 
@@ -394,9 +398,20 @@
   function bindEvents() {
     document.getElementById('backFromProduct')?.addEventListener('click', closeProductPage);
 
-    const openCart = () => { document.getElementById('miniCartModal').classList.add('active'); document.body.style.overflow='hidden'; renderMiniCart(); };
+    const openCart = () => { 
+      const modal = document.getElementById('miniCartModal');
+      modal.classList.add('active'); 
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow='hidden'; 
+      renderMiniCart(); 
+    };
     document.getElementById('navCartBtn')?.addEventListener('click', (e) => { e.preventDefault(); openCart(); });
-    document.getElementById('miniCartClose')?.addEventListener('click', () => { document.getElementById('miniCartModal').classList.remove('active'); document.body.style.overflow=''; });
+    document.getElementById('miniCartClose')?.addEventListener('click', () => { 
+      const modal = document.getElementById('miniCartModal');
+      modal.classList.remove('active'); 
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow=''; 
+    });
 
     document.addEventListener('click', e => {
       const mi = e.target.closest('.boutique-item');
@@ -461,12 +476,18 @@
       if(e.target.id === 'btnOpenPayment') {
         const name = document.getElementById('customerName')?.value.trim(), phone = document.getElementById('customerPhone')?.value.trim(), address = document.getElementById('customerAddress')?.value.trim();
         if(!name || !phone || !address || (!state.selectedDistrict && !state.userDistance)) { showToast('Mohon lengkapi data penerima.'); return; }
-        state.customerPhone = phone; state.customerAddress = address; 
+        state.customerPhone = escapeHTML(phone); state.customerAddress = escapeHTML(address); 
         document.getElementById('paymentTotalDisplay').textContent = document.getElementById('finalTotal').textContent;
-        document.getElementById('paymentModal').classList.add('active');
+        const pModal = document.getElementById('paymentModal');
+        pModal.classList.add('active');
+        pModal.setAttribute('aria-hidden', 'false');
       }
 
-      if(e.target.id === 'paymentClose') { document.getElementById('paymentModal').classList.remove('active'); }
+      if(e.target.id === 'paymentClose') { 
+        const pModal = document.getElementById('paymentModal');
+        pModal.classList.remove('active'); 
+        pModal.setAttribute('aria-hidden', 'true');
+      }
       
       if(e.target.closest('[data-action="confirm-wa"]')) {
         if (checkoutLocked) return; checkoutLocked = true;
@@ -495,8 +516,17 @@
         }, 500);
       }
 
-      if(e.target.closest('#aiChatToggle')) { e.preventDefault(); document.getElementById('aiChatBox').classList.add('active'); }
-      if(e.target.id === 'aiChatClose') { document.getElementById('aiChatBox').classList.remove('active'); }
+      if(e.target.closest('#aiChatToggle')) { 
+        e.preventDefault(); 
+        const cModal = document.getElementById('aiChatBox');
+        cModal.classList.add('active'); 
+        cModal.setAttribute('aria-hidden', 'false');
+      }
+      if(e.target.id === 'aiChatClose') { 
+        const cModal = document.getElementById('aiChatBox');
+        cModal.classList.remove('active'); 
+        cModal.setAttribute('aria-hidden', 'true');
+      }
     });
   }
 
