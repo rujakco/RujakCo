@@ -94,10 +94,7 @@ p { line-height: 1.8; }
 .luxury-header.scrolled .user-loc::before { color: var(--gray-400); }
 
 /* HERO */
-.content-wrapper { 
-  padding-bottom: 40px;
-  overflow-x: hidden; 
-}
+.content-wrapper { padding-bottom: 80px; overflow-x: hidden; }
 .hero-editorial { padding: 0 24px 0; margin-top: -70px; position: relative; z-index: 1; }
 .hero-img-wrap { width: 100%; aspect-ratio: 4 / 3; position: relative; border-radius: 0 0 32px 32px; overflow: hidden; box-shadow: 0 12px 40px rgba(10,58,42,0.15); }
 .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -139,9 +136,8 @@ p { line-height: 1.8; }
 .carousel-container { 
   width: 100%; 
   overflow: hidden; 
-  padding: 12px 0 0px;
-  margin-top: 25px;
-  margin-bottom: 0;
+  padding: 12px 0 0px; /* Padding bawah dihapus karena insight menggantikannya */
+  margin-top: 25px; /* NAIK 15PX DARI SEBELUMNYA (40px) */
   container-type: inline-size; 
 }
 
@@ -165,6 +161,7 @@ p { line-height: 1.8; }
   opacity: 0.45; 
   will-change: transform; 
   
+  /* DIKEMBALIKAN KE GREEN GLASS TRANSPARAN SEPERTI AWAL */
   background: linear-gradient(145deg, rgba(8, 46, 33, 0.08) 0%, rgba(8, 46, 33, 0.02) 100%);
   backdrop-filter: blur(16px) saturate(120%);
   -webkit-backdrop-filter: blur(16px) saturate(120%);
@@ -180,6 +177,7 @@ p { line-height: 1.8; }
   transform: scale(1); 
   opacity: 1; 
   z-index: 10; 
+  /* Bayangan hijau kembali aktif */
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3), 0 24px 48px rgba(8, 46, 33, 0.12); 
 }
 
@@ -238,9 +236,8 @@ p { line-height: 1.8; }
 .product-insight-container {
   text-align: center;
   padding: 0 32px;
-  margin-top: 28px;
-  margin-bottom: 12px;
-  min-height: auto;
+  margin-top: 8px; /* Dekat dengan carousel */
+  min-height: 60px; /* Menyediakan ruang agar UI tidak melompat */
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -267,7 +264,7 @@ p { line-height: 1.8; }
   50% { opacity: 0; }
 }
 
-/* FOOTER */
+/* FOOTER DENGAN RANDOM SCATTER LOGO SEAMLESS */
 .luxury-footer { 
   display: flex; 
   flex-direction: column; 
@@ -276,10 +273,9 @@ p { line-height: 1.8; }
   padding: 48px 24px 96px; 
   border-top: 1px solid var(--gray-200); 
   background-color: var(--ivory); 
-  margin-top: 0;
+  margin-top: 34px; /* FOOTER NAIK 30PX DARI SEBELUMNYA 64px */
   position: relative; 
   overflow: hidden; 
-  clip-path: inset(30px 0px 0px 0px); 
 }
 
 .luxury-footer::before {
@@ -291,10 +287,10 @@ p { line-height: 1.8; }
     url('https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp'),
     url('https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp'),
     url('https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp');
-  background-size: 113px 113px, 67px 67px, 43px 43px, 157px 157px;
+  background-size: 113px 113px, 67px 67px, 43px 43px, 157px 157px; 
   background-position: 0 0, 31px 53px, 89px 17px, 11px 137px;
   background-repeat: repeat;
-  opacity: 0.03;
+  opacity: 0.03; 
   filter: sepia(1) hue-rotate(10deg) saturate(3) brightness(0.9);
   pointer-events: none;
   z-index: 0;
@@ -363,7 +359,7 @@ p { line-height: 1.8; }
 .detail-manifesto h4 { font-size: 12px; color: var(--gold); margin-bottom: 16px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; }
 .detail-manifesto p { font-size: 14px; line-height: 1.8; color: var(--gray-900); font-family: 'Fraunces', serif; font-style: italic; margin: 0; }
 
-/* BOTTOM NAV BAR — SOLID IVORY (TIDAK TRANSPARAN) */
+/* BOTTOM NAV BAR (FROSTED GLASS GOLD SEJAJAR HEADER) */
 .bottom-nav { 
   position: fixed; 
   bottom: 0; 
@@ -372,13 +368,14 @@ p { line-height: 1.8; }
   width: calc(100% - 48px); 
   max-width: 432px; 
   z-index: var(--z-nav); 
-  background: var(--ivory); /* SOLID, TIDAK TRANSPARAN */
-  box-shadow: 0 -4px 20px rgba(8, 46, 33, 0.06); /* Tambahan bayangan halus */
+  background: rgba(197, 160, 89, 0.08); 
+  backdrop-filter: blur(16px) saturate(120%); 
+  -webkit-backdrop-filter: blur(16px) saturate(120%); 
   display: flex; 
   justify-content: space-around; 
   align-items: center; 
   padding: 14px 0 calc(14px + env(safe-area-inset-bottom)); 
-  border-top: 1px solid var(--gray-200); 
+  border-top: 1px solid rgba(197, 160, 89, 0.25); 
   border-radius: 16px 16px 0 0; 
 }
 .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--gray-400); font-size: 10px; font-weight: 600; gap: 6px; transition: color 0.2s; }
