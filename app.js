@@ -7,7 +7,6 @@
 
   const SPICE_LABELS = { 1: 'Ringan', 2: 'Sedang', 3: 'Pedas', 4: 'Sangat Pedas', 5: 'Neraka' };
 
-  // Data produk dengan tambahan properti 'insight' untuk animasi ketikan makna rujak
   const PRODUCTS = [
     { id:'p_m1', name:'Rujak Segar', desc:'Kombinasi buah pilihan dengan sambal original Rujak.Co. Disiapkan seketika sesaat sebelum pengantaran untuk menjaga tekstur renyah alami.', insight: 'Kesegaran otentik buah tropis pilihan.', price:35000, container:'Thinwall 1000ml Presisi', size:'Porsi Reguler', sambal:'Original Signature (1 Cup)', buah:['Mangga Mengkel','Nanas Hutan','Bengkoang','Jambu Air','Kedondong Kebun'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp' },
     { id:'p_m2', name:'Rujak Serut', desc:'Buah diserut halus secara presisi untuk pengalaman rasa yang lebih menyatu secara intim dengan saus karamelisasi mete.', insight: 'Harmoni rasa dalam serutan presisi yang intim.', price:26000, container:'Thinwall 750ml', size:'Porsi Reguler', sambal:'Original Terbawa', buah:['Mangga Muda Jawa','Bengkoang Garing','Nanas Madu','Ubi Ungu Manis'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp' },
@@ -25,8 +24,8 @@
     shippingProvider: 'rujakco', vehicleType: 'motor',
     isPriority: false,
     userDistance: null,
-    currentInsightId: null, // Melacak produk mana yang sedang tampil maknanya
-    typeTimeout: null       // Timer ketikan
+    currentInsightId: null, 
+    typeTimeout: null       
   };
 
   const LOOP_MULTIPLIER = 5; 
@@ -193,7 +192,6 @@
         } 
       });
 
-      // Logika Animasi Ketikan Makna Produk (Insight)
       if (closestItem) {
         const newId = closestItem.dataset.id;
         if (state.currentInsightId !== newId) {
@@ -209,7 +207,7 @@
                if (i < txt.length) {
                  insightEl.innerHTML += txt.charAt(i);
                  i++;
-                 state.typeTimeout = setTimeout(type, 30); // Kecepatan ketikan
+                 state.typeTimeout = setTimeout(type, 30); 
                }
              }
              type();
