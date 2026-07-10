@@ -188,7 +188,8 @@
       requestAnimationFrame(updateCenter);
       window.clearTimeout(isScrolling);
       isScrolling = setTimeout(() => {
-        const itemWidth = track.children[0]?.offsetWidth ? track.children[0].offsetWidth + 20 : 0; 
+        // Kompensasi jarak tumpuk (-28 margin kiri + -28 margin kanan = -56)
+        const itemWidth = track.children[0]?.offsetWidth ? track.children[0].offsetWidth - 56 : 0; 
         if(itemWidth === 0) return;
         const currentIndex = Math.round(track.scrollLeft / itemWidth);
         const baseCount = PRODUCTS.length;
