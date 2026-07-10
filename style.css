@@ -48,36 +48,66 @@ h1, h2, h3, h4, .brand-name, .font-fraunces { font-family: 'Fraunces', serif; fo
 @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
 /* ============================================================
-   HEADER + HERO GABUNGAN
+   HEADER — STICKY TRANSPARAN, HANYA TERLIHAT DI ATAS HERO
    ============================================================ */
-.hero-header {
-  background: var(--ivory);
-  padding-bottom: 4px;
-  border-bottom: 1px solid rgba(10,58,42,0.04);
-}
-
-.header-top {
+.luxury-header {
+  position: sticky;
+  top: 0;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px 12px;
-  background: rgba(252,250,248,0.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  position: sticky;
-  top: 0;
+  padding: 16px 24px;
   z-index: 100;
+  background: transparent;
+  pointer-events: none;
+  /* Agar klik tetap bisa di logo dan brand name, tapi kita override untuk elemen interaktif */
 }
-.brand-logo img { width: 32px; height: 32px; border-radius: 50%; box-shadow: 0 4px 12px rgba(10,58,42,0.08); }
-.header-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
-.brand-name { font-size: 18px; letter-spacing: -0.01em; color: var(--green); font-weight: 500; }
+.luxury-header .brand-logo,
+.luxury-header .header-center {
+  pointer-events: auto;
+}
+.brand-logo img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.brand-name {
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  color: white;
+  font-weight: 500;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
 
+/* ============================================================
+   HERO — GAMBAR MENEMBUS SAMPAI ATAS LAYAR
+   ============================================================ */
+.content-wrapper {
+  padding-bottom: 80px;
+}
+.hero-editorial {
+  padding: 0 24px 0;
+  margin-top: -72px; /* Tarik ke atas menutupi area header */
+  position: relative;
+  z-index: 1;
+}
 .hero-img-wrap {
   width: 100%;
   aspect-ratio: 4 / 2;
   position: relative;
+  border-radius: 0 0 24px 24px;
   overflow: hidden;
-  margin-top: 0;
+  box-shadow: 0 8px 32px rgba(10,58,42,0.10);
 }
 .hero-img {
   width: 100%;
@@ -88,7 +118,7 @@ h1, h2, h3, h4, .brand-name, .font-fraunces { font-family: 'Fraunces', serif; fo
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 60%, rgba(10,58,42,0.62) 100%);
+  background: linear-gradient(180deg, transparent 40%, rgba(10,58,42,0.7) 100%);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -101,6 +131,7 @@ h1, h2, h3, h4, .brand-name, .font-fraunces { font-family: 'Fraunces', serif; fo
   letter-spacing: -0.01em;
   color: var(--ivory);
   font-weight: 300;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.2);
 }
 .hero-overlay h2 em {
   font-style: italic;
@@ -109,7 +140,7 @@ h1, h2, h3, h4, .brand-name, .font-fraunces { font-family: 'Fraunces', serif; fo
 }
 
 .hero-caption {
-  padding: 14px 24px 8px;
+  padding: 16px 4px 8px;
   display: flex;
   align-items: center;
 }
@@ -134,11 +165,8 @@ h1, h2, h3, h4, .brand-name, .font-fraunces { font-family: 'Fraunces', serif; fo
 }
 
 /* ============================================================
-   CAROUSEL — thumbnail selebar hero (aspect 4:2)
+   CAROUSEL — THUMBNAIL ASPECT 4:1.5 (LEBIH LEBAR)
    ============================================================ */
-.content-wrapper {
-  padding-bottom: 80px;
-}
 .carousel-container {
   width: 100%;
   overflow: hidden;
@@ -177,7 +205,7 @@ h1, h2, h3, h4, .brand-name, .font-fraunces { font-family: 'Fraunces', serif; fo
 }
 .btq-img {
   width: 100%;
-  aspect-ratio: 4 / 2;
+  aspect-ratio: 4 / 1.5; /* Lebih lebar dari sebelumnya (4:2) */
   object-fit: cover;
   border-radius: 12px;
   margin-bottom: 16px;
@@ -208,12 +236,13 @@ h1, h2, h3, h4, .brand-name, .font-fraunces { font-family: 'Fraunces', serif; fo
 }
 
 /* ============================================================
-   FOOTER — lebih padat & berimbang
+   FOOTER — TETAP MENTOK DI ATAS BOTTOM BAR
    ============================================================ */
 .luxury-footer {
-  padding: 24px 24px 60px;
+  padding: 24px 24px 80px; /* padding-bottom cukup untuk bottom nav */
   border-top: 1px solid var(--gray-200);
   background: var(--ivory);
+  margin-top: 16px;
 }
 .footer-grid {
   display: flex;
