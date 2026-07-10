@@ -219,9 +219,12 @@
     container.innerHTML = loopedProducts.map((p, index) => `
       <div class="boutique-item" data-id="${p.id}" data-idx="${index}">
         <img src="${p.thumbnail}" class="btq-img" loading="lazy" alt="${p.name}">
-        <h3 class="btq-name">${p.name}</h3>
-        <span class="hairline"></span>
-        <span class="btq-price">${fmt(p.price)}</span>
+        <div class="btq-text-container">
+          <h3 class="btq-name">${p.name}</h3>
+          <div class="btq-price-wrap">
+            <span class="btq-price">${fmt(p.price)}</span>
+          </div>
+        </div>
       </div>
     `).join('');
     initCarousel();
