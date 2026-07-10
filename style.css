@@ -141,7 +141,7 @@ p { line-height: 1.8; }
   overflow: hidden; 
   padding: 12px 0 0px;
   margin-top: 25px;
-  margin-bottom: 0; /* HAPUS MARGIN NEGATIF */
+  margin-bottom: 0;
   container-type: inline-size; 
 }
 
@@ -234,12 +234,12 @@ p { line-height: 1.8; }
   white-space: nowrap; 
 }
 
-/* TYPING ANIMATION INSIGHT — TURUN 20px & JARAK 40px KE FOOTER */
+/* TYPING ANIMATION INSIGHT */
 .product-insight-container {
   text-align: center;
   padding: 0 32px;
-  margin-top: 28px; /* TURUN 20px (dari 8px) */
-  margin-bottom: 12px; /* SISA JARAK 40px - 28px = 12px */
+  margin-top: 28px;
+  margin-bottom: 12px;
   min-height: auto;
   display: flex;
   align-items: flex-start;
@@ -267,7 +267,7 @@ p { line-height: 1.8; }
   50% { opacity: 0; }
 }
 
-/* FOOTER — TETAP DENGAN CLIP DAN BACKGROUND CSS */
+/* FOOTER */
 .luxury-footer { 
   display: flex; 
   flex-direction: column; 
@@ -276,7 +276,7 @@ p { line-height: 1.8; }
   padding: 48px 24px 96px; 
   border-top: 1px solid var(--gray-200); 
   background-color: var(--ivory); 
-  margin-top: 0; /* JARAK DIATUR OLEH INSIGHT (12px) */
+  margin-top: 0;
   position: relative; 
   overflow: hidden; 
   clip-path: inset(30px 0px 0px 0px); 
@@ -363,7 +363,7 @@ p { line-height: 1.8; }
 .detail-manifesto h4 { font-size: 12px; color: var(--gold); margin-bottom: 16px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; }
 .detail-manifesto p { font-size: 14px; line-height: 1.8; color: var(--gray-900); font-family: 'Fraunces', serif; font-style: italic; margin: 0; }
 
-/* BOTTOM NAV BAR (FROSTED GLASS GOLD SEJAJAR HEADER) */
+/* BOTTOM NAV BAR — SOLID IVORY (TIDAK TRANSPARAN) */
 .bottom-nav { 
   position: fixed; 
   bottom: 0; 
@@ -372,14 +372,13 @@ p { line-height: 1.8; }
   width: calc(100% - 48px); 
   max-width: 432px; 
   z-index: var(--z-nav); 
-  background: rgba(197, 160, 89, 0.08); 
-  backdrop-filter: blur(16px) saturate(120%); 
-  -webkit-backdrop-filter: blur(16px) saturate(120%); 
+  background: var(--ivory); /* SOLID, TIDAK TRANSPARAN */
+  box-shadow: 0 -4px 20px rgba(8, 46, 33, 0.06); /* Tambahan bayangan halus */
   display: flex; 
   justify-content: space-around; 
   align-items: center; 
   padding: 14px 0 calc(14px + env(safe-area-inset-bottom)); 
-  border-top: 1px solid rgba(197, 160, 89, 0.25); 
+  border-top: 1px solid var(--gray-200); 
   border-radius: 16px 16px 0 0; 
 }
 .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--gray-400); font-size: 10px; font-weight: 600; gap: 6px; transition: color 0.2s; }
