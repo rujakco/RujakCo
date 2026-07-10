@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Rujak.Co — Asem, Pedes, Manis, Seger. Dalam Satu Gigitan.</title>
-  <meta name="description" content="Rujak premium dengan sambal mete terpisah — tetap renyah sampai tujuan. Ongkir mulai Rp8.000." />
+  <title>Rujak.Co — Premium Rujak Experience</title>
+  <meta name="description" content="Rujak premium dengan sambal mete terpisah — tetap renyah sampai tujuan." />
   <meta name="theme-color" content="#0F4D37" />
   <link rel="icon" type="image/webp" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-  <script defer src="https://unpkg.com/lucide@0.383.0"></script>
+  <script src="https://unpkg.com/lucide@0.383.0"></script>
 </head>
 <body>
   <div id="app">
@@ -25,7 +25,7 @@
           <div class="store-status" id="storeStatus"><span class="status-dot"></span><span class="status-text" id="storeStatusText">Buka</span></div>
           <div class="location-pill" id="locationPill">
             <i data-lucide="map-pin" class="w-4 h-4 text-[#0F4D37]"></i>
-            <div class="location-text"><span class="location-label">Diantar ke</span><span class="location-value" id="locationDisplay">Mendeteksi... ▾</span></div>
+            <div class="location-text"><span class="location-label">Pengiriman ke</span><span class="location-value" id="locationDisplay">Mendeteksi... ▾</span></div>
           </div>
         </div>
       </div>
@@ -39,82 +39,56 @@
           <div class="hero-gradient"></div>
         </div>
         <div class="hero-content-premium">
-          <span class="hero-eyebrow">EST. 2024 • BEKASI</span>
+          <span class="hero-eyebrow">Kualitas Premium • Bekasi</span>
           <h2 class="hero-title">Asem, Pedes,<br><em>Manis, Seger.</em></h2>
-          <p class="hero-subtitle">Dalam satu gigitan.</p>
+          <p class="hero-subtitle">Kurasi buah terbaik dalam satu gigitan.</p>
           <button class="hero-cta" onclick="document.getElementById('menuList').scrollIntoView({behavior:'smooth'})">
-            Jelajahi Koleksi
-            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            Lihat Koleksi <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </button>
         </div>
       </div>
 
       <div class="trust-section reveal-on-scroll">
         <div class="trust-stats stagger-children">
-          <div class="trust-stat"><div class="trust-stat-number">4.9</div><div class="trust-stat-stars">⭐️⭐️⭐️⭐️⭐️</div><div class="trust-stat-label">500+ Pesanan</div></div>
-          <div class="trust-stat"><div class="trust-stat-number">98%</div><div class="trust-stat-label">Segar Sampai</div></div>
-          <div class="trust-stat"><div class="trust-stat-number">&lt;45</div><div class="trust-stat-label">Menit Delivery</div></div>
+          <div class="trust-stat"><div class="trust-stat-number">4.9</div><div class="trust-stat-label">Rating Pelanggan</div></div>
+          <div class="trust-stat"><div class="trust-stat-number">100%</div><div class="trust-stat-label">Garansi Segar</div></div>
+          <div class="trust-stat"><div class="trust-stat-number"><i data-lucide="shield-check" class="w-6 h-6 inline"></i></div><div class="trust-stat-label">Standar Higienis</div></div>
         </div>
       </div>
 
-      <div id="storeStatusBanner" style="display:none;margin:0 20px 12px;padding:10px 14px;border-radius:12px;background:#FEE2E2;border:1px solid #FECACA;text-align:center;font-size:13px;font-weight:600;color:#991B1B;">
-        <i data-lucide="clock" class="w-4 h-4 inline" style="margin-right:4px;"></i>
-        <span id="storeStatusBannerText">Toko tutup. Buka jam 10.00 WIB.</span>
+      <div id="freshBanner" class="fresh-banner">
+        <i data-lucide="leaf" class="w-4 h-4 text-[#0F4D37]"></i> 
+        <span><strong>Standar Fresh-Prep:</strong> Buah dipotong 15 menit sebelum pengiriman untuk menjaga kerenyahan optimal.</span>
       </div>
-
-      <div id="freshBanner" style="display:block; margin:8px 20px 16px; padding:0 8px; font-size:13px; color:#4a3f2b; font-weight:500; text-align:center; line-height:1.5;">
-        <span style="display:inline-flex; align-items:center; gap:6px; justify-content:center;">
-          <span style="font-size:16px;">🌿</span>
-          <span><strong style="color:#0F4D37;">Fresh‑Prep</strong> — Pesan hari ini, nikmati besok. Buah baru dipotong 15 menit sebelum dikirim agar kesegarannya 100% terjaga.</span>
-          <span style="font-size:16px;">✨</span>
-        </span>
-      </div>
-
-      <div id="aiRecommendationContainer" style="display:none; margin: 0 20px 12px; background:linear-gradient(135deg,#F8F5EE,#FFFDF5); border:1px solid #E8E0D0; border-radius:12px; padding:10px 14px;"></div>
 
       <nav class="cat-scroll no-sb" id="catScroll">
-        <button type="button" class="cat-pill active" data-cat="all">Semua</button>
+        <button type="button" class="cat-pill active" data-cat="all">Semua Koleksi</button>
         <button type="button" class="cat-pill" data-cat="signature">Signature</button>
         <button type="button" class="cat-pill" data-cat="classic">Classic</button>
         <button type="button" class="cat-pill" data-cat="reserve">Reserve</button>
-        <button type="button" class="cat-pill" data-cat="addon">Tambahan</button>
+        <button type="button" class="cat-pill" data-cat="addon">Pelengkap</button>
       </nav>
 
       <div class="sec-header" id="menuHeader"><span class="sec-title">Koleksi Rasa</span>
         <div class="search-toggle-wrap" id="searchToggleWrap">
           <button class="search-icon-btn" id="searchIconBtn" aria-label="Cari"><i data-lucide="search" class="w-5 h-5"></i></button>
-          <div class="search-input-wrap" id="searchInputWrap"><input type="text" id="searchInput" placeholder="Cari menu..." autocomplete="off" /><button type="button" class="clear-search" id="clearSearchBtn">✕</button></div>
+          <div class="search-input-wrap" id="searchInputWrap"><input type="text" id="searchInput" placeholder="Cari sajian..." autocomplete="off" /><button type="button" class="clear-search" id="clearSearchBtn">✕</button></div>
         </div>
       </div>
 
-      <div class="empty-state" id="emptyState">Menu tidak ditemukan.</div>
-      <div id="skeletonContainer" style="padding:0 20px;"><div class="skeleton-item"><div class="skeleton-img skeleton"></div><div class="skeleton-body"><div class="skeleton-line skeleton"></div><div class="skeleton-line skeleton medium"></div><div class="skeleton-line skeleton short"></div></div></div></div>
+      <div class="empty-state" id="emptyState" style="display:none;">Sajian tidak ditemukan.</div>
+      <div id="skeletonContainer" style="padding:0 24px;"><div class="skeleton-item"><div class="skeleton-img skeleton"></div><div class="skeleton-body"><div class="skeleton-line skeleton"></div><div class="skeleton-line skeleton medium"></div></div></div></div>
       <div class="menu-list" id="menuList" style="display:none;"></div>
 
       <div class="divider" id="addonDivider"></div>
-      <div class="sec-header" id="addonHeader"><span class="sec-title">Tambahan</span><span style="font-size:11px;color:var(--gray-500);font-weight:500;white-space:nowrap;">Opsional — Sambal ekstra, buah dll.</span></div>
+      <div class="sec-header" id="addonHeader"><span class="sec-title">Pelengkap Sajian</span></div>
       <div class="addon-grid" id="addonList"></div>
 
       <div class="divider"></div>
-      <div class="sec-header"><span class="sec-title">Apa Kata Mereka?</span></div>
-      <div class="testi-flip-container reveal-on-scroll" id="testiFlipContainer" style="position:relative;overflow:hidden;height:140px;margin:0 20px 16px;background:#FFFDF5;border:1px solid #F0E6C0;border-radius:14px;padding:20px;">
-        <div class="testi-card active" data-index="0" style="position:absolute;top:0;left:0;right:0;padding:20px;transition:transform 0.6s cubic-bezier(0.4,0,0.2,1),opacity 0.6s;transform:translateY(0);opacity:1;">
-          <div style="font-size:18px;margin-bottom:4px;letter-spacing:2px;">⭐️⭐️⭐️⭐️⭐️</div>
-          <p style="font-size:16px;color:#3d2b00;font-weight:600;margin:0 0 6px;line-height:1.4;">"Buset ini rujak bukan kaleng-kaleng. Sambel metenya berasa banget."</p>
-          <span style="font-size:13px;color:#8B7355;">— Dina, Bekasi</span>
-        </div>
-        <div class="testi-card" data-index="1" style="position:absolute;top:0;left:0;right:0;padding:20px;transition:transform 0.6s;transform:translateY(100%);opacity:0;">
-          <div style="font-size:18px;margin-bottom:4px;letter-spacing:2px;">⭐️⭐️⭐️⭐️⭐️</div>
-          <p style="font-size:16px;color:#3d2b00;font-weight:600;margin:0 0 6px;line-height:1.4;">"Ngidam rujak pas hamil, ini satu-satunya yang nggak ngecewain."</p>
-          <span style="font-size:13px;color:#8B7355;">— Rina, Jakarta Timur</span>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-      <div class="sec-header" style="margin-top:16px"><span class="sec-title">Kenapa Rujak.Co Bikin Ngiler?</span></div>
+      <div class="sec-header" style="margin-top:16px"><span class="sec-title">Pengalaman Rujak.Co</span></div>
       <div class="edu-container reveal-on-scroll stagger-children">
-        <div class="edu-card"><div class="edu-icon-wrap" style="background:rgba(214,40,40,0.1);color:var(--red);"><i data-lucide="box" class="w-5 h-5"></i></div><div><h4 class="edu-title">Sambal Diracik Terpisah</h4><p class="edu-desc">Sambal dikemas dalam cup sealed. Buah tetap segar, tidak layu, tidak tumpah selama pengiriman.</p></div></div>
-        <div class="edu-card"><div class="edu-icon-wrap" style="background:var(--green-pale);color:var(--green);"><i data-lucide="shield-check" class="w-5 h-5"></i></div><div><h4 class="edu-title">Standar Fresh-Prep</h4><p class="edu-desc">Pesanan dikirim esok hari. Buah baru dikupas dan dipotong 15 menit sebelum kurir jalan.</p></div></div>
+        <div class="edu-card"><div class="edu-icon-wrap"><i data-lucide="droplets" class="w-5 h-5"></i></div><div><h4 class="edu-title">Sistem Fresh-Lock™</h4><p class="edu-desc">Sambal premium dikemas dalam wadah tersegel terpisah, memastikan buah tetap dingin dan renyah selama perjalanan.</p></div></div>
+        <div class="edu-card"><div class="edu-icon-wrap"><i data-lucide="clock" class="w-5 h-5"></i></div><div><h4 class="edu-title">Standar Fresh-Prep</h4><p class="edu-desc">Pesanan hari ini dikirim esok hari. Proses pengupasan dilakukan tepat sebelum kurir tiba untuk mempertahankan kualitas.</p></div></div>
       </div>
 
       <div class="divider"></div>
@@ -125,7 +99,8 @@
       </div>
 
       <div class="guarantee-badge reveal-on-scroll">
-        <div style="font-size:32px;">🛡️</div><div><strong>Garansi Segar 100%</strong><span>Benyek di jalan? Kami ganti baru.</span></div>
+        <i data-lucide="award" class="w-8 h-8 text-[#0F4D37]"></i>
+        <div><strong>Jaminan Kualitas</strong><span>Pengembalian penuh jika kualitas buah tidak memenuhi standar premium kami saat diterima.</span></div>
       </div>
     </div>
 
@@ -133,29 +108,24 @@
     <div class="product-page" id="productPage" style="display:none;">
       <div class="product-page-header">
         <button class="back-btn" id="backFromProduct"><i data-lucide="arrow-left"></i></button>
-        <span class="product-page-title">Detail Produk</span>
-        <button class="share-btn-page" id="shareProductPage"><i data-lucide="share-2"></i></button>
+        <span class="product-page-title">Detail Sajian</span>
+        <button class="share-btn-page"><i data-lucide="share-2"></i></button>
       </div>
       <div class="product-page-img" id="productPageImg"></div>
       <div class="product-page-body">
-        <div class="product-page-badge" id="productPageBadge" style="display:none;"></div>
         <h1 class="product-page-name" id="productPageName"></h1>
         <p class="product-page-desc" id="productPageDesc"></p>
         <div class="product-page-meta">
-          <div class="meta-row"><span>Wadah</span><span id="productPageContainer">-</span></div>
-          <div class="meta-row"><span>Porsi</span><span id="productPageSize">-</span></div>
+          <div class="meta-row"><span>Kemasan</span><span id="productPageContainer">-</span></div>
+          <div class="meta-row"><span>Sajian</span><span id="productPageSize">-</span></div>
           <div class="meta-row"><span>Sambal</span><span id="productPageSambal">-</span></div>
         </div>
-        <div class="product-page-buah" id="productPageBuah"></div>
-        <div class="product-page-tags" id="productPageTags"></div>
-        <div class="spice-row-page"><span>Level Pedas</span><div class="spice-options" id="spiceOptionsPage"></div></div>
-        
+        <div class="spice-row-page"><span>Intensitas Pedas</span><div class="spice-options" id="spiceOptionsPage"></div></div>
         <div class="product-page-actions">
           <div class="product-page-price" id="productPagePrice"></div>
           <div class="qty-control"><button class="qty-btn" id="qtyMinusPage">−</button><span class="qty-num" id="qtyNumPage">1</span><button class="qty-btn" id="qtyPlusPage">+</button></div>
-          <button class="add-to-cart-page" id="addToCartPage">+ Keranjang</button>
+          <button class="add-to-cart-page" id="addToCartPage">Tambahkan</button>
         </div>
-        <div class="related-products"><h3>Mungkin Anda Suka</h3><div class="related-grid" id="relatedGrid"></div></div>
       </div>
     </div>
   </div>
@@ -164,150 +134,137 @@
   <footer class="footer-brand">
     <div class="footer-brand-inner">
       <div class="footer-brand-row"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" /><span class="footer-brand-name">Rujak<span>.Co</span></span></div>
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
-        <p class="footer-brand-desc" style="flex:1; margin:0;">Menghadirkan keberagaman rasa rujak Indonesia dalam satu pengalaman yang segar, modern, dan berkualitas.</p>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:16px;">
+        <p class="footer-brand-desc" style="flex:1; margin:0;">Menghadirkan keberagaman rasa rujak Indonesia dalam satu pengalaman yang elegan dan berkualitas.</p>
         <div style="position: relative;">
-          <button id="aiChatToggle" style="background: white; color: #0F4D37; border: 2px solid #0F4D37; border-radius: 50px; padding: 8px 16px; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap;">🤖 Chat Jakco</button>
-          <div id="aiChatBox" style="display:none; position:absolute; bottom:60px; right:0; width:320px; max-height:400px; background:white; border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,0.2); overflow:hidden; border:1px solid #E8E0D0; z-index:10000;">
-            <div style="background:#0F4D37; color:white; padding:12px 16px; font-weight:700; font-size:14px; display:flex; justify-content:space-between; align-items:center;">
-              <div style="display:flex; align-items:center; gap:8px;"><span style="font-size:20px;">🤖</span><div><div style="font-size:14px;">Jakco — AI Sales</div><div style="font-size:9px; font-weight:400; opacity:0.7;">Online • siap bantu</div></div></div>
-              <button id="aiChatClose" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">✕</button>
+          <button id="aiChatToggle" class="ai-chat-btn"><i data-lucide="sparkles" class="w-4 h-4 inline"></i> Concierge</button>
+          <div id="aiChatBox" class="ai-chat-box" style="display:none;">
+            <div class="ai-chat-header">
+              <div style="display:flex; align-items:center; gap:8px;"><i data-lucide="concierge-bell" class="w-5 h-5"></i><div><div style="font-size:14px;font-weight:700;">Rujak.Co Concierge</div><div style="font-size:9px;opacity:0.7;">Pramutamu Klien Premium</div></div></div>
+              <button id="aiChatClose" style="background:none;border:none;color:var(--green);cursor:pointer;font-weight:700;">✕</button>
             </div>
-            <div id="aiChatMessages" style="height:220px; overflow-y:auto; padding:12px; font-size:13px; line-height:1.6; background:#FFFDF5;"><div style="margin-bottom:8px;"><span style="background:#E8F5E9; padding:8px 14px; border-radius:16px; display:inline-block; max-width:85%;">👋 Halo! Saya Jakco, asisten virtual Rujak.Co. Mau rekomendasi rujak?</span></div></div>
-            <div style="padding:8px 12px; border-top:1px solid #E8E0D0; display:flex; gap:8px; background:#FAFAF8;">
-              <input id="aiChatInput" type="text" placeholder="Tanya soal rujak..." style="flex:1; padding:8px 14px; border:1px solid #E8E0D0; border-radius:20px; font-size:13px; outline:none; background:white;">
-              <button id="aiChatSend" style="background:#0F4D37; color:white; border:none; border-radius:20px; padding:8px 16px; font-weight:600; font-size:13px; cursor:pointer;">Kirim</button>
+            <div id="aiChatMessages" class="ai-chat-messages" role="log" aria-live="polite">
+              <div style="margin-bottom:8px;"><span class="chat-bubble bot">Selamat datang di layanan Concierge Rujak.Co. Ada yang bisa saya bantu rekomendasikan untuk Anda hari ini?</span></div>
+            </div>
+            <div class="ai-chat-input-area">
+              <input id="aiChatInput" type="text" placeholder="Ketik pesan Anda...">
+              <button id="aiChatSend">Kirim</button>
             </div>
           </div>
         </div>
       </div>
       <div class="footer-grid">
-        <div class="footer-col"><h4>Jam Operasional</h4><ul><li><i data-lucide="clock"></i> Sen–Jum: 10.00–20.00</li><li><i data-lucide="map-pin"></i> Bekasi, Jawa Barat</li></ul></div>
-        <div class="footer-col"><h4>Ikuti Kami</h4><div class="footer-social"><a href="https://www.instagram.com/rujakco.id" target="_blank" rel="noopener"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Instagram-icon.webp" alt="Instagram"></a></div></div>
+        <div class="footer-col"><h4>Layanan Klien</h4><ul><li><i data-lucide="clock"></i> Sen–Jum: 10.00–20.00</li><li><i data-lucide="map-pin"></i> Bekasi, Jawa Barat</li></ul></div>
+        <div class="footer-col"><h4>Ikuti Kami</h4><div class="footer-social"><a href="https://www.instagram.com/rujakco.id" target="_blank" rel="noopener" aria-label="Instagram"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Instagram-icon.webp" alt="Instagram"></a></div></div>
       </div>
+      <div class="footer-bottom">&copy; 2026 Rujak.Co — Premium Rujak Experience.</div>
     </div>
   </footer>
 
-  <!-- BOTTOM BAR (Keranjang Ringkas) -->
+  <!-- BOTTOM BAR (Floating Checkout) -->
   <div id="bottom-bar">
-    <button class="close-bottom-bar" id="closeBottomBar">✕</button>
-    <div class="shipping-estimate" id="shippingEstimate" style="margin:0 0 10px 0;border-radius:12px;">
-      <div class="shipping-left"><i data-lucide="truck"></i><span>Ongkir:</span><span class="shipping-cost" id="shippingCost">⏳</span><span class="shipping-distance" id="shippingDistance"></span></div>
-      <div class="shipping-toggle"><input type="checkbox" id="priorityToggle" /><label for="priorityToggle" class="toggle-label" style="cursor:pointer;"><i data-lucide="zap"></i><span class="badge-priority">Prioritas</span></label></div>
+    <div class="shipping-estimate" id="shippingEstimate" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+      <div class="shipping-left" style="display:flex; align-items:center; gap:6px; font-size:13px; color:var(--gray-500);"><i data-lucide="truck" class="w-4 h-4"></i><span class="shipping-cost" id="shippingCost" style="font-weight:600; color:var(--green);">⏳</span><span class="shipping-distance" id="shippingDistance"></span></div>
+      <div id="btnAutoDetect" style="font-size:11px; font-weight:600; color:var(--gold); cursor:pointer;">📍 Gunakan GPS GPS</div>
     </div>
-    <div id="manualSelectWrapper" style="margin-bottom:10px;">
-      <div style="display:flex;gap:8px;margin-bottom:8px;">
-        <button type="button" id="btnAutoDetect" class="active" style="flex:1;padding:8px;border:1px solid var(--gray-200);border-radius:8px;background:white;">📍 Deteksi Otomatis</button>
-        <button type="button" id="btnManualDistrict" style="flex:1;padding:8px;border:1px solid var(--gray-200);border-radius:8px;background:white;">🗺️ Pilih Manual</button>
-      </div>
-      <div id="districtTrigger" class="custom-select-trigger" style="margin-top:8px;">
-        <span id="districtLabel">Pilih kecamatan...</span><i data-lucide="chevron-down" class="w-4 h-4"></i>
-      </div>
-      <input type="hidden" id="districtSelect" value="">
-    </div>
-    <div class="shipping-out-of-range" id="outOfRange" style="display:none;margin:0 0 10px 0;border-radius:12px;background:#fee2e2;color:#D62828;padding:6px;text-align:center;font-size:12px;">⚠️ Wilayah di luar jangkauan kurir.</div>
+    <div class="shipping-out-of-range" id="outOfRange" style="display:none; font-size:12px; color:#D62828; margin-bottom:8px; text-align:center;">⚠️ Wilayah di luar jangkauan kurir standar.</div>
     <div class="cart-summary" id="cartSummary" tabindex="0" role="button" aria-label="Buka keranjang">
-      <span class="cart-items-preview" id="cartPreview">0 item</span>
-      <div class="cart-total-wrap"><span class="cart-total" id="cartTotalDisplay">Rp0</span></div>
+      <span class="cart-items-preview" id="cartPreview">0 sajian</span>
+      <div class="cart-total-wrap"><span id="discountLabel" class="cart-discount-label" style="display:none; margin-right:8px; font-size:11px; background:var(--gold); color:white; padding:2px 6px; border-radius:4px;">Privilege</span><span class="cart-total" id="cartTotalDisplay">Rp0</span></div>
     </div>
-    <button type="button" class="wa-btn" data-action="open-cart">
-      <div class="wa-btn-left"><span class="wa-btn-sub">Ngiler?</span><span>Pesan Sekarang</span></div>
-      <div class="wa-badge"><i data-lucide="droplets" class="w-4 h-4"></i> Seger</div>
-    </button>
+    <button type="button" class="wa-btn" data-action="open-cart"><div class="wa-btn-left"><span class="wa-btn-sub">Pesanan Anda</span><span>Selesaikan Checkout</span></div><i data-lucide="chevron-right" class="w-5 h-5 text-white"></i></button>
   </div>
 
-  <div id="floatingCartBtn" aria-label="Buka keranjang"><i data-lucide="shopping-bag" style="width:24px;height:24px;"></i><span class="badge-cart" id="floatingBadge">0</span></div>
+  <!-- FIXED BOTTOM NAVIGATION BAR -->
+  <nav class="bottom-nav" id="bottomNav">
+    <a href="#" class="nav-item active" data-tab="home"><i data-lucide="home" class="nav-icon"></i><span class="nav-label">Home</span></a>
+    <a href="#" class="nav-item" data-tab="explore"><i data-lucide="compass" class="nav-icon"></i><span class="nav-label">Jelajah</span></a>
+    <a href="#" class="nav-item" data-tab="orders"><i data-lucide="package" class="nav-icon"></i><span class="nav-label">Pesanan</span></a>
+    <a href="#" class="nav-item" data-tab="chat"><i data-lucide="message-circle" class="nav-icon"></i><span class="nav-label">Concierge</span></a>
+  </nav>
+
   <div id="toast" role="alert" aria-live="polite"></div>
 
-  <!-- Mini Cart Modal -->
+  <!-- MINI CART MODAL (Premium Checkout) -->
   <div class="modal-overlay" id="miniCartModal">
-    <div class="modal-content" style="max-width:480px;">
+    <div class="modal-content bottom-sheet" style="max-width:480px; background:#FAFAFA;">
       <div class="modal-header">
-        <span class="modal-header-title">🛒 Keranjang & Checkout</span>
-        <div class="modal-header-actions"><button class="clear-cart-btn" id="clearCartBtn"><i data-lucide="trash" class="w-4 h-4"></i> Kosongkan</button><button class="modal-close" id="miniCartClose">&times;</button></div>
+        <span class="modal-header-title">Checkout</span>
+        <button class="modal-close" id="miniCartClose"><i data-lucide="x" class="w-6 h-6"></i></button>
       </div>
-      <div class="modal-body" style="padding:16px 20px; max-height:70vh; overflow-y:auto;">
-        <div id="miniCartList"></div>
-        <div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotalDisplay">Rp0</span></div>
-        <div id="step1Upsell"></div>
-        <hr style="margin:16px 0; border:1px solid var(--gray-200);">
-
-        <div class="form-section"><label class="form-label">Nama Penerima</label><input type="text" id="customerName" placeholder="Nama lengkap"></div>
-        <div class="form-section"><label class="form-label">Nomor HP</label><input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx"></div>
-        <div class="form-section"><label class="form-label">Alamat Lengkap</label><input type="text" id="customerAddress" placeholder="Jalan, RT/RW, Kelurahan"></div>
-
-        <div class="form-section" style="position:relative;">
-          <label class="form-label">Kecamatan</label>
-          <input type="text" id="districtInput" placeholder="Ketik nama kecamatan..." autocomplete="off">
-          <div id="customDistrictDropdown" style="display:none; position:absolute; background:white; border:1px solid var(--gray-300); border-radius:8px; max-height:200px; overflow-y:auto; width:100%; z-index:999; box-shadow:0 4px 12px rgba(0,0,0,0.1);"></div>
+      <div class="modal-body" style="padding:16px 20px; max-height:75vh; overflow-y:auto;">
+        
+        <div class="checkout-card" style="background:white; border-radius:16px; padding:20px; box-shadow:0 4px 20px rgba(15,77,55,0.04); margin-bottom:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;"><div style="font-size:12px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.05em;">Sajian Anda</div><button id="clearCartBtn" style="background:none; border:none; color:var(--gray-400); font-size:11px; font-weight:600; cursor:pointer;">Kosongkan</button></div>
+          <div id="miniCartList"></div>
+          <div style="display:flex; justify-content:space-between; margin-top:16px; padding-top:16px; border-top:1px solid var(--gray-100); font-weight:600; color:var(--green);"><span>Subtotal</span><span id="cartSubtotalDisplay">Rp0</span></div>
         </div>
 
-        <div class="form-section">
-          <label class="form-label" for="deliveryTime">Jam Pengiriman (Besok)</label>
-          <div id="deliveryTimeTrigger" class="custom-select-trigger"><span id="deliveryTimeLabel">Pilih jam pengiriman...</span><i data-lucide="chevron-down" class="w-4 h-4"></i></div>
-          <input type="hidden" id="deliveryTime" name="deliveryTime" value="">
-        </div>
-
-        <div class="form-section"><label class="form-label">Catatan (Opsional)</label><textarea id="orderNotes" placeholder="Contoh: Sambal dipisah" rows="2"></textarea></div>
-
-        <div id="shippingSection" style="display:none; margin-top:12px;">
+        <div class="checkout-card" style="background:white; border-radius:16px; padding:20px; box-shadow:0 4px 20px rgba(15,77,55,0.04); margin-bottom:16px;">
+          <div style="font-size:12px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:16px;">Informasi Pengiriman</div>
+          <div class="form-section"><input type="text" id="customerName" placeholder="Nama Lengkap Penerima"></div>
+          <div class="form-section"><input type="tel" id="customerPhone" placeholder="Nomor Telepon (08xx)"></div>
+          <div class="form-section"><textarea id="customerAddress" placeholder="Detail Alamat (Jalan, Blok, Patokan)" rows="2"></textarea></div>
+          
+          <div class="form-section" style="position:relative;">
+            <input type="text" id="districtInput" placeholder="Ketik nama kecamatan..." autocomplete="off">
+            <div id="customDistrictDropdown" style="display:none; position:absolute; background:white; border:1px solid var(--gray-200); border-radius:12px; max-height:200px; overflow-y:auto; width:100%; z-index:999; box-shadow:0 8px 24px rgba(0,0,0,0.1); margin-top:4px;"></div>
+          </div>
           <div class="form-section">
-            <label class="form-label">Pilih Kurir</label>
-            <div class="shipping-options"><button type="button" class="ship-btn active" data-provider="rujakco">🛵 Lalamove</button><button type="button" class="ship-btn" data-provider="paxel">📦 Paxel Same Day</button></div>
+            <div id="deliveryTimeTrigger" class="custom-select-trigger"><span id="deliveryTimeLabel">Jam Pengiriman (Besok)...</span><i data-lucide="chevron-down" class="w-4 h-4"></i></div>
+            <input type="hidden" id="deliveryTime" name="deliveryTime" value="">
           </div>
-          <div id="rujakcoOptions">
-            <div class="form-section"><label class="form-label">Kendaraan</label><div class="vehicle-options"><button type="button" class="veh-btn active" data-vehicle="motor">🛵 Motor</button><button type="button" class="veh-btn" data-vehicle="mobil">🚗 Mobil</button></div></div>
-            <div class="priority-toggle"><span>⚡ Prioritas (+Rp8.000)</span><label class="switch"><input type="checkbox" id="priorityToggleMini"><span class="slider"></span></label></div>
-          </div>
-          <div id="paxelOptions" style="display:none; margin-top:10px;"><div class="form-section"><label class="form-label">Layanan Paxel</label><div style="font-size:13px; color:var(--gray-600); background:var(--green-pale); padding:8px 12px; border-radius:8px;">🚀 Same Day — Dikirim besok (Fresh-Prep)</div></div></div>
-          <div id="step2Breakdown" style="background:white;border:1px solid var(--gray-200);border-radius:10px;padding:10px 14px;margin-top:10px;font-size:12px;color:var(--gray-700);line-height:1.8;">
-            <div style="font-weight:700;margin-bottom:4px;color:var(--gray-900);">📦 Detail Ongkir</div>
-            <div id="breakdownContent">Pilih kecamatan terlebih dahulu.</div>
-          </div>
+          <div class="form-section"><input type="text" id="orderNotes" placeholder="Catatan Khusus (Contoh: Sambal dipisah)"></div>
         </div>
 
-        <div class="final-summary" style="margin-top:12px;">
-          <div class="final-row"><span>Subtotal</span><span id="finalSubtotal">Rp0</span></div>
-          <div class="final-row"><span>Ongkir</span><span id="finalShipping">Rp0</span></div>
-          <div class="final-row total"><span>Total</span><span id="finalTotal">Rp0</span></div>
+        <div id="shippingSection" class="checkout-card" style="display:none; background:white; border-radius:16px; padding:20px; box-shadow:0 4px 20px rgba(15,77,55,0.04); margin-bottom:16px;">
+          <div style="font-size:12px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:16px;">Opsi Logistik</div>
+          <div class="shipping-options"><button type="button" class="ship-btn active" data-provider="rujakco">🛵 Lalamove</button><button type="button" class="ship-btn" data-provider="paxel">📦 Paxel</button></div>
+          
+          <div id="rujakcoOptions" style="margin-top:16px;">
+            <div class="vehicle-options"><button type="button" class="veh-btn active" data-vehicle="motor">Motor</button><button type="button" class="veh-btn" data-vehicle="mobil">Mobil</button></div>
+            <div class="priority-toggle" style="display:flex; justify-content:space-between; align-items:center; background:#FAFAFA; padding:12px; border-radius:12px; border:1px solid var(--gray-100); margin-top:12px;">
+              <span style="font-size:13px; font-weight:600; color:var(--gray-700);">Prioritas (+Rp8.000)</span>
+              <input type="checkbox" id="priorityToggleMini" style="width:20px; height:20px; accent-color:var(--green); cursor:pointer;">
+            </div>
+          </div>
+          <div id="paxelOptions" style="display:none; margin-top:12px;">
+            <div style="font-size:12px; color:var(--green); background:var(--green-pale); padding:12px; border-radius:12px;">🚀 <strong>Paxel Same Day</strong> — Tiba besok hari.</div>
+          </div>
+          <div id="step2Breakdown" style="background:#FAFAFA; border:1px solid var(--gray-200); border-radius:12px; padding:12px; margin-top:16px; font-size:12px; color:var(--gray-700); line-height:1.6;"><div id="breakdownContent">Pilih kecamatan terlebih dahulu.</div></div>
         </div>
 
-        <button class="btn-step primary" id="btnOpenPayment" style="width:100%;justify-content:center;margin-top:12px;font-size:16px;padding:16px;">💳 Lanjutkan Pembayaran</button>
+        <div class="final-summary" style="background:white; border-radius:16px; padding:20px; box-shadow:0 4px 20px rgba(15,77,55,0.04); margin-bottom:24px;">
+          <div class="final-row"><span>Subtotal Sajian</span><span id="finalSubtotal">Rp0</span></div>
+          <div class="final-row" id="discountRow" style="display:none; color:var(--gold);"><span>Privilege</span><span id="finalDiscount">-Rp0</span></div>
+          <div class="final-row"><span>Biaya Logistik</span><span id="finalShipping">Rp0</span></div>
+          <div class="final-row total"><span>Total Akhir</span><span id="finalTotal">Rp0</span></div>
+        </div>
+
+        <button class="btn-step primary" id="btnOpenPayment">Lanjutkan Pembayaran</button>
       </div>
     </div>
   </div>
 
   <!-- Payment Modal -->
   <div class="modal-overlay" id="paymentModal">
-    <div class="modal-content">
-      <div class="modal-header"><span class="modal-header-title">💳 Pembayaran QRIS</span><button class="modal-close" id="paymentClose">&times;</button></div>
-      <div class="modal-body" style="padding:16px 20px;">
-        <div style="position:relative;display:block;width:100%;max-width:280px;margin:0 auto;">
-          <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" id="qrisImagePayment" style="width:100%;height:auto;border-radius:12px;display:block;border:2px solid #E8E0D0;" />
+    <div class="modal-content bottom-sheet">
+      <div class="modal-header"><span class="modal-header-title">Pembayaran QRIS</span><button class="modal-close" id="paymentClose"><i data-lucide="x" class="w-6 h-6"></i></button></div>
+      <div class="modal-body" style="padding:24px 20px;">
+        <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" id="qrisImagePayment" />
+        <div style="background:var(--green); color:white; border-radius:12px; padding:12px 16px; margin:16px 0; text-align:center;">
+          <div style="font-size:11px; opacity:0.8;">Total Tagihan</div>
+          <div style="font-size:24px; font-family:'Fraunces',serif; font-weight:600;" id="paymentTotalDisplay">Rp0</div>
         </div>
-        <div style="background:#0F4D37;color:white;border-radius:12px;padding:12px 16px;margin:12px 0;text-align:center;">
-          <div style="font-size:11px;opacity:0.7;">Total Tagihan</div>
-          <div style="font-size:24px;font-weight:800;" id="paymentTotalDisplay">Rp0</div>
-        </div>
-        <button id="copyAmountBtn" style="width:100%;background:white;border:1px solid #0F4D37;color:#0F4D37;padding:10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:8px;">📋 Salin Nominal</button>
-      </div>
-      <div class="modal-footer" style="flex-direction:column;align-items:stretch;gap:8px;padding:12px 20px 16px;">
-        <button type="button" class="modal-add" data-action="confirm-wa" style="justify-content:center;gap:8px;margin-top:0;background:#0F4D37;color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;">
-          <i data-lucide="send" class="w-5 h-5 inline"></i> Kirim Bukti Transfer
-        </button>
+        <button id="copyAmountBtn" style="width:100%; background:var(--ivory); border:1px solid var(--green); color:var(--green); padding:12px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; margin-bottom:12px;">Salin Nominal</button>
+        <div style="font-size:13px; color:var(--gray-500); text-align:center; line-height:1.5;">Pindai QRIS. Jika berhasil, klik konfirmasi di bawah.</div>
+        <button class="btn-step primary" data-action="confirm-wa" style="margin-top:24px;">Kirim Bukti Transfer</button>
       </div>
     </div>
   </div>
 
-  <!-- BOTTOM NAVIGATION BAR -->
-  <nav class="bottom-nav" id="bottomNav">
-    <a href="#" class="nav-item active" data-tab="home"><i data-lucide="home" class="nav-icon"></i><span class="nav-label">Home</span></a>
-    <a href="#" class="nav-item" data-tab="explore"><i data-lucide="compass" class="nav-icon"></i><span class="nav-label">Jelajah</span></a>
-    <a href="#" class="nav-item" data-tab="orders"><i data-lucide="package" class="nav-icon"></i><span class="nav-label">Pesanan</span></a>
-    <a href="#" class="nav-item" data-tab="chat"><i data-lucide="message-circle" class="nav-icon"></i><span class="nav-label">Chat</span></a>
-  </nav>
-
-  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script defer src="app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
 </body>
 </html>
+
