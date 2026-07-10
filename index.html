@@ -4,17 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Rujak.Co — Premium Rujak</title>
-  <meta name="theme-color" content="#FAF8F5" />
+  <meta name="theme-color" content="#FCFAF8" />
   <link rel="icon" type="image/webp" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-  <script src="https://unpkg.com/lucide@0.383.0"></script>
+  <script defer src="https://unpkg.com/lucide@0.383.0"></script>
 </head>
 <body>
   
-  <!-- TIRAI SAMBUTAN (ONBOARDING) -->
+  <!-- TIRAI SAMBUTAN (VIP ONBOARDING) -->
   <div id="onboardingOverlay" class="onboarding-overlay">
     <div class="onb-content">
       <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" class="onb-logo">
@@ -33,33 +33,33 @@
             <input type="text" id="onbDistrict" class="onb-input" placeholder="Ketik nama kecamatan..." autocomplete="off">
             <div id="onbDistrictDropdown" class="minimal-dropdown" style="text-align:left;"></div>
           </div>
-          <button class="btn-gold full-width" id="onbStartBtn" style="margin-top:16px;">Akses Butik</button>
+          <button class="btn-gold full-width" id="onbStartBtn" style="margin-top:24px;">Akses Butik</button>
         </div>
       </div>
 
       <div id="onbReturningUser" style="display:none; width:100%;">
         <p class="onb-welcome-text">Selamat Datang Kembali,</p>
         <h2 class="onb-title" id="onbWelcomeName">Klien</h2>
-        <p class="onb-subtitle" style="margin-bottom:48px;">Destinasi: <span id="onbWelcomeDistrict" style="color:var(--gold);">Bekasi</span></p>
+        <p class="onb-subtitle" style="margin-bottom:56px;">Destinasi: <span id="onbWelcomeDistrict" style="color:var(--gold);">Bekasi</span></p>
         <button class="btn-gold full-width" id="onbEnterBtn">Masuk Ke Butik</button>
-        <button class="btn-text-gold" id="onbResetBtn" style="margin-top:24px;">Ubah Profil Pengantaran</button>
+        <button class="btn-text-gold" id="onbResetBtn" style="margin-top:32px;">Ubah Profil Pengantaran</button>
       </div>
     </div>
   </div>
 
   <div id="app">
-    <!-- HEADER KACA TRANSPARAN MENTOK ATAS -->
+    <!-- HEADER EDITORIAL (KINI LEBIH BERSIH DAN LEGA) -->
     <header class="luxury-header">
       <div class="brand-logo"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co"></div>
       <div class="header-center">
         <h1 class="brand-name">Rujak.Co</h1>
         <span class="header-greeting" id="headerGreeting">Eksklusif</span>
       </div>
-      <div style="width:36px;"></div> <!-- Area keranjang dipindah ke Bottom Nav -->
+      <div style="width:36px;"></div> <!-- Spacer -->
     </header>
 
     <main class="content-wrapper" id="mainContent">
-      <!-- HERO SQUARE EDGE-TO-EDGE -->
+      <!-- HERO LANSKAP (4:3) DENGAN RUANG NAPAS DI KIRI KANAN -->
       <div class="hero-editorial fade-up">
         <div class="hero-img-wrap">
           <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Sajian Rujak" />
@@ -81,11 +81,11 @@
       </footer>
     </main>
 
-    <!-- PRODUCT SWIPER OVERLAY (INFINITE SWIPE KIRI/KANAN) -->
+    <!-- PRODUCT SWIPER OVERLAY (INFINITE SWIPE) -->
     <div class="product-swiper-overlay" id="productPage" style="display:none;">
       <button id="backFromProduct" class="glass-btn floating-close"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
       <div class="product-swiper-track" id="productSwiperTrack">
-        <!-- Dirender oleh JS (Infinite Loop) -->
+        <!-- Dirender oleh JS (Infinite Loop dengan 2 Tahap Checkout) -->
       </div>
     </div>
 
@@ -93,7 +93,7 @@
     <div class="modal-overlay" id="miniCartModal">
       <div class="drawer-content">
         <div class="drawer-header">
-          <h3>Shopping Bag</h3>
+          <h3>Tas Belanja</h3>
           <button id="miniCartClose" class="glass-btn-dark"><i data-lucide="x" class="w-4 h-4"></i></button>
         </div>
         <div class="drawer-body">
@@ -113,7 +113,7 @@
             <div style="position:relative;">
               <input type="text" id="districtInput" placeholder="Distrik / Kecamatan..." class="input-minimal" autocomplete="off" readonly style="color:var(--green); font-weight:600;">
             </div>
-            <div style="font-size:11px; color:var(--gold); margin-top:-16px; margin-bottom:24px; font-weight:500;">
+            <div style="font-size:12px; color:var(--gold); margin-top:-16px; margin-bottom:32px; font-weight:500;">
               *Kecamatan disinkronkan dari profil awal Anda.
             </div>
 
@@ -126,14 +126,14 @@
             <textarea id="orderNotes" placeholder="Instruksi Khusus (Opsional)" rows="1" class="input-minimal"></textarea>
           </div>
 
-          <div id="shippingSection" class="checkout-forms" style="margin-top:32px;">
+          <div id="shippingSection" class="checkout-forms" style="margin-top:40px;">
             <h4>Opsi Logistik Rujak.Co</h4>
             <div class="logistic-options">
               <button class="log-btn active" data-provider="rujakco">Kurir Pribadi</button>
               <button class="log-btn" data-provider="paxel">Paxel Premium</button>
             </div>
             
-            <div id="rujakcoOptions" style="margin-top:16px;">
+            <div id="rujakcoOptions" style="margin-top:24px;">
               <div class="logistic-options">
                 <button class="veh-btn active" data-vehicle="motor">Armada Motor</button>
                 <button class="veh-btn" data-vehicle="mobil">Secure Vault Mobil</button>
@@ -141,7 +141,7 @@
               <label class="priority-label"><input type="checkbox" id="priorityToggleMini"> Layanan Eksekusi Prioritas (+Rp8.000)</label>
             </div>
             
-            <div id="paxelOptions" style="display:none; margin-top:16px; font-size:12px; color:var(--gold); font-style:italic;">* Layanan Paxel Same Day. Tiba esok hari.</div>
+            <div id="paxelOptions" style="display:none; margin-top:24px; font-size:13px; color:var(--gold); font-style:italic; line-height:1.6;">* Layanan Paxel Same Day. Sajian akan tiba esok hari.</div>
             
             <div class="drawer-breakdown">
               <span id="shippingDistance"></span>
@@ -163,19 +163,19 @@
     <div class="modal-overlay" id="paymentModal">
       <div class="drawer-content" style="height:auto;">
         <div class="drawer-header"><h3>Gerbang QRIS</h3><button id="paymentClose" class="glass-btn-dark"><i data-lucide="x" class="w-4 h-4"></i></button></div>
-        <div class="drawer-body" style="text-align:center; padding-bottom:40px;">
+        <div class="drawer-body" style="text-align:center; padding-bottom:48px;">
           <div class="qris-frame">
             <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" />
           </div>
-          <div style="font-size:32px; font-family:'Fraunces',serif; margin:24px 0; color:var(--green);" id="paymentTotalDisplay">Rp0</div>
-          <button class="btn-dark full-width" data-action="confirm-wa"><i data-lucide="check" class="w-4 h-4 inline" style="margin-right:6px;"></i> Verifikasi ke Pramutamu</button>
+          <div style="font-size:36px; font-family:'Fraunces',serif; margin:32px 0; color:var(--green);" id="paymentTotalDisplay">Rp0</div>
+          <button class="btn-dark full-width" data-action="confirm-wa"><i data-lucide="check" class="w-5 h-5 inline" style="margin-right:8px;"></i> Verifikasi ke Pramutamu</button>
         </div>
       </div>
     </div>
 
     <!-- AI CHAT PRAMUTAMU -->
     <div class="modal-overlay" id="aiChatBox" style="display:none; z-index:2000;">
-      <div class="drawer-content" style="height:60vh;">
+      <div class="drawer-content" style="height:70vh;">
         <div class="drawer-header"><h3>Pramutamu</h3><button id="aiChatClose" class="glass-btn-dark"><i data-lucide="x" class="w-4 h-4"></i></button></div>
         <div class="drawer-body chat-body">
           <div id="aiChatMessages" class="chat-messages">
@@ -192,7 +192,6 @@
     <!-- BOTTOM NAVIGATION (DENGAN KERANJANG DI SINI) -->
     <nav class="bottom-nav" id="bottomNav">
       <a href="#" class="nav-item active" data-tab="home"><i data-lucide="home" class="nav-icon"></i><span class="nav-label">Koleksi</span></a>
-      <!-- KERANJANG DIPUSATKAN DI SINI -->
       <a href="#" class="nav-item" id="navCartBtn">
         <div class="nav-cart-wrapper">
           <i data-lucide="shopping-bag" class="nav-icon"></i>
@@ -207,9 +206,7 @@
     <div id="toast" role="alert" aria-live="polite"></div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="app.js"></script>
 </body>
 </html>
-
-
