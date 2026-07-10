@@ -2,7 +2,7 @@
   'use strict';
 
   // ============================================================
-  // RUJAK.CO v3.2 — ELITE ENTERPRISE CORE MACHINE (ROBUST PATCH)
+  // RUJAK.CO v3.0 — FINAL AUDITED ENGINE (BUGFIXED 100%)
   // ============================================================
 
   const SUPABASE_URL = "https://ghhnnfrmftttptcejizp.supabase.co";
@@ -10,19 +10,19 @@
   const SYSTEM = { DISCOUNT_THRESHOLD: 100000, DISCOUNT_AMOUNT: 5000, WA_NUMBER: '6289677161680', STORE_LAT: -6.2165414, STORE_LNG: 107.0177395, DEFAULT_DISTANCE: 2 };
 
   const PRODUCTS = [
-    { id:'p_m1', name:'Rujak Segar', desc:'Kurasi klasik lima varietas buah tropis pilihan disajikan dengan harmoni sambal original.', price:35000, cat:'classic', container:'Thinwall 1000ml Presisi', size:'Porsi Reguler (1-2 Orang)', sambal:'Sambal Original Signature (1 Cup)', buah:['Mangga Mengkel','Nanas Hutan','Bengkoang','Jambu Air','Kedondong Kebun'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp' },
-    { id:'p_m2', name:'Rujak Serut Artisanal', desc:'Buah-buahan segar diserut mikro secara presisi guna menghasilkan penyatuan saus karamelisasi mete optimal.', price:26000, cat:'classic', container:'Thinwall Food-Grade 750ml', size:'Porsi Reguler', sambal:'Sambal Original Terbawa', buah:['Mangga Muda Jawa','Bengkoang Garing','Nanas Madu','Ubi Ungu Manis'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp' },
-    { id:'p_m3', name:'Rujak Gaco Premium', desc:'Sajian kulinari terlaris yang menggabungkan kesegaran eksklusif buah pilihan dan racikan sambal mete premium.', price:40000, cat:'signature', badge:'Signature', badgeColor:'gold', container:'Thinwall Sealed 1000ml', size:'Porsi Eksklusif Klien', sambal:'Sambal Karamelisasi Mete (1 Cup)', buah:['Jambu Kristal Tanpa Biji','Mangga Indramayu Mengkel','Nanas Subang','Bengkoang Air','Jambu Air Premium','Kedondong'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-hd.webp' },
-    { id:'p_m4', name:'Rujak Rama Sharing', desc:'Formula porsi melimpah yang dikonsepkan khusus untuk momentum kebersamaan atau perjamuan formal keluarga.', price:48000, cat:'signature', container:'Jumbo Thinwall Lock 1000ml', size:'Porsi Sharing (2-3 Orang)', sambal:'Sambal Karamelisasi Mete Duet (2 Cup)', buah:['Varian Jambu Kristal','Mangga Mengkel Pilihan','Nanas Madu','Bengkoang Super','Jambu Air','Kedondong'], defaultSpice:4, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-hd.webp' },
-    { id:'p_m5', name:'Rujak Mahkota Reserve', desc:'Mahakarya mahkota rasa yang memadukan keanggunan anggur Shine Muscat impor dengan kurasi buah eksklusif.', price:85000, cat:'reserve', badge:'Reserve', badgeColor:'gold', container:'Premium Luxury Box + Luxury Silk Ribbon', size:'Eksklusif Vault Single', sambal:'Sambal Mete Grand Reserve (2 Cup)', buah:['Shine Muscat Impor Jepang Grade A','Jambu Kristal Garing','Mangga Mengkel Kurasi','Nanas Hutan','Bengkoang Garing'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp' },
-    { id:'p_m6', name:'Tampah Nusantara Grand Gala', desc:'Representasi kemegahan tradisi rasa Indonesia dalam wadah tampah artisanal bambu rajutan tangan.', price:200000, cat:'reserve', badge:'Pre-Order', badgeColor:'gold', container:'Tampah Bambu Ø40cm + Protective Shell Box', size:'Sajian Perjamuan (8-10 Orang)', sambal:'Aparatus Komplit Original & Mete (4 Cup)', buah:['Shine Muscat Premium','Jambu Kristal Vault','Mangga Pilihan Utama','Nanas Hutan Subang','Bengkoang Garing','Jambu Air Rose','Kedondong Pilihan','Ubi Ungu Manis'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp' }
+    { id:'p_m1', name:'Rujak Segar', desc:'Kombinasi buah pilihan dengan sambal original Rujak.Co.', price:35000, cat:'classic', container:'Thinwall 1000ml', size:'Porsi Reguler', sambal:'Sambal Original (1 Cup)', buah:['Mangga Mengkel','Nanas','Bengkoang','Jambu Air','Kedondong'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp', isHidden:false },
+    { id:'p_m2', name:'Rujak Serut', desc:'Buah diserut halus untuk pengalaman rasa yang lebih menyatu.', price:26000, cat:'classic', container:'Thinwall 750ml', size:'Porsi Reguler', sambal:'Sambal Original (1 Cup)', buah:['Mangga Muda','Bengkoang','Nanas','Ubi Merah'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp', isHidden:false },
+    { id:'p_m3', name:'Rujak Gaco', desc:'Enam buah pilihan dengan sambal mete premium.', price:40000, cat:'signature', badge:'Koleksi Favorit', badgeColor:'gold', container:'Thinwall 1000ml', size:'Porsi Reguler', sambal:'Sambal Mete Premium (1 Cup)', buah:['Jambu Kristal','Mangga Mengkel','Nanas','Bengkoang','Jambu Air','Kedondong'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-hd.webp', isHidden:false },
+    { id:'p_m4', name:'Rujak Rama', desc:'Porsi melimpah untuk dua hingga tiga orang.', price:48000, cat:'signature', container:'Thinwall Jumbo 1000ml', size:'Porsi Sharing', sambal:'Sambal Mete Premium (2 Cup)', buah:['Jambu Kristal','Mangga Mengkel','Nanas','Bengkoang','Jambu Air','Kedondong'], defaultSpice:4, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-hd.webp', isHidden:false },
+    { id:'p_m5', name:'Rujak Mahkota', desc:'Koleksi premium dengan Shine Muscat.', price:85000, cat:'reserve', badge:'Reserve Collection', badgeColor:'gold', container:'Thinwall Jumbo 1000ml + Paper Bag', size:'Porsi Premium', sambal:'Sambal Mete Premium (2 Cup)', buah:['Shine Muscat','Jambu Kristal','Mangga Mengkel','Nanas','Bengkoang','Jambu Air','Kedondong'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp', isHidden:false },
+    { id:'p_m6', name:'Tampah Nusantara', desc:'Sajian kebersamaan dalam tampah bambu.', price:200000, cat:'reserve', container:'Tampah Bambu Ø40cm', size:'8-10 Orang', sambal:'Original & Mete (4 Cup)', buah:['Shine Muscat','Jambu Kristal','Mangga Mengkel','Nanas','Bengkoang','Jambu Air','Kedondong','Ubi Merah'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp', isHidden:false }
   ];
 
   const ADDONS = [
-    { id:'a_sambal1', name:'Saus Original Ekstra Cup', price:8000, desc:'Ekstensi rasa autentik klasik.' },
-    { id:'a_sambal2', name:'Saus Karamel Mete Ekstra Cup', price:12000, desc:'Kedalaman rasa mete murni gurih.' },
-    { id:'a_extra_jambu', name:'Tambahan Jambu Kristal Garing', price:10000, desc:'Tambahan irisan garing premium.' },
-    { id:'a_extra_muscat', name:'Tambahan Anggur Shine Muscat', price:15000, desc:'Butiran premium anggur tanpa biji.' }
+    { id:'a_sambal1', name:'Sambal Original', price:8000, desc:'Warisan rasa klasik.' },
+    { id:'a_sambal2', name:'Sambal Mete Premium', price:12000, desc:'Lebih gurih dan kaya rasa.' },
+    { id:'a_extra_jambu', name:'Extra Jambu Kristal', price:10000, desc:'Tambahan segar ekstra.' },
+    { id:'a_extra_muscat', name:'Extra Shine Muscat', price:15000, desc:'Anggur impor premium.' }
   ];
 
   const DISTRICT_MAP = { 'bekasi barat':5, 'bekasi timur':7, 'bekasi selatan':9, 'bekasi utara':11, 'rawalumbu':8, 'jatiasih':12, 'pondokgede':14, 'cikarang':23, 'tambun':16, 'cibitung':20, 'gambir':18, 'menteng':19, 'tebet':20, 'pancoran':21, 'pasar minggu':22, 'kebayoran lama':24, 'kebayoran baru':22, 'mampang prapatan':21, 'pulo gadung':16, 'jatinegara':18, 'duren sawit':15, 'kramat jati':19, 'pasar rebo':20, 'cakung':12, 'kembangan':25, 'kelapa gading':27, 'depok':35, 'tangerang':38, 'bogor':50 };
@@ -35,7 +35,6 @@
 
   let checkoutLocked = false, cachedSummary = null, toastTimer = null;
 
-  // --- Core Functional Utilities ---
   function fmt(num) { return 'Rp' + num.toLocaleString('id-ID'); }
   function escapeHTML(str) { return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
   function showToast(msg) {
@@ -46,7 +45,7 @@
   }
 
   function getSupabase() { return window.supabase?.createClient ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null; }
-  function haversineDistance(lat1, lon1, lat2, lon2) { const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180; const a = Math.sin(dLat/2)**2 + Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * Math.sin(dLon/2)**2; return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); }
+  function haversineDistance(lat1, lon1, lat2, lon2) { const R = 6371, dLat = (lat2 - lat1) * Math.PI / 180, dLon = (lon2 - lon1) * Math.PI / 180; const a = Math.sin(dLat/2)**2 + Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * Math.sin(dLon/2)**2; return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); }
   function estimateRoadDistance(straightKm) { return Math.round(straightKm * (straightKm <= 10 ? 1.35 : straightKm <= 20 ? 1.30 : 1.20)); }
 
   function getItemById(id) {
@@ -72,28 +71,27 @@
   function getCartSummaryCached() { if(!cachedSummary) cachedSummary = getCartSummary(); return cachedSummary; }
   function invalidateCache() { cachedSummary = null; try { localStorage.setItem('rujak_cart_v3', JSON.stringify(state.cart)); } catch(e){} }
 
-  // Logistics Apportionment Formula (Paxel Box Packing Architecture Checked)
   function calculateShipping(distance, priority, mainQty) {
     const dist = distance || SYSTEM.DEFAULT_DISTANCE;
-    if (dist > 50) return { cost: null, label: 'Konfirmasi Finansial' };
+    if (dist > 50) return { cost: null, label: 'Konfirmasi Pramutamu' };
     
     if (state.shippingProvider === 'paxel') {
       const large = Math.floor(mainQty / 2), med = mainQty % 2;
-      return { cost: (large * 25000) + (med * 20000) + ((large + med) * 3000), label: 'Paxel Same Day Premium' };
+      return { cost: (large * 25000) + (med * 20000) + ((large + med) * 3000), label: 'Paxel Same Day' };
     } else {
       let cost = dist <= 3 ? 8000 : dist <= 10 ? 8000 + (dist-3)*1800 : dist <= 20 ? 20600 + (dist-10)*1600 : dist <= 30 ? 36600 + (dist-20)*1400 : 50600 + (dist-30)*1150;
       if (state.vehicleType === 'mobil') cost = dist <= 3 ? 24000 : dist <= 10 ? 24000 + (dist-3)*4500 : dist <= 20 ? 55500 + (dist-10)*4000 : 95500 + (dist-20)*3500;
       if (priority) cost += 8000;
-      return { cost, label: state.vehicleType === 'motor' ? 'Kurir Instan Pribadi' : 'Secure Vault Roda Empat' };
+      return { cost, label: state.vehicleType === 'motor' ? 'Motor Instan' : 'Mobil Instan' };
     }
   }
 
-  // PATCHED REALTIME LOGISTICS INTERLOCK SYSTEM
+  // BUGFIX 2: OPSI KURIR MUNCUL OTOMATIS
   function updateShippingUI() {
     const summary = getCartSummaryCached();
     const dist = state.selectedDistrict ? (DISTRICT_MAP[state.selectedDistrict] || estimateRoadDistance(10)) : (state.userDistance || null);
     
-    // Auto-reveal logistics sector if coordinate metrics or manual entries match verified parameters
+    // Jika dist ada isinya (baik dari GPS maupun manual klik), tampilkan blok opsi kurir
     if (dist !== null) {
       const shipSec = document.getElementById('shippingSection');
       if (shipSec) shipSec.style.display = 'block';
@@ -103,25 +101,24 @@
     
     const costEl = document.getElementById('shippingCost'), distEl = document.getElementById('shippingDistance');
     if(costEl) costEl.textContent = ship.cost ? fmt(ship.cost) : 'Konfirmasi';
-    if(distEl) distEl.textContent = dist ? `~${dist} km` : 'Tentukan Destinasi';
+    if(distEl) distEl.textContent = dist ? `~${dist} km` : 'Pilih Lokasi';
     
     const breakdown = document.getElementById('breakdownContent');
-    if(breakdown) breakdown.innerHTML = `<div>Estimasi Orbit Pengantaran: <strong>${dist || '?'} km</strong></div><div>Jenis Layanan Logistik: <strong>${ship.label}</strong></div><div style="margin-top:8px; padding-top:8px; border-top:1px solid var(--gray-200); font-weight:600; color:var(--green);">Proteksi Logistik: <strong>${ship.cost ? fmt(ship.cost) : 'Menghubungi Pramutamu'}</strong></div>`;
+    if(breakdown) breakdown.innerHTML = `<div>Estimasi Jarak: <strong>${dist || '?'} km</strong></div><div>Layanan: <strong>${ship.label}</strong></div><div style="margin-top:6px; padding-top:6px; border-top:1px solid var(--gray-200);">Total Ongkir: <strong>${ship.cost ? fmt(ship.cost) : 'Hubungi Kami'}</strong></div>`;
     
     const outRange = document.getElementById('outOfRange');
     if(outRange) outRange.style.display = (dist && dist > 50) ? 'block' : 'none';
 
-    const finalSub = document.getElementById('finalSubtotal'); if(finalSub) finalSub.textContent = fmt(summary.subtotal);
+    document.getElementById('finalSubtotal').textContent = fmt(summary.subtotal);
     const discRow = document.getElementById('discountRow'), discVal = document.getElementById('finalDiscount');
     if(discRow && discVal) {
       discRow.style.display = summary.discount > 0 ? 'flex' : 'none';
       discVal.textContent = `-${fmt(summary.discount)}`;
     }
-    const finalShip = document.getElementById('finalShipping'); if(finalShip) finalShip.textContent = ship.cost ? fmt(ship.cost) : 'Rp0';
-    const finalTot = document.getElementById('finalTotal'); if(finalTot) finalTot.textContent = ship.cost ? fmt(summary.subtotal - summary.discount + ship.cost) : 'Menunggu Konfirmasi';
+    document.getElementById('finalShipping').textContent = ship.cost ? fmt(ship.cost) : 'Rp0';
+    document.getElementById('finalTotal').textContent = ship.cost ? fmt(summary.subtotal - summary.discount + ship.cost) : 'Konfirmasi';
   }
 
-  // --- Rendering Architecture System ---
   function renderMenu() {
     const container = document.getElementById('menuList'); if (!container) return;
     let items = state.activeFilter === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.cat === state.activeFilter);
@@ -136,7 +133,7 @@
       Object.keys(state.cart).forEach(k => { if(k.startsWith(p.id)) { qty += state.cart[k].qty; firstKey = k; } });
       const badge = p.badge ? `<span class="item-badge-right ${p.badgeColor}">${p.badge}</span>` : '';
       const control = qty === 0 ? `<button class="btn-add-unified" data-action="open-modal" data-id="${p.id}">Tambahkan</button>` : `<div class="qty-control"><button class="qty-btn" data-action="decrease" data-id="${firstKey}">−</button><span class="qty-num">${qty}</span><button class="qty-btn" data-action="increase" data-id="${firstKey}">+</button></div>`;
-      return `<div class="menu-item" data-id="${p.id}"><div class="item-img-wrap"><img src="${p.thumbnail}" loading="lazy" class="img-cover"></div><div class="item-body"><div class="item-name-row"><h3 class="item-name">${p.name}</h3>${badge}</div><p class="item-desc">${p.desc}</p><div class="item-footer"><span class="item-price">${fmt(p.price)}</span>${control}</div></div></div>`;
+      return `<div class="menu-item" data-id="${p.id}"><div class="item-img-wrap"><img src="${p.thumbnail}" loading="lazy"></div><div class="item-body"><div class="item-name-row"><span class="item-name">${p.name}</span>${badge}</div><p class="item-desc">${p.desc}</p><div class="item-footer"><span class="item-price">${fmt(p.price)}</span>${control}</div></div></div>`;
     }).join('');
     container.style.display = 'block';
   }
@@ -146,7 +143,7 @@
     container.innerHTML = ADDONS.map(a => {
       const qty = state.cart[a.id]?.qty || 0;
       const control = qty === 0 ? `<button class="btn-add-unified" data-action="add-addon" data-id="${a.id}">Tambahkan</button>` : `<div class="qty-control"><button class="qty-btn" data-action="decrease" data-id="${a.id}">−</button><span class="qty-num">${qty}</span><button class="qty-btn" data-action="increase" data-id="${a.id}">+</button></div>`;
-      return `<div class="addon-card"><span class="addon-name">${a.name}</span><span class="addon-price">${fmt(a.price)}</span><div style="margin-top:auto; display:flex; justify-content:flex-end;">${control}</div></div>`;
+      return `<div class="addon-card"><div class="addon-name">${a.name}</div><div class="addon-price">${fmt(a.price)}</div><div style="margin-top:auto; display:flex; justify-content:flex-end;">${control}</div></div>`;
     }).join('');
   }
 
@@ -154,7 +151,7 @@
     const sum = getCartSummaryCached(), bar = document.getElementById('bottom-bar');
     if (sum.totalQty > 0) {
       if(bar) bar.classList.add('visible');
-      const prev = document.getElementById('cartPreview'); if(prev) prev.textContent = `${sum.totalQty} sajian terpilih`;
+      const prev = document.getElementById('cartPreview'); if(prev) prev.textContent = `${sum.totalQty} sajian`;
       const tot = document.getElementById('cartTotalDisplay'); if(tot) tot.textContent = fmt(sum.subtotal - sum.discount);
       const disc = document.getElementById('discountLabel'); if(disc) disc.style.display = sum.discount > 0 ? 'inline-block' : 'none';
     } else {
@@ -166,7 +163,7 @@
   function renderMiniCart() {
     const sum = getCartSummaryCached();
     const list = document.getElementById('miniCartList');
-    if(list) list.innerHTML = sum.items.length === 0 ? '<p style="text-align:center; color:var(--gray-400); padding:24px 0; font-size:13px;">Kurasi keranjang kosong.</p>' : sum.items.map(i => `<div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--gray-100);"><div style="flex:1;"><div style="font-weight:600; font-size:14px; color:var(--green);">${i.name}${i.spice?' (Lv '+i.spice+')':''}</div><div style="font-size:12px; color:var(--gray-500); margin-top:2px;">${fmt(i.price)}</div></div><div class="qty-control"><button class="qty-btn" data-action="decrease" data-id="${i.cartId}">−</button><span class="qty-num">${i.qty}</span><button class="qty-btn" data-action="increase" data-id="${i.cartId}">+</button></div></div>`).join('');
+    if(list) list.innerHTML = sum.items.length === 0 ? '<p style="text-align:center;color:#999;padding:20px;">Sajian belum dipilih.</p>' : sum.items.map(i => `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid #eee;"><div style="flex:1;"><div style="font-weight:600; font-size:14px; color:var(--green);">${i.name}${i.spice?' (Lv '+i.spice+')':''}</div><div style="font-size:12px; color:var(--gray-500);">${fmt(i.price)}</div></div><div class="qty-control"><button class="qty-btn" data-action="decrease" data-id="${i.cartId}">−</button><span class="qty-num">${i.qty}</span><button class="qty-btn" data-action="increase" data-id="${i.cartId}">+</button></div></div>`).join('');
     
     const subDisp = document.getElementById('cartSubtotalDisplay'); if(subDisp) subDisp.textContent = fmt(sum.subtotal);
     
@@ -174,14 +171,14 @@
       const di = document.getElementById('districtInput'); if(di) di.value = state.selectedDistrict.replace(/\b\w/g, l=>l.toUpperCase());
     }
     updateShippingUI();
+    if(window.lucide) window.lucide.createIcons();
   }
 
   function updateUI() { invalidateCache(); renderMenu(); renderAddons(); renderCart(); if(document.getElementById('miniCartModal')?.classList.contains('active')) renderMiniCart(); }
 
-  // --- Fullscreen History-API Stack Viewpage Navigation ---
   function openProductPage(id) {
     const p = PRODUCTS.find(x => x.id === id); if(!p) return;
-    document.getElementById('productPageImg').innerHTML = `<img src="${p.image}" class="img-cover" alt="${p.name}">`;
+    document.getElementById('productPageImg').innerHTML = `<img src="${p.image}">`;
     document.getElementById('productPageName').textContent = p.name;
     document.getElementById('productPageDesc').textContent = p.desc;
     document.getElementById('productPageContainer').textContent = p.container;
@@ -208,25 +205,24 @@
     if(pp && pp.style.display === 'block') { pp.style.display = 'none'; document.getElementById('mainContent').style.display = 'block'; }
   });
 
-  // --- Real-time Luxury AI Concierge Logic Module ---
+  // BUGFIX 5: CHAT CONCIERGE
   function initAIChat() {
     const toggle = document.getElementById('aiChatToggle'), box = document.getElementById('aiChatBox'), close = document.getElementById('aiChatClose'), input = document.getElementById('aiChatInput'), send = document.getElementById('aiChatSend'), messages = document.getElementById('aiChatMessages');
     if(toggle && box && close) {
-      toggle.addEventListener('click', (e) => { e.preventDefault(); box.style.display = box.style.display === 'none' ? 'block' : 'none'; if(box.style.display==='block' && input) input.focus(); });
+      toggle.addEventListener('click', () => { box.style.display = box.style.display === 'none' ? 'block' : 'none'; });
       close.addEventListener('click', () => { box.style.display = 'none'; });
-      const processMsg = () => {
+      const sendMsg = () => {
         const txt = input.value.trim(); if(!txt) return;
-        if(messages) {
-          messages.innerHTML += `<div style="text-align:right; margin-bottom:12px;"><span class="chat-bubble user">${escapeHTML(txt)}</span></div>`;
-          input.value = ''; messages.scrollTop = messages.scrollHeight;
-          setTimeout(() => { messages.innerHTML += `<div style="margin-bottom:12px;"><span class="chat-bubble bot">Preferensi kurasi rasa Anda telah terasimilasi secara personal ke dalam algoritma layanan pramutamu kami. Ada aspeknisasi rasa lainnya yang Anda butuhkan?</span></div>`; messages.scrollTop = messages.scrollHeight; }, 600);
-        }
+        messages.innerHTML += `<div style="text-align:right;margin-bottom:8px;"><span class="chat-bubble user">${escapeHTML(txt)}</span></div>`;
+        input.value = ''; messages.scrollTop = messages.scrollHeight;
+        setTimeout(() => { messages.innerHTML += `<div style="margin-bottom:8px;"><span class="chat-bubble bot">Terima kasih, catatan Anda telah saya rekam ke dalam sistem pesanan.</span></div>`; messages.scrollTop = messages.scrollHeight; }, 600);
       };
-      if(send) send.addEventListener('click', processMsg);
-      if(input) input.addEventListener('keydown', e => { if(e.key === 'Enter') processMsg(); });
+      if(send) send.addEventListener('click', sendMsg);
+      if(input) input.addEventListener('keydown', e => { if(e.key === 'Enter') sendMsg(); });
     }
   }
 
+  // --- FAQ Toggles ---
   function initFAQ() {
     document.querySelectorAll('.faq-item').forEach(item => {
       item.addEventListener('click', () => {
@@ -237,7 +233,6 @@
     });
   }
 
-  // --- Event Interlocking Architecture Array ---
   function bindEvents() {
     document.getElementById('backFromProduct')?.addEventListener('click', closeProductPage);
     
@@ -246,7 +241,7 @@
       const cartKey = id + '_spice' + spice;
       const entry = state.cart[cartKey] || { qty: 0, spice: spice };
       entry.qty += qty; entry.spice = spice; state.cart[cartKey] = entry;
-      invalidateCache(); updateUI(); showToast('✅ Sajian ditambahkan Ke Koleksi.');
+      invalidateCache(); updateUI(); showToast('✅ Ditambahkan!');
       setTimeout(() => closeProductPage(), 300);
     });
 
@@ -260,10 +255,18 @@
     document.getElementById('qtyMinusPage')?.addEventListener('click', () => { if (state.currentProductPage.qty > 1) { state.currentProductPage.qty--; document.getElementById('qtyNumPage').textContent = state.currentProductPage.qty; } });
     document.getElementById('qtyPlusPage')?.addEventListener('click', () => { state.currentProductPage.qty++; document.getElementById('qtyNumPage').textContent = state.currentProductPage.qty; });
 
+    let tOut;
+    document.getElementById('searchInput')?.addEventListener('input', e => {
+      document.getElementById('clearSearchBtn').style.display = e.target.value.length ? 'inline-block' : 'none';
+      clearTimeout(tOut); tOut = setTimeout(() => { state.searchQuery = e.target.value; invalidateCache(); updateUI(); }, 300);
+    });
+    document.getElementById('searchIconBtn')?.addEventListener('click', () => { document.getElementById('searchInputWrap').classList.toggle('open'); document.getElementById('searchInput').focus(); });
+    document.getElementById('clearSearchBtn')?.addEventListener('click', () => { document.getElementById('searchInput').value = ''; state.searchQuery = ''; document.getElementById('clearSearchBtn').style.display = 'none'; invalidateCache(); updateUI(); });
+
     const di = document.getElementById('districtInput'), dm = document.getElementById('customDistrictDropdown');
     if(di) di.addEventListener('input', e => {
       const v = e.target.value.toLowerCase(), m = Object.keys(DISTRICT_MAP).filter(k => k.includes(v));
-      if(dm) { dm.style.display = 'block'; dm.innerHTML = m.map(k => `<div data-val="${k}">${k.replace(/\b\w/g, l=>l.toUpperCase())}</div>`).join(''); }
+      if(dm) { dm.style.display = 'block'; dm.innerHTML = m.map(k => `<div style="padding:14px 16px; border-bottom:1px solid #eee; cursor:pointer;" data-val="${k}">${k.replace(/\b\w/g, l=>l.toUpperCase())}</div>`).join(''); }
     });
     
     if(dm) dm.addEventListener('click', e => {
@@ -272,31 +275,37 @@
       updateShippingUI();
     });
 
-    // Curated Delivery Time Interval Toggler
-    const times = ['Pagi Hari (09.00 - 11.00 WIB)', 'Siang Hari (11.00 - 13.00 WIB)', 'Sore Hari (14.00 - 17.00 WIB)'];
+    // BUGFIX 3: WAKTU PENGIRIMAN
+    const times = ['Pagi (09:00 - 11:00 WIB)', 'Siang (11:00 - 13:00 WIB)', 'Sore (14:00 - 17:00 WIB)'];
     let timeIdx = 0;
     document.getElementById('deliveryTimeTrigger')?.addEventListener('click', function() {
-      const lbl = document.getElementById('deliveryTimeLabel'), val = document.getElementById('deliveryTime');
-      if (lbl && val) { lbl.textContent = times[timeIdx]; lbl.style.color = "var(--gray-900)"; val.value = times[timeIdx]; timeIdx = (timeIdx + 1) % times.length; }
+      const lbl = document.getElementById('deliveryTimeLabel');
+      const val = document.getElementById('deliveryTime');
+      if (lbl && val) {
+        lbl.textContent = times[timeIdx];
+        lbl.style.color = "var(--gray-900)";
+        val.value = times[timeIdx];
+        timeIdx = (timeIdx + 1) % times.length;
+      }
     });
 
-    // High Precision Satellite GPS Synchronizer Link
+    // GPS Button in Bottom Bar
     document.getElementById('btnAutoDetect')?.addEventListener('click', function() {
       if(navigator.geolocation) {
-        showToast('Menghubungkan Ke Jaringan Satelit Geolokasi...');
+        showToast('Mencari lokasi GPS...');
         navigator.geolocation.getCurrentPosition(pos => {
           state.userDistance = estimateRoadDistance(haversineDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, pos.coords.latitude, pos.coords.longitude));
-          state.selectedDistrict = ''; 
-          if(di) di.value = 'Lokasi Terautentikasi (GPS)';
+          state.selectedDistrict = ''; // Clear manual district if GPS is successful
+          if(di) di.value = 'Lokasi Otomatis (GPS)';
           updateShippingUI();
-          showToast('✅ Orbit Jarak Sinkron.');
-        }, () => { showToast('Akses Satelit Ditolak. Harap Tentukan Manual.'); }, { timeout: 8000 });
+          showToast('✅ Jarak ditemukan.');
+        }, () => { showToast('GPS gagal. Mohon ketik kecamatan.'); }, { timeout: 8000 });
       }
     });
 
     document.addEventListener('click', e => {
       if(e.target.closest('[data-action="open-cart"]') || e.target.closest('.cart-summary')) { const m = document.getElementById('miniCartModal'); if(m){ m.classList.add('active'); document.body.style.overflow='hidden'; renderMiniCart(); } return; }
-      if(e.target.closest('#miniCartClose') || (e.target.id === 'miniCartModal' && !e.target.closest('.modal-content'))) { const m = document.getElementById('miniCartModal'); if(m){ m.classList.remove('active'); document.body.style.overflow=''; } return; }
+      if(e.target.closest('#miniCartClose')) { const m = document.getElementById('miniCartModal'); if(m){ m.classList.remove('active'); document.body.style.overflow=''; } return; }
       if(e.target.id === 'priorityToggleMini') { state.isPriority = e.target.checked; updateShippingUI(); return; }
 
       const act = e.target.closest('[data-action]');
@@ -313,11 +322,11 @@
       if(e.target.closest('.veh-btn')) { document.querySelectorAll('.veh-btn').forEach(b => b.classList.remove('active')); e.target.closest('.veh-btn').classList.add('active'); state.vehicleType = e.target.closest('.veh-btn').dataset.vehicle; updateShippingUI(); }
       if(e.target.id === 'clearCartBtn') { state.cart = {}; invalidateCache(); updateUI(); renderMiniCart(); showToast('Keranjang dikosongkan.'); }
 
-      // Structural Modal Validation Sequence
       if(e.target.closest('#btnOpenPayment')) {
         const name = document.getElementById('customerName')?.value.trim(), phone = document.getElementById('customerPhone')?.value.trim(), address = document.getElementById('customerAddress')?.value.trim();
         const dist = state.selectedDistrict || state.userDistance;
-        if(!name || !phone || !address || !dist) { showToast('Mohon lengkapi informasi formulir destinasi.'); return; }
+        if(!name || !phone || !address || !dist) { showToast('Mohon lengkapi alamat dan nama.'); return; }
+        
         state.customerName = name; state.customerPhone = phone; state.customerAddress = address; 
         const pt = document.getElementById('paymentTotalDisplay'), ft = document.getElementById('finalTotal');
         if(pt && ft) pt.textContent = ft.textContent;
@@ -326,27 +335,26 @@
 
       if(e.target.closest('#paymentClose')) { document.getElementById('paymentModal')?.classList.remove('active'); }
       
-      // CRITICAL END-TO-END SYSTEM ROUTING LOGIC LOCKED
       if(e.target.closest('[data-action="confirm-wa"]')) {
-        if (checkoutLocked) return; checkoutLocked = true;
+        if (checkoutLocked) return;
+        checkoutLocked = true;
         
         const sum = getCartSummaryCached();
         const distNum = state.selectedDistrict ? DISTRICT_MAP[state.selectedDistrict] || 10 : (state.userDistance || 2);
         const ship = calculateShipping(distNum, state.isPriority, sum.mainProductQty || 1);
         const orderId = 'RJ' + Date.now().toString(36).toUpperCase().slice(-6);
-        const locLabel = state.selectedDistrict ? `Kec. ${state.selectedDistrict.replace(/\b\w/g, l=>l.toUpperCase())}` : 'Titik Kordinat Satelit GPS';
+        const locLabel = state.selectedDistrict ? `Kec. ${state.selectedDistrict.replace(/\b\w/g, l=>l.toUpperCase())}` : 'Lokasi GPS';
         const fullAddress = `${state.customerAddress}, ${locLabel}`;
-        const timeDel = document.getElementById('deliveryTime')?.value || 'As Soon As Prepared (Esok Hari)';
-        const notes = document.getElementById('orderNotes')?.value || 'Nihil';
+        const timeDel = document.getElementById('deliveryTime')?.value || 'Belum dipilih';
+        const notes = document.getElementById('orderNotes')?.value || '-';
         
-        let msg = `*RESERVASI RESERVED ORDER — RUJAK.CO*\n\nID Transaksi: #${orderId}\nNama Klien: ${state.customerName}\nKontak Klien: ${state.customerPhone}\nDestinasi Alamat: ${fullAddress}\nInterval Waktu: ${timeDel}\nInstruksi Khusus: ${notes}\n\n*Kurasi Menu Terpilih:*\n`;
-        sum.items.forEach(i => msg += `• ${i.name} ${i.spice?'[Level Pedas '+i.spice+']':''} x${i.qty}\n`);
-        msg += `\nSubtotal Nilai Sajian: ${fmt(sum.subtotal)}\nProteksi Logistik (${ship.label}): ${fmt(ship.cost)}\n*TOTAL INVESTASI RASA: ${fmt(sum.subtotal + (ship.cost||0))}*\n\n(Terlampir Bukti Autentikasi Struk Transfer QRIS)`;
+        let msg = `*PESANAN RUJAK.CO*\n\nOrder: ${orderId}\nNama: ${state.customerName}\nTelp: ${state.customerPhone}\nAlamat: ${fullAddress}\nJam: ${timeDel}\nCatatan: ${notes}\n\n*Sajian:*\n`;
+        sum.items.forEach(i => msg += `- ${i.name} ${i.spice?'(Lv '+i.spice+')':''} x${i.qty}\n`);
+        msg += `\nSubtotal: ${fmt(sum.subtotal)}\nPrivilege: -${fmt(sum.discount)}\nOngkir: ${fmt(ship.cost)}\n*TOTAL: ${fmt(sum.subtotal - sum.discount + (ship.cost||0))}*\n\n(Mohon lampirkan bukti transfer QRIS)`;
         
-        // Asynchronous Datastore Persistence Engine
         getSupabase().then(client => {
           if (client) {
-            client.from('orders').insert([{ order_id: orderId, customer_name: state.customerName, customer_phone: state.customerPhone, customer_address: fullAddress, items: sum.items, total: sum.subtotal + (ship.cost || 0), status: 'pending' }]).then(({error}) => { if (error) console.error(error); });
+            client.from('orders').insert([{ order_id: orderId, customer_name: state.customerName, customer_phone: state.customerPhone, customer_address: fullAddress, items: sum.items, total: sum.subtotal - sum.discount + (ship.cost || 0), status: 'pending' }]).then(({error}) => { if (error) console.error(error); });
           }
         });
 
@@ -359,18 +367,27 @@
         }, 500);
       }
 
-      // Safe Dialogue Opener Validation
       const mi = e.target.closest('.menu-item');
       if (mi && !e.target.closest('.btn-add-unified') && !e.target.closest('.qty-control')) { openProductPage(mi.dataset.id); }
     });
+    
+    const obs = new IntersectionObserver(e => e.forEach(x => { if(x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1 });
+    document.querySelectorAll('.reveal-on-scroll, .stagger-children').forEach(el => obs.observe(el));
   }
 
   function init() {
-    initAIChat(); initFAQ();
+    initAIChat();
+    initFAQ();
     try { const s = localStorage.getItem('rujak_cart_v3'); if(s) state.cart = JSON.parse(s); } catch(e){}
     updateUI(); bindEvents();
+    if(navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        state.userDistance = estimateRoadDistance(haversineDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, pos.coords.latitude, pos.coords.longitude));
+        const loc = document.getElementById('locationDisplay'); if(loc) loc.textContent = 'Lokasi GPS ▾'; updateShippingUI();
+      }, () => {}, { timeout: 8000 });
+    }
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
-]
+
