@@ -47,8 +47,6 @@
     toastTimer = setTimeout(() => { el.classList.remove('show'); }, 3000);
   }
 
-  function haversineDistance(lat1, lon1, lat2, lon2) { const R = 6371; const dLat = (lat2-lat1)*Math.PI/180; const dLon = (lon2-lon1)*Math.PI/180; const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2; return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); }
-  function estimateRoadDistance(straightKm) { return Math.round(straightKm * (straightKm <= 10 ? 1.35 : straightKm <= 20 ? 1.30 : 1.20)); }
   function getSupabase() {
     if (window.supabase?.createClient) return window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     console.warn('Supabase belum siap');
@@ -58,8 +56,6 @@
   // --- Onboarding & Personalisasi ---
   function applyPersonalization() {
     const name = state.customerName || 'Klien';
-
-    // Hero name (satu-satunya sapaan di beranda, di dalam eyebrow hero)
     const heroName = document.getElementById('heroNameDisplay');
     if (heroName) heroName.textContent = name;
 
@@ -190,7 +186,7 @@
       requestAnimationFrame(updateCenter);
       window.clearTimeout(isScrolling);
       isScrolling = setTimeout(() => {
-        const itemWidth = track.children[0]?.offsetWidth ? track.children[0].offsetWidth + 24 : 0;
+        const itemWidth = track.children[0]?.offsetWidth ? track.children[0].offsetWidth + 16 : 0;
         if(itemWidth === 0) return;
         const currentIndex = Math.round(track.scrollLeft / itemWidth);
         const baseCount = PRODUCTS.length;
@@ -416,7 +412,6 @@
       const mi = e.target.closest('.boutique-item');
       if (mi) { openProductPage(mi.dataset.idx); }
 
-      // ACTION 1: Lanjutkan
       if (e.target.classList.contains('btn-lanjutkan')) {
         const idx = e.target.dataset.idx; const pid = e.target.dataset.pid;
         document.getElementById(`step1_${idx}_${pid}`).style.display = 'none';
@@ -445,13 +440,11 @@
         }
       }
 
-      // ACTION 2: Konfirmasi
       if (e.target.classList.contains('add-to-cart-btn')) {
         const pid = e.target.dataset.pid; const draft = state.drafts[pid]; const idx = e.target.dataset.idx;
         const cartKey = pid + '_spice' + draft.spice;
         if(!state.cart[cartKey]) state.cart[cartKey] = {qty: 0, spice: draft.spice};
         state.cart[cartKey].qty += draft.qty;
-        // Reset draft qty
         state.drafts[pid].qty = 1;
         document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = 1);
         updateUI(); showToast('Sajian telah ditambahkan ke keranjang.');
@@ -517,7 +510,6 @@
     });
   }
 
-  // --- Konfirmasi sebelum meninggalkan halaman ---
   window.addEventListener('beforeunload', function (e) {
     const hasCart = Object.keys(state.cart).length > 0;
     if (hasCart) {
