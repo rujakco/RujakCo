@@ -47,28 +47,28 @@ h1, h2, h3, h4, .brand-name, .font-fraunces { font-family: 'Fraunces', serif; fo
 @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
 /* HEADER STICKY KACA */
-.luxury-header { position: sticky; top: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; background: rgba(252,250,248,0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); z-index: 100; border-bottom: 1px solid rgba(10,58,42,0.04); }
-.brand-logo img { width: 36px; height: 36px; border-radius: 50%; box-shadow: 0 4px 12px rgba(10,58,42,0.08); }
+.luxury-header { position: sticky; top: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; background: rgba(252,250,248,0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); z-index: 100; border-bottom: 1px solid rgba(10,58,42,0.04); }
+.brand-logo img { width: 32px; height: 32px; border-radius: 50%; box-shadow: 0 4px 12px rgba(10,58,42,0.08); }
 .header-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
-.brand-name { font-size: 20px; letter-spacing: -0.01em; color: var(--green); font-weight: 500; }
+.brand-name { font-size: 18px; letter-spacing: -0.01em; color: var(--green); font-weight: 500; }
 
 /* HERO LANSKAP (4:2) BERBINGKAI */
-.content-wrapper { padding-bottom: 120px; }
-.hero-editorial { padding: 24px; margin-bottom: 8px; } /* jarak ke greeting 8px (40% dari 16px) */
+.content-wrapper { padding-bottom: 100px; }
+.hero-editorial { padding: 20px 24px 8px 24px; margin-bottom: 6px; }
 .hero-img-wrap { width: 100%; aspect-ratio: 4 / 2; position: relative; border-radius: 24px; overflow: hidden; box-shadow: 0 16px 40px rgba(10,58,42,0.08); }
 .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.03); transition: transform 0.8s ease-out; }
 .hero-editorial:hover .hero-img { transform: scale(1); }
-.hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 20%, rgba(10,58,42,0.9) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 40px 32px; text-align: left; }
-.hero-overlay h2 { font-size: 38px; line-height: 1.1; letter-spacing: -0.02em; color: var(--ivory); text-shadow: 0 4px 16px rgba(0,0,0,0.2); }
+.hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 20%, rgba(10,58,42,0.9) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 40px 32px 48px 32px; text-align: left; }
+.hero-overlay h2 { font-size: 36px; line-height: 1.1; letter-spacing: -0.02em; color: var(--ivory); text-shadow: 0 4px 16px rgba(0,0,0,0.2); margin-bottom: 8px; }
 .hero-overlay h2 em { font-style: italic; color: var(--gold); font-weight: 400; }
-.hero-overlay p { font-size: 14px; color: rgba(255,255,255,0.9); margin-top: 16px; font-weight: 400; font-family: 'DM Sans', sans-serif; }
+.hero-overlay p { font-size: 17px; color: rgba(255,255,255,0.9); margin-top: 8px; font-weight: 400; font-family: 'DM Sans', sans-serif; }
 .hero-overlay p #heroNameDisplay { color: var(--gold); font-weight: 600; font-style: italic; }
 
 /* SAPAAN PERSONAL - RATA KANAN, GOLD, UKURAN KECIL, TANPA BG */
 .personal-greeting {
-  padding: 0 24px 8px 24px; /* jarak ke carousel 8px */
+  padding: 0 24px 8px 24px;
   font-family: 'Fraunces', serif;
-  font-size: 11px;
+  font-size: 13.2px; /* +20% dari 11px */
   color: var(--gold);
   letter-spacing: 0.02em;
   font-weight: 400;
@@ -82,28 +82,28 @@ h1, h2, h3, h4, .brand-name, .font-fraunces { font-family: 'Fraunces', serif; fo
   display: inline;
 }
 .personal-greeting .greeting-name {
-  font-size: 13.2px; /* 20% lebih besar */
+  font-size: 15.84px; /* +20% dari 13.2px */
   font-weight: 500;
   color: var(--gold);
 }
 
-/* SISTEM CAROUSEL RAKSASA */
-.carousel-container { width: 100%; overflow: hidden; padding: 8px 0 80px; }
-.carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; padding: 8px calc(50% - 145px) 0; align-items: center; gap: 32px; }
+/* SISTEM CAROUSEL RAKSASA - DIPERBESAR AGAR SEIMBANG */
+.carousel-container { width: 100%; overflow: hidden; padding: 12px 0 60px; }
+.carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; padding: 8px calc(50% - 160px) 0; align-items: center; gap: 28px; }
 .carousel-track::-webkit-scrollbar { display: none; }
-.boutique-item { flex: 0 0 290px; scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; text-decoration: none; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease; transform: scale(0.85); opacity: 0.3; will-change: transform; }
+.boutique-item { flex: 0 0 320px; scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; text-decoration: none; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease; transform: scale(0.85); opacity: 0.3; will-change: transform; }
 .boutique-item.active-center { transform: scale(1.05); opacity: 1; z-index: 10; }
-.btq-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 20px; margin-bottom: 28px; background: var(--gray-100); box-shadow: 0 12px 32px rgba(10,58,42,0.06); transition: box-shadow 0.6s ease; }
-.boutique-item.active-center .btq-img { box-shadow: 0 24px 56px rgba(10,58,42,0.15); }
-.btq-name { font-family: 'Fraunces', serif; font-size: 24px; color: var(--green); margin-bottom: 8px; line-height: 1.2; font-weight: 400; }
-.btq-price { font-size: 15px; color: var(--gray-500); font-weight: 500; }
+.btq-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 20px; margin-bottom: 24px; background: var(--gray-100); box-shadow: 0 12px 32px rgba(10,58,42,0.06); transition: box-shadow 0.6s ease; }
+.boutique-item.active-center .btq-img { box-shadow: 0 24px 56px rgba(10,58,42,0.18); transform: scale(1.02); }
+.btq-name { font-family: 'Fraunces', serif; font-size: 26px; color: var(--green); margin-bottom: 6px; line-height: 1.2; font-weight: 400; }
+.btq-price { font-size: 16px; color: var(--gray-500); font-weight: 500; }
 
-/* FOOTER */
-.luxury-footer { text-align: center; padding: 32px 24px 80px; }
-.luxury-footer img { width: 40px; height: 40px; border-radius: 50%; margin-bottom: 24px; filter: grayscale(100%); opacity: 0.3; }
-.luxury-footer p { font-size: 10px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 32px; font-weight: 600; }
-.footer-links { display: flex; justify-content: center; gap: 40px; }
-.footer-links a { color: var(--gray-500); text-decoration: none; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; transition: color 0.2s; }
+/* FOOTER - DIPERKECIL AGAR TIDAK MENGAKAN MENU */
+.luxury-footer { text-align: center; padding: 24px 24px 60px; }
+.luxury-footer img { width: 32px; height: 32px; border-radius: 50%; margin-bottom: 16px; filter: grayscale(100%); opacity: 0.25; }
+.luxury-footer p { font-size: 9px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 16px; font-weight: 500; }
+.footer-links { display: flex; justify-content: center; gap: 32px; }
+.footer-links a { color: var(--gray-500); text-decoration: none; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; transition: color 0.2s; }
 .footer-links a:hover { color: var(--gold); }
 
 /* PRODUCT SWIPER OVERLAY */
@@ -157,8 +157,8 @@ h1, h2, h3, h4, .brand-name, .font-fraunces { font-family: 'Fraunces', serif; fo
 .detail-manifesto p { font-size: 15px; line-height: 1.8; color: var(--green); opacity: 0.85; margin: 0; }
 
 /* BOTTOM NAV BAR */
-.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; max-width: 480px; margin: 0 auto; z-index: var(--z-nav); background: rgba(252,250,248,0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); display: flex; justify-content: space-around; align-items: center; padding: 16px 0 calc(16px + env(safe-area-inset-bottom)); border-top: 1px solid rgba(0,0,0,0.05); }
-.nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--gray-400); font-size: 10px; font-weight: 600; gap: 8px; transition: color 0.2s; }
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; max-width: 480px; margin: 0 auto; z-index: var(--z-nav); background: rgba(252,250,248,0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); display: flex; justify-content: space-around; align-items: center; padding: 14px 0 calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid rgba(0,0,0,0.05); }
+.nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--gray-400); font-size: 10px; font-weight: 600; gap: 6px; transition: color 0.2s; }
 .nav-item.active { color: var(--green); }
 .nav-cart-wrapper { position: relative; display: inline-block; }
 .nav-badge { position: absolute; top: -8px; right: -10px; background: var(--gold); color: white; font-size: 10px; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--ivory); }
