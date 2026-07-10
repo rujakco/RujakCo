@@ -2,138 +2,223 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Rujak.co — Ultimate Breathing Luxury</title>
-
-  <!-- Google Fonts -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Rujak.Co — Premium Rujak</title>
+  <meta name="theme-color" content="#FDFBF7" />
+  <link rel="icon" type="image/webp" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet" />
-
-  <!-- CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <script defer src="https://unpkg.com/lucide@0.383.0"></script>
 </head>
 <body>
-  <div id="app">
-
-    <!-- ===== ONBOARDING ===== -->
-    <div class="onboarding-overlay" id="onboarding">
-      <div class="onb-content">
-        <img class="onb-logo" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.co" />
-        <div class="onb-welcome-text">Selamat Datang</div>
-        <h1 class="onb-title">Rujak.co</h1>
-        <p class="onb-subtitle">Rasakan kemewahan dalam setiap gigitan.</p>
-
-        <div class="onb-step active" data-step="1">
-          <label class="onb-label">Siapa nama Anda?</label>
-          <input class="onb-input" id="onbName" type="text" placeholder="Ketik nama Anda..." maxlength="30" autofocus />
-          <button class="btn-gold" id="onbNameBtn">Lanjutkan</button>
+  
+  <!-- TIRAI SAMBUTAN (VIP ONBOARDING) -->
+  <div id="onboardingOverlay" class="onboarding-overlay">
+    <div class="onb-content">
+      <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" class="onb-logo">
+      
+      <div id="onbNewUser" style="display:none; width:100%;">
+        <h2 class="onb-title">Selamat Datang di Rujak.Co</h2>
+        <p class="onb-subtitle">Nikmati keistimewaan rasa Nusantara.</p>
+        <div id="onbStep1" class="onb-step active">
+          <label class="onb-label">Pesanan ini atas nama:</label>
+          <input type="text" id="onbName" class="onb-input" placeholder="Nama lengkap Anda" autocomplete="off">
+          <button class="btn-gold full-width" id="onbNextBtn">Lanjutkan</button>
         </div>
+        <div id="onbStep2" class="onb-step">
+          <label class="onb-label">Kecamatan tujuan pengantaran</label>
+          <div style="position:relative;">
+            <input type="text" id="onbDistrict" class="onb-input" placeholder="Ketik nama kecamatan..." autocomplete="off" value="Bekasi">
+            <div id="onbDistrictDropdown" class="minimal-dropdown" style="text-align:left;"></div>
+          </div>
+          <button class="btn-gold full-width" id="onbStartBtn" style="margin-top:24px;">Masuk ke Butik</button>
+        </div>
+      </div>
 
-        <div class="onb-step" data-step="2">
-          <label class="onb-label">Di mana Anda berada?</label>
-          <input class="onb-input" id="onbLoc" type="text" placeholder="Kota atau daerah..." maxlength="40" />
-          <button class="btn-gold" id="onbLocBtn">Mulai Pengalaman</button>
-          <button class="btn-text-gold" id="onbSkipLoc">Lewati</button>
+      <div id="onbReturningUser" style="display:none; width:100%;">
+        <p class="onb-welcome-text">Selamat datang kembali,</p>
+        <h2 class="onb-title" id="onbWelcomeName">Ngoedi</h2>
+        <p class="onb-subtitle" style="margin-bottom:56px;">Destinasi: <span id="onbWelcomeDistrict" style="color:var(--gold);">Bekasi</span></p>
+        <button class="btn-gold full-width" id="onbEnterBtn">Masuk Sekarang</button>
+        <button class="btn-text-gold" id="onbResetBtn" style="margin-top:32px;">Ganti data & alamat</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="app">
+    <!-- HEADER STICKY KACA TRANSLUSEN -->
+    <header class="luxury-header" id="mainHeader">
+      <div class="header-left">
+        <div class="brand-logo"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co"></div>
+        <h1 class="brand-name">RUJAK.Co</h1>
+      </div>
+      <div class="header-right">
+        <span class="user-name" id="headerNameDisplay">Ngoedi</span>
+        <span class="user-loc" id="headerLocDisplay">Bekasi</span>
+      </div>
+    </header>
+
+    <main class="content-wrapper" id="mainContent">
+      <!-- HERO -->
+      <div class="hero-editorial fade-up">
+        <div class="hero-img-wrap">
+          <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Sajian Rujak" />
+          <div class="hero-overlay">
+            <h2>Asam, Pedas,<br><em>Manis, Segar.</em></h2>
+            <div class="hero-caption">
+              <span class="hairline"></span>
+              <span class="hero-caption-text">Nikmati Indonesia dalam Satu Wadah, <span id="heroNameDisplay">Ngoedi</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CAROUSEL (MENU) -->
+      <div class="carousel-container fade-up">
+        <div class="carousel-track" id="menuList"></div>
+      </div>
+      
+      <!-- TYPING ANIMATION INSIGHT -->
+      <div class="product-insight-container fade-up">
+        <p id="productInsightText" class="typing-text"></p>
+      </div>
+
+      <!-- FOOTER -->
+      <footer class="luxury-footer fade-up">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co">
+            <p>EST. 2024 &nbsp;•&nbsp; BEKASI, INDONESIA</p>
+          </div>
+          <div class="footer-links">
+            <a href="#">Tentang</a>
+            <a href="#">Kontak</a>
+            <a href="#">Kebijakan</a>
+          </div>
+          <div class="footer-social">
+            <a href="#" aria-label="Instagram"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+            <a href="#" aria-label="WhatsApp"><i data-lucide="phone" class="w-4 h-4"></i></a>
+            <a href="#" aria-label="Email"><i data-lucide="mail" class="w-4 h-4"></i></a>
+          </div>
+        </div>
+        <p class="footer-copy">© 2024 RUJAK.Co — Premium Rujak</p>
+      </footer>
+    </main>
+
+    <!-- PRODUCT SWIPER OVERLAY (DETAIL) -->
+    <div class="product-swiper-overlay" id="productPage" style="display:none;" aria-hidden="true">
+      <button id="backFromProduct" class="glass-btn floating-close"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+      <div class="product-swiper-track" id="productSwiperTrack"></div>
+    </div>
+
+    <!-- CART & CHECKOUT DRAWER -->
+    <div class="modal-overlay" id="miniCartModal" aria-hidden="true">
+      <div class="drawer-content">
+        <div class="drawer-header">
+          <h3>Keranjang Belanja</h3>
+          <button id="miniCartClose" class="glass-btn-dark"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+        <div class="drawer-body">
+          <div id="miniCartList"></div>
+          <div class="drawer-subtotal">
+            <span>Total Sajian</span>
+            <span id="cartSubtotalDisplay" class="font-fraunces">Rp0</span>
+          </div>
+          <div class="checkout-forms">
+            <h4>Data Penerima</h4>
+            <input type="text" id="customerName" placeholder="Nama lengkap penerima" class="input-minimal">
+            <input type="tel" id="customerPhone" placeholder="Nomor HP aktif" inputmode="numeric" class="input-minimal">
+            <textarea id="customerAddress" placeholder="Alamat lengkap (jalan, RT/RW, patokan)" rows="2" class="input-minimal"></textarea>
+            <div style="position:relative;">
+              <input type="text" id="districtInput" placeholder="Kecamatan" class="input-minimal" autocomplete="off" readonly style="color:var(--green); font-weight:600;">
+              <div id="customDistrictDropdown" class="minimal-dropdown"></div>
+            </div>
+            <div style="font-size:12px; color:var(--gold); margin-top:-16px; margin-bottom:32px; font-weight:500;">*Kecamatan sesuai profil awal Anda.</div>
+            <select id="deliveryTime" class="input-minimal" style="margin-top:8px;">
+              <option value="Pagi (09:00 - 11:00)">Pengantaran Pagi (09:00 - 11:00)</option>
+              <option value="Siang (11:00 - 13:00)">Pengantaran Siang (11:00 - 13:00)</option>
+              <option value="Sore (14:00 - 17:00)">Pengantaran Sore (14:00 - 17:00)</option>
+            </select>
+            <textarea id="orderNotes" placeholder="Instruksi Khusus (Opsional)" rows="1" class="input-minimal"></textarea>
+          </div>
+          <div id="shippingSection" class="checkout-forms" style="margin-top:40px;">
+            <h4>Pilih Kurir</h4>
+            <div class="logistic-options">
+              <button class="log-btn active" data-provider="rujakco">Kurir Rujak.Co</button>
+              <button class="log-btn" data-provider="paxel">Paxel Same Day</button>
+            </div>
+            <div id="rujakcoOptions" style="margin-top:24px;">
+              <div class="logistic-options">
+                <button class="veh-btn active" data-vehicle="motor">Motor</button>
+                <button class="veh-btn" data-vehicle="mobil">Mobil</button>
+              </div>
+              <label class="priority-label"><input type="checkbox" id="priorityToggleMini"> Prioritas (+Rp8.000)</label>
+            </div>
+            <div id="paxelOptions" style="display:none; margin-top:24px; font-size:13px; color:var(--gold); font-style:italic; line-height:1.6;">* Layanan Paxel Same Day. Sajian tiba esok hari.</div>
+            <div class="drawer-breakdown">
+              <span id="shippingDistance"></span>
+              <span id="finalShipping" class="font-fraunces">Rp0</span>
+            </div>
+          </div>
+          <div class="drawer-total">
+            <span>Total Pesanan</span>
+            <span id="finalTotal">Rp0</span>
+          </div>
+          <button class="btn-dark full-width" id="btnOpenPayment">Bayar Sekarang</button>
         </div>
       </div>
     </div>
 
-    <!-- ===== HEADER ===== -->
-    <header class="luxury-header" id="mainHeader">
-      <div class="header-left">
-        <div class="brand-logo">
-          <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.co" />
-        </div>
-        <span class="brand-name">rujak.co</span>
-      </div>
-      <div class="header-right">
-        <span class="user-name" id="headerName">Tamu</span>
-        <span class="user-loc" id="headerLoc">📍</span>
-      </div>
-    </header>
-
-    <!-- ===== MAIN CONTENT ===== -->
-    <div class="content-wrapper">
-
-      <!-- HERO -->
-      <section class="hero-editorial">
-        <div class="hero-img-wrap">
-          <img class="hero-img" src="https://images.unsplash.com/photo-1596792213659-3f9c1d5e5b5f?w=800&h=600&fit=crop&crop=center" alt="Rujak hero" />
-          <div class="hero-overlay">
-            <h2>Rasakan <em>ledakan</em> rasa<br />dalam setiap suapan.</h2>
-            <div class="hero-caption">
-              <span class="hairline"></span>
-              <span class="hero-caption-text">Untuk <span id="heroNameDisplay">Tamu</span>, dari kami dengan cinta</span>
-            </div>
+    <!-- PAYMENT MODAL -->
+    <div class="modal-overlay" id="paymentModal" aria-hidden="true">
+      <div class="drawer-content" style="height:auto;">
+        <div class="drawer-header"><h3>QRIS Pembayaran</h3><button id="paymentClose" class="glass-btn-dark"><i data-lucide="x" class="w-4 h-4"></i></button></div>
+        <div class="drawer-body" style="text-align:center; padding-bottom:48px;">
+          <div class="qris-frame">
+            <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" />
           </div>
-        </div>
-      </section>
-
-      <!-- CAROUSEL -->
-      <div class="carousel-container">
-        <div class="carousel-track" id="carouselTrack">
-          <!-- Item akan di-generate oleh JavaScript -->
+          <div style="font-size:36px; font-family:'Fraunces',serif; margin:32px 0; color:var(--green);" id="paymentTotalDisplay">Rp0</div>
+          <button class="btn-dark full-width" data-action="confirm-wa"><i data-lucide="check" class="w-5 h-5 inline" style="margin-right:8px;"></i> Konfirmasi via WhatsApp</button>
         </div>
       </div>
+    </div>
 
-      <!-- TYPING INSIGHT -->
-      <div class="product-insight-container">
-        <p class="typing-text" id="typingText"></p>
-      </div>
-
-      <!-- FOOTER -->
-      <footer class="luxury-footer">
-        <div class="footer-grid">
-          <div class="footer-brand">
-            <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.co" />
-            <p>Rujak.co — Kemewahan Rasa</p>
+    <!-- AI CHAT PRAMUTAMU -->
+    <div class="modal-overlay" id="aiChatBox" style="display:none; z-index:2000;" aria-hidden="true">
+      <div class="drawer-content" style="height:70vh;">
+        <div class="drawer-header"><h3>Pramutamu Rujak.Co</h3><button id="aiChatClose" class="glass-btn-dark"><i data-lucide="x" class="w-4 h-4"></i></button></div>
+        <div class="drawer-body chat-body">
+          <div id="aiChatMessages" class="chat-messages">
+            <div class="msg-bot"><span id="aiWelcomeMsg">Selamat siang. Ada yang dapat kami bantu untuk pesanan Anda?</span></div>
           </div>
-          <div class="footer-links">
-            <a href="#">Tentang</a>
-            <a href="#">Rasa</a>
-            <a href="#">Kontak</a>
-          </div>
-          <div class="footer-social">
-            <a href="#">IG</a>
-            <a href="#">YT</a>
-            <a href="#">TikTok</a>
+          <div class="chat-input-row">
+            <input type="text" id="aiChatInput" class="input-minimal" placeholder="Tulis pesan Anda...">
+            <button id="aiChatSend" class="btn-gold-round"><i data-lucide="send" class="w-4 h-4"></i></button>
           </div>
         </div>
-        <p class="footer-copy">&copy; 2026 Rujak.co. Semua hak dilindungi.</p>
-      </footer>
+      </div>
+    </div>
 
-    </div><!-- /content-wrapper -->
-
-    <!-- ===== BOTTOM NAV ===== -->
+    <!-- BOTTOM NAVIGATION -->
     <nav class="bottom-nav" id="bottomNav">
-      <a class="nav-item active" href="#" data-nav="home">
-        <span>🏠</span>
-        <span>Beranda</span>
+      <a href="#" class="nav-item active" data-tab="home"><i data-lucide="home" class="nav-icon"></i><span class="nav-label">Beranda</span></a>
+      <a href="#" class="nav-item" id="navCartBtn">
+        <div class="nav-cart-wrapper">
+          <i data-lucide="shopping-bag" class="nav-icon"></i>
+          <span class="nav-badge" id="cartBadgeNav" style="display:none;">0</span>
+        </div>
+        <span class="nav-label">Keranjang</span>
       </a>
-      <a class="nav-item" href="#" data-nav="explore">
-        <span>🔍</span>
-        <span>Jelajah</span>
-      </a>
-      <a class="nav-item" href="#" data-nav="cart" id="navCart">
-        <span class="nav-cart-wrapper">
-          <span>🛒</span>
-          <span class="nav-badge" id="cartBadge" style="display:none;">0</span>
-        </span>
-        <span>Keranjang</span>
-      </a>
-      <a class="nav-item" href="#" data-nav="profile">
-        <span>👤</span>
-        <span>Profil</span>
-      </a>
+      <a href="#" class="nav-item" data-tab="orders"><i data-lucide="package" class="nav-icon"></i><span class="nav-label">Pesanan</span></a>
+      <a href="#" class="nav-item" id="aiChatToggle"><i data-lucide="sparkles" class="nav-icon"></i><span class="nav-label">Butler</span></a>
     </nav>
 
-    <!-- ===== TOAST NOTIFICATION ===== -->
-    <div id="toast"></div>
+    <div id="toast" role="alert" aria-live="polite"></div>
+  </div>
 
-  </div><!-- /#app -->
-
-  <!-- ===== JAVASCRIPT ===== -->
-  <script src="App.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="app.js"></script>
 </body>
 </html>
