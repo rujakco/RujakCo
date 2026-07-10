@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Rujak.Co — Premium Rujak</title>
-  <meta name="theme-color" content="#FCFAF8" />
+  <meta name="theme-color" content="#FDFBF7" />
   <link rel="icon" type="image/webp" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,7 +14,6 @@
 </head>
 <body>
   
-  <!-- TIRAI SAMBUTAN (VIP ONBOARDING) -->
   <div id="onboardingOverlay" class="onboarding-overlay">
     <div class="onb-content">
       <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" class="onb-logo">
@@ -30,7 +29,7 @@
         <div id="onbStep2" class="onb-step">
           <label class="onb-label">Kecamatan tujuan pengantaran</label>
           <div style="position:relative;">
-            <input type="text" id="onbDistrict" class="onb-input" placeholder="Ketik nama kecamatan..." autocomplete="off">
+            <input type="text" id="onbDistrict" class="onb-input" placeholder="Ketik nama kecamatan..." autocomplete="off" value="Bekasi">
             <div id="onbDistrictDropdown" class="minimal-dropdown" style="text-align:left;"></div>
           </div>
           <button class="btn-gold full-width" id="onbStartBtn" style="margin-top:24px;">Masuk ke Butik</button>
@@ -39,7 +38,7 @@
 
       <div id="onbReturningUser" style="display:none; width:100%;">
         <p class="onb-welcome-text">Selamat datang kembali,</p>
-        <h2 class="onb-title" id="onbWelcomeName">Klien</h2>
+        <h2 class="onb-title" id="onbWelcomeName">Ngoedi</h2>
         <p class="onb-subtitle" style="margin-bottom:56px;">Destinasi: <span id="onbWelcomeDistrict" style="color:var(--gold);">Bekasi</span></p>
         <button class="btn-gold full-width" id="onbEnterBtn">Masuk Sekarang</button>
         <button class="btn-text-gold" id="onbResetBtn" style="margin-top:32px;">Ganti alamat pengantaran</button>
@@ -48,7 +47,6 @@
   </div>
 
   <div id="app">
-    <!-- HEADER STICKY (TRANSPARAN) -->
     <header class="luxury-header" id="mainHeader">
       <div class="brand-logo"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co"></div>
       <div class="header-center">
@@ -58,7 +56,6 @@
     </header>
 
     <main class="content-wrapper" id="mainContent">
-      <!-- HERO — MENEMBUS SAMPAI ATAS LAYAR -->
       <div class="hero-editorial fade-up">
         <div class="hero-img-wrap">
           <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Sajian Rujak" />
@@ -72,7 +69,6 @@
         </div>
       </div>
 
-      <!-- CAROUSEL — THUMBNAIL LEBIH LEBAR (4:1.5) -->
       <div class="carousel-container fade-up">
         <div class="carousel-track" id="menuList"></div>
       </div>
@@ -98,14 +94,12 @@
       </footer>
     </main>
 
-    <!-- PRODUCT SWIPER OVERLAY -->
-    <div class="product-swiper-overlay" id="productPage" style="display:none;">
+    <div class="product-swiper-overlay" id="productPage" style="display:none;" aria-hidden="true">
       <button id="backFromProduct" class="glass-btn floating-close"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
       <div class="product-swiper-track" id="productSwiperTrack"></div>
     </div>
 
-    <!-- CART & CHECKOUT DRAWER -->
-    <div class="modal-overlay" id="miniCartModal">
+    <div class="modal-overlay" id="miniCartModal" aria-hidden="true">
       <div class="drawer-content">
         <div class="drawer-header">
           <h3>Keranjang Belanja</h3>
@@ -120,7 +114,7 @@
           <div class="checkout-forms">
             <h4>Data Penerima</h4>
             <input type="text" id="customerName" placeholder="Nama lengkap penerima" class="input-minimal">
-            <input type="tel" id="customerPhone" placeholder="Nomor HP aktif" class="input-minimal">
+            <input type="tel" id="customerPhone" placeholder="Nomor HP aktif" inputmode="numeric" class="input-minimal">
             <textarea id="customerAddress" placeholder="Alamat lengkap (jalan, RT/RW, patokan)" rows="2" class="input-minimal"></textarea>
             <div style="position:relative;">
               <input type="text" id="districtInput" placeholder="Kecamatan" class="input-minimal" autocomplete="off" readonly style="color:var(--green); font-weight:600;">
@@ -162,8 +156,7 @@
       </div>
     </div>
 
-    <!-- PAYMENT MODAL -->
-    <div class="modal-overlay" id="paymentModal">
+    <div class="modal-overlay" id="paymentModal" aria-hidden="true">
       <div class="drawer-content" style="height:auto;">
         <div class="drawer-header"><h3>QRIS Pembayaran</h3><button id="paymentClose" class="glass-btn-dark"><i data-lucide="x" class="w-4 h-4"></i></button></div>
         <div class="drawer-body" style="text-align:center; padding-bottom:48px;">
@@ -176,8 +169,7 @@
       </div>
     </div>
 
-    <!-- AI CHAT PRAMUTAMU -->
-    <div class="modal-overlay" id="aiChatBox" style="display:none; z-index:2000;">
+    <div class="modal-overlay" id="aiChatBox" style="display:none; z-index:2000;" aria-hidden="true">
       <div class="drawer-content" style="height:70vh;">
         <div class="drawer-header"><h3>Pramutamu Rujak.Co</h3><button id="aiChatClose" class="glass-btn-dark"><i data-lucide="x" class="w-4 h-4"></i></button></div>
         <div class="drawer-body chat-body">
@@ -192,7 +184,6 @@
       </div>
     </div>
 
-    <!-- BOTTOM NAVIGATION -->
     <nav class="bottom-nav" id="bottomNav">
       <a href="#" class="nav-item active" data-tab="home"><i data-lucide="home" class="nav-icon"></i><span class="nav-label">Beranda</span></a>
       <a href="#" class="nav-item" id="navCartBtn">
