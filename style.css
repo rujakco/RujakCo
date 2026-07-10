@@ -15,7 +15,7 @@
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { margin: 0; padding: 0; background: var(--ivory); font-family: 'DM Sans', sans-serif; color: var(--gray-900); /* scroll-behavior dihapus dari global */ }
+html, body { margin: 0; padding: 0; background: var(--ivory); font-family: 'DM Sans', sans-serif; color: var(--gray-900); }
 .no-sb::-webkit-scrollbar { display: none; } .no-sb { -ms-overflow-style: none; scrollbar-width: none; }
 #app { width: 100%; max-width: 480px; margin: 0 auto; min-height: 100dvh; background: var(--ivory); position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.03); overflow-x: hidden; }
 
@@ -52,36 +52,43 @@ h1, h2, h3, h4, .brand-name, .font-fraunces { font-family: 'Fraunces', serif; fo
 .header-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
 .brand-name { font-size: 20px; letter-spacing: -0.01em; color: var(--green); font-weight: 500; }
 
-/* HERO LANSKAP (4:3) BERBINGKAI */
+/* HERO LANSKAP (4:2) BERBINGKAI */
 .content-wrapper { padding-bottom: 120px; }
-.hero-editorial { padding: 24px; margin-bottom: 16px; } /* kurangi margin bawah */
-.hero-img-wrap { width: 100%; aspect-ratio: 4/3; position: relative; border-radius: 24px; overflow: hidden; box-shadow: 0 16px 40px rgba(10,58,42,0.08); }
+.hero-editorial { padding: 24px; margin-bottom: 8px; } /* jarak ke greeting 8px (40% dari 16px) */
+.hero-img-wrap { width: 100%; aspect-ratio: 4 / 2; position: relative; border-radius: 24px; overflow: hidden; box-shadow: 0 16px 40px rgba(10,58,42,0.08); }
 .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.03); transition: transform 0.8s ease-out; }
 .hero-editorial:hover .hero-img { transform: scale(1); }
 .hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 20%, rgba(10,58,42,0.9) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 40px 32px; text-align: left; }
 .hero-overlay h2 { font-size: 38px; line-height: 1.1; letter-spacing: -0.02em; color: var(--ivory); text-shadow: 0 4px 16px rgba(0,0,0,0.2); }
 .hero-overlay h2 em { font-style: italic; color: var(--gold); font-weight: 400; }
 .hero-overlay p { font-size: 14px; color: rgba(255,255,255,0.9); margin-top: 16px; font-weight: 400; font-family: 'DM Sans', sans-serif; }
+.hero-overlay p #heroNameDisplay { color: var(--gold); font-weight: 600; font-style: italic; }
 
-/* SAPAAN PERSONAL */
+/* SAPAAN PERSONAL - RATA KANAN, GOLD, UKURAN KECIL, TANPA BG */
 .personal-greeting {
-  padding: 0 24px 32px 24px;
+  padding: 0 24px 8px 24px; /* jarak ke carousel 8px */
   font-family: 'Fraunces', serif;
-  font-size: 22px;
-  color: var(--green);
-  letter-spacing: -0.01em;
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.02em;
   font-weight: 400;
+  text-align: right;
+  background: none;
 }
 .personal-greeting span {
-  background: var(--green-light);
-  padding: 12px 24px;
-  border-radius: 100px;
-  display: inline-block;
-  border: 1px solid rgba(10,58,42,0.06);
+  background: none;
+  padding: 0;
+  border: none;
+  display: inline;
+}
+.personal-greeting .greeting-name {
+  font-size: 13.2px; /* 20% lebih besar */
+  font-weight: 500;
+  color: var(--gold);
 }
 
 /* SISTEM CAROUSEL RAKSASA */
-.carousel-container { width: 100%; overflow: hidden; padding: 8px 0 80px; } /* tambah padding-top */
+.carousel-container { width: 100%; overflow: hidden; padding: 8px 0 80px; }
 .carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; padding: 8px calc(50% - 145px) 0; align-items: center; gap: 32px; }
 .carousel-track::-webkit-scrollbar { display: none; }
 .boutique-item { flex: 0 0 290px; scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; text-decoration: none; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease; transform: scale(0.85); opacity: 0.3; will-change: transform; }
