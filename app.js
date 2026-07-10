@@ -222,6 +222,7 @@
       <div class="boutique-item" data-id="${p.id}" data-idx="${index}">
         <img src="${p.thumbnail}" class="btq-img" loading="lazy" alt="${p.name}">
         <h3 class="btq-name">${p.name}</h3>
+        <span class="hairline"></span>
         <span class="btq-price">${fmt(p.price)}</span>
       </div>
     `).join('');
@@ -237,6 +238,7 @@
       <div class="product-slide" data-id="${p.id}" data-idx="${index}">
         <div class="detail-image-wrap"><img src="${p.image}" alt="${p.name}" loading="lazy"></div>
         <div class="detail-content">
+          <span class="hairline"></span>
           <h2>${p.name}</h2>
           <p class="detail-price">${fmt(p.price)}</p>
           <p class="detail-desc">${p.desc}</p>
