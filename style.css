@@ -50,9 +50,12 @@ p { line-height: 1.8; }
 
 /* HEADER STICKY (TRUE FROSTED GLASS) */
 .luxury-header { 
-  position: sticky; 
+  position: fixed; 
   top: 0; 
+  left: 50%;
+  transform: translateX(-50%);
   width: 100%; 
+  max-width: 480px; 
   display: flex; 
   align-items: center; 
   justify-content: space-between; 
@@ -78,7 +81,7 @@ p { line-height: 1.8; }
 
 /* HERO */
 .content-wrapper { padding-bottom: 80px; overflow-x: hidden; }
-.hero-editorial { padding: 0 24px 0; margin-top: -72px; position: relative; z-index: 1; }
+.hero-editorial { padding: 0 24px 0; margin-top: 0; position: relative; z-index: 1; }
 .hero-img-wrap { width: 100%; aspect-ratio: 4 / 3; position: relative; border-radius: 0 0 32px 32px; overflow: hidden; box-shadow: 0 12px 40px rgba(10,58,42,0.15); }
 .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(8,46,33,0.7) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 32px; text-align: left; }
@@ -187,45 +190,4 @@ p { line-height: 1.8; }
 .modal-overlay.active .drawer-content { transform: translateY(0); }
 .drawer-header { padding: 32px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.04); }
 .drawer-header h3 { font-size: 22px; color: var(--green); }
-.glass-btn-dark { background: var(--gray-100); border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gray-900); cursor: pointer; transition: background 0.2s; }
-.glass-btn-dark:active { background: var(--gray-200); }
-.drawer-body { flex: 1; overflow-y: auto; padding: 32px 32px 48px; }
-
-.cart-item-row { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; border-bottom: 1px solid var(--gray-200); }
-.cart-item-info h4 { font-size: 18px; font-family: 'Fraunces', serif; color: var(--green); margin: 0 0 8px; font-weight: 400; }
-.cart-item-info p { font-size: 15px; color: var(--gold); margin: 0; font-weight: 500; }
-.drawer-subtotal { display: flex; justify-content: space-between; font-size: 16px; font-weight: 600; padding: 32px 0; border-bottom: 1px solid var(--gray-200); margin-bottom: 48px; color: var(--gray-500); }
-
-.checkout-forms h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--gray-500); margin-bottom: 32px; font-family: 'DM Sans', sans-serif; font-weight: 600; }
-.input-minimal { width: 100%; border: none; border-bottom: 1px solid var(--gray-300); background: transparent; padding: 16px 0; font-family: inherit; font-size: 16px; margin-bottom: 32px; border-radius: 0; transition: border-color 0.3s; outline: none; color: var(--gray-900); }
-.input-minimal:focus { border-bottom-color: var(--gold); }
-.input-minimal::placeholder { color: var(--gray-400); font-weight: 400; }
-.minimal-dropdown { display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--gray-200); z-index: 10; max-height: 200px; overflow-y: auto; box-shadow: 0 16px 40px rgba(0,0,0,0.08); border-radius: 16px; margin-top: 4px; }
-.minimal-dropdown div { padding: 16px 24px; font-size: 15px; cursor: pointer; border-bottom: 1px solid var(--gray-100); transition: background 0.2s; }
-.minimal-dropdown div:hover { background: var(--green-light); color: var(--green); }
-
-.logistic-options { display: flex; gap: 16px; margin-bottom: 24px; }
-.log-btn, .veh-btn { flex: 1; padding: 16px; background: transparent; border: 1px solid var(--gray-300); border-radius: 16px; font-size: 15px; color: var(--gray-500); cursor: pointer; transition: all 0.2s; font-weight: 500; }
-.log-btn.active, .veh-btn.active { border-color: var(--green); color: var(--green); background: var(--green-light); font-weight: 600; }
-.priority-label { font-size: 15px; color: var(--gray-500); display: flex; align-items: center; gap: 12px; cursor: pointer; }
-.priority-label input { accent-color: var(--green); width: 24px; height: 24px; }
-
-.drawer-breakdown { font-size: 15px; color: var(--gray-500); display: flex; justify-content: space-between; margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--gray-200); }
-.drawer-total { display: flex; justify-content: space-between; align-items: flex-end; font-size: 16px; font-weight: 500; color: var(--gray-500); margin: 56px 0 48px; }
-.drawer-total #finalTotal { font-size: 36px; color: var(--green); font-family: 'Fraunces', serif; line-height: 1; }
-
-.qris-frame { background: white; padding: 32px; border-radius: 32px; box-shadow: 0 16px 40px rgba(8,46,33,0.06); display: inline-block; margin-bottom: 24px; border: 1px solid var(--gray-100); }
-.qris-frame img { width: 240px; height: auto; display: block; }
-
-.chat-body { display: flex; flex-direction: column; padding: 0; background: #F8F6F2; }
-.chat-messages { flex: 1; overflow-y: auto; padding: 32px; font-size: 15px; line-height: 1.6; }
-.msg-bot span { background: white; padding: 18px 24px; border-radius: 24px; border-bottom-left-radius: 4px; display: inline-block; max-width: 85%; box-shadow: 0 4px 12px rgba(0,0,0,0.03); color: var(--gray-900); border: 1px solid var(--gray-100); }
-.msg-user { text-align: right; margin-bottom: 24px; }
-.msg-user span { background: var(--green); color: white; padding: 18px 24px; border-radius: 24px; border-bottom-right-radius: 4px; display: inline-block; max-width: 85%; box-shadow: 0 8px 24px rgba(8,46,33,0.15); }
-.chat-input-row { padding: 24px 32px; border-top: 1px solid var(--gray-200); display: flex; gap: 16px; background: white; }
-.chat-input-row input { margin: 0; padding: 18px 28px; background: var(--gray-100); border: none; border-radius: 100px; font-size: 16px; }
-.btn-gold-round { background: linear-gradient(135deg, #CEAA65 0%, #B89650 100%); color: white; border: none; border-radius: 50%; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; box-shadow: 0 8px 24px rgba(184,150,80,0.3); }
-.btn-gold-round:active { transform: scale(0.9); }
-
-#toast { position: fixed; top: 120px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--green); color: white; font-size: 15px; font-weight: 500; padding: 18px 36px; border-radius: 100px; z-index: var(--z-onboard); opacity: 0; pointer-events: none; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 16px 40px rgba(8,46,33,0.2); }
-#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.glass-btn-dark { background: var(--gray-100); border: none; width: 44px; height: 44px; border-radius: 50%;
