@@ -48,29 +48,31 @@
   </div>
 
   <div id="app">
-    <!-- HEADER + HERO DIGABUNG -->
-    <header class="hero-header" id="heroHeader">
-      <div class="header-top">
-        <div class="brand-logo"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co"></div>
-        <div class="header-center">
-          <h1 class="brand-name">Rujak.Co</h1>
-        </div>
-        <div style="width:36px;"></div>
+    <!-- HEADER STICKY (TRANSPARAN) -->
+    <header class="luxury-header" id="mainHeader">
+      <div class="brand-logo"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co"></div>
+      <div class="header-center">
+        <h1 class="brand-name">Rujak.Co</h1>
       </div>
-      <div class="hero-img-wrap">
-        <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Sajian Rujak" />
-        <div class="hero-overlay">
-          <h2>Asam, Pedas,<br><em>Manis, Segar.</em></h2>
-        </div>
-      </div>
-      <div class="hero-caption">
-        <span class="hairline"></span>
-        <span class="hero-caption-text">Selamat berbelanja, <span id="heroNameDisplay">Ngoedi</span></span>
-      </div>
+      <div style="width:36px;"></div>
     </header>
 
     <main class="content-wrapper" id="mainContent">
-      <!-- CAROUSEL RAKSASA — thumbnail selebar hero -->
+      <!-- HERO — MENEMBUS SAMPAI ATAS LAYAR -->
+      <div class="hero-editorial fade-up">
+        <div class="hero-img-wrap">
+          <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Sajian Rujak" />
+          <div class="hero-overlay">
+            <h2>Asam, Pedas,<br><em>Manis, Segar.</em></h2>
+          </div>
+        </div>
+        <div class="hero-caption">
+          <span class="hairline"></span>
+          <span class="hero-caption-text">Selamat berbelanja, <span id="heroNameDisplay">Ngoedi</span></span>
+        </div>
+      </div>
+
+      <!-- CAROUSEL — THUMBNAIL LEBIH LEBAR (4:1.5) -->
       <div class="carousel-container fade-up">
         <div class="carousel-track" id="menuList"></div>
       </div>
@@ -96,12 +98,10 @@
       </footer>
     </main>
 
-    <!-- PRODUCT SWIPER OVERLAY (FULLSCREEN) -->
+    <!-- PRODUCT SWIPER OVERLAY -->
     <div class="product-swiper-overlay" id="productPage" style="display:none;">
       <button id="backFromProduct" class="glass-btn floating-close"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
-      <div class="product-swiper-track" id="productSwiperTrack">
-        <!-- Dirender oleh JS -->
-      </div>
+      <div class="product-swiper-track" id="productSwiperTrack"></div>
     </div>
 
     <!-- CART & CHECKOUT DRAWER -->
@@ -113,42 +113,33 @@
         </div>
         <div class="drawer-body">
           <div id="miniCartList"></div>
-          
           <div class="drawer-subtotal">
             <span>Total Sajian</span>
             <span id="cartSubtotalDisplay" class="font-fraunces">Rp0</span>
           </div>
-
           <div class="checkout-forms">
             <h4>Data Penerima</h4>
             <input type="text" id="customerName" placeholder="Nama lengkap penerima" class="input-minimal">
             <input type="tel" id="customerPhone" placeholder="Nomor HP aktif" class="input-minimal">
             <textarea id="customerAddress" placeholder="Alamat lengkap (jalan, RT/RW, patokan)" rows="2" class="input-minimal"></textarea>
-            
             <div style="position:relative;">
               <input type="text" id="districtInput" placeholder="Kecamatan" class="input-minimal" autocomplete="off" readonly style="color:var(--green); font-weight:600;">
               <div id="customDistrictDropdown" class="minimal-dropdown"></div>
             </div>
-            <div style="font-size:12px; color:var(--gold); margin-top:-16px; margin-bottom:32px; font-weight:500;">
-              *Kecamatan sesuai profil awal Anda.
-            </div>
-
+            <div style="font-size:12px; color:var(--gold); margin-top:-16px; margin-bottom:32px; font-weight:500;">*Kecamatan sesuai profil awal Anda.</div>
             <select id="deliveryTime" class="input-minimal" style="margin-top:8px;">
               <option value="Pagi (09:00 - 11:00)">Pengantaran Pagi (09:00 - 11:00)</option>
               <option value="Siang (11:00 - 13:00)">Pengantaran Siang (11:00 - 13:00)</option>
               <option value="Sore (14:00 - 17:00)">Pengantaran Sore (14:00 - 17:00)</option>
             </select>
-
             <textarea id="orderNotes" placeholder="Instruksi Khusus (Opsional)" rows="1" class="input-minimal"></textarea>
           </div>
-
           <div id="shippingSection" class="checkout-forms" style="margin-top:40px;">
             <h4>Pilih Kurir</h4>
             <div class="logistic-options">
               <button class="log-btn active" data-provider="rujakco">Kurir Rujak.Co</button>
               <button class="log-btn" data-provider="paxel">Paxel Same Day</button>
             </div>
-            
             <div id="rujakcoOptions" style="margin-top:24px;">
               <div class="logistic-options">
                 <button class="veh-btn active" data-vehicle="motor">Motor</button>
@@ -156,20 +147,16 @@
               </div>
               <label class="priority-label"><input type="checkbox" id="priorityToggleMini"> Prioritas (+Rp8.000)</label>
             </div>
-            
             <div id="paxelOptions" style="display:none; margin-top:24px; font-size:13px; color:var(--gold); font-style:italic; line-height:1.6;">* Layanan Paxel Same Day. Sajian tiba esok hari.</div>
-            
             <div class="drawer-breakdown">
               <span id="shippingDistance"></span>
               <span id="finalShipping" class="font-fraunces">Rp0</span>
             </div>
           </div>
-
           <div class="drawer-total">
             <span>Total Pesanan</span>
             <span id="finalTotal">Rp0</span>
           </div>
-
           <button class="btn-dark full-width" id="btnOpenPayment">Bayar Sekarang</button>
         </div>
       </div>
