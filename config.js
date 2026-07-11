@@ -1,0 +1,9 @@
+// config.js
+window.CONFIG = {
+  SUPABASE_URL: "https://ghhnnfrmftttptcejizp.supabase.co",
+  SUPABASE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoaG5uZnJtZnR0dHB0Y2VqaXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNjA1ODksImV4cCI6MjA5NzgzNjU4OX0.FM-sPvJJzviX2kA0GEHnznOppivm4JNyC4IPFv_RkdE",
+  WA_NUMBER: '6289677161680',
+  STORE_LAT: -6.2165414,
+  STORE_LNG: 107.0177395,
+  DEFAULT_DISTANCE: 2
+};
