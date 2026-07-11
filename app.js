@@ -7,10 +7,10 @@
 
   const SPICE_LABELS = { 1: 'Ringan', 2: 'Sedang', 3: 'Pedas', 4: 'Sangat Pedas', 5: 'Neraka' };
 
-  /* Perbaikan Array Produk (Semua wajib ada: Mangga, Nanas, Bengkoang, Jambu Citra, Kedondong) */
+  /* Perbaikan Array Produk (Rujak Serut disesuaikan, tanpa Kedondong & Jambu Citra) */
   const PRODUCTS = [
     { id:'p_m1', name:'Rujak Segar', desc:'Kombinasi buah pilihan dengan sambal original Rujak.Co. Disiapkan seketika sesaat sebelum pengantaran untuk menjaga tekstur renyah alami.', insight: 'Kesegaran otentik buah tropis pilihan.', price:35000, container:'Thinwall 1000ml', size:'Porsi Reguler', sambal:'Sambal Kacang Original', buah:['Mangga','Nanas','Bengkoang','Jambu Citra','Kedondong'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp' },
-    { id:'p_m2', name:'Rujak Serut', desc:'Buah diserut halus untuk tekstur yang lebih menyatu dengan saus karamelisasi mete.', insight: 'Harmoni rasa dalam serutan presisi yang lembut.', price:26000, container:'Thinwall 750ml', size:'Porsi Reguler', sambal:'Sambal Kacang Original', buah:['Mangga','Nanas','Bengkoang','Jambu Citra','Kedondong','Ubi Ungu'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp' },
+    { id:'p_m2', name:'Rujak Serut', desc:'Buah diserut halus untuk tekstur yang lebih menyatu dengan saus karamelisasi mete.', insight: 'Harmoni rasa dalam serutan presisi yang lembut.', price:26000, container:'Thinwall 750ml', size:'Porsi Reguler', sambal:'Sambal Kacang Original', buah:['Mangga','Nanas','Bengkoang','Ubi Ungu'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp' },
     { id:'p_m3', name:'Rujak Gaco', desc:'Enam buah eksklusif pilihan dengan sambal mete premium. Sebuah mahakarya harmoni rasa gurih, pedas, dan manis.', insight: 'Mahakarya rasa gurih, pedas, dan manis.', price:40000, container:'Thinwall 1000ml', size:'Porsi Eksklusif', sambal:'Sambal Mete Spesial', buah:['Jambu Kristal','Mangga','Nanas','Bengkoang','Jambu Citra','Kedondong'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-hd.webp' },
     { id:'p_m4', name:'Rujak Rama', desc:'Porsi melimpah yang dirancang khusus untuk momen kebersamaan atau perjamuan bersama kerabat terdekat.', insight: 'Porsi melimpah untuk momen kebersamaan.', price:48000, container:'Jumbo Thinwall 1000ml', size:'Porsi Sharing', sambal:'Sambal Kacang Original & Sambal Mete Spesial', buah:['Jambu Kristal','Mangga','Nanas','Bengkoang','Jambu Citra','Kedondong'], defaultSpice:4, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-hd.webp' },
     { id:'p_m5', name:'Rujak Mahkota', desc:'Koleksi premium dengan anggur Shine Muscat impor pilihan, memadukan kemewahan tekstur tanpa biji dengan buah tropis terbaik.', insight: 'Kemewahan Shine Muscat berpadu buah tropis.', price:85000, container:'Premium Luxury Box', size:'Vault Single', sambal:'Sambal Mete Spesial', buah:['Shine Muscat','Jambu Kristal','Mangga','Nanas','Bengkoang','Jambu Citra','Kedondong'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp' },
@@ -268,6 +268,7 @@
     const track = document.getElementById('productSwiperTrack');
     if(!track) return;
 
+    /* Perubahan: Angka jumlah buah otomatis disisipkan ke dalam judul komposisi buah */
     track.innerHTML = loopedProducts.map((p, index) => `
       <div class="product-slide" data-id="${p.id}" data-idx="${index}">
         <div class="detail-image-wrap"><img src="${p.image}" alt="${p.name}" loading="lazy"></div>
@@ -308,7 +309,7 @@
             </div>
           </div>
 
-          <label class="section-label">Komposisi Buah</label>
+          <label class="section-label">Komposisi ${p.buah.length} Buah</label>
           <p class="fruit-list-inline">
             ${p.buah.join(' <span class="fruit-bullet">•</span> ')}
           </p>
