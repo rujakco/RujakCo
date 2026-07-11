@@ -156,20 +156,20 @@ p { line-height: 1.8; }
   text-align: center; 
   cursor: pointer; 
   text-decoration: none; 
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease, box-shadow 0.5s ease; 
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease, box-shadow 0.5s ease, border 0.5s ease; 
   transform: scale(0.82); 
   opacity: 0.45; 
   will-change: transform; 
   
-  /* Efek Green Glass Transparan Dipertahankan */
+  /* Efek Green Glass Transparan dengan List Gold Tipis */
   background: linear-gradient(145deg, rgba(8, 46, 33, 0.08) 0%, rgba(8, 46, 33, 0.02) 100%);
   backdrop-filter: blur(16px) saturate(120%);
   -webkit-backdrop-filter: blur(16px) saturate(120%);
-  border: 1px solid rgba(8, 46, 33, 0.08);
+  border: 1px solid rgba(197, 160, 89, 0.35); /* List line gold tipis */
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 16px 32px rgba(8, 46, 33, 0.04);
   
   border-radius: 32px;
-  padding: 40px 40px 48px; 
+  padding: 16px 16px 32px; 
   z-index: 1; 
 }
 
@@ -177,6 +177,7 @@ p { line-height: 1.8; }
   transform: scale(1); 
   opacity: 1; 
   z-index: 10; 
+  border: 1px solid rgba(197, 160, 89, 0.7); /* List gold lebih tegas saat aktif */
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3), 0 24px 48px rgba(8, 46, 33, 0.12); 
 }
 
@@ -231,11 +232,11 @@ p { line-height: 1.8; }
   white-space: nowrap; 
 }
 
-/* TYPING ANIMATION INSIGHT */
+/* TYPING ANIMATION INSIGHT (Turun 20px) */
 .product-insight-container {
   text-align: center;
   padding: 0 32px;
-  margin-top: 8px; 
+  margin-top: 28px; /* Diturunkan 20px dari sebelumnya 8px */
   min-height: 60px; 
   display: flex;
   align-items: flex-start;
@@ -263,16 +264,16 @@ p { line-height: 1.8; }
   50% { opacity: 0; }
 }
 
-/* FOOTER DENGAN RANDOM SCATTER LOGO SEAMLESS */
+/* FOOTER DENGAN RANDOM SCATTER LOGO SEAMLESS (Naik 20px) */
 .luxury-footer { 
   display: flex; 
   flex-direction: column; 
   align-items: center; 
   text-align: center; 
-  padding: 18px 24px 96px; /* Padding atas dikurangi 30px (dari 48px jadi 18px) */
+  padding: 18px 24px 96px; 
   border-top: 1px solid var(--gray-200); 
   background-color: var(--ivory); 
-  margin-top: -6px; /* Margin atas dikurangi 40px (dari 34px jadi -6px) */
+  margin-top: -26px; /* Ditarik ke atas 20px dari sebelumnya -6px */
   position: relative; 
   overflow: hidden; 
 }
