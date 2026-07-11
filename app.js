@@ -271,8 +271,12 @@
       <div class="product-slide" data-id="${p.id}" data-idx="${index}">
         <div class="detail-image-wrap"><img src="${p.image}" alt="${p.name}" loading="lazy"></div>
         <div class="detail-content">
-          <span class="hairline"></span>
-          <h2>${p.name}</h2>
+          
+          <div class="detail-title-row">
+            <h2>${p.name}</h2>
+            <span class="title-line"></span>
+          </div>
+          
           <p class="detail-price">${fmt(p.price)}</p>
           <p class="detail-desc">${p.desc}</p>
           
@@ -303,9 +307,9 @@
           </div>
 
           <label class="section-label">Komposisi Buah</label>
-          <ul class="fruit-list">
-            ${p.buah.map(b => `<li>${b}</li>`).join('')}
-          </ul>
+          <p class="fruit-list-inline">
+            ${p.buah.join(' <span class="fruit-bullet">•</span> ')}
+          </p>
 
           <div class="detail-specs">
             <div><span>Wadah</span> <span>${p.container}</span></div>
@@ -352,7 +356,6 @@
   function renderMiniCart() {
     const sum = getCartSummary();
     const list = document.getElementById('miniCartList');
-    // Pesan keranjang kosong mewah
     list.innerHTML = sum.items.length === 0 ? '<p class="cart-empty">Reservasi Anda masih kosong.<br>Silakan pilih mahakarya sajian kami.</p>' : sum.items.map(i => `
       <div class="cart-item-row">
         <div class="cart-item-info">
@@ -491,9 +494,8 @@
         }
       }
 
-      // Tombol add to cart + Haptic feedback + Toast elegan
       if (e.target.classList.contains('add-to-cart-btn')) {
-        if (window.navigator.vibrate) window.navigator.vibrate(50); // Haptic feedback ringan
+        if (window.navigator.vibrate) window.navigator.vibrate(50);
 
         const pid = e.target.dataset.pid; const draft = state.drafts[pid]; const idx = e.target.dataset.idx;
         const cartKey = pid + '_spice' + draft.spice;
@@ -591,7 +593,6 @@
     initOnboarding(); 
     updateUI(); 
 
-    // Header Frosted Glass Effect
     window.addEventListener('scroll', () => {
       const header = document.getElementById('mainHeader');
       if (!header) return;
