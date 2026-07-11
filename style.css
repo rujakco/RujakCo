@@ -168,7 +168,7 @@ p { line-height: 1.8; }
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 16px 32px rgba(8, 46, 33, 0.04);
   
   border-radius: 32px;
-  padding: 30px; /* PADDING DIPERBESAR JADI 30PX RATA */
+  padding: 20px 20px 32px; 
   z-index: 1; 
 }
 
@@ -180,14 +180,23 @@ p { line-height: 1.8; }
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3), 0 24px 48px rgba(8, 46, 33, 0.12); 
 }
 
-.btq-img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 20px; margin-bottom: 0; background: var(--gray-100); box-shadow: 0 16px 32px rgba(8, 46, 33, 0.12); }
+/* THUMB KARTU LENGKUNGAN 12PX (SEIMBANG MATEMATIS DENGAN KARTU) */
+.btq-img { 
+  width: 100%; 
+  aspect-ratio: 1 / 1; 
+  object-fit: cover; 
+  border-radius: 12px; 
+  margin-bottom: 0; 
+  background: var(--gray-100); 
+  box-shadow: 0 16px 32px rgba(8, 46, 33, 0.12); 
+}
 
 /* WADAH TEKS DAN GARIS HARGA YANG MENGIKUTI LEBAR NAMA */
 .btq-text-container {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  width: max-content; /* KUNCI: Memaksa lebar kontainer hanya sebatas teks terpanjang (nama) */
+  width: max-content; 
   margin: 0 auto;
   opacity: 0; 
   transform: translateY(12px); 
@@ -213,13 +222,13 @@ p { line-height: 1.8; }
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%; /* Akan 100% mengikuti kontainer yang selebar nama rujak */
+  width: 100%; 
   gap: 12px;
 }
 .btq-price-wrap::before, .btq-price-wrap::after {
   content: '';
   flex: 1 1 0%; 
-  min-width: 8px; /* Diperkecil agar nama pendek tidak pecah */
+  min-width: 8px; 
   height: 1px;
   background: var(--gold);
   opacity: 0.5;
@@ -264,16 +273,16 @@ p { line-height: 1.8; }
   50% { opacity: 0; }
 }
 
-/* FOOTER DENGAN RANDOM SCATTER LOGO SEAMLESS */
+/* FOOTER DENGAN RANDOM SCATTER LOGO SEAMLESS (Turun 10px menjadi -16px) */
 .luxury-footer { 
   display: flex; 
   flex-direction: column; 
   align-items: center; 
   text-align: center; 
   padding: 18px 24px 96px; 
-  border-top: none; /* BORDER ATAS DIHILANGKAN */
+  border-top: none; 
   background-color: var(--ivory); 
-  margin-top: -26px; 
+  margin-top: -16px; /* Diturunkan 10px dari sebelumnya -26px */
   position: relative; 
   overflow: hidden; 
 }
@@ -359,7 +368,7 @@ p { line-height: 1.8; }
 .detail-manifesto h4 { font-size: 12px; color: var(--gold); margin-bottom: 16px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; }
 .detail-manifesto p { font-size: 14px; line-height: 1.8; color: var(--gray-900); font-family: 'Fraunces', serif; font-style: italic; margin: 0; }
 
-/* BOTTOM NAV BAR (FROSTED GLASS GOLD SEJAJAR HEADER) */
+/* BOTTOM NAV BAR (WARNA SOLID CREAM/GOLD) */
 .bottom-nav { 
   position: fixed; 
   bottom: 0; 
@@ -368,14 +377,12 @@ p { line-height: 1.8; }
   width: calc(100% - 48px); 
   max-width: 432px; 
   z-index: var(--z-nav); 
-  background: rgba(197, 160, 89, 0.08); 
-  backdrop-filter: blur(16px) saturate(120%); 
-  -webkit-backdrop-filter: blur(16px) saturate(120%); 
+  background: #F5EFE6; /* Warna solid emas/krem pucat tanpa transparansi */
   display: flex; 
   justify-content: space-around; 
   align-items: center; 
   padding: 14px 0 calc(14px + env(safe-area-inset-bottom)); 
-  border-top: 1px solid rgba(197, 160, 89, 0.25); 
+  border-top: 1px solid rgba(197, 160, 89, 0.3); 
   border-radius: 16px 16px 0 0; 
 }
 .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--gray-400); font-size: 10px; font-weight: 600; gap: 6px; transition: color 0.2s; }
