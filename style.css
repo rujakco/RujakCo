@@ -41,22 +41,101 @@ p { line-height: 1.8; }
   transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s; 
 }
 .onboarding-overlay.hidden { opacity: 0; visibility: hidden; }
-.onb-content { width: 100%; max-width: 320px; display: flex; flex-direction: column; align-items: center; color: var(--ivory); }
-.onb-logo { width: 72px; height: 72px; border-radius: 50%; margin-bottom: 40px; border: 1px solid rgba(197, 160, 89, 0.4); padding: 4px; background: rgba(0, 0, 0, 0.2); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5); animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.onb-title { font-family: 'Fraunces', serif; font-size: 34px; font-weight: 300; color: var(--ivory); margin-bottom: 12px; letter-spacing: -0.01em; line-height: 1.1; animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; opacity: 0; }
-.onb-subtitle, .onb-welcome-text { font-family: 'DM Sans', sans-serif; font-size: 11px; color: var(--gold-light); opacity: 0.7; margin-bottom: 64px; text-transform: uppercase; letter-spacing: 0.2em; font-weight: 500; animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards; opacity: 0; }
+
+.onb-content { 
+  width: 100%; max-width: 320px; 
+  display: flex; flex-direction: column; align-items: center; color: var(--ivory); 
+}
+
+.onb-logo { 
+  width: 72px; height: 72px; 
+  border-radius: 50%; 
+  margin-bottom: 40px; 
+  border: 1px solid rgba(197, 160, 89, 0.4); 
+  padding: 4px; 
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5); 
+  animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+}
+
+.onb-title { 
+  font-family: 'Fraunces', serif; 
+  font-size: 34px; 
+  font-weight: 300; 
+  color: var(--ivory); 
+  margin-bottom: 12px; 
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; 
+  opacity: 0; 
+}
+
+.onb-subtitle, .onb-welcome-text { 
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px; 
+  color: var(--gold-light); 
+  opacity: 0.7;
+  margin-bottom: 64px; 
+  text-transform: uppercase; 
+  letter-spacing: 0.2em; 
+  font-weight: 500;
+  animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards; 
+  opacity: 0; 
+}
+
 .onb-step { display: none; width: 100%; opacity: 0; animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .onb-step.active { display: block; }
-.onb-label { display: block; font-size: 11px; font-weight: 600; color: var(--gold); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.15em; }
-.onb-input { width: 100%; text-align: center; border: none; border-bottom: 1px solid rgba(197, 160, 89, 0.3); background: transparent; padding: 16px 0; font-size: 26px; font-family: 'Fraunces', serif; font-weight: 300; color: var(--ivory); margin-bottom: 48px; transition: all 0.4s ease; outline: none; border-radius: 0; }
-.onb-input:focus { border-bottom-color: var(--gold); box-shadow: 0 12px 24px -12px rgba(197, 160, 89, 0.3); }
-.onb-input::placeholder { color: rgba(253, 251, 247, 0.15); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; }
-#onbDistrictDropdown { background: rgba(4, 18, 13, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(197, 160, 89, 0.2); border-radius: 16px; box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6); }
-#onbDistrictDropdown div { border-bottom: 1px solid rgba(255, 255, 255, 0.04); color: var(--ivory); font-family: 'DM Sans', sans-serif; font-weight: 400; }
-#onbDistrictDropdown div:hover { background: rgba(197, 160, 89, 0.1); color: var(--gold); }
-.btn-text-gold { background: none; border: none; color: var(--gold); font-size: 11px; margin-top: 32px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; transition: opacity 0.3s; }
+
+.onb-label { 
+  display: block; 
+  font-size: 11px; 
+  font-weight: 600; 
+  color: var(--gold); 
+  margin-bottom: 16px; 
+  text-transform: uppercase; 
+  letter-spacing: 0.15em; 
+}
+
+.onb-input { 
+  width: 100%; text-align: center; border: none; 
+  border-bottom: 1px solid rgba(197, 160, 89, 0.3); 
+  background: transparent; padding: 16px 0; 
+  font-size: 26px; font-family: 'Fraunces', serif; font-weight: 300;
+  color: var(--ivory); margin-bottom: 48px; 
+  transition: all 0.4s ease; outline: none; border-radius: 0;
+}
+.onb-input:focus { 
+  border-bottom-color: var(--gold); 
+  box-shadow: 0 12px 24px -12px rgba(197, 160, 89, 0.3); 
+}
+.onb-input::placeholder { 
+  color: rgba(253, 251, 247, 0.15); 
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; 
+  letter-spacing: 0.15em; text-transform: uppercase;
+}
+
+#onbDistrictDropdown {
+  background: rgba(4, 18, 13, 0.85);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(197, 160, 89, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6);
+}
+#onbDistrictDropdown div {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: var(--ivory); font-family: 'DM Sans', sans-serif; font-weight: 400;
+}
+#onbDistrictDropdown div:hover {
+  background: rgba(197, 160, 89, 0.1); color: var(--gold);
+}
+
+.btn-text-gold { 
+  background: none; border: none; color: var(--gold); 
+  font-size: 11px; margin-top: 32px; cursor: pointer; 
+  text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600;
+  transition: opacity 0.3s;
+}
 .btn-text-gold:active { opacity: 0.6; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 
 /* =========================================
    TOMBOL MEWAH & RAMPING 
@@ -76,9 +155,11 @@ p { line-height: 1.8; }
   justify-content: center;
   width: 100%; 
 }
+
 .btn-gold { background: linear-gradient(135deg, #C5A059 0%, #B89650 100%); color: #FFFFFF; border: none; box-shadow: 0 12px 24px rgba(197, 160, 89, 0.15); }
 .btn-dark { background: var(--green); color: var(--gold-light); border: 1px solid rgba(197, 160, 89, 0.4); box-shadow: 0 12px 24px rgba(8, 46, 33, 0.15); }
 .btn-gold:active, .btn-dark:active, .step-1-btn:active { transform: scale(0.98); opacity: 0.9; }
+
 
 /* HEADER STICKY KACA TRANSLUSEN */
 .luxury-header { position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: calc(100% - 48px); max-width: 432px; display: flex; align-items: center; justify-content: space-between; padding: calc(12px + env(safe-area-inset-top)) 16px 12px; z-index: 100; background: rgba(253, 251, 247, 0.2); backdrop-filter: blur(8px) saturate(120%); -webkit-backdrop-filter: blur(8px) saturate(120%); border-bottom: 1px solid rgba(255, 255, 255, 0.3); border-radius: 0 0 16px 16px; pointer-events: none; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -236,7 +317,20 @@ p { line-height: 1.8; }
 .drawer-total { display: flex; justify-content: space-between; align-items: flex-end; font-size: 16px; font-weight: 500; color: var(--gray-500); margin: 56px 0 48px; }
 .drawer-total #finalTotal { font-size: 36px; color: var(--green); font-family: 'Fraunces', serif; line-height: 1; }
 
-.qris-frame { background: #FFFFFF; padding: 24px; border-radius: 24px; box-shadow: 0 24px 48px rgba(8, 46, 33, 0.08); display: inline-block; margin-bottom: 32px; border: 1px solid rgba(197, 160, 89, 0.3); width: 90%; max-width: 320px; }
+/* =========================================
+   QRIS MEWAH (RATA PENUH DENGAN TOMBOL)
+   ========================================= */
+.qris-frame { 
+  background: #FFFFFF; 
+  padding: 24px; 
+  border-radius: 24px; 
+  box-shadow: 0 24px 48px rgba(8, 46, 33, 0.08); 
+  display: block; 
+  margin: 0 auto 32px auto; 
+  border: 1px solid rgba(197, 160, 89, 0.3); 
+  width: 100%; 
+  max-width: none; 
+}
 .qris-frame img { width: 100%; height: auto; display: block; border-radius: 12px; }
 
 .chat-body { display: flex; flex-direction: column; padding: 0; background: #F8F6F2; }
