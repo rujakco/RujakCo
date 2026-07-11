@@ -9,11 +9,11 @@
 
   const PRODUCTS = [
     { id:'p_m1', name:'Rujak Segar', desc:'Kombinasi buah pilihan dengan sambal original Rujak.Co. Disiapkan seketika sesaat sebelum pengantaran untuk menjaga tekstur renyah alami.', insight: 'Kesegaran otentik buah tropis pilihan.', price:35000, container:'Thinwall 1000ml Presisi', size:'Porsi Reguler', sambal:'Original Signature (1 Cup)', buah:['Mangga Mengkel','Nanas Hutan','Bengkoang','Jambu Air','Kedondong Kebun'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp' },
-    { id:'p_m2', name:'Rujak Serut', desc:'Buah diserut halus secara presisi untuk pengalaman rasa yang lebih menyatu secara intim dengan saus karamelisasi mete.', insight: 'Harmoni rasa dalam serutan presisi yang intim.', price:26000, container:'Thinwall 750ml', size:'Porsi Reguler', sambal:'Original Terbawa', buah:['Mangga Muda Jawa','Bengkoang Garing','Nanas Madu','Ubi Ungu Manis'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp' },
+    { id:'p_m2', name:'Rujak Serut', desc:'Buah diserut halus untuk tekstur yang lebih menyatu dengan saus karamelisasi mete.', insight: 'Harmoni rasa dalam serutan presisi yang lembut.', price:26000, container:'Thinwall 750ml', size:'Porsi Reguler', sambal:'Original Terbawa', buah:['Mangga Muda Jawa','Bengkoang Garing','Nanas Madu','Ubi Ungu Manis'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp' },
     { id:'p_m3', name:'Rujak Gaco', desc:'Enam buah eksklusif pilihan dengan sambal mete premium. Sebuah mahakarya harmoni rasa gurih, pedas, dan manis.', insight: 'Mahakarya rasa gurih, pedas, dan manis.', price:40000, container:'Thinwall 1000ml Tersiegel', size:'Porsi Eksklusif', sambal:'Karamelisasi Mete (1 Cup)', buah:['Jambu Kristal Tanpa Biji','Mangga Indramayu Mengkel','Nanas Subang','Bengkoang Air','Jambu Air Premium','Kedondong'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-hd.webp' },
-    { id:'p_m4', name:'Rujak Rama', desc:'Formula porsi melimpah yang dikonsepkan khusus untuk momentum kebersamaan atau perjamuan formal kerabat terdekat.', insight: 'Porsi melimpah untuk momentum kebersamaan.', price:48000, container:'Jumbo Thinwall 1000ml', size:'Porsi Sharing', sambal:'Karamelisasi Mete (2 Cup)', buah:['Varian Jambu Kristal','Mangga Mengkel Pilihan','Nanas Madu','Bengkoang Super','Jambu Air','Kedondong'], defaultSpice:4, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-hd.webp' },
-    { id:'p_m5', name:'Rujak Mahkota', desc:'Koleksi premium dengan anggur Shine Muscat impor pilihan. Menggabungkan kemewahan tekstur tanpa biji dengan buah tropis terbaik.', insight: 'Kemewahan Shine Muscat berpadu buah tropis.', price:85000, container:'Premium Luxury Box', size:'Vault Single', sambal:'Mete Grand Reserve (2 Cup)', buah:['Shine Muscat Impor Jepang Grade A','Jambu Kristal Garing','Mangga Mengkel Kurasi','Nanas Hutan','Bengkoang Garing'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp' },
-    { id:'p_m6', name:'Tampah Nusantara', desc:'Representasi kemegahan tradisi rasa Indonesia dalam wadah tampah bambu rajutan tangan untuk perjamuan istimewa Anda.', insight: 'Kemegahan tradisi rasa dalam anyaman bambu.', price:200000, container:'Tampah Bambu Ø40cm', size:'Perjamuan (8-10 Orang)', sambal:'Original & Mete (4 Cup)', buah:['Shine Muscat Premium','Jambu Kristal Vault','Mangga Pilihan Utama','Nanas Hutan Subang','Bengkoang Garing','Jambu Air Rose','Kedondong Pilihan','Ubi Ungu Manis'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp' }
+    { id:'p_m4', name:'Rujak Rama', desc:'Porsi melimpah yang dirancang khusus untuk momen kebersamaan atau perjamuan bersama kerabat terdekat.', insight: 'Porsi melimpah untuk momen kebersamaan.', price:48000, container:'Jumbo Thinwall 1000ml', size:'Porsi Sharing', sambal:'Karamelisasi Mete (2 Cup)', buah:['Varian Jambu Kristal','Mangga Mengkel Pilihan','Nanas Madu','Bengkoang Super','Jambu Air','Kedondong'], defaultSpice:4, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-hd.webp' },
+    { id:'p_m5', name:'Rujak Mahkota', desc:'Koleksi premium dengan anggur Shine Muscat impor pilihan, memadukan kemewahan tekstur tanpa biji dengan buah tropis terbaik.', insight: 'Kemewahan Shine Muscat berpadu buah tropis.', price:85000, container:'Premium Luxury Box', size:'Vault Single', sambal:'Mete Grand Reserve (2 Cup)', buah:['Shine Muscat Impor Jepang Grade A','Jambu Kristal Garing','Mangga Mengkel Kurasi','Nanas Hutan','Bengkoang Garing'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp' },
+    { id:'p_m6', name:'Tampah Nusantara', desc:'Representasi kemegahan tradisi rasa Indonesia dalam wadah tampah bambu anyaman tangan untuk perjamuan istimewa Anda.', insight: 'Kemegahan tradisi rasa dalam anyaman bambu.', price:200000, container:'Tampah Bambu Ø40cm', size:'Perjamuan (8-10 Orang)', sambal:'Original & Mete (4 Cup)', buah:['Shine Muscat Premium','Jambu Kristal Vault','Mangga Pilihan Utama','Nanas Hutan Subang','Bengkoang Garing','Jambu Air Rose','Kedondong Pilihan','Ubi Ungu Manis'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp' }
   ];
 
   const DISTRICT_MAP = { 'bekasi barat':5, 'bekasi timur':7, 'bekasi selatan':9, 'bekasi utara':11, 'rawalumbu':8, 'jatiasih':12, 'pondokgede':14, 'cikarang':23, 'tambun':16, 'cibitung':20, 'gambir':18, 'menteng':19, 'tebet':20, 'pancoran':21, 'pasar minggu':22, 'kebayoran lama':24, 'kebayoran baru':22, 'mampang prapatan':21, 'pulo gadung':16, 'jatinegara':18, 'duren sawit':15, 'kramat jati':19, 'pasar rebo':20, 'cakung':12, 'kembangan':25, 'kelapa gading':27, 'depok':35, 'tangerang':38, 'bogor':50 };
@@ -69,7 +69,7 @@
     if(document.getElementById('districtInput') && state.selectedDistrict) { document.getElementById('districtInput').value = state.selectedDistrict.replace(/\b\w/g, l=>l.toUpperCase()); }
     
     const aiWelcome = document.getElementById('aiWelcomeMsg');
-    if(aiWelcome) aiWelcome.textContent = `Selamat siang, ${name}. Ada yang dapat kami bantu untuk pesanan Anda?`;
+    if(aiWelcome) aiWelcome.textContent = `Halo, ${name}! Ada yang bisa kami bantu untuk pesanan Anda?`;
     updateShippingUI();
   }
 
@@ -111,7 +111,7 @@
     });
     
     if(onbStartBtn) onbStartBtn.addEventListener('click', () => {
-      if(!state.selectedDistrict) { showToast('Silakan pilih kecamatan tujuan.'); return; }
+      if(!state.selectedDistrict) { showToast('Mohon pilih kecamatan tujuan.'); return; }
       try { localStorage.setItem('rj_client_name', state.customerName); localStorage.setItem('rj_client_district', state.selectedDistrict); } catch(e){}
       overlay.classList.add('hidden'); setTimeout(() => { overlay.style.display = 'none'; }, 600);
       applyPersonalization(); initScrollReveal();
@@ -145,10 +145,10 @@
 
   function calculateShipping(distance, mainQty) {
     const dist = distance || SYSTEM.DEFAULT_DISTANCE;
-    if (dist > 50) return { cost: null, label: 'Konfirmasi Pramutamu' };
+    if (dist > 50) return { cost: null, label: 'Konfirmasi via Concierge' };
     if (state.shippingProvider === 'paxel') {
       const large = Math.floor(mainQty/2), med = mainQty%2;
-      return { cost: (large*25000)+(med*20000)+((large+med)*3000), label: 'Paxel Premium' };
+      return { cost: (large*25000)+(med*20000)+((large+med)*3000), label: 'Paxel Ekspres' };
     } else {
       let cost = dist<=3?8000:dist<=10?8000+(dist-3)*1800:dist<=20?20600+(dist-10)*1600:dist<=30?36600+(dist-20)*1400:50600+(dist-30)*1150;
       if (state.vehicleType === 'mobil') cost = dist<=3?24000:dist<=10?24000+(dist-3)*4500:dist<=20?55500+(dist-10)*4000:95500+(dist-20)*3500;
@@ -278,7 +278,7 @@
           
           <div class="action-area">
             <div id="step1_${index}_${p.id}" class="action-step-1">
-              <button class="step-1-btn btn-lanjutkan" data-idx="${index}" data-pid="${p.id}">Pilih Sajian Ini</button>
+              <button class="step-1-btn btn-lanjutkan" data-idx="${index}" data-pid="${p.id}">Sesuaikan &amp; Pesan</button>
             </div>
             
             <div id="step2_${index}_${p.id}" class="step-2-content">
@@ -315,7 +315,7 @@
           
           <div class="detail-manifesto">
             <h4><i data-lucide="shield-check" class="w-4 h-4 inline" style="margin-bottom:-2px;"></i> Komitmen Kesegaran</h4>
-            <p>Kerenyahan adalah prioritas. Kami memotong buah tepat 15 menit sebelum diberangkatkan. Sambal dikemas terpisah.</p>
+            <p>Kerenyahan adalah prioritas kami. Buah dipotong tepat 15 menit sebelum diantar, dan sambal selalu dikemas terpisah agar teksturnya terjaga.</p>
           </div>
         </div>
       </div>
@@ -352,7 +352,7 @@
   function renderMiniCart() {
     const sum = getCartSummary();
     const list = document.getElementById('miniCartList');
-    list.innerHTML = sum.items.length === 0 ? '<p style="text-align:center; color:var(--gray-500); padding:32px 0;">Keranjang Anda kosong.</p>' : sum.items.map(i => `
+    list.innerHTML = sum.items.length === 0 ? '<p class="cart-empty">Keranjang Anda masih kosong.<br>Yuk pilih sajian favorit Anda.</p>' : sum.items.map(i => `
       <div class="cart-item-row">
         <div class="cart-item-info">
           <h4>${i.name}${i.spice?' (Lv '+i.spice+')':''}</h4>
@@ -434,7 +434,7 @@
       const txt = input.value.trim(); if(!txt) return;
       messages.innerHTML += `<div class="msg-user"><span>${escapeHTML(txt)}</span></div>`;
       input.value = ''; messages.scrollTop = messages.scrollHeight;
-      setTimeout(() => { messages.innerHTML += `<div class="msg-bot" style="margin-bottom:12px;"><span>Pesan Anda telah kami terima. Tim kami akan segera merespons.</span></div>`; messages.scrollTop = messages.scrollHeight; }, 800);
+      setTimeout(() => { messages.innerHTML += `<div class="msg-bot" style="margin-bottom:12px;"><span>Pesan Anda sudah kami terima. Tim kami akan segera membalas.</span></div>`; messages.scrollTop = messages.scrollHeight; }, 800);
     };
     if(send) send.addEventListener('click', processMsg);
     if(input) input.addEventListener('keydown', e => { if(e.key === 'Enter') processMsg(); });
@@ -497,7 +497,7 @@
         state.cart[cartKey].qty += draft.qty;
         state.drafts[pid].qty = 1;
         document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = 1);
-        updateUI(); showToast('Sajian telah ditambahkan ke keranjang.');
+        updateUI(); showToast('Ditambahkan ke keranjang.');
         closeProductPage();
         
         setTimeout(() => {
