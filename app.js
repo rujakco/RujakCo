@@ -297,7 +297,7 @@
                   <span class="qty-num" data-valpid="${p.id}">${state.drafts[p.id].qty}</span>
                   <button class="qty-plus" data-pid="${p.id}">+</button>
                 </div>
-                <button class="btn-dark add-to-cart-btn" data-pid="${p.id}" data-idx="${index}">Tambahkan ke Keranjang</button>
+                <button class="btn-dark add-to-cart-btn" data-pid="${p.id}" data-idx="${index}">Tambahkan ke Reservasi</button>
               </div>
             </div>
           </div>
@@ -352,7 +352,8 @@
   function renderMiniCart() {
     const sum = getCartSummary();
     const list = document.getElementById('miniCartList');
-    list.innerHTML = sum.items.length === 0 ? '<p class="cart-empty">Keranjang Anda masih kosong.<br>Yuk pilih sajian favorit Anda.</p>' : sum.items.map(i => `
+    // Pesan keranjang kosong mewah
+    list.innerHTML = sum.items.length === 0 ? '<p class="cart-empty">Reservasi Anda masih kosong.<br>Silakan pilih mahakarya sajian kami.</p>' : sum.items.map(i => `
       <div class="cart-item-row">
         <div class="cart-item-info">
           <h4>${i.name}${i.spice?' (Lv '+i.spice+')':''}</h4>
@@ -490,14 +491,19 @@
         }
       }
 
+      // Tombol add to cart + Haptic feedback + Toast elegan
       if (e.target.classList.contains('add-to-cart-btn')) {
+        if (window.navigator.vibrate) window.navigator.vibrate(50); // Haptic feedback ringan
+
         const pid = e.target.dataset.pid; const draft = state.drafts[pid]; const idx = e.target.dataset.idx;
         const cartKey = pid + '_spice' + draft.spice;
         if(!state.cart[cartKey]) state.cart[cartKey] = {qty: 0, spice: draft.spice};
         state.cart[cartKey].qty += draft.qty;
         state.drafts[pid].qty = 1;
         document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = 1);
-        updateUI(); showToast('Ditambahkan ke keranjang.');
+        updateUI(); 
+        
+        showToast('Sajian ditambahkan ke reservasi.');
         closeProductPage();
         
         setTimeout(() => {
