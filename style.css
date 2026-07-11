@@ -41,171 +41,48 @@ p { line-height: 1.8; }
   transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s; 
 }
 .onboarding-overlay.hidden { opacity: 0; visibility: hidden; }
-
-.onb-content { 
-  width: 100%; max-width: 320px; 
-  display: flex; flex-direction: column; align-items: center; color: var(--ivory); 
-}
-
-.onb-logo { 
-  width: 72px; height: 72px; 
-  border-radius: 50%; 
-  margin-bottom: 40px; 
-  border: 1px solid rgba(197, 160, 89, 0.4); 
-  padding: 4px; 
-  background: rgba(0, 0, 0, 0.2);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5); 
-  animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
-}
-
-.onb-title { 
-  font-family: 'Fraunces', serif; 
-  font-size: 34px; 
-  font-weight: 300; 
-  color: var(--ivory); 
-  margin-bottom: 12px; 
-  letter-spacing: -0.01em;
-  line-height: 1.1;
-  animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; 
-  opacity: 0; 
-}
-
-.onb-subtitle, .onb-welcome-text { 
-  font-family: 'DM Sans', sans-serif;
-  font-size: 11px; 
-  color: var(--gold-light); 
-  opacity: 0.7;
-  margin-bottom: 64px; 
-  text-transform: uppercase; 
-  letter-spacing: 0.2em; 
-  font-weight: 500;
-  animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards; 
-  opacity: 0; 
-}
-
+.onb-content { width: 100%; max-width: 320px; display: flex; flex-direction: column; align-items: center; color: var(--ivory); }
+.onb-logo { width: 72px; height: 72px; border-radius: 50%; margin-bottom: 40px; border: 1px solid rgba(197, 160, 89, 0.4); padding: 4px; background: rgba(0, 0, 0, 0.2); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5); animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.onb-title { font-family: 'Fraunces', serif; font-size: 34px; font-weight: 300; color: var(--ivory); margin-bottom: 12px; letter-spacing: -0.01em; line-height: 1.1; animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; opacity: 0; }
+.onb-subtitle, .onb-welcome-text { font-family: 'DM Sans', sans-serif; font-size: 11px; color: var(--gold-light); opacity: 0.7; margin-bottom: 64px; text-transform: uppercase; letter-spacing: 0.2em; font-weight: 500; animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards; opacity: 0; }
 .onb-step { display: none; width: 100%; opacity: 0; animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .onb-step.active { display: block; }
-
-.onb-label { 
-  display: block; 
-  font-size: 11px; 
-  font-weight: 600; 
-  color: var(--gold); 
-  margin-bottom: 16px; 
-  text-transform: uppercase; 
-  letter-spacing: 0.15em; 
-}
-
-.onb-input { 
-  width: 100%; text-align: center; border: none; 
-  border-bottom: 1px solid rgba(197, 160, 89, 0.3); 
-  background: transparent; padding: 16px 0; 
-  font-size: 26px; font-family: 'Fraunces', serif; font-weight: 300;
-  color: var(--ivory); margin-bottom: 48px; 
-  transition: all 0.4s ease; outline: none; border-radius: 0;
-}
-.onb-input:focus { 
-  border-bottom-color: var(--gold); 
-  box-shadow: 0 12px 24px -12px rgba(197, 160, 89, 0.3); 
-}
-.onb-input::placeholder { 
-  color: rgba(253, 251, 247, 0.15); 
-  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; 
-  letter-spacing: 0.15em; text-transform: uppercase;
-}
-
-#onbDistrictDropdown {
-  background: rgba(4, 18, 13, 0.85);
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(197, 160, 89, 0.2);
-  border-radius: 16px;
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6);
-}
-#onbDistrictDropdown div {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  color: var(--ivory); font-family: 'DM Sans', sans-serif; font-weight: 400;
-}
-#onbDistrictDropdown div:hover {
-  background: rgba(197, 160, 89, 0.1); color: var(--gold);
-}
-
-.btn-text-gold { 
-  background: none; border: none; color: var(--gold); 
-  font-size: 11px; margin-top: 32px; cursor: pointer; 
-  text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600;
-  transition: opacity 0.3s;
-}
+.onb-label { display: block; font-size: 11px; font-weight: 600; color: var(--gold); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.15em; }
+.onb-input { width: 100%; text-align: center; border: none; border-bottom: 1px solid rgba(197, 160, 89, 0.3); background: transparent; padding: 16px 0; font-size: 26px; font-family: 'Fraunces', serif; font-weight: 300; color: var(--ivory); margin-bottom: 48px; transition: all 0.4s ease; outline: none; border-radius: 0; }
+.onb-input:focus { border-bottom-color: var(--gold); box-shadow: 0 12px 24px -12px rgba(197, 160, 89, 0.3); }
+.onb-input::placeholder { color: rgba(253, 251, 247, 0.15); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; }
+#onbDistrictDropdown { background: rgba(4, 18, 13, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(197, 160, 89, 0.2); border-radius: 16px; box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6); }
+#onbDistrictDropdown div { border-bottom: 1px solid rgba(255, 255, 255, 0.04); color: var(--ivory); font-family: 'DM Sans', sans-serif; font-weight: 400; }
+#onbDistrictDropdown div:hover { background: rgba(197, 160, 89, 0.1); color: var(--gold); }
+.btn-text-gold { background: none; border: none; color: var(--gold); font-size: 11px; margin-top: 32px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; transition: opacity 0.3s; }
 .btn-text-gold:active { opacity: 0.6; }
-
-@keyframes fadeUp { 
-  from { opacity: 0; transform: translateY(24px); } 
-  to { opacity: 1; transform: translateY(0); } 
-}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 
 /* =========================================
-   TOMBOL MEWAH & RAMPING (DIPERBAIKI)
+   TOMBOL MEWAH & RAMPING 
    ========================================= */
 .btn-gold, .btn-dark, .step-1-btn {
-  border-radius: 8px; /* Sudut lebih tegas dan elegan */
-  padding: 14px 24px; /* Tinggi proporsional */
+  border-radius: 8px; 
+  padding: 14px 24px; 
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.2em; 
   font-family: 'DM Sans', sans-serif;
   cursor: pointer;
-  transition: all 0.3s ease; /* Transisi kalem, bebas efek kebut */
+  transition: all 0.3s ease; 
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%; /* Mempertahankan lebar penuh rata teks */
+  width: 100%; 
 }
-
-.btn-gold {
-  background: linear-gradient(135deg, #C5A059 0%, #B89650 100%);
-  color: #FFFFFF;
-  border: none;
-  box-shadow: 0 12px 24px rgba(197, 160, 89, 0.15);
-}
-
-.btn-dark {
-  background: var(--green);
-  color: var(--gold-light);
-  border: 1px solid rgba(197, 160, 89, 0.4);
-  box-shadow: 0 12px 24px rgba(8, 46, 33, 0.15);
-}
-
-.btn-gold:active, .btn-dark:active, .step-1-btn:active {
-  transform: scale(0.98); /* Efek pantulan lembut */
-  opacity: 0.9;
-}
+.btn-gold { background: linear-gradient(135deg, #C5A059 0%, #B89650 100%); color: #FFFFFF; border: none; box-shadow: 0 12px 24px rgba(197, 160, 89, 0.15); }
+.btn-dark { background: var(--green); color: var(--gold-light); border: 1px solid rgba(197, 160, 89, 0.4); box-shadow: 0 12px 24px rgba(8, 46, 33, 0.15); }
+.btn-gold:active, .btn-dark:active, .step-1-btn:active { transform: scale(0.98); opacity: 0.9; }
 
 /* HEADER STICKY KACA TRANSLUSEN */
-.luxury-header { 
-  position: fixed; 
-  top: 0; 
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 48px); 
-  max-width: 432px; 
-  display: flex; 
-  align-items: center; 
-  justify-content: space-between; 
-  padding: calc(12px + env(safe-area-inset-top)) 16px 12px; 
-  z-index: 100; 
-  background: rgba(253, 251, 247, 0.2); 
-  backdrop-filter: blur(8px) saturate(120%); 
-  -webkit-backdrop-filter: blur(8px) saturate(120%); 
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3); 
-  border-radius: 0 0 16px 16px; 
-  pointer-events: none; 
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
-}
-.luxury-header.scrolled { 
-  background: rgba(253, 251, 247, 0.85); 
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05); 
-  box-shadow: 0 8px 32px rgba(8, 46, 33, 0.08); 
-}
+.luxury-header { position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: calc(100% - 48px); max-width: 432px; display: flex; align-items: center; justify-content: space-between; padding: calc(12px + env(safe-area-inset-top)) 16px 12px; z-index: 100; background: rgba(253, 251, 247, 0.2); backdrop-filter: blur(8px) saturate(120%); -webkit-backdrop-filter: blur(8px) saturate(120%); border-bottom: 1px solid rgba(255, 255, 255, 0.3); border-radius: 0 0 16px 16px; pointer-events: none; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+.luxury-header.scrolled { background: rgba(253, 251, 247, 0.85); border-bottom: 1px solid rgba(0, 0, 0, 0.05); box-shadow: 0 8px 32px rgba(8, 46, 33, 0.08); }
 .luxury-header .header-left, .luxury-header .header-right { pointer-events: auto; }
 .header-left { display: flex; align-items: center; gap: 12px; }
 .brand-logo img { width: 32px; height: 32px; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
@@ -224,12 +101,7 @@ p { line-height: 1.8; }
 .hero-editorial { padding: 0 24px 0; margin-top: -70px; position: relative; z-index: 1; }
 .hero-img-wrap { width: 100%; aspect-ratio: 4 / 3; position: relative; border-radius: 0 0 32px 32px; overflow: hidden; box-shadow: 0 12px 40px rgba(10,58,42,0.15); }
 .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.hero-overlay { 
-  position: absolute; inset: 0; 
-  background: linear-gradient(180deg, transparent 40%, rgba(8,46,33,0.85) 100%); 
-  display: flex; flex-direction: column; justify-content: flex-end; 
-  padding: 32px 32px 27px; text-align: left; 
-}
+.hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(8,46,33,0.85) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 32px 32px 27px; text-align: left; }
 .hero-overlay h2 { font-size: 32px; line-height: 1.15; letter-spacing: -0.01em; color: var(--ivory); font-weight: 300; text-shadow: 0 2px 20px rgba(0,0,0,0.2); }
 .hero-overlay h2 em { font-style: italic; color: var(--gold); font-weight: 400; }
 .hero-caption { margin-top: 20px; display: flex; align-items: center; }
@@ -241,9 +113,7 @@ p { line-height: 1.8; }
 .carousel-container { width: 100%; overflow: hidden; padding: 12px 0 0px; margin-top: 25px; container-type: inline-size; }
 .carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; padding: 0 52px; gap: 0; }
 .carousel-track::-webkit-scrollbar { display: none; }
-.boutique-item { 
-  flex: 0 0 calc(100vw - 48px); flex: 0 0 calc(100cqw - 48px); max-width: 432px; margin: 0 -28px; scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; text-decoration: none; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease, border-color 0.5s ease; transform: scale(0.82); opacity: 0.55; will-change: transform; background: var(--ivory); border: 1px solid var(--gray-200); box-shadow: none; border-radius: 24px; padding: 30px; z-index: 1; 
-}
+.boutique-item { flex: 0 0 calc(100vw - 48px); flex: 0 0 calc(100cqw - 48px); max-width: 432px; margin: 0 -28px; scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; text-decoration: none; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease, border-color 0.5s ease; transform: scale(0.82); opacity: 0.55; will-change: transform; background: var(--ivory); border: 1px solid var(--gray-200); box-shadow: none; border-radius: 24px; padding: 30px; z-index: 1; }
 .boutique-item.active-center { transform: scale(1); opacity: 1; z-index: 10; border-color: var(--gold); box-shadow: 0 12px 32px rgba(8, 46, 33, 0.06); }
 .btq-img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 12px; margin-bottom: 0; background: var(--gray-100); box-shadow: 0 16px 32px rgba(8, 46, 33, 0.12); }
 .btq-text-container { display: flex; flex-direction: column; align-items: stretch; width: max-content; margin: 0 auto; opacity: 0.35; transform: translateY(12px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; }
@@ -285,18 +155,22 @@ p { line-height: 1.8; }
 .product-slide { flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: center; overflow-y: auto; overflow-x: hidden; background: var(--ivory); position: relative; overscroll-behavior-y: contain; }
 
 /* =========================================
-   HALAMAN DETAIL PRODUK (1:1 & JUSTIFY)
+   HALAMAN DETAIL PRODUK (1:1 & JERNIH)
    ========================================= */
-.detail-image-wrap { width: 100%; aspect-ratio: 1 / 1; position: relative; } /* Berubah menjadi 1:1 */
-.detail-image-wrap::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, var(--ivory) 100%); pointer-events: none; }
+.detail-image-wrap { width: 100%; aspect-ratio: 1 / 1; position: relative; } /* Gambar kotak */
+.detail-image-wrap::after { display: none; } /* Kabut dibuang total, gambar jernih */
 .detail-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.detail-content { padding: 40px 32px 72px; background: var(--ivory); position: relative; z-index: 2; margin-top: -60px; border-radius: 32px 32px 0 0; min-height: 60vh; }
+.detail-content { padding: 40px 32px 72px; background: var(--ivory); position: relative; z-index: 2; margin-top: -32px; border-radius: 32px 32px 0 0; min-height: 60vh; box-shadow: 0 -12px 32px rgba(0,0,0,0.05); }
 
-.detail-title-row { display: flex; align-items: center; gap: 16px; margin-bottom: 4px; }
-.detail-title-row h2 { font-size: 36px; color: var(--green); margin: 0; font-weight: 300; letter-spacing: -0.01em; font-family: 'Fraunces', serif; white-space: nowrap; }
-.title-line { flex: 1; height: 1px; background: var(--gold); opacity: 0.5; }
+/* Nama Menu */
+.detail-content h2 { font-size: 36px; color: var(--green); margin-bottom: 8px; font-weight: 300; letter-spacing: -0.01em; font-family: 'Fraunces', serif; }
 
-.detail-price { font-size: 20px; color: var(--gold); margin-bottom: 28px; font-family: 'DM Sans', sans-serif; font-weight: 500; letter-spacing: 0.05em; }
+/* Harga disejajarkan dengan garis emas */
+.detail-price-row { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+.detail-price { font-size: 20px; color: var(--gold); font-family: 'DM Sans', sans-serif; font-weight: 500; letter-spacing: 0.05em; margin: 0; }
+.price-line { flex: 1; height: 1px; background: var(--gold); opacity: 0.5; }
+
+/* Deskripsi rata kiri kanan (justify) */
 .detail-desc { font-size: 15px; line-height: 1.7; color: var(--gray-900); margin-bottom: 40px; font-weight: 400; text-align: justify; }
 
 .action-area { margin-bottom: 56px; }
@@ -313,13 +187,10 @@ p { line-height: 1.8; }
 
 .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--gray-500); margin-bottom: 24px; font-weight: 600; display: block; text-align: center; border-top: 1px solid var(--gray-200); padding-top: 40px; }
 
-/* KOMPOSISI BUAH (INLINE SEPERTI CREDIT FILM) */
-.fruit-list-inline { text-align: center; font-size: 14px; line-height: 1.8; color: var(--gray-900); margin-bottom: 48px; font-weight: 400; }
+/* KOMPOSISI BUAH & WADAH (INLINE SEPERTI CREDIT FILM) */
+.fruit-list-inline { text-align: center; font-size: 14px; line-height: 1.8; color: var(--gray-900); margin-bottom: 48px; font-weight: 400; padding: 0 16px; }
 .fruit-bullet { color: var(--gold); margin: 0 8px; font-size: 12px; opacity: 0.7; }
 
-.detail-specs { border-bottom: 1px solid var(--gray-200); padding-bottom: 32px; margin-bottom: 40px; }
-.detail-specs div { display: flex; justify-content: space-between; font-size: 15px; padding: 16px 0; }
-.detail-specs div span:first-child { color: var(--gray-500); font-weight: 500; }
 .detail-manifesto { background: transparent; padding: 32px; border-radius: 16px; border: 1px solid rgba(197, 160, 89, 0.4); text-align: center; margin-top: 24px; }
 .detail-manifesto h4 { font-size: 12px; color: var(--gold); margin-bottom: 16px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; }
 .detail-manifesto p { font-size: 14px; line-height: 1.8; color: var(--gray-900); font-family: 'Fraunces', serif; font-style: italic; margin: 0; }
