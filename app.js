@@ -7,13 +7,14 @@
 
   const SPICE_LABELS = { 1: 'Ringan', 2: 'Sedang', 3: 'Pedas', 4: 'Sangat Pedas', 5: 'Neraka' };
 
+  /* Perbaikan Array Produk (Nama buah normalisasi & Sambal Spesifik) */
   const PRODUCTS = [
-    { id:'p_m1', name:'Rujak Segar', desc:'Kombinasi buah pilihan dengan sambal original Rujak.Co. Disiapkan seketika sesaat sebelum pengantaran untuk menjaga tekstur renyah alami.', insight: 'Kesegaran otentik buah tropis pilihan.', price:35000, container:'Thinwall 1000ml Presisi', size:'Porsi Reguler', sambal:'Original Signature (1 Cup)', buah:['Mangga Mengkel','Nanas Hutan','Bengkoang','Jambu Air','Kedondong Kebun'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp' },
-    { id:'p_m2', name:'Rujak Serut', desc:'Buah diserut halus untuk tekstur yang lebih menyatu dengan saus karamelisasi mete.', insight: 'Harmoni rasa dalam serutan presisi yang lembut.', price:26000, container:'Thinwall 750ml', size:'Porsi Reguler', sambal:'Original Terbawa', buah:['Mangga Muda Jawa','Bengkoang Garing','Nanas Madu','Ubi Ungu Manis'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp' },
-    { id:'p_m3', name:'Rujak Gaco', desc:'Enam buah eksklusif pilihan dengan sambal mete premium. Sebuah mahakarya harmoni rasa gurih, pedas, dan manis.', insight: 'Mahakarya rasa gurih, pedas, dan manis.', price:40000, container:'Thinwall 1000ml Tersiegel', size:'Porsi Eksklusif', sambal:'Karamelisasi Mete (1 Cup)', buah:['Jambu Kristal Tanpa Biji','Mangga Indramayu Mengkel','Nanas Subang','Bengkoang Air','Jambu Air Premium','Kedondong'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-hd.webp' },
-    { id:'p_m4', name:'Rujak Rama', desc:'Porsi melimpah yang dirancang khusus untuk momen kebersamaan atau perjamuan bersama kerabat terdekat.', insight: 'Porsi melimpah untuk momen kebersamaan.', price:48000, container:'Jumbo Thinwall 1000ml', size:'Porsi Sharing', sambal:'Karamelisasi Mete (2 Cup)', buah:['Varian Jambu Kristal','Mangga Mengkel Pilihan','Nanas Madu','Bengkoang Super','Jambu Air','Kedondong'], defaultSpice:4, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-hd.webp' },
-    { id:'p_m5', name:'Rujak Mahkota', desc:'Koleksi premium dengan anggur Shine Muscat impor pilihan, memadukan kemewahan tekstur tanpa biji dengan buah tropis terbaik.', insight: 'Kemewahan Shine Muscat berpadu buah tropis.', price:85000, container:'Premium Luxury Box', size:'Vault Single', sambal:'Mete Grand Reserve (2 Cup)', buah:['Shine Muscat Impor Jepang Grade A','Jambu Kristal Garing','Mangga Mengkel Kurasi','Nanas Hutan','Bengkoang Garing'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp' },
-    { id:'p_m6', name:'Tampah Nusantara', desc:'Representasi kemegahan tradisi rasa Indonesia dalam wadah tampah bambu anyaman tangan untuk perjamuan istimewa Anda.', insight: 'Kemegahan tradisi rasa dalam anyaman bambu.', price:200000, container:'Tampah Bambu Ø40cm', size:'Perjamuan (8-10 Orang)', sambal:'Original & Mete (4 Cup)', buah:['Shine Muscat Premium','Jambu Kristal Vault','Mangga Pilihan Utama','Nanas Hutan Subang','Bengkoang Garing','Jambu Air Rose','Kedondong Pilihan','Ubi Ungu Manis'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp' }
+    { id:'p_m1', name:'Rujak Segar', desc:'Kombinasi buah pilihan dengan sambal original Rujak.Co. Disiapkan seketika sesaat sebelum pengantaran untuk menjaga tekstur renyah alami.', insight: 'Kesegaran otentik buah tropis pilihan.', price:35000, container:'Thinwall 1000ml', size:'Porsi Reguler', sambal:'Sambal Kacang Original', buah:['Mangga','Nanas','Bengkoang','Jambu Citra','Kedondong'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp' },
+    { id:'p_m2', name:'Rujak Serut', desc:'Buah diserut halus untuk tekstur yang lebih menyatu dengan saus karamelisasi mete.', insight: 'Harmoni rasa dalam serutan presisi yang lembut.', price:26000, container:'Thinwall 750ml', size:'Porsi Reguler', sambal:'Sambal Kacang Original', buah:['Mangga','Bengkoang','Nanas','Ubi Ungu'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp' },
+    { id:'p_m3', name:'Rujak Gaco', desc:'Enam buah eksklusif pilihan dengan sambal mete premium. Sebuah mahakarya harmoni rasa gurih, pedas, dan manis.', insight: 'Mahakarya rasa gurih, pedas, dan manis.', price:40000, container:'Thinwall 1000ml', size:'Porsi Eksklusif', sambal:'Sambal Mete Spesial', buah:['Jambu Kristal','Mangga','Nanas','Bengkoang','Jambu Citra','Kedondong'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-hd.webp' },
+    { id:'p_m4', name:'Rujak Rama', desc:'Porsi melimpah yang dirancang khusus untuk momen kebersamaan atau perjamuan bersama kerabat terdekat.', insight: 'Porsi melimpah untuk momen kebersamaan.', price:48000, container:'Jumbo Thinwall 1000ml', size:'Porsi Sharing', sambal:'Sambal Kacang Original & Sambal Mete Spesial', buah:['Jambu Kristal','Mangga','Nanas','Bengkoang','Jambu Citra','Kedondong'], defaultSpice:4, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-hd.webp' },
+    { id:'p_m5', name:'Rujak Mahkota', desc:'Koleksi premium dengan anggur Shine Muscat impor pilihan, memadukan kemewahan tekstur tanpa biji dengan buah tropis terbaik.', insight: 'Kemewahan Shine Muscat berpadu buah tropis.', price:85000, container:'Premium Luxury Box', size:'Vault Single', sambal:'Sambal Mete Spesial', buah:['Shine Muscat','Jambu Kristal','Mangga','Nanas','Bengkoang'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp' },
+    { id:'p_m6', name:'Tampah Nusantara', desc:'Representasi kemegahan tradisi rasa Indonesia dalam wadah tampah bambu anyaman tangan untuk perjamuan istimewa Anda.', insight: 'Kemegahan tradisi rasa dalam anyaman bambu.', price:200000, container:'Tampah Bambu Ø40cm', size:'Perjamuan (8-10 Orang)', sambal:'Sambal Kacang & Mete Spesial', buah:['Shine Muscat','Jambu Kristal','Mangga','Nanas','Bengkoang','Jambu Citra','Kedondong','Ubi Ungu'], defaultSpice:3, thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-thumb.webp', image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp' }
   ];
 
   const DISTRICT_MAP = { 'bekasi barat':5, 'bekasi timur':7, 'bekasi selatan':9, 'bekasi utara':11, 'rawalumbu':8, 'jatiasih':12, 'pondokgede':14, 'cikarang':23, 'tambun':16, 'cibitung':20, 'gambir':18, 'menteng':19, 'tebet':20, 'pancoran':21, 'pasar minggu':22, 'kebayoran lama':24, 'kebayoran baru':22, 'mampang prapatan':21, 'pulo gadung':16, 'jatinegara':18, 'duren sawit':15, 'kramat jati':19, 'pasar rebo':20, 'cakung':12, 'kembangan':25, 'kelapa gading':27, 'depok':35, 'tangerang':38, 'bogor':50 };
@@ -267,17 +268,19 @@
     const track = document.getElementById('productSwiperTrack');
     if(!track) return;
 
+    /* Revisi HTML Detail: Hilangkan garis atas, pindah garis ke harga, & list inline */
     track.innerHTML = loopedProducts.map((p, index) => `
       <div class="product-slide" data-id="${p.id}" data-idx="${index}">
         <div class="detail-image-wrap"><img src="${p.image}" alt="${p.name}" loading="lazy"></div>
         <div class="detail-content">
           
-          <div class="detail-title-row">
-            <h2>${p.name}</h2>
-            <span class="title-line"></span>
+          <h2>${p.name}</h2>
+          
+          <div class="detail-price-row">
+            <span class="detail-price">${fmt(p.price)}</span>
+            <span class="price-line"></span>
           </div>
           
-          <p class="detail-price">${fmt(p.price)}</p>
           <p class="detail-desc">${p.desc}</p>
           
           <div class="action-area">
@@ -311,11 +314,10 @@
             ${p.buah.join(' <span class="fruit-bullet">•</span> ')}
           </p>
 
-          <div class="detail-specs">
-            <div><span>Wadah</span> <span>${p.container}</span></div>
-            <div><span>Porsi</span> <span>${p.size}</span></div>
-            <div><span>Sambal</span> <span>${p.sambal}</span></div>
-          </div>
+          <label class="section-label">Spesifikasi Sajian</label>
+          <p class="fruit-list-inline" style="margin-bottom:40px;">
+            ${p.container} <span class="fruit-bullet">•</span> ${p.size} <span class="fruit-bullet">•</span> ${p.sambal}
+          </p>
           
           <div class="detail-manifesto">
             <h4><i data-lucide="shield-check" class="w-4 h-4 inline" style="margin-bottom:-2px;"></i> Komitmen Kesegaran</h4>
