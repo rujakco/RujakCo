@@ -23,8 +23,8 @@
         <h2 class="onb-title">Selamat Datang di Rujak.Co</h2>
         <p class="onb-subtitle">Nikmati keistimewaan rasa Nusantara.</p>
         <div id="onbStep1" class="onb-step active">
-          <label class="onb-label">Pesanan ini atas nama:</label>
-          <input type="text" id="onbName" class="onb-input" placeholder="Nama lengkap Anda" autocomplete="off">
+          <label class="onb-label">Boleh kami tahu nama Anda?</label>
+          <input type="text" id="onbName" class="onb-input" placeholder="Nama lengkap" autocomplete="off">
           <button class="btn-gold full-width" id="onbNextBtn">Lanjutkan</button>
         </div>
         <div id="onbStep2" class="onb-step">
@@ -40,9 +40,9 @@
       <div id="onbReturningUser" style="display:none; width:100%;">
         <p class="onb-welcome-text">Selamat datang kembali,</p>
         <h2 class="onb-title" id="onbWelcomeName">Ngoedi</h2>
-        <p class="onb-subtitle" style="margin-bottom:56px;">Destinasi: <span id="onbWelcomeDistrict" style="color:var(--gold);">Bekasi</span></p>
+        <p class="onb-subtitle" style="margin-bottom:56px;">Diantar ke <span id="onbWelcomeDistrict" style="color:var(--gold);">Bekasi</span></p>
         <button class="btn-gold full-width" id="onbEnterBtn">Masuk Sekarang</button>
-        <button class="btn-text-gold" id="onbResetBtn" style="margin-top:32px;">Ganti data & alamat</button>
+        <button class="btn-text-gold" id="onbResetBtn" style="margin-top:32px;">Ganti nama & kecamatan</button>
       </div>
     </div>
   </div>
@@ -117,13 +117,13 @@
     <div class="modal-overlay" id="miniCartModal" aria-hidden="true">
       <div class="drawer-content">
         <div class="drawer-header">
-          <h3>Keranjang Belanja</h3>
+          <h3>Keranjang Anda</h3>
           <button id="miniCartClose" class="glass-btn-dark"><i data-lucide="x" class="w-4 h-4"></i></button>
         </div>
         <div class="drawer-body">
           <div id="miniCartList"></div>
           <div class="drawer-subtotal">
-            <span>Total Sajian</span>
+            <span>Subtotal Sajian</span>
             <span id="cartSubtotalDisplay" class="font-fraunces">Rp0</span>
           </div>
           <div class="checkout-forms">
@@ -135,19 +135,19 @@
               <input type="text" id="districtInput" placeholder="Kecamatan" class="input-minimal" autocomplete="off" readonly style="color:var(--green); font-weight:600;">
               <div id="customDistrictDropdown" class="minimal-dropdown"></div>
             </div>
-            <div style="font-size:12px; color:var(--gold); margin-top:-16px; margin-bottom:32px; font-weight:500;">*Kecamatan sesuai profil awal Anda.</div>
+            <div style="font-size:12px; color:var(--gold); margin-top:-16px; margin-bottom:32px; font-weight:500;">*Kecamatan mengikuti alamat awal Anda. Ubah lewat "Ganti nama &amp; kecamatan" di layar masuk.</div>
             <select id="deliveryTime" class="input-minimal" style="margin-top:8px;">
               <option value="Pagi (09:00 - 11:00)">Pengantaran Pagi (09:00 - 11:00)</option>
               <option value="Siang (11:00 - 13:00)">Pengantaran Siang (11:00 - 13:00)</option>
               <option value="Sore (14:00 - 17:00)">Pengantaran Sore (14:00 - 17:00)</option>
             </select>
-            <textarea id="orderNotes" placeholder="Instruksi Khusus (Opsional)" rows="1" class="input-minimal"></textarea>
+            <textarea id="orderNotes" placeholder="Catatan untuk kurir (opsional)" rows="1" class="input-minimal"></textarea>
           </div>
           <div id="shippingSection" class="checkout-forms" style="margin-top:40px;">
             <h4>Pilih Kurir</h4>
             <div class="logistic-options">
               <button class="log-btn active" data-provider="rujakco">Kurir Rujak.Co</button>
-              <button class="log-btn" data-provider="paxel">Paxel Same Day</button>
+              <button class="log-btn" data-provider="paxel">Paxel Ekspres</button>
             </div>
             <div id="rujakcoOptions" style="margin-top:24px;">
               <div class="logistic-options">
@@ -156,7 +156,7 @@
               </div>
               <label class="priority-label"><input type="checkbox" id="priorityToggleMini"> Prioritas (+Rp8.000)</label>
             </div>
-            <div id="paxelOptions" style="display:none; margin-top:24px; font-size:13px; color:var(--gold); font-style:italic; line-height:1.6;">* Layanan Paxel Same Day. Sajian tiba esok hari.</div>
+            <div id="paxelOptions" style="display:none; margin-top:24px; font-size:13px; color:var(--gold); font-style:italic; line-height:1.6;">* Estimasi tiba dalam 1 hari kerja.</div>
             <div class="drawer-breakdown">
               <span id="shippingDistance"></span>
               <span id="finalShipping" class="font-fraunces">Rp0</span>
@@ -174,7 +174,7 @@
     <!-- PAYMENT MODAL -->
     <div class="modal-overlay" id="paymentModal" aria-hidden="true">
       <div class="drawer-content" style="height:auto;">
-        <div class="drawer-header"><h3>QRIS Pembayaran</h3><button id="paymentClose" class="glass-btn-dark"><i data-lucide="x" class="w-4 h-4"></i></button></div>
+        <div class="drawer-header"><h3>Pembayaran QRIS</h3><button id="paymentClose" class="glass-btn-dark"><i data-lucide="x" class="w-4 h-4"></i></button></div>
         <div class="drawer-body" style="text-align:center; padding-bottom:48px;">
           <div class="qris-frame">
             <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" />
@@ -185,13 +185,13 @@
       </div>
     </div>
 
-    <!-- AI CHAT PRAMUTAMU -->
+    <!-- AI CHAT CONCIERGE -->
     <div class="modal-overlay" id="aiChatBox" style="display:none; z-index:2000;" aria-hidden="true">
       <div class="drawer-content" style="height:70vh;">
-        <div class="drawer-header"><h3>Pramutamu Rujak.Co</h3><button id="aiChatClose" class="glass-btn-dark"><i data-lucide="x" class="w-4 h-4"></i></button></div>
+        <div class="drawer-header"><h3>Concierge Rujak.Co</h3><button id="aiChatClose" class="glass-btn-dark"><i data-lucide="x" class="w-4 h-4"></i></button></div>
         <div class="drawer-body chat-body">
           <div id="aiChatMessages" class="chat-messages">
-            <div class="msg-bot"><span id="aiWelcomeMsg">Selamat siang. Ada yang dapat kami bantu untuk pesanan Anda?</span></div>
+            <div class="msg-bot"><span id="aiWelcomeMsg">Halo! Ada yang bisa kami bantu untuk pesanan Anda?</span></div>
           </div>
           <div class="chat-input-row">
             <input type="text" id="aiChatInput" class="input-minimal" placeholder="Tulis pesan Anda...">
@@ -212,7 +212,7 @@
         <span class="nav-label">Keranjang</span>
       </a>
       <a href="#" class="nav-item" data-tab="orders"><i data-lucide="package" class="nav-icon"></i><span class="nav-label">Pesanan</span></a>
-      <a href="#" class="nav-item" id="aiChatToggle"><i data-lucide="sparkles" class="nav-icon"></i><span class="nav-label">Butler</span></a>
+      <a href="#" class="nav-item" id="aiChatToggle"><i data-lucide="sparkles" class="nav-icon"></i><span class="nav-label">Concierge</span></a>
     </nav>
 
     <div id="toast" role="alert" aria-live="polite"></div>
