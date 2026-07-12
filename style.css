@@ -21,22 +21,21 @@
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-/* ----- HANYA BACKGROUND LAYAR YANG HIJAU ----- */
+/* ----- BACKGROUND HIJAU DI SELURUH LAYAR ----- */
 html, body {
   margin: 0;
   padding: 0;
-  background: #082E21; /* <-- HIJAU TUA */
+  background: #082E21;
   font-family: 'DM Sans', sans-serif;
   color: var(--gray-900);
 }
 
-/* ----- APP TRANSPARAN AGAR BACKGROUND HIJAU TERLIHAT ----- */
 #app {
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
   min-height: 100dvh;
-  background: transparent; /* <-- HILANGKAN BACKGROUND IVORY */
+  background: #082E21; /* Hijau di app */
   position: relative;
   box-shadow: none;
   overflow-x: hidden;
@@ -328,7 +327,7 @@ p { line-height: 1.8; }
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 40%, rgba(8,46,33,0.85) 100%);
+  background: linear-gradient(180deg, transparent 40%, rgba(8,46,33,0.95) 100%);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -367,6 +366,29 @@ p { line-height: 1.8; }
   font-size: 12.5px;
   letter-spacing: 0.04em;
   color: rgba(253, 251, 247, 0.9);
+}
+
+/* ===== HERO FLAVOR (Asam, Pedas, Manis, Segar) dengan aksen emas ===== */
+.hero-flavor {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 16px;
+  gap: 12px;
+}
+.flavor-line {
+  flex: 0 0 20px;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.6;
+}
+.flavor-text {
+  font-family: 'Fraunces', serif;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
 }
 
 /* =========================================
@@ -485,7 +507,7 @@ p { line-height: 1.8; }
 }
 
 /* =========================================
-   INSIGHT
+   INSIGHT (WARNA EMAS)
 ========================================= */
 .product-insight-container {
   text-align: center;
@@ -499,7 +521,7 @@ p { line-height: 1.8; }
 .typing-text {
   font-family: 'DM Sans', sans-serif;
   font-size: 13px;
-  color: var(--gray-500);
+  color: var(--gold); /* <-- DIUBAH JADI EMAS */
   font-style: italic;
   letter-spacing: 0.03em;
   line-height: 1.6;
@@ -516,7 +538,7 @@ p { line-height: 1.8; }
 @keyframes blink { 50% { opacity: 0; } }
 
 /* =========================================
-   FOOTER
+   FOOTER (BACKGROUND HIJAU, TEKS TERANG)
 ========================================= */
 .luxury-footer {
   display: flex;
@@ -524,8 +546,8 @@ p { line-height: 1.8; }
   align-items: center;
   text-align: center;
   padding: 18px 24px 96px;
-  border-top: none;
-  background-color: var(--ivory);
+  border-top: 1px solid rgba(197, 160, 89, 0.2);
+  background-color: #082E21; /* <-- HIJAU */
   margin-top: -16px;
   position: relative;
   overflow: hidden;
@@ -537,7 +559,7 @@ p { line-height: 1.8; }
   background-image: url('https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp');
   background-size: 113px 113px;
   background-repeat: repeat;
-  opacity: 0.03;
+  opacity: 0.05;
   filter: sepia(1) hue-rotate(10deg) saturate(3) brightness(0.9);
   pointer-events: none;
   z-index: 0;
@@ -561,12 +583,12 @@ p { line-height: 1.8; }
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  filter: grayscale(100%);
-  opacity: 0.3;
+  filter: brightness(0) invert(1); /* <-- LOGO JADI PUTIH */
+  opacity: 0.5;
 }
 .footer-brand p {
   font-size: 10px;
-  color: var(--gray-500);
+  color: rgba(255,255,255,0.5); /* <-- PUTIH REDUP */
   letter-spacing: 0.08em;
   font-weight: 500;
   margin: 0;
@@ -578,27 +600,31 @@ p { line-height: 1.8; }
 }
 .footer-links a {
   font-size: 11px;
-  color: var(--gray-500);
+  color: rgba(255,255,255,0.6); /* <-- PUTIH */
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s;
 }
-.footer-links a:hover { color: var(--gold); }
+.footer-links a:hover {
+  color: var(--gold); /* <-- EMAS SAAT HOVER */
+}
 .footer-social {
   display: flex;
   gap: 16px;
   justify-content: center;
 }
 .footer-social a {
-  color: var(--gray-400);
+  color: rgba(255,255,255,0.4); /* <-- PUTIH REDUP */
   transition: color 0.2s;
   text-decoration: none;
 }
-.footer-social a:hover { color: var(--gold); }
+.footer-social a:hover {
+  color: var(--gold); /* <-- EMAS SAAT HOVER */
+}
 .footer-copy {
   text-align: center;
   font-size: 10px;
-  color: var(--gray-400);
+  color: rgba(255,255,255,0.3); /* <-- PUTIH SANGAT REDUP */
   letter-spacing: 0.05em;
   margin: 0;
   padding-top: 12px;
