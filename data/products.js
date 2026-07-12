@@ -1,16 +1,99 @@
 // data/products.js
-window.PRODUCTS = [
-  { 
-    id:'p_m1', name:'Rujak Segar', desc:'Kombinasi buah pilihan dengan sambal original Rujak.Co. Disiapkan seketika sesaat sebelum pengantaran untuk menjaga tekstur renyah alami.', 
-    insight: 'Kesegaran otentik buah tropis pilihan.', 
-    price:35000, container:'Thinwall 1000ml', size:'Porsi Reguler', 
-    sambal:'Sambal Kacang Original', 
-    buah:['Mangga','Nanas','Bengkoang','Jambu Citra','Kedondong'], 
-    defaultSpice:3, 
-    thumbnail:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp', 
-    image:'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp' 
+export const PRODUCTS = [
+  {
+    id: 'p_m1',
+    name: 'Rujak Segar',
+    badge: 'Best Seller',
+    story: 'Terinspirasi dari rujak tradisional Jawa Timur dengan interpretasi modern.',
+    desc: 'Kombinasi buah pilihan dengan sambal original Rujak.Co. Disiapkan seketika sesaat sebelum pengantaran untuk menjaga tekstur renyah alami.',
+    insight: 'Kesegaran otentik buah tropis pilihan.',
+    price: 35000,
+    container: 'Thinwall 1000ml',
+    size: 'Porsi Reguler',
+    sambal: 'Sambal Kacang Original',
+    buah: ['Mangga', 'Nanas', 'Bengkoang', 'Jambu Citra', 'Kedondong'],
+    defaultSpice: 3,
+    thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-thumb.webp',
+    image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-segar-hd.webp'
   },
-  // ... (lanjutkan untuk produk lainnya dengan pola yang sama)
+  {
+    id: 'p_m2',
+    name: 'Rujak Serut',
+    badge: 'Signature',
+    story: 'Resep turun-temurun dari keluarga kami, disempurnakan dengan teknik serut presisi.',
+    desc: 'Buah diserut halus untuk tekstur yang lebih menyatu dengan saus karamelisasi mete.',
+    insight: 'Harmoni rasa dalam serutan presisi yang lembut.',
+    price: 26000,
+    container: 'Thinwall 750ml',
+    size: 'Porsi Reguler',
+    sambal: 'Sambal Kacang Original',
+    buah: ['Mangga', 'Nanas', 'Bengkoang', 'Ubi Ungu'],
+    defaultSpice: 3,
+    thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-thumb.webp',
+    image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-serut-hd.webp'
+  },
+  {
+    id: 'p_m3',
+    name: 'Rujak Gaco',
+    badge: 'Chef Choice',
+    story: 'Dipilih langsung oleh chef kami sebagai representasi rasa Nusantara yang paling seimbang.',
+    desc: 'Enam buah eksklusif pilihan dengan sambal mete premium. Sebuah mahakarya harmoni rasa gurih, pedas, dan manis.',
+    insight: 'Mahakarya rasa gurih, pedas, dan manis.',
+    price: 40000,
+    container: 'Thinwall 1000ml',
+    size: 'Porsi Eksklusif',
+    sambal: 'Sambal Mete Spesial',
+    buah: ['Jambu Kristal', 'Mangga', 'Nanas', 'Bengkoang', 'Jambu Citra', 'Kedondong'],
+    defaultSpice: 3,
+    thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-thumb.webp',
+    image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-gaco-hd.webp'
+  },
+  {
+    id: 'p_m4',
+    name: 'Rujak Rama',
+    badge: 'Sharing',
+    story: 'Diciptakan untuk merayakan kebersamaan. Satu porsi, banyak cerita.',
+    desc: 'Porsi melimpah yang dirancang khusus untuk momen kebersamaan atau perjamuan bersama kerabat terdekat.',
+    insight: 'Porsi melimpah untuk momen kebersamaan.',
+    price: 48000,
+    container: 'Jumbo Thinwall 1000ml',
+    size: 'Porsi Sharing',
+    sambal: 'Sambal Kacang Original & Sambal Mete Spesial',
+    buah: ['Jambu Kristal', 'Mangga', 'Nanas', 'Bengkoang', 'Jambu Citra', 'Kedondong'],
+    defaultSpice: 4,
+    thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-thumb.webp',
+    image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-rama-hd.webp'
+  },
+  {
+    id: 'p_m5',
+    name: 'Rujak Mahkota',
+    badge: 'Limited',
+    story: 'Koleksi terbatas dengan anggur Shine Muscat impor. Hanya tersedia musiman.',
+    desc: 'Koleksi premium dengan anggur Shine Muscat impor pilihan, memadukan kemewahan tekstur tanpa biji dengan buah tropis terbaik.',
+    insight: 'Kemewahan Shine Muscat berpadu buah tropis.',
+    price: 85000,
+    container: 'Premium Luxury Box',
+    size: 'Vault Single',
+    sambal: 'Sambal Mete Spesial',
+    buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga', 'Nanas', 'Bengkoang', 'Jambu Citra', 'Kedondong'],
+    defaultSpice: 3,
+    thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-thumb.webp',
+    image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/rujak-mahkota-hd.webp'
+  },
+  {
+    id: 'p_m6',
+    name: 'Tampah Nusantara',
+    badge: 'Exclusive',
+    story: 'Perayaan rasa Indonesia dalam wadah anyaman bambu. Untuk momen terbesar Anda.',
+    desc: 'Representasi kemegahan tradisi rasa Indonesia dalam wadah tampah bambu anyaman tangan untuk perjamuan istimewa Anda.',
+    insight: 'Kemegahan tradisi rasa dalam anyaman bambu.',
+    price: 200000,
+    container: 'Tampah Bambu Ø40cm',
+    size: 'Perjamuan (8-10 Orang)',
+    sambal: 'Sambal Kacang & Mete Spesial',
+    buah: ['Shine Muscat', 'Jambu Kristal', 'Mangga', 'Nanas', 'Bengkoang', 'Jambu Citra', 'Kedondong', 'Ubi Ungu'],
+    defaultSpice: 3,
+    thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-thumb.webp',
+    image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp'
+  }
 ];
-
-window.DISTRICT_MAP = { 'bekasi barat':5, 'bekasi timur':7, /* ... dst */ };
