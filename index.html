@@ -2,57 +2,56 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Rujak.Co — Premium Rujak</title>
   <meta name="description" content="Rujak premium asli Bekasi. Asam, pedas, manis, segar." />
+  <!-- Fonts with display=swap -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <!-- Versi cache-busting v=5 -->
-  <link rel="stylesheet" href="style.css?v=5" />
+  <link rel="stylesheet" href="style.css" />
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 </head>
 <body>
 <div id="app">
 
   <!-- ONBOARDING -->
-  <div class="onboarding-overlay" id="onboardingOverlay">
+  <div class="onboarding-overlay" id="onboardingOverlay" role="dialog" aria-modal="true" aria-labelledby="onbTitle">
     <div class="onb-content">
       <img class="onb-logo" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" />
       <div id="onbNewUser" style="display:none; width:100%;">
-        <h2 class="onb-title">Selamat Datang</h2>
+        <h2 class="onb-title" id="onbTitle">Selamat Datang</h2>
         <p class="onb-subtitle">Nikmati keistimewaan rasa Nusantara.</p>
         <div id="onbStep1" class="onb-step active">
-          <label class="onb-label">Boleh kami tahu nama Anda?</label>
+          <label class="onb-label" for="onbName">Boleh kami tahu nama Anda?</label>
           <input type="text" id="onbName" class="onb-input" placeholder="Nama lengkap" autocomplete="off" />
-          <button class="btn-gold full-width" id="onbNextBtn">Lanjutkan</button>
+          <button type="button" class="btn-gold full-width" id="onbNextBtn">Lanjutkan</button>
         </div>
         <div id="onbStep2" class="onb-step">
-          <label class="onb-label">Kecamatan tujuan pengantaran</label>
+          <label class="onb-label" for="onbDistrict">Kecamatan tujuan pengantaran</label>
           <div style="position:relative;">
             <input type="text" id="onbDistrict" class="onb-input" placeholder="Ketik nama kecamatan..." autocomplete="off" />
             <div id="onbDistrictDropdown" class="minimal-dropdown" style="text-align:left;"></div>
           </div>
-          <button class="btn-gold full-width" id="onbStartBtn" style="margin-top:24px;">Masuk ke Butik</button>
+          <button type="button" class="btn-gold full-width" id="onbStartBtn" style="margin-top:24px;">Masuk ke Butik</button>
         </div>
       </div>
       <div id="onbReturningUser" style="display:none; width:100%;">
         <p class="onb-welcome-text">Selamat datang kembali,</p>
         <h2 class="onb-title" id="onbWelcomeName">Ngoedi</h2>
         <p class="onb-subtitle" style="margin-bottom:56px;">Diantar ke <span id="onbWelcomeDistrict" style="color:var(--gold);">Bekasi</span></p>
-        <button class="btn-gold full-width" id="onbEnterBtn">Masuk Sekarang</button>
-        <button class="btn-text-gold" id="onbResetBtn">Ganti nama &amp; kecamatan</button>
+        <button type="button" class="btn-gold full-width" id="onbEnterBtn">Masuk Sekarang</button>
+        <button type="button" class="btn-text-gold" id="onbResetBtn">Ganti nama &amp; kecamatan</button>
       </div>
     </div>
   </div>
 
   <!-- HEADER -->
   <header class="luxury-header" id="mainHeader">
-    <div class="header-left" id="aboutTrigger" style="cursor:pointer;">
-      <div class="brand-logo"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" /></div>
+    <button type="button" class="header-left" id="aboutTrigger" aria-label="Tentang Rujak.Co">
+      <div class="brand-logo"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Logo" /></div>
       <span class="brand-name">Rujak.Co</span>
-    </div>
+    </button>
     <div class="header-right">
       <span class="user-name" id="headerNameDisplay">Ngoedi</span>
       <span class="user-loc" id="headerLocDisplay">Bekasi</span>
@@ -66,10 +65,9 @@
     <div class="hero-editorial fade-up">
       <div class="hero-gold-frame">
         <div class="hero-img-wrap">
-          <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Sajian Rujak" />
+          <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Sajian Rujak" fetchpriority="high" decoding="async" />
           <div class="hero-overlay-new">
             <div class="hero-content">
-              <!-- Garis emas dekorasi dihapus sesuai permintaan -->
               <h1 class="hero-title">
                 Asam, Pedas,<br>
                 Manis, <span class="hero-title-em">Segar.</span>
@@ -92,7 +90,7 @@
       <p id="productInsightText" class="typing-text"></p>
     </div>
 
-    <!-- FOOTER LUXURY -->
+    <!-- FOOTER -->
     <footer class="luxury-footer fade-up">
       <div class="footer-row">
         <h3 class="footer-brand">Rujak.Co</h3>
@@ -107,17 +105,17 @@
   </main>
 
   <!-- PRODUCT DETAIL -->
-  <div class="product-swiper-overlay" id="productPage" style="display:none;" aria-hidden="true">
-    <button id="backFromProduct" class="glass-btn floating-close" aria-label="Kembali"><i data-lucide="arrow-left" class="icon-sm"></i></button>
+  <div class="product-swiper-overlay" id="productPage" style="display:none;" role="dialog" aria-modal="true" aria-hidden="true">
+    <button type="button" id="backFromProduct" class="glass-btn floating-close" aria-label="Kembali"><i data-lucide="arrow-left" class="icon-sm"></i></button>
     <div class="product-swiper-track" id="productSwiperTrack"></div>
   </div>
 
   <!-- CART DRAWER -->
-  <div class="modal-overlay" id="miniCartModal" aria-hidden="true">
+  <div class="modal-overlay" id="miniCartModal" role="dialog" aria-modal="true" aria-labelledby="miniCartTitle" aria-hidden="true">
     <div class="drawer-content">
       <div class="drawer-header">
-        <h3>Reservasi Sajian</h3>
-        <button id="miniCartClose" class="glass-btn-dark" aria-label="Tutup Keranjang"><i data-lucide="x" class="icon-sm"></i></button>
+        <h3 id="miniCartTitle">Reservasi Sajian</h3>
+        <button type="button" id="miniCartClose" class="glass-btn-dark" aria-label="Tutup Keranjang"><i data-lucide="x" class="icon-sm"></i></button>
       </div>
       <div class="drawer-body">
         <div id="miniCartList"></div>
@@ -131,7 +129,7 @@
           <input type="tel" id="customerPhone" placeholder="Nomor HP aktif" inputmode="numeric" class="input-minimal" />
           <textarea id="customerAddress" placeholder="Alamat lengkap (jalan, RT/RW, patokan)" rows="2" class="input-minimal"></textarea>
           <div style="position:relative;">
-            <input type="text" id="districtInput" placeholder="Kecamatan" class="input-minimal" autocomplete="off" readonly style="color:var(--green); font-weight:600;" />
+            <input type="text" id="districtInput" placeholder="Kecamatan" class="input-minimal" readonly style="color:var(--green); font-weight:600;" />
           </div>
           <div style="font-size:12px; color:var(--gold); margin-top:-16px; margin-bottom:32px; font-weight:500;">*Kecamatan mengikuti alamat awal Anda. Ubah lewat "Ganti nama &amp; kecamatan" di layar masuk.</div>
           <select id="deliveryTime" class="input-minimal" style="margin-top:8px;">
@@ -144,13 +142,13 @@
         <div id="shippingSection" class="checkout-forms" style="margin-top:40px;">
           <h4>Pilih Kurir</h4>
           <div class="logistic-options">
-            <button class="log-btn active" data-provider="rujakco">Kurir Rujak.Co</button>
-            <button class="log-btn" data-provider="paxel">Paxel Ekspres</button>
+            <button type="button" class="log-btn active" data-provider="rujakco">Kurir Rujak.Co</button>
+            <button type="button" class="log-btn" data-provider="paxel">Paxel Ekspres</button>
           </div>
           <div id="rujakcoOptions" style="margin-top:24px;">
             <div class="logistic-options">
-              <button class="veh-btn active" data-vehicle="motor">Motor</button>
-              <button class="veh-btn" data-vehicle="mobil">Mobil</button>
+              <button type="button" class="veh-btn active" data-vehicle="motor">Motor</button>
+              <button type="button" class="veh-btn" data-vehicle="mobil">Mobil</button>
             </div>
             <label class="priority-label"><input type="checkbox" id="priorityToggleMini" /> Prioritas (+Rp8.000)</label>
           </div>
@@ -164,115 +162,89 @@
           <span>Total Pesanan</span>
           <span id="finalTotal">Rp0</span>
         </div>
-        <button class="btn-gold full-width" id="btnOpenPayment" style="margin-top:8px;">Selesaikan Reservasi</button>
+        <button type="button" class="btn-gold full-width" id="btnOpenPayment" style="margin-top:8px;">Selesaikan Reservasi</button>
       </div>
     </div>
   </div>
 
   <!-- PAYMENT MODAL -->
-  <div class="modal-overlay" id="paymentModal" aria-hidden="true">
+  <div class="modal-overlay" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentTitle" aria-hidden="true">
     <div class="drawer-content" style="height:auto;">
-      <div class="drawer-header"><h3>Pembayaran QRIS</h3><button id="paymentClose" class="glass-btn-dark" aria-label="Tutup Pembayaran"><i data-lucide="x" class="icon-sm"></i></button></div>
+      <div class="drawer-header">
+        <h3 id="paymentTitle">Pembayaran QRIS</h3>
+        <button type="button" id="paymentClose" class="glass-btn-dark" aria-label="Tutup Pembayaran"><i data-lucide="x" class="icon-sm"></i></button>
+      </div>
       <div class="drawer-body" style="text-align:center; padding-bottom:48px;">
         <div class="qris-frame">
           <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" />
         </div>
         <div style="font-size:36px; font-family:'Fraunces',serif; margin:32px 0; color:var(--green);" id="paymentTotalDisplay">Rp0</div>
-        <button class="btn-dark full-width" data-action="confirm-wa"><i data-lucide="check" class="icon-sm inline" style="margin-right:8px;"></i> Validasi Reservasi via WhatsApp</button>
+        <button type="button" class="btn-dark full-width" id="confirmPaymentBtn"><i data-lucide="check" class="icon-sm inline" style="margin-right:8px;"></i> Validasi Reservasi via WhatsApp</button>
       </div>
     </div>
   </div>
 
   <!-- AI CHAT -->
-  <div class="modal-overlay" id="aiChatBox" aria-hidden="true">
+  <div class="modal-overlay" id="aiChatBox" role="dialog" aria-modal="true" aria-labelledby="aiChatTitle" aria-hidden="true">
     <div class="drawer-content" style="height:70vh;">
-      <div class="drawer-header"><h3>Concierge Rujak.Co</h3><button id="aiChatClose" class="glass-btn-dark" aria-label="Tutup Chat"><i data-lucide="x" class="icon-sm"></i></button></div>
+      <div class="drawer-header">
+        <h3 id="aiChatTitle">Concierge Rujak.Co</h3>
+        <button type="button" id="aiChatClose" class="glass-btn-dark" aria-label="Tutup Chat"><i data-lucide="x" class="icon-sm"></i></button>
+      </div>
       <div class="drawer-body chat-body">
         <div id="aiChatMessages" class="chat-messages">
           <div class="msg-bot"><span id="aiWelcomeMsg">Halo! Ada yang bisa kami bantu untuk pesanan Anda?</span></div>
         </div>
         <div class="chat-input-row">
           <input type="text" id="aiChatInput" class="input-minimal" placeholder="Tulis pesan Anda..." />
-          <button id="aiChatSend" class="btn-gold-round" aria-label="Kirim Pesan"><i data-lucide="send" class="icon-sm"></i></button>
+          <button type="button" id="aiChatSend" class="btn-gold-round" aria-label="Kirim Pesan"><i data-lucide="send" class="icon-sm"></i></button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- ABOUT MODAL -->
-  <div class="modal-overlay" id="aboutModal" aria-hidden="true">
+  <div class="modal-overlay" id="aboutModal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle" aria-hidden="true">
     <div class="drawer-content" style="height:auto; max-height:80vh;">
       <div class="drawer-header">
-        <h3>Tentang Rujak.Co</h3>
-        <button id="aboutClose" class="glass-btn-dark" aria-label="Tutup"><i data-lucide="x" class="icon-sm"></i></button>
+        <h3 id="aboutTitle">Tentang Rujak.Co</h3>
+        <button type="button" id="aboutClose" class="glass-btn-dark" aria-label="Tutup"><i data-lucide="x" class="icon-sm"></i></button>
       </div>
       <div class="drawer-body" style="padding-bottom:40px;">
-        <h4 style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.15em; color:var(--gold); margin-bottom:8px;">Tentang</h4>
+        <h4 class="section-label" style="text-align:left; border-top:none; padding-top:0;">Tentang</h4>
         <p style="font-size:1rem; line-height:1.7; margin-bottom:24px;">Rujak.Co lahir dari kecintaan terhadap rasa Nusantara. Kami menyajikan rujak premium dengan buah segar yang dipotong 15 menit sebelum diantar, dan sambal dikemas terpisah agar tekstur tetap renyah. <strong style="color:var(--green);">Indonesia dalam Satu Wadah.</strong></p>
-        <h4 style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.15em; color:var(--gold); margin-bottom:8px;">Kontak</h4>
+        <h4 class="section-label" style="text-align:left; border-top:none; padding-top:0;">Kontak</h4>
         <div style="display:flex; gap:20px; margin-bottom:24px;">
           <a href="#" aria-label="Instagram" style="color:var(--gray-500);"><i data-lucide="instagram" class="icon-md"></i></a>
           <a href="#" aria-label="WhatsApp" style="color:var(--gray-500);"><i data-lucide="phone" class="icon-md"></i></a>
           <a href="#" aria-label="Email" style="color:var(--gray-500);"><i data-lucide="mail" class="icon-md"></i></a>
         </div>
-        <h4 id="policyToggle" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.15em; color:var(--gold); margin-bottom:8px; cursor:pointer;">Kebijakan ▾</h4>
-        <div id="policyContent" style="display:none; font-size:0.875rem; line-height:1.7; color:var(--gray-500);">
-          <p>Kami memproses pesanan Anda dengan standar kebersihan tertinggi. Buah dicuci bersih, dipotong dengan alat steril, dan dikemas dalam wadah food-grade. Pengantaran dilakukan oleh kurir terlatih dengan tas pendingin untuk menjaga kesegaran hingga ke tangan Anda.</p>
-        </div>
+        <details>
+          <summary style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.15em; color:var(--gold); margin-bottom:8px; cursor:pointer; font-weight:600;">Kebijakan</summary>
+          <p style="font-size:0.875rem; line-height:1.7; color:var(--gray-500);">Kami memproses pesanan Anda dengan standar kebersihan tertinggi. Buah dicuci bersih, dipotong dengan alat steril, dan dikemas dalam wadah food-grade. Pengantaran dilakukan oleh kurir terlatih dengan tas pendingin untuk menjaga kesegaran hingga ke tangan Anda.</p>
+        </details>
       </div>
     </div>
   </div>
 
-  <!-- BOTTOM NAV (Menempel Bawah) -->
+  <!-- BOTTOM NAV -->
   <nav class="bottom-nav" id="bottomNav">
-    <a href="#" class="nav-item active" data-tab="home"><i data-lucide="home" class="nav-icon"></i><span class="nav-label">Beranda</span></a>
-    <a href="#" class="nav-item" id="navCartBtn">
-      <div class="nav-cart-wrapper">
+    <button type="button" class="nav-item active" data-tab="home"><i data-lucide="home" class="nav-icon"></i><span class="nav-label">Beranda</span></button>
+    <button type="button" class="nav-item" id="navCartBtn">
+      <span class="nav-cart-wrapper">
         <i data-lucide="shopping-bag" class="nav-icon"></i>
         <span class="nav-badge" id="cartBadgeNav" style="display:none;">0</span>
-      </div>
+      </span>
       <span class="nav-label">Reservasi</span>
-    </a>
-    <a href="#" class="nav-item" data-tab="orders"><i data-lucide="package" class="nav-icon"></i><span class="nav-label">Pesanan</span></a>
-    <a href="#" class="nav-item" id="aiChatToggle"><i data-lucide="sparkles" class="nav-icon"></i><span class="nav-label">Concierge</span></a>
+    </button>
+    <button type="button" class="nav-item" data-tab="orders"><i data-lucide="package" class="nav-icon"></i><span class="nav-label">Pesanan</span></button>
+    <button type="button" class="nav-item" id="aiChatToggle"><i data-lucide="sparkles" class="nav-icon"></i><span class="nav-label">Concierge</span></button>
   </nav>
 
   <!-- TOAST -->
   <div id="toast" role="alert" aria-live="polite"></div>
 </div>
 
-<script type="importmap">
-  {
-    "imports": {
-      "./data/": "./data/",
-      "./utils/": "./utils/",
-      "./modules/": "./modules/"
-    }
-  }
-</script>
-<script type="module" src="app.js"></script>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const trigger = document.getElementById('aboutTrigger');
-    const modal = document.getElementById('aboutModal');
-    const close = document.getElementById('aboutClose');
-    const toggle = document.getElementById('policyToggle');
-    const content = document.getElementById('policyContent');
-
-    if (trigger && modal && close) {
-      trigger.addEventListener('click', () => { modal.classList.add('active'); modal.setAttribute('aria-hidden', 'false'); });
-      close.addEventListener('click', () => { modal.classList.remove('active'); modal.setAttribute('aria-hidden', 'true'); });
-      modal.addEventListener('click', (e) => { if (e.target === modal) { modal.classList.remove('active'); modal.setAttribute('aria-hidden', 'true'); } });
-    }
-    if (toggle && content) {
-      toggle.addEventListener('click', () => {
-        const isOpen = content.style.display !== 'none';
-        content.style.display = isOpen ? 'none' : 'block';
-        toggle.textContent = isOpen ? 'Kebijakan ▾' : 'Kebijakan ▴';
-      });
-    }
-  });
-</script>
+<script src="app.js" type="module"></script>
 </body>
 </html>
