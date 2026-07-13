@@ -194,6 +194,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   box-shadow: var(--shadow-floating);
 }
 
+/* Bingkai emas melalui pseudo-element dengan masking */
 .hero-gold-frame::before {
   content: '';
   position: absolute;
@@ -250,13 +251,13 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   8. CAROUSEL — ruang napas ekstra
+   8. CAROUSEL — ruang napas ekstra & perbaikan potongan
 ========================================= */
 .carousel-container {
   width: 100%;
   padding: 0;
-  margin-top: 24px;
-  padding-top: 12px; /* tambahan untuk mencegah bayangan terpotong */
+  margin-top: 32px;        /* ruang vertikal lebih dari hero */
+  padding-top: 24px;       /* memberi ruang bagi shadow & efek angkat item aktif */
   container-type: inline-size;
   position: relative;
 }
