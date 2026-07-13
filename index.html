@@ -73,10 +73,13 @@
                 <span class="hero-line"></span>
                 <span class="hero-line"></span>
               </div>
+              
+              <!-- SUSUNAN TEKS DIKUNCI DI SINI -->
               <h1 class="hero-title">
                 Asam, Pedas,<br>
                 Manis, <span class="hero-title-em">Segar.</span>
               </h1>
+              
               <div class="hero-divider"></div>
               <p class="hero-subtitle">Nikmati Indonesia dalam Satu Wadah</p>
             </div>
@@ -260,22 +263,10 @@
     const content = document.getElementById('policyContent');
 
     if (trigger && modal && close) {
-      trigger.addEventListener('click', () => {
-        modal.classList.add('active');
-        modal.setAttribute('aria-hidden', 'false');
-      });
-      close.addEventListener('click', () => {
-        modal.classList.remove('active');
-        modal.setAttribute('aria-hidden', 'true');
-      });
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          modal.classList.remove('active');
-          modal.setAttribute('aria-hidden', 'true');
-        }
-      });
+      trigger.addEventListener('click', () => { modal.classList.add('active'); modal.setAttribute('aria-hidden', 'false'); });
+      close.addEventListener('click', () => { modal.classList.remove('active'); modal.setAttribute('aria-hidden', 'true'); });
+      modal.addEventListener('click', (e) => { if (e.target === modal) { modal.classList.remove('active'); modal.setAttribute('aria-hidden', 'true'); } });
     }
-
     if (toggle && content) {
       toggle.addEventListener('click', () => {
         const isOpen = content.style.display !== 'none';
