@@ -146,7 +146,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 ========================================= */
 .luxury-header {
   position: fixed; top: 0; left: 0; right: 0; margin: 0 auto;
-  width: calc(100% - 32px); max-width: 448px;
+  width: calc(100% - 40px); max-width: 440px;
   display: flex; align-items: center; justify-content: space-between;
   padding: calc(12px + env(safe-area-inset-top)) 16px 12px;
   z-index: var(--z-header); background: rgba(253, 251, 247, 0.12);
@@ -175,28 +175,57 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .luxury-header.scrolled .user-loc { color: var(--gray-500); text-shadow: none; }
 
 /* =========================================
-   7. HERO
+   7. HERO — margin baru & frame perbaikan
 ========================================= */
 .content-wrapper { padding-bottom: 80px; overflow-x: hidden; }
 
 .hero-editorial {
-  width: calc(100% - 32px); max-width: 448px;
+  width: calc(100% - 40px);
+  max-width: 440px;
   margin: -110px auto 0;
   padding: 0 !important;
-  position: relative; z-index: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .hero-gold-frame {
   position: relative;
-  padding: 1px;
   border-radius: var(--radius-2xl);
-  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 40%, #A8833A 100%);
-  border: none; box-shadow: var(--shadow-floating);
+  box-shadow: var(--shadow-floating);
 }
-.hero-img-wrap { width: 100%; aspect-ratio: 4 / 3; position: relative; border-radius: 28px; overflow: hidden; }
+
+/* Bingkai emas melalui pseudo-element dengan masking */
+.hero-gold-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 40%, #A8833A 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-img-wrap {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  position: relative;
+  border-radius: 28px;
+  overflow: hidden;
+  z-index: 0;
+}
+
 .hero-img {
-  width: 100%; height: 100%; object-fit: cover; display: block;
-  transform: scale(1.02); transition: transform 0.8s var(--transition-spring);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: scale(1.02);
+  transition: transform 0.8s var(--transition-spring);
 }
 .hero-editorial.scrolled-past .hero-img { transform: scale(1); }
 
@@ -213,14 +242,27 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .hero-subtitle { font-family: 'DM Sans', sans-serif; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.9); margin: 0; }
 
 /* =========================================
-   8. CAROUSEL
+   8. CAROUSEL — ruang napas ekstra
 ========================================= */
-.carousel-container { width: 100%; padding: 0; margin-top: 24px; container-type: inline-size; position: relative; }
-.carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; padding: 0 16px; gap: 16px; }
+.carousel-container {
+  width: 100%;
+  padding: 0;
+  margin-top: 24px;
+  padding-top: 8px; /* agar bayangan item aktif tidak terpotong */
+  container-type: inline-size;
+  position: relative;
+}
+.carousel-track {
+  display: flex; overflow-x: auto;
+  scroll-snap-type: x mandatory; scroll-behavior: auto;
+  -ms-overflow-style: none; scrollbar-width: none;
+  padding: 0 20px;  /* padding kiri-kanan 20px */
+  gap: 16px;
+}
 .carousel-track::-webkit-scrollbar { display: none; }
 
 .boutique-item {
-  width: 100%; flex: 0 0 100%; max-width: 448px;
+  width: 100%; flex: 0 0 100%; max-width: 440px; /* sama dengan lebar baru */
   scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; text-align: center;
   cursor: pointer;
   transform: scale(0.94) translateZ(0); opacity: 0.75;
@@ -279,11 +321,11 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .meta-dot { color: var(--gold-soft); }
 
 /* =========================================
-   11. BOTTOM NAV
+   11. BOTTOM NAV — margin baru
 ========================================= */
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0; margin: 0 auto;
-  width: calc(100% - 32px); max-width: 448px;
+  width: calc(100% - 40px); max-width: 440px;
   z-index: var(--z-nav); background: var(--bg-surface); display: flex; justify-content: space-around;
   align-items: center; padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
   border-top: 1px solid rgba(197,160,89,0.15); border-radius: 16px 16px 0 0;
