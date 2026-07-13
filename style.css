@@ -308,7 +308,7 @@ p, li, .body-text {
    HERO — GOLD FRAME (SEDERHANA)
 ========================================= */
 .hero-editorial {
-  padding: 0 16px 0;
+  padding: 0 16px;
   margin-top: -60px;
   position: relative;
   z-index: 1;
@@ -337,7 +337,7 @@ p, li, .body-text {
 .hero-overlay-new {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(8,46,33,0.2) 0%, rgba(8,46,33,0.5) 50%, rgba(8,46,33,0.9) 100%);
+  background: linear-gradient(to top, rgba(8,46,33,0.9) 0%, transparent 55%); /* Hanya di area bawah teks */
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
@@ -359,10 +359,10 @@ p, li, .body-text {
 .hero-line {
   display: block;
   width: 18px;
-  height: 2px;
+  height: 1px; /* 1px */
   background: var(--gold);
   opacity: 0.8;
-  border-radius: 2px;
+  border-radius: 1px;
   box-shadow: 0 0 8px rgba(197, 160, 89, 0.2);
 }
 .hero-title {
@@ -384,7 +384,7 @@ p, li, .body-text {
 }
 .hero-divider {
   width: 40px;
-  height: 1.5px;
+  height: 1px; /* 1px */
   background: var(--gold);
   margin: 10px 0 8px 0;
   opacity: 0.8;
@@ -413,8 +413,7 @@ p, li, .body-text {
 ========================================= */
 .carousel-container {
   width: 100%;
-  overflow: hidden;
-  padding: 8px 0 0;
+  padding: 8px 16px 0; /* Sama dengan padding hero */
   margin-top: 20px;
   container-type: inline-size;
   position: relative;
@@ -426,15 +425,13 @@ p, li, .body-text {
   scroll-behavior: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  padding: 0 40px;
-  gap: 0;
+  padding: 0;
+  gap: 8px;
 }
 .carousel-track::-webkit-scrollbar { display: none; }
 .boutique-item {
-  flex: 0 0 calc(100vw - 48px);
-  flex: 0 0 calc(100cqw - 48px);
+  flex: 0 0 calc(100% - 16px);
   max-width: 400px;
-  margin: 0 -24px;
   scroll-snap-align: center;
   display: flex;
   flex-direction: column;
@@ -486,11 +483,20 @@ p, li, .body-text {
   transform: translateY(0);
   pointer-events: auto;
 }
+.btq-badge {
+  display: block;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
 .btq-name {
   font-size: 1.25rem;
   color: var(--green);
   margin: 0 0 6px 0;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em; /* lebih renggang */
   font-weight: 400;
 }
 .btq-price-wrap {
@@ -573,18 +579,32 @@ p, li, .body-text {
 @keyframes blink { 50% { opacity: 0; } }
 
 /* =========================================
-   FOOTER (1 BARIS)
+   FOOTER (2 KOLOM: KIRI & KANAN)
 ========================================= */
 .luxury-footer {
-  padding: 16px 20px 24px;
+  padding: 16px 16px 24px;
   background: #082E21;
   border-top: 1px solid rgba(197,160,89,0.15);
-  text-align: center;
 }
-.luxury-footer .footer-copy {
-  color: rgba(255,255,255,0.5);
+.footer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 432px;
+  margin: 0 auto;
+}
+.footer-tagline {
   font-size: 0.75rem;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.04em;
+  text-align: left;
+}
+.footer-copy {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
   letter-spacing: 0.05em;
+  text-align: right;
   margin: 0;
 }
 
