@@ -33,7 +33,7 @@
   --blur-medium: blur(20px);
   --blur-strong: blur(32px);
 
-  /* Shadow System (Optimasi Performa Android) */
+  /* Shadow System */
   --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.04);
   --shadow-card: 0 8px 24px rgba(8, 46, 33, 0.06);
   --shadow-floating: 0 12px 32px rgba(0, 0, 0, 0.1);
@@ -180,17 +180,22 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 /* =========================================
    7. HERO
 ========================================= */
-.content-wrapper { padding-bottom: 80px; overflow-x: hidden; } /* Dikembalikan ke 80px karena nav bar tidak floating lagi */
+.content-wrapper { padding-bottom: 80px; overflow-x: hidden; }
 
 .hero-editorial {
   width: calc(100% - 32px); max-width: 448px;
-  margin: -60px auto 0; padding: 0 !important;
+  margin: -110px auto 0; /* Dinaikkan 50px */
+  padding: 0 !important;
   position: relative; z-index: 1;
 }
+
+/* Bingkai ditipiskan (hairline) */
 .hero-gold-frame {
-  position: relative; padding: 4px; border-radius: var(--radius-2xl);
+  position: relative; 
+  padding: 1px; /* Hairline thickness */
+  border-radius: var(--radius-2xl);
   background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 40%, #A8833A 100%);
-  border: 1px solid rgba(255,255,255,0.18); box-shadow: var(--shadow-floating);
+  border: none; box-shadow: var(--shadow-floating);
 }
 .hero-img-wrap { width: 100%; aspect-ratio: 4 / 3; position: relative; border-radius: 28px; overflow: hidden; }
 .hero-img { 
@@ -206,8 +211,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   padding: 60px 24px 28px; border-radius: 0 0 28px 28px;
 }
 .hero-content { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
-
-/* Garis dihapus */
 
 .hero-title { line-height: 1.1; color: #FFFFFF; margin: 0; text-shadow: 0 4px 16px rgba(0,0,0,0.4); }
 .hero-title-em { display: inline; color: var(--gold); font-weight: 400; font-style: italic; }
@@ -247,7 +250,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   transition: opacity 0.5s var(--transition-spring), transform 0.5s var(--transition-spring);
 }
 .boutique-item.active-center .btq-text-container { opacity: 1; transform: translateY(0); pointer-events: auto; }
-
 .btq-badge { order: 1; display: block; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--gold); font-weight: 600; margin-bottom: 8px; }
 .btq-name { order: 2; color: var(--green); margin: 0 0 12px 0; letter-spacing: 0.15em; font-weight: 400; text-transform: uppercase; }
 .btq-price-wrap { order: 3; display: flex; align-items: center; justify-content: center; width: 100%; gap: 12px; }
@@ -280,7 +282,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .meta-dot { color: var(--gold-soft); }
 
 /* =========================================
-   11. BOTTOM NAV (Dikembalikan Menempel Bawah)
+   11. BOTTOM NAV
 ========================================= */
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0; margin: 0 auto;
