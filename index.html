@@ -46,9 +46,9 @@
     </div>
   </div>
 
-  <!-- HEADER -->
+  <!-- HEADER (brand-logo + nama bisa di-tap untuk buka About) -->
   <header class="luxury-header" id="mainHeader">
-    <div class="header-left">
+    <div class="header-left" id="aboutTrigger" style="cursor:pointer;">
       <div class="brand-logo"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" /></div>
       <span class="brand-name">Rujak.Co</span>
     </div>
@@ -61,7 +61,7 @@
   <!-- MAIN CONTENT -->
   <main class="content-wrapper" id="mainContent">
 
-    <!-- HERO DENGAN BINGKAI EMAS -->
+    <!-- HERO (tanpa .hero-personal) -->
     <div class="hero-editorial fade-up">
       <div class="hero-gold-frame">
         <div class="hero-img-wrap">
@@ -81,10 +81,6 @@
               </h1>
               <div class="hero-divider"></div>
               <p class="hero-subtitle">Nikmati Indonesia dalam Satu Wadah</p>
-              <div class="hero-personal">
-                <span class="hero-name" id="heroNameDisplay">Ngoedi</span>
-                <span class="hero-loc" id="heroLocDisplay">Bekasi</span>
-              </div>
             </div>
           </div>
         </div>
@@ -94,6 +90,7 @@
     <!-- CAROUSEL -->
     <div class="carousel-container fade-up">
       <div class="carousel-track" id="menuList"></div>
+      <div class="carousel-dots" id="carouselDots"></div>
     </div>
 
     <!-- INSIGHT -->
@@ -101,31 +98,15 @@
       <p id="productInsightText" class="typing-text"></p>
     </div>
 
-    <!-- FOOTER -->
+    <!-- FOOTER (1 baris, tanpa grid) -->
     <footer class="luxury-footer fade-up">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" />
-          <p>EST. 2024 &nbsp;•&nbsp; BEKASI, INDONESIA</p>
-        </div>
-        <div class="footer-links">
-          <a href="#">Tentang</a>
-          <a href="#">Kontak</a>
-          <a href="#">Kebijakan</a>
-        </div>
-        <div class="footer-social">
-          <a href="#" aria-label="Instagram"><i data-lucide="instagram" class="w-4 h-4"></i></a>
-          <a href="#" aria-label="WhatsApp"><i data-lucide="phone" class="w-4 h-4"></i></a>
-          <a href="#" aria-label="Email"><i data-lucide="mail" class="w-4 h-4"></i></a>
-        </div>
-      </div>
-      <p class="footer-copy">© 2024 RUJAK.Co — Premium Rujak</p>
+      <p class="footer-copy">© 2025 Rujak.Co — Premium Rujak</p>
     </footer>
   </main>
 
   <!-- PRODUCT DETAIL -->
   <div class="product-swiper-overlay" id="productPage" style="display:none;" aria-hidden="true">
-    <button id="backFromProduct" class="glass-btn floating-close" aria-label="Kembali"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+    <button id="backFromProduct" class="glass-btn floating-close" aria-label="Kembali"><i data-lucide="arrow-left" class="icon-sm"></i></button>
     <div class="product-swiper-track" id="productSwiperTrack"></div>
   </div>
 
@@ -134,7 +115,7 @@
     <div class="drawer-content">
       <div class="drawer-header">
         <h3>Reservasi Sajian</h3>
-        <button id="miniCartClose" class="glass-btn-dark" aria-label="Tutup Keranjang"><i data-lucide="x" class="w-4 h-4"></i></button>
+        <button id="miniCartClose" class="glass-btn-dark" aria-label="Tutup Keranjang"><i data-lucide="x" class="icon-sm"></i></button>
       </div>
       <div class="drawer-body">
         <div id="miniCartList"></div>
@@ -149,7 +130,6 @@
           <textarea id="customerAddress" placeholder="Alamat lengkap (jalan, RT/RW, patokan)" rows="2" class="input-minimal"></textarea>
           <div style="position:relative;">
             <input type="text" id="districtInput" placeholder="Kecamatan" class="input-minimal" autocomplete="off" readonly style="color:var(--green); font-weight:600;" />
-            <div id="customDistrictDropdown" class="minimal-dropdown"></div>
           </div>
           <div style="font-size:12px; color:var(--gold); margin-top:-16px; margin-bottom:32px; font-weight:500;">*Kecamatan mengikuti alamat awal Anda. Ubah lewat "Ganti nama &amp; kecamatan" di layar masuk.</div>
           <select id="deliveryTime" class="input-minimal" style="margin-top:8px; -webkit-appearance: none;">
@@ -182,7 +162,7 @@
           <span>Total Pesanan</span>
           <span id="finalTotal">Rp0</span>
         </div>
-        <button class="btn-dark full-width" id="btnOpenPayment">Selesaikan Reservasi</button>
+        <button class="btn-gold full-width" id="btnOpenPayment" style="margin-top:8px;">Selesaikan Reservasi</button>
       </div>
     </div>
   </div>
@@ -190,28 +170,52 @@
   <!-- PAYMENT MODAL -->
   <div class="modal-overlay" id="paymentModal" aria-hidden="true">
     <div class="drawer-content" style="height:auto;">
-      <div class="drawer-header"><h3>Pembayaran QRIS</h3><button id="paymentClose" class="glass-btn-dark" aria-label="Tutup Pembayaran"><i data-lucide="x" class="w-4 h-4"></i></button></div>
+      <div class="drawer-header"><h3>Pembayaran QRIS</h3><button id="paymentClose" class="glass-btn-dark" aria-label="Tutup Pembayaran"><i data-lucide="x" class="icon-sm"></i></button></div>
       <div class="drawer-body" style="text-align:center; padding-bottom:48px;">
         <div class="qris-frame">
           <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS Rujak.Co" />
         </div>
         <div style="font-size:36px; font-family:'Fraunces',serif; margin:32px 0; color:var(--green);" id="paymentTotalDisplay">Rp0</div>
-        <button class="btn-dark full-width" data-action="confirm-wa"><i data-lucide="check" class="w-5 h-5 inline" style="margin-right:8px;"></i> Validasi Reservasi via WhatsApp</button>
+        <button class="btn-dark full-width" data-action="confirm-wa"><i data-lucide="check" class="icon-sm inline" style="margin-right:8px;"></i> Validasi Reservasi via WhatsApp</button>
       </div>
     </div>
   </div>
 
   <!-- AI CHAT -->
-  <div class="modal-overlay" id="aiChatBox" style="display:none; z-index:2000;" aria-hidden="true">
+  <div class="modal-overlay" id="aiChatBox" aria-hidden="true">
     <div class="drawer-content" style="height:70vh;">
-      <div class="drawer-header"><h3>Concierge Rujak.Co</h3><button id="aiChatClose" class="glass-btn-dark" aria-label="Tutup Chat"><i data-lucide="x" class="w-4 h-4"></i></button></div>
+      <div class="drawer-header"><h3>Concierge Rujak.Co</h3><button id="aiChatClose" class="glass-btn-dark" aria-label="Tutup Chat"><i data-lucide="x" class="icon-sm"></i></button></div>
       <div class="drawer-body chat-body">
         <div id="aiChatMessages" class="chat-messages">
           <div class="msg-bot"><span id="aiWelcomeMsg">Halo! Ada yang bisa kami bantu untuk pesanan Anda?</span></div>
         </div>
         <div class="chat-input-row">
           <input type="text" id="aiChatInput" class="input-minimal" placeholder="Tulis pesan Anda..." />
-          <button id="aiChatSend" class="btn-gold-round" aria-label="Kirim Pesan"><i data-lucide="send" class="w-4 h-4"></i></button>
+          <button id="aiChatSend" class="btn-gold-round" aria-label="Kirim Pesan"><i data-lucide="send" class="icon-sm"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT MODAL -->
+  <div class="modal-overlay" id="aboutModal" aria-hidden="true">
+    <div class="drawer-content" style="height:auto; max-height:80vh;">
+      <div class="drawer-header">
+        <h3>Tentang Rujak.Co</h3>
+        <button id="aboutClose" class="glass-btn-dark" aria-label="Tutup"><i data-lucide="x" class="icon-sm"></i></button>
+      </div>
+      <div class="drawer-body" style="padding-bottom:40px;">
+        <h4 style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.15em; color:var(--gold); margin-bottom:8px;">Tentang</h4>
+        <p style="font-size:1rem; line-height:1.7; margin-bottom:24px;">Rujak.Co lahir dari kecintaan terhadap rasa Nusantara. Kami menyajikan rujak premium dengan buah segar yang dipotong 15 menit sebelum diantar, dan sambal dikemas terpisah agar tekstur tetap renyah. <strong style="color:var(--green);">Indonesia dalam Satu Wadah.</strong> EST. 2024</p>
+        <h4 style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.15em; color:var(--gold); margin-bottom:8px;">Kontak</h4>
+        <div style="display:flex; gap:20px; margin-bottom:24px;">
+          <a href="#" aria-label="Instagram" style="color:var(--gray-500);"><i data-lucide="instagram" class="icon-md"></i></a>
+          <a href="#" aria-label="WhatsApp" style="color:var(--gray-500);"><i data-lucide="phone" class="icon-md"></i></a>
+          <a href="#" aria-label="Email" style="color:var(--gray-500);"><i data-lucide="mail" class="icon-md"></i></a>
+        </div>
+        <h4 id="policyToggle" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.15em; color:var(--gold); margin-bottom:8px; cursor:pointer;">Kebijakan ▾</h4>
+        <div id="policyContent" style="display:none; font-size:0.875rem; line-height:1.7; color:var(--gray-500);">
+          <p>Kami memproses pesanan Anda dengan standar kebersihan tertinggi. Buah dicuci bersih, dipotong dengan alat steril, dan dikemas dalam wadah food-grade. Pengantaran dilakukan oleh kurir terlatih dengan tas pendingin untuk menjaga kesegaran hingga ke tangan Anda.</p>
         </div>
       </div>
     </div>
@@ -245,5 +249,44 @@
   }
 </script>
 <script type="module" src="app.js"></script>
+
+<script>
+  // About Modal Trigger (langsung, tidak perlu impor)
+  document.addEventListener('DOMContentLoaded', function() {
+    const trigger = document.getElementById('aboutTrigger');
+    const modal = document.getElementById('aboutModal');
+    const close = document.getElementById('aboutClose');
+    const toggle = document.getElementById('policyToggle');
+    const content = document.getElementById('policyContent');
+
+    if (trigger && modal && close) {
+      trigger.addEventListener('click', () => {
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+      });
+      close.addEventListener('click', () => {
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+      });
+      // Tutup kalau klik overlay
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+          modal.setAttribute('aria-hidden', 'true');
+        }
+      });
+    }
+
+    // Policy toggle
+    if (toggle && content) {
+      toggle.addEventListener('click', () => {
+        const isOpen = content.style.display !== 'none';
+        content.style.display = isOpen ? 'none' : 'block';
+        toggle.textContent = isOpen ? 'Kebijakan ▾' : 'Kebijakan ▴';
+      });
+    }
+  });
+</script>
+
 </body>
 </html>
