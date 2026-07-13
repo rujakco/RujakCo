@@ -51,7 +51,6 @@ h1, h2, h3, h4, .brand-name, .font-fraunces {
   font-family: 'Fraunces', serif; font-weight: 300;
   margin: 0; letter-spacing: -0.02em;
 }
-
 h1 { font-size: clamp(1.75rem, 6vw, 2.25rem); }
 h2 { font-size: clamp(1.5rem, 5vw, 1.75rem); }
 h3 { font-size: clamp(1.25rem, 4vw, 1.5rem); }
@@ -63,11 +62,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 /* =========================================
    ONBOARDING
 ========================================= */
-.onboarding-overlay {
-  position: fixed; inset: 0; background: radial-gradient(circle at 50% 40%, #0C422F 0%, #04120D 100%);
-  z-index: var(--z-onboard); display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 32px 24px; text-align: center; transition: opacity 0.8s var(--transition-spring), visibility 0.8s;
-}
+.onboarding-overlay { position: fixed; inset: 0; background: radial-gradient(circle at 50% 40%, #0C422F 0%, #04120D 100%); z-index: var(--z-onboard); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; text-align: center; transition: opacity 0.8s var(--transition-spring), visibility 0.8s; }
 .onboarding-overlay.hidden { opacity: 0; visibility: hidden; }
 .onb-content { width: 100%; max-width: 320px; display: flex; flex-direction: column; align-items: center; color: var(--ivory); }
 .onb-logo { width: 72px; height: 72px; border-radius: 50%; margin-bottom: 32px; border: 1px solid rgba(197, 160, 89, 0.4); padding: 4px; background: rgba(0,0,0,0.2); box-shadow: 0 16px 40px rgba(0,0,0,0.5); }
@@ -98,11 +93,11 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .btn-gold:active, .btn-dark:active { transform: scale(0.98); opacity: 0.9; }
 
 /* =========================================
-   HEADER (SEJAJAR 448PX)
+   HEADER (Kunci Absolut Sejajar)
 ========================================= */
 .luxury-header {
-  position: fixed; top: 0; left: 50%; transform: translateX(-50%);
-  width: calc(100% - 32px); max-width: 448px; /* Pasti Rata Lurus */
+  position: fixed; top: 0; left: 0; right: 0; margin: 0 auto;
+  width: calc(100% - 32px); max-width: 448px;
   display: flex; align-items: center; justify-content: space-between;
   padding: calc(12px + env(safe-area-inset-top)) 16px 12px;
   z-index: 100; background: rgba(253, 251, 247, 0.15);
@@ -129,11 +124,12 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .content-wrapper { padding-bottom: 80px; overflow-x: hidden; }
 
 /* =========================================
-   HERO (SEJAJAR 448PX & GARIS HAIRLINE)
+   HERO (Kunci Absolut Sejajar, Bebas Sisa Padding)
 ========================================= */
 .hero-editorial {
-  width: calc(100% - 32px); max-width: 448px; /* Pasti Rata Lurus */
-  margin: -60px auto 0; padding: 0;
+  width: calc(100% - 32px); max-width: 448px;
+  margin: -60px auto 0;
+  padding: 0 !important; /* Mencegah bug padding pemicu penyusutan */
   position: relative; z-index: 1;
 }
 .hero-gold-frame {
@@ -152,21 +148,19 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .hero-content { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
 .hero-flavor-lines { display: flex; gap: 5px; margin-bottom: 6px; }
 
-/* PERBAIKAN: Garis Super Tipis (Hairline) Via Opacity Tinggi, Tanpa Border */
+/* PERBAIKAN: Garis Super Tipis True Hairline */
 .hero-line {
-  display: block; width: 18px; height: 1px;
-  background: rgba(197, 160, 89, 0.4); 
-  border: none; box-shadow: none;
+  display: block; width: 18px; height: 0;
+  border-top: 0.5px solid var(--gold); opacity: 0.9;
 }
 .hero-divider {
-  width: 40px; height: 1px;
-  background: rgba(197, 160, 89, 0.4);
-  margin: 12px 0 10px 0;
-  border: none; box-shadow: none;
+  width: 40px; height: 0;
+  border-top: 0.5px solid var(--gold); margin: 12px 0 10px 0; opacity: 0.9;
 }
 
+/* PERBAIKAN: Penghapusan span block pemicu baris patah */
 .hero-title { line-height: 1.1; color: #FFFFFF; margin: 0; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-.hero-title-em { color: var(--gold); font-weight: 400; font-style: italic; text-shadow: 0 0 24px rgba(197, 160, 89, 0.25); }
+.hero-title-em { display: inline; color: var(--gold); font-weight: 400; font-style: italic; text-shadow: 0 0 24px rgba(197, 160, 89, 0.25); }
 .hero-subtitle { font-family: 'DM Sans', sans-serif; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255, 255, 255, 0.85); margin: 0; text-shadow: 0 2px 12px rgba(0,0,0,0.3); }
 
 @media (max-width: 400px) {
@@ -177,7 +171,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   CAROUSEL (SEJAJAR 448PX & PADDING RENGGANG)
+   CAROUSEL (Kunci Absolut Sejajar, Padding Lega)
 ========================================= */
 .carousel-container {
   width: 100%; padding: 0; margin-top: 20px;
@@ -186,19 +180,19 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .carousel-track {
   display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: auto;
   -ms-overflow-style: none; scrollbar-width: none;
-  padding: 0 16px; gap: 12px;
+  padding: 0 16px; gap: 16px;
 }
 .carousel-track::-webkit-scrollbar { display: none; }
 
 .boutique-item {
-  flex: 0 0 calc(100% - 32px); max-width: 448px; /* Pasti Rata Lurus */
+  width: 100%; flex: 0 0 100%; max-width: 448px; /* Dijamin presisi 100% sama dengan Header & Hero */
   scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; text-align: center;
   cursor: pointer; transition: transform 0.6s var(--transition-spring), opacity 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
   transform: scale(0.88) translateZ(0); opacity: 0.7;
   background: var(--bg-surface); border: 1px solid var(--gray-200); border-radius: 20px;
   
-  /* PERBAIKAN: Padding Direnggangkan agar Image Mengecil */
-  padding: 36px 32px; 
+  /* PERBAIKAN: Padding diperbesar agar gambar mengecil */
+  padding: 40px 32px; 
   z-index: 1;
 }
 .boutique-item.active-center {
@@ -213,7 +207,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .boutique-item.active-center .btq-img { transform: scale(1.02); }
 
 .btq-text-container {
-  display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 16px;
+  display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 20px;
   opacity: 0.5; transform: translateY(8px); transition: all 0.6s var(--transition-spring); pointer-events: none;
 }
 .boutique-item.active-center .btq-text-container { opacity: 1; transform: translateY(0); pointer-events: auto; }
@@ -237,19 +231,19 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 @keyframes blink { 50% { opacity: 0; } }
 
 /* =========================================
-   FOOTER (SEJAJAR 448PX)
+   FOOTER (Kunci Absolut Sejajar)
 ========================================= */
 .luxury-footer { padding: 32px 16px 40px; background: var(--green); border-top: 1px solid rgba(197,160,89,0.15); }
 .footer-row {
   display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px;
-  width: 100%; max-width: 448px; /* Pasti Rata Lurus */
+  width: 100%; max-width: 448px;
   margin: 0 auto;
 }
 .footer-tagline { font-family: 'Fraunces', serif; font-size: 1rem; color: var(--gold); font-style: italic; letter-spacing: 0.02em; }
 .footer-copy { font-size: 0.75rem; color: rgba(255,255,255,0.4); letter-spacing: 0.1em; margin: 0; }
 
 /* =========================================
-   PRODUCT DETAIL
+   PRODUCT DETAIL (MODAL FULLSCREEN)
 ========================================= */
 .product-swiper-overlay { position: fixed; inset: 0; background: var(--gray-900); z-index: var(--z-product); display: flex; flex-direction: column; overflow: hidden; }
 .floating-close { position: fixed; top: 16px; left: 16px; z-index: 510; }
@@ -289,11 +283,11 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .detail-manifesto p { color: var(--gray-900); font-family: 'Fraunces', serif; font-style: italic; margin: 0; }
 
 /* =========================================
-   BOTTOM NAV (SEJAJAR 448PX)
+   BOTTOM NAV (Kunci Absolut Sejajar)
 ========================================= */
 .bottom-nav {
-  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: calc(100% - 32px); max-width: 448px; /* Pasti Rata Lurus */
+  position: fixed; bottom: 0; left: 0; right: 0; margin: 0 auto;
+  width: calc(100% - 32px); max-width: 448px;
   z-index: var(--z-nav); background: var(--bg-surface); display: flex; justify-content: space-around;
   align-items: center; padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
   border-top: 1px solid rgba(197, 160, 89, 0.2); border-radius: 16px 16px 0 0;
