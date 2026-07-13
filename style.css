@@ -11,6 +11,7 @@
   --bg-subtle: #F6F4F0;
   --gray-100: #F4F2EE;
   --gray-200: #E6E4DF;
+  --gray-300: #D1CFCA; /* Ditambahkan agar input line berfungsi sempurna */
   --gray-400: #A8A6A0;
   --gray-500: #888681;
   --gray-900: #1A1816;
@@ -18,16 +19,21 @@
   --z-product: 500;
   --z-modal: 1000;
   --z-onboard: 9999;
-  --transition-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Transisi disempurnakan untuk nuansa sehalus iOS */
+  --transition-spring: cubic-bezier(0.25, 1, 0.5, 1); 
   --font-base: 16px;
 }
 
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+/* Perbaikan Reset: Berlaku juga untuk ::before dan ::after */
+*, *::before, *::after { 
+  box-sizing: border-box; 
+  -webkit-tap-highlight-color: transparent; 
+}
 
 html, body {
   margin: 0;
   padding: 0;
-  background: #082E21;
+  background: var(--green); /* Tidak lagi di-hardcode */
   font-family: 'DM Sans', sans-serif;
   font-size: var(--font-base);
   color: var(--gray-900);
@@ -40,14 +46,14 @@ html, body {
   max-width: 480px;
   margin: 0 auto;
   min-height: 100dvh;
-  background: #082E21;
+  background: var(--green);
   position: relative;
   box-shadow: none;
   overflow-x: hidden;
 }
 
 /* =========================================
-   TYPOGRAPHY — MOBILE-FIRST READABILITY
+   TYPOGRAPHY — FLUID & MOBILE-FIRST
 ========================================= */
 h1, h2, h3, h4, .brand-name, .font-fraunces {
   font-family: 'Fraunces', serif;
@@ -55,15 +61,18 @@ h1, h2, h3, h4, .brand-name, .font-fraunces {
   margin: 0;
   letter-spacing: -0.02em;
 }
-h1 { font-size: 2rem; }
-h2 { font-size: 1.75rem; }
-h3 { font-size: 1.5rem; }
-h4 { font-size: 1.25rem; }
+
+/* Fluid scaling ensures perfect proportions across all mobile/tablet sizes */
+h1 { font-size: clamp(1.75rem, 6vw, 2.25rem); }
+h2 { font-size: clamp(1.5rem, 5vw, 1.75rem); }
+h3 { font-size: clamp(1.25rem, 4vw, 1.5rem); }
+h4 { font-size: clamp(1.125rem, 3.5vw, 1.25rem); }
 
 p, li, .body-text {
-  font-size: 1rem;
+  font-size: clamp(0.9375rem, 3vw, 1rem);
   line-height: 1.7;
 }
+
 .small-text { font-size: 0.875rem; line-height: 1.6; }
 .tiny-text { font-size: 0.75rem; line-height: 1.5; }
 
@@ -96,7 +105,6 @@ p, li, .body-text {
 }
 .onb-title {
   font-family: 'Fraunces', serif;
-  font-size: 2rem;
   font-weight: 300;
   color: var(--ivory);
   margin-bottom: 8px;
@@ -105,7 +113,6 @@ p, li, .body-text {
 }
 .onb-subtitle, .onb-welcome-text {
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.75rem;
   color: rgba(244, 232, 209, 0.7);
   margin-bottom: 48px;
   text-transform: uppercase;
@@ -230,8 +237,8 @@ p, li, .body-text {
   padding: calc(12px + env(safe-area-inset-top)) 16px 12px;
   z-index: 100;
   background: rgba(253, 251, 247, 0.15);
-  backdrop-filter: blur(12px) saturate(140%);
-  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
   border-bottom: 1px solid rgba(255,255,255,0.15);
   border-radius: 0 0 16px 16px;
   pointer-events: none;
@@ -240,7 +247,7 @@ p, li, .body-text {
 .luxury-header.scrolled {
   background: var(--bg-surface);
   border-bottom: 1px solid rgba(0,0,0,0.05);
-  box-shadow: 0 8px 32px rgba(8,46,33,0.08);
+  box-shadow: 0 8px 32px rgba(8,46,33,0.06);
 }
 .luxury-header .header-left,
 .luxury-header .header-right { pointer-events: auto; }
@@ -305,7 +312,7 @@ p, li, .body-text {
 }
 
 /* =========================================
-   HERO — GOLD FRAME (SEDERHANA)
+   HERO — GOLD FRAME
 ========================================= */
 .hero-editorial {
   padding: 0 16px;
@@ -318,7 +325,7 @@ p, li, .body-text {
   padding: 4px;
   border-radius: 32px;
   background: linear-gradient(135deg, #C5A059 0%, #E8D5A8 40%, #A8833A 100%);
-  box-shadow: 0 0 24px rgba(197, 160, 89, 0.15);
+  box-shadow: 0 12px 32px rgba(197, 160, 89, 0.12); /* Bayangan dihaluskan */
 }
 .hero-img-wrap {
   width: 100%;
@@ -326,7 +333,6 @@ p, li, .body-text {
   position: relative;
   border-radius: 28px;
   overflow: hidden;
-  box-shadow: inset 0 0 40px rgba(0,0,0,0.2);
 }
 .hero-img {
   width: 100%;
@@ -337,7 +343,7 @@ p, li, .body-text {
 .hero-overlay-new {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(8,46,33,0.9) 0%, transparent 55%); /* Hanya di area bawah teks */
+  background: linear-gradient(to top, rgba(8,46,33,0.95) 0%, transparent 60%);
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
@@ -356,21 +362,30 @@ p, li, .body-text {
   gap: 5px;
   margin-bottom: 6px;
 }
+
+/* PERBAIKAN: Garis Hairline Super Tipis tanpa Box Shadow Kotor */
 .hero-line {
   display: block;
   width: 18px;
-  height: 1px; /* 1px */
+  height: 1px;
   background: var(--gold);
-  opacity: 0.8;
+  opacity: 0.9;
   border-radius: 1px;
-  box-shadow: 0 0 8px rgba(197, 160, 89, 0.2);
+  transform: scaleY(0.5); 
+  transform-origin: bottom;
 }
+.hero-divider {
+  width: 40px;
+  height: 1px;
+  background: var(--gold);
+  margin: 10px 0 8px 0;
+  opacity: 0.9;
+  transform: scaleY(0.5);
+  transform-origin: bottom;
+}
+
 .hero-title {
-  font-family: 'Fraunces', serif;
-  font-weight: 300;
-  font-size: 2.25rem;
   line-height: 1.05;
-  letter-spacing: -0.02em;
   color: #FFFFFF;
   margin: 0;
   text-shadow: 0 4px 30px rgba(0,0,0,0.5);
@@ -380,19 +395,10 @@ p, li, .body-text {
   color: var(--gold);
   font-weight: 400;
   font-style: italic;
-  text-shadow: 0 0 30px rgba(197, 160, 89, 0.2);
-}
-.hero-divider {
-  width: 40px;
-  height: 1px; /* 1px */
-  background: var(--gold);
-  margin: 10px 0 8px 0;
-  opacity: 0.8;
-  box-shadow: 0 0 12px rgba(197, 160, 89, 0.15);
+  text-shadow: 0 0 24px rgba(197, 160, 89, 0.25);
 }
 .hero-subtitle {
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -401,7 +407,6 @@ p, li, .body-text {
   text-shadow: 0 2px 12px rgba(0,0,0,0.3);
 }
 @media (max-width: 400px) {
-  .hero-title { font-size: 1.75rem; }
   .hero-overlay-new { padding: 24px 18px 20px; }
   .hero-gold-frame { padding: 3px; border-radius: 24px; }
   .hero-img-wrap { border-radius: 20px; }
@@ -409,11 +414,11 @@ p, li, .body-text {
 }
 
 /* =========================================
-   CAROUSEL
+   CAROUSEL — PERFORMANT
 ========================================= */
 .carousel-container {
   width: 100%;
-  padding: 8px 16px 0; /* Sama dengan padding hero */
+  padding: 8px 16px 0;
   margin-top: 20px;
   container-type: inline-size;
   position: relative;
@@ -438,10 +443,12 @@ p, li, .body-text {
   align-items: center;
   text-align: center;
   cursor: pointer;
+  
+  /* PERBAIKAN: translateZ(0) untuk hardware acceleration, hapus will-change */
   transition: transform 0.6s var(--transition-spring), opacity 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
-  transform: scale(0.88);
+  transform: scale(0.88) translateZ(0);
   opacity: 0.7;
-  will-change: transform;
+  
   background: var(--bg-surface);
   border: 1px solid var(--gray-200);
   box-shadow: none;
@@ -450,11 +457,11 @@ p, li, .body-text {
   z-index: 1;
 }
 .boutique-item.active-center {
-  transform: scale(1);
+  transform: scale(1) translateZ(0);
   opacity: 1;
   z-index: 10;
   border-color: var(--gold);
-  box-shadow: 0 16px 40px rgba(8,46,33,0.10);
+  box-shadow: 0 16px 40px rgba(8,46,33,0.08);
 }
 .btq-img {
   width: 100%;
@@ -463,7 +470,6 @@ p, li, .body-text {
   border-radius: 12px;
   margin-bottom: 0;
   background: var(--bg-subtle);
-  box-shadow: 0 8px 24px rgba(8,46,33,0.10);
   transition: transform 0.6s var(--transition-spring);
 }
 .boutique-item.active-center .btq-img { transform: scale(1.02); }
@@ -493,10 +499,9 @@ p, li, .body-text {
   margin-bottom: 4px;
 }
 .btq-name {
-  font-size: 1.25rem;
   color: var(--green);
   margin: 0 0 6px 0;
-  letter-spacing: 0.08em; /* lebih renggang */
+  letter-spacing: 0.08em;
   font-weight: 400;
 }
 .btq-price-wrap {
@@ -523,7 +528,7 @@ p, li, .body-text {
   white-space: nowrap;
 }
 
-/* Carousel Dots (hit-area via padding) */
+/* Carousel Dots */
 .carousel-dots {
   display: flex;
   justify-content: center;
@@ -548,7 +553,7 @@ p, li, .body-text {
 }
 
 /* =========================================
-   INSIGHT — GOLD LEBIH GELAP (KONTRAST)
+   INSIGHT
 ========================================= */
 .product-insight-container {
   text-align: center;
@@ -561,11 +566,9 @@ p, li, .body-text {
 }
 .typing-text {
   font-family: 'DM Sans', sans-serif;
-  font-size: 1rem;
   color: #A8833A;
   font-style: italic;
   letter-spacing: 0.02em;
-  line-height: 1.6;
   margin: 0;
   transition: opacity 0.4s ease;
 }
@@ -579,11 +582,11 @@ p, li, .body-text {
 @keyframes blink { 50% { opacity: 0; } }
 
 /* =========================================
-   FOOTER (2 KOLOM: KIRI & KANAN)
+   FOOTER
 ========================================= */
 .luxury-footer {
   padding: 16px 16px 24px;
-  background: #082E21;
+  background: var(--green);
   border-top: 1px solid rgba(197,160,89,0.15);
 }
 .footer-row {
@@ -609,7 +612,7 @@ p, li, .body-text {
 }
 
 /* =========================================
-   PRODUCT DETAIL
+   PRODUCT DETAIL (MODAL FULLSCREEN)
 ========================================= */
 .product-swiper-overlay {
   position: fixed; inset: 0;
@@ -636,10 +639,10 @@ p, li, .body-text {
   justify-content: center;
   color: var(--green);
   cursor: pointer;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   transition: transform 0.2s;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
 }
 .glass-btn:active { transform: scale(0.9); }
 .product-swiper-track {
@@ -677,10 +680,17 @@ p, li, .body-text {
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: filter 0.6s ease;
 }
-.detail-image-wrap img.lazy-detail { filter: blur(12px); }
-.detail-image-wrap img.lazy-detail.loaded { filter: blur(0); }
+
+/* PERBAIKAN: Lazy Load yang ringan (GPU Friendly) */
+.detail-image-wrap img.lazy-detail { 
+  opacity: 0; 
+  transition: opacity 0.5s ease;
+}
+.detail-image-wrap img.lazy-detail.loaded { 
+  opacity: 1; 
+}
+
 .detail-content {
   padding: 28px 20px 60px;
   background: var(--bg-surface);
@@ -689,10 +699,9 @@ p, li, .body-text {
   margin-top: -24px;
   border-radius: 28px 28px 0 0;
   min-height: 60vh;
-  box-shadow: 0 -12px 32px rgba(0,0,0,0.06);
+  box-shadow: 0 -12px 32px rgba(0,0,0,0.04);
 }
 .detail-content h2 {
-  font-size: 1.75rem;
   color: var(--green);
   margin-bottom: 4px;
   font-weight: 300;
@@ -718,8 +727,6 @@ p, li, .body-text {
   opacity: 0.4;
 }
 .detail-desc {
-  font-size: 1rem;
-  line-height: 1.7;
   color: var(--gray-900);
   margin-bottom: 32px;
   font-weight: 400;
@@ -838,8 +845,6 @@ p, li, .body-text {
 }
 .fruit-list-inline {
   text-align: center;
-  font-size: 0.875rem;
-  line-height: 1.8;
   color: var(--gray-900);
   margin-bottom: 32px;
   font-weight: 400;
@@ -868,8 +873,6 @@ p, li, .body-text {
   text-transform: uppercase;
 }
 .detail-manifesto p {
-  font-size: 0.875rem;
-  line-height: 1.7;
   color: var(--gray-900);
   font-family: 'Fraunces', serif;
   font-style: italic;
@@ -877,7 +880,7 @@ p, li, .body-text {
 }
 
 /* =========================================
-   BOTTOM NAV (AKSESIBILITAS)
+   BOTTOM NAV
 ========================================= */
 .bottom-nav {
   position: fixed;
@@ -894,6 +897,7 @@ p, li, .body-text {
   padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
   border-top: 1px solid rgba(197, 160, 89, 0.2);
   border-radius: 16px 16px 0 0;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.03);
 }
 .nav-item {
   flex: 1;
@@ -986,7 +990,6 @@ p, li, .body-text {
   border-bottom: 1px solid rgba(0,0,0,0.04);
 }
 .drawer-header h3 {
-  font-family: 'Fraunces', serif;
   font-size: 1.5rem;
   color: var(--green);
   font-weight: 300;
@@ -1021,8 +1024,6 @@ p, li, .body-text {
   text-align: center;
   padding: 40px 16px;
   color: var(--gray-500);
-  font-size: 1rem;
-  line-height: 1.7;
 }
 .cart-item-info p {
   font-size: 0.875rem;
@@ -1033,13 +1034,14 @@ p, li, .body-text {
 .drawer-subtotal {
   display: flex;
   justify-content: space-between;
-  font-size: 1rem;
   font-weight: 600;
   padding: 24px 0;
   border-bottom: 1px solid var(--gray-200);
   margin-bottom: 32px;
   color: var(--gray-500);
 }
+
+/* PERBAIKAN: Input & Dropdown Select yang Rapih */
 .input-minimal {
   width: 100%;
   border: none;
@@ -1058,6 +1060,15 @@ p, li, .body-text {
 .input-minimal::placeholder {
   color: var(--gray-400);
   font-weight: 400;
+}
+select.input-minimal {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888681' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0 center;
+  background-size: 16px 12px;
+  padding-right: 24px;
 }
 .minimal-dropdown {
   display: none;
@@ -1134,7 +1145,6 @@ p, li, .body-text {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  font-size: 1rem;
   font-weight: 500;
   color: var(--gray-500);
   margin: 40px 0 32px;
@@ -1303,11 +1313,11 @@ p, li, .body-text {
     transform: none !important;
   }
   .btn-gold { animation: none; }
-  .detail-image-wrap img.lazy-detail { filter: blur(0); }
+  .detail-image-wrap img.lazy-detail { opacity: 1; transition: none; }
 }
 
 /* =========================================
-   FADE-UP (DARI APP.JS)
+   FADE-UP
 ========================================= */
 .fade-up {
   opacity: 0;
