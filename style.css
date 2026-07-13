@@ -194,7 +194,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   box-shadow: var(--shadow-floating);
 }
 
-/* Bingkai emas melalui pseudo-element dengan masking */
 .hero-gold-frame::before {
   content: '';
   position: absolute;
@@ -239,7 +238,16 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 
 .hero-title { line-height: 1.1; color: #FFFFFF; margin: 0; text-shadow: 0 2px 8px rgba(0,0,0,0.25); }
 .hero-title-em { display: inline; color: var(--gold); font-weight: 400; font-style: italic; }
-.hero-subtitle { font-family: 'DM Sans', sans-serif; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.9); margin: 0; }
+.hero-subtitle {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.9);
+  margin: 0;
+  font-size: 0.7rem;               /* diperkecil */
+  transform: translateY(5px);      /* turun 5px */
+}
 
 /* =========================================
    8. CAROUSEL — ruang napas ekstra
@@ -248,7 +256,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   width: 100%;
   padding: 0;
   margin-top: 24px;
-  padding-top: 8px; /* agar bayangan item aktif tidak terpotong */
+  padding-top: 12px; /* tambahan untuk mencegah bayangan terpotong */
   container-type: inline-size;
   position: relative;
 }
@@ -256,13 +264,13 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   display: flex; overflow-x: auto;
   scroll-snap-type: x mandatory; scroll-behavior: auto;
   -ms-overflow-style: none; scrollbar-width: none;
-  padding: 0 20px;  /* padding kiri-kanan 20px */
+  padding: 0 20px;
   gap: 16px;
 }
 .carousel-track::-webkit-scrollbar { display: none; }
 
 .boutique-item {
-  width: 100%; flex: 0 0 100%; max-width: 440px; /* sama dengan lebar baru */
+  width: 100%; flex: 0 0 100%; max-width: 440px;
   scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; text-align: center;
   cursor: pointer;
   transform: scale(0.94) translateZ(0); opacity: 0.75;
