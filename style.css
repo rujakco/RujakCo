@@ -35,7 +35,7 @@ html, body {
   max-width: 480px;
   margin: 0 auto;
   min-height: 100dvh;
-  background: #082E21; /* Hijau di app */
+  background: #082E21;
   position: relative;
   box-shadow: none;
   overflow-x: hidden;
@@ -62,7 +62,7 @@ p { line-height: 1.8; }
 .inline { display: inline; }
 
 /* =========================================
-   ONBOARDING (TETAP GELAP)
+   ONBOARDING
 ========================================= */
 .onboarding-overlay {
   position: fixed; inset: 0;
@@ -225,7 +225,7 @@ p { line-height: 1.8; }
 }
 
 /* =========================================
-   HEADER & HERO
+   HEADER
 ========================================= */
 .luxury-header {
   position: fixed; top: 0; left: 50%; transform: translateX(-50%);
@@ -300,95 +300,198 @@ p { line-height: 1.8; }
   text-shadow: none;
 }
 
+/* =========================================
+   CONTENT WRAPPER
+========================================= */
 .content-wrapper {
   padding-bottom: 80px;
   overflow-x: hidden;
 }
+
+/* =========================================
+   HERO — BINGKAI EMAS PREMIUM (NEW)
+========================================= */
 .hero-editorial {
   padding: 0 24px 0;
   margin-top: -70px;
   position: relative;
   z-index: 1;
 }
+
+/* BINGKAI EMAS (PIGURA) */
+.hero-gold-frame {
+  position: relative;
+  padding: 6px;
+  border-radius: 36px;
+  background: linear-gradient(135deg, #C5A059 0%, #E8D5A8 30%, #C5A059 60%, #A8833A 100%);
+  box-shadow: 0 0 30px rgba(197, 160, 89, 0.25), inset 0 0 30px rgba(197, 160, 89, 0.1);
+}
+
+/* Efek bingkai dalam (double border) */
+.hero-gold-frame::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 32px;
+  border: 1.5px solid rgba(197, 160, 89, 0.5);
+  pointer-events: none;
+  z-index: 2;
+}
+
 .hero-img-wrap {
   width: 100%;
   aspect-ratio: 4 / 3;
   position: relative;
-  border-radius: 0 0 32px 32px;
+  border-radius: 30px;
   overflow: hidden;
-  box-shadow: 0 12px 40px rgba(10,58,42,0.15);
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.2);
 }
+
 .hero-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
-.hero-overlay {
+
+.hero-overlay-new {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 40%, rgba(8,46,33,0.95) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(8, 46, 33, 0.15) 0%,
+    rgba(8, 46, 33, 0.6) 55%,
+    rgba(8, 46, 33, 0.9) 100%
+  );
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 32px 32px 27px;
-  text-align: left;
-}
-.hero-overlay h2 {
-  font-size: 32px;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-  color: var(--ivory);
-  font-weight: 300;
-  text-shadow: 0 2px 20px rgba(0,0,0,0.2);
-  transition: all 0.6s ease;
-}
-.hero-overlay h2 em {
-  font-style: italic;
-  color: var(--gold);
-  font-weight: 400;
-}
-.hero-caption {
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-}
-.hero-caption .hairline {
-  display: inline-block;
-  width: 24px;
-  height: 1px;
-  background: var(--gold);
-  margin-right: 12px;
-  opacity: 0.8;
-}
-.hero-caption-text {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12.5px;
-  letter-spacing: 0.04em;
-  color: rgba(253, 251, 247, 0.9);
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 40px 32px 36px;
+  border-radius: 30px;
 }
 
-/* ===== HERO FLAVOR (Asam, Pedas, Manis, Segar) dengan aksen emas ===== */
-.hero-flavor {
+.hero-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+/* Garis emas di atas teks */
+.hero-flavor-lines {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.hero-line {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--gold);
+  opacity: 0.9;
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(197, 160, 89, 0.3);
+}
+
+/* Judul utama */
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: 38px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  margin: 0;
+  text-shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+.hero-title span {
+  display: block;
+}
+.hero-title-em {
+  color: var(--gold);
+  font-weight: 400;
+  font-style: italic;
+  text-shadow: 0 0 30px rgba(197, 160, 89, 0.2);
+}
+
+/* Garis pemisah emas */
+.hero-divider {
+  width: 40px;
+  height: 1.5px;
+  background: var(--gold);
+  margin: 12px 0 10px 0;
+  opacity: 0.8;
+  box-shadow: 0 0 12px rgba(197, 160, 89, 0.2);
+}
+
+/* Subteks */
+.hero-subtitle {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.2);
+}
+
+/* Personalisasi: nama & lokasi */
+.hero-personal {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  gap: 8px;
   margin-top: 16px;
-  gap: 12px;
+  align-self: flex-end;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
 }
-.flavor-line {
-  flex: 0 0 20px;
-  height: 1px;
-  background: var(--gold);
+.hero-name {
+  color: var(--gold);
+  font-weight: 600;
+}
+.hero-loc::before {
+  content: '•';
+  margin-right: 6px;
+  color: var(--gold);
   opacity: 0.6;
 }
-.flavor-text {
-  font-family: 'Fraunces', serif;
-  font-size: 14px;
-  font-weight: 400;
-  letter-spacing: 0.12em;
-  color: var(--gold);
-  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+.hero-loc {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Responsif layar kecil */
+@media (max-width: 400px) {
+  .hero-title {
+    font-size: 30px;
+  }
+  .hero-overlay-new {
+    padding: 30px 24px 28px;
+  }
+  .hero-gold-frame {
+    padding: 4px;
+    border-radius: 28px;
+  }
+  .hero-img-wrap {
+    border-radius: 24px;
+  }
+  .hero-overlay-new {
+    border-radius: 24px;
+  }
+  .hero-gold-frame::before {
+    border-radius: 26px;
+    inset: 2px;
+  }
+  .hero-flavor-lines {
+    gap: 4px;
+  }
+  .hero-line {
+    width: 16px;
+  }
 }
 
 /* =========================================
@@ -521,7 +624,7 @@ p { line-height: 1.8; }
 .typing-text {
   font-family: 'DM Sans', sans-serif;
   font-size: 13px;
-  color: var(--gold); /* <-- DIUBAH JADI EMAS */
+  color: var(--gold);
   font-style: italic;
   letter-spacing: 0.03em;
   line-height: 1.6;
@@ -547,7 +650,7 @@ p { line-height: 1.8; }
   text-align: center;
   padding: 18px 24px 96px;
   border-top: 1px solid rgba(197, 160, 89, 0.2);
-  background-color: #082E21; /* <-- HIJAU */
+  background-color: #082E21;
   margin-top: -16px;
   position: relative;
   overflow: hidden;
@@ -583,12 +686,12 @@ p { line-height: 1.8; }
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  filter: brightness(0) invert(1); /* <-- LOGO JADI PUTIH */
+  filter: brightness(0) invert(1);
   opacity: 0.5;
 }
 .footer-brand p {
   font-size: 10px;
-  color: rgba(255,255,255,0.5); /* <-- PUTIH REDUP */
+  color: rgba(255,255,255,0.5);
   letter-spacing: 0.08em;
   font-weight: 500;
   margin: 0;
@@ -600,13 +703,13 @@ p { line-height: 1.8; }
 }
 .footer-links a {
   font-size: 11px;
-  color: rgba(255,255,255,0.6); /* <-- PUTIH */
+  color: rgba(255,255,255,0.6);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s;
 }
 .footer-links a:hover {
-  color: var(--gold); /* <-- EMAS SAAT HOVER */
+  color: var(--gold);
 }
 .footer-social {
   display: flex;
@@ -614,17 +717,17 @@ p { line-height: 1.8; }
   justify-content: center;
 }
 .footer-social a {
-  color: rgba(255,255,255,0.4); /* <-- PUTIH REDUP */
+  color: rgba(255,255,255,0.4);
   transition: color 0.2s;
   text-decoration: none;
 }
 .footer-social a:hover {
-  color: var(--gold); /* <-- EMAS SAAT HOVER */
+  color: var(--gold);
 }
 .footer-copy {
   text-align: center;
   font-size: 10px;
-  color: rgba(255,255,255,0.3); /* <-- PUTIH SANGAT REDUP */
+  color: rgba(255,255,255,0.3);
   letter-spacing: 0.05em;
   margin: 0;
   padding-top: 12px;
