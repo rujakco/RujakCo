@@ -9,17 +9,29 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
   const track = document.getElementById(trackId);
   if (!track) return;
 
+  // Fungsi ini sekarang tidak hanya mengubah CSS (active-center), 
+  // tetapi juga mengembalikan 'index' kartu yang sedang aktif
   const updateCenter = () => {
     const items = track.querySelectorAll('.boutique-item');
-    if (!items.length) return;
+    if (!items.length) return -1;
+    
     const trackCenter = track.getBoundingClientRect().left + track.clientWidth / 2;
-    let closestItem = null, minDistance = Infinity;
-    items.forEach(item => {
+    let closestItem = null, minDistance = Infinity, closestIndex = -1;
+    
+    // Cari kartu yang paling dekat dengan titik tengah layar
+    items.forEach((item, index) => {
       const itemCenter = item.getBoundingClientRect().left + item.clientWidth / 2;
       const distance = Math.abs(trackCenter - itemCenter);
-      if (distance < minDistance) { minDistance = distance; closestItem = item; }
+      if (distance < minDistance) { 
+        minDistance = distance; 
+        closestItem = item; 
+        closestIndex = index; 
+      }
     });
+    
     items.forEach(item => item.classList.toggle('active-center', item === closestItem));
+    
+    // Animasi efek ketik (typing effect)
     if (closestItem) {
       const newId = closestItem.dataset.id;
       if (currentInsightId !== newId) {
@@ -48,34 +60,60 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
         }
       }
     }
+    
+    return closestIndex; // Kirim index ke listener scroll
   };
 
   let isScrolling;
+  
   track.addEventListener('scroll', () => {
-    requestAnimationFrame(updateCenter);
+    const currentIndex = updateCenter(); // Jalankan style saat digeser
+    
     window.clearTimeout(isScrolling);
+    
+    // Tunggu 250ms sampai CSS Snap benar-benar berhenti (mencegah bentrok)
     isScrolling = setTimeout(() => {
-      const itemWidth = track.children[0]?.offsetWidth ? track.children[0].offsetWidth - 56 : 0;
-      if (itemWidth === 0) return;
-      const currentIndex = Math.round(track.scrollLeft / itemWidth);
+      if (currentIndex === -1) return;
+      
       const baseCount = PRODUCTS.length;
-      if (currentIndex <= baseCount || currentIndex >= baseCount * (LOOP_MULTIPLIER - 2)) {
+      
+      // Jika pengguna sudah menggeser terlalu jauh ke ujung kiri atau kanan
+      if (currentIndex < baseCount || currentIndex >= baseCount * (LOOP_MULTIPLIER - 1)) {
+        // Hitung index kembarannya di blok tengah
         const modulo = currentIndex % baseCount;
         const middleTarget = Math.floor(LOOP_MULTIPLIER / 2) * baseCount + modulo;
         const targetItem = track.children[middleTarget];
+        
         if (targetItem) {
-          track.scrollTo({ left: targetItem.offsetLeft - (track.clientWidth / 2) + (targetItem.clientWidth / 2), behavior: 'instant' });
+          // Matikan smooth scroll sejenak agar teleportasi tidak terlihat
+          track.style.scrollBehavior = 'auto';
+          track.scrollTo({ 
+            left: targetItem.offsetLeft - (track.clientWidth / 2) + (targetItem.clientWidth / 2), 
+            behavior: 'instant' 
+          });
+          
+          // Nyalakan lagi setelah frame ter-render
+          requestAnimationFrame(() => {
+            track.style.scrollBehavior = 'smooth';
+          });
         }
       }
-    }, 150);
+    }, 250); 
   }, { passive: true });
 
+  // Posisi awal saat web pertama kali dimuat (lompat ke tengah)
   setTimeout(() => {
     track.style.scrollBehavior = 'auto';
     const midPoint = Math.floor(LOOP_MULTIPLIER / 2) * PRODUCTS.length;
     const targetItem = track.children[midPoint];
-    if (targetItem) { track.scrollLeft = targetItem.offsetLeft - (track.clientWidth / 2) + (targetItem.clientWidth / 2); }
-    track.style.scrollBehavior = 'smooth';
-    updateCenter();
+    
+    if (targetItem) { 
+      track.scrollLeft = targetItem.offsetLeft - (track.clientWidth / 2) + (targetItem.clientWidth / 2); 
+    }
+    
+    requestAnimationFrame(() => {
+       track.style.scrollBehavior = 'smooth';
+       updateCenter();
+    });
   }, 100);
 }
