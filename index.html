@@ -7,7 +7,7 @@
   <meta name="description" content="Rujak premium asli Bekasi. Asam, pedas, manis, segar." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <script src="https://unpkg.com/lucide@latest" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
@@ -46,7 +46,7 @@
     </div>
   </div>
 
-  <!-- HEADER (brand-logo + nama bisa di-tap untuk buka About) -->
+  <!-- HEADER -->
   <header class="luxury-header" id="mainHeader">
     <div class="header-left" id="aboutTrigger" style="cursor:pointer;">
       <div class="brand-logo"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="Rujak.Co" /></div>
@@ -74,10 +74,8 @@
                 <span class="hero-line"></span>
               </div>
               <h1 class="hero-title">
-                <span>Asam,</span>
-                <span>Pedas,</span>
-                <span>Manis,</span>
-                <span class="hero-title-em">Segar.</span>
+                Asam, Pedas,<br>
+                Manis, <span class="hero-title-em">Segar.</span>
               </h1>
               <div class="hero-divider"></div>
               <p class="hero-subtitle">Nikmati Indonesia dalam Satu Wadah</p>
@@ -98,7 +96,7 @@
       <p id="productInsightText" class="typing-text"></p>
     </div>
 
-    <!-- FOOTER (2 kolom) -->
+    <!-- FOOTER -->
     <footer class="luxury-footer fade-up">
       <div class="footer-row">
         <span class="footer-tagline">Nikmati Indonesia dalam Satu Wadah</span>
@@ -135,7 +133,7 @@
             <input type="text" id="districtInput" placeholder="Kecamatan" class="input-minimal" autocomplete="off" readonly style="color:var(--green); font-weight:600;" />
           </div>
           <div style="font-size:12px; color:var(--gold); margin-top:-16px; margin-bottom:32px; font-weight:500;">*Kecamatan mengikuti alamat awal Anda. Ubah lewat "Ganti nama &amp; kecamatan" di layar masuk.</div>
-          <select id="deliveryTime" class="input-minimal" style="margin-top:8px; -webkit-appearance: none;">
+          <select id="deliveryTime" class="input-minimal" style="margin-top:8px;">
             <option value="Pagi (09:00 - 11:00)">Pengantaran Pagi (09:00 - 11:00)</option>
             <option value="Siang (11:00 - 13:00)">Pengantaran Siang (11:00 - 13:00)</option>
             <option value="Sore (14:00 - 17:00)">Pengantaran Sore (14:00 - 17:00)</option>
@@ -254,7 +252,6 @@
 <script type="module" src="app.js"></script>
 
 <script>
-  // About Modal Trigger (langsung, tidak perlu impor)
   document.addEventListener('DOMContentLoaded', function() {
     const trigger = document.getElementById('aboutTrigger');
     const modal = document.getElementById('aboutModal');
@@ -288,6 +285,5 @@
     }
   });
 </script>
-
 </body>
 </html>
