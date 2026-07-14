@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (dengan swipe‑to‑close yang aman)
+// app.js — Luxury Edition (swipe horizontal + swipe‑to‑close harmonis)
 import { PRODUCTS } from './data/products.js';
 import { DISTRICT_MAP } from './data/districts.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
@@ -177,23 +177,27 @@ function closeProductPage() {
 }
 
 // ---------------------------------------------------------------------------
-// Gesture: swipe down to close product page (AMAN, tidak ganggu horizontal)
+// Gesture: swipe produk & tutup detail (HANDAL, TIDAK KONFLIK)
 // ---------------------------------------------------------------------------
-function initSwipeToClose() {
-  let startY = 0, startX = 0, isPulling = false, activeSlide = null;
-  let gestureStarted = false; // sudah melewati threshold gerakan
+function initDetailGestures() {
+  const track = DOM.productSwiperTrack;
+  if (!track) return;
 
-  const onTouchStart = (e) => {
+  let startX = 0, startY = 0;
+  let activeSlide = null;
+  let isPulling = false;
+  let gestureDetermined = false;
+
+  track.addEventListener('touchstart', (e) => {
     if (e.touches.length > 1) return;
-    startY = e.touches[0].clientY;
     startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
     activeSlide = e.target.closest('.product-slide');
-    // hanya bisa tarik jika konten di posisi paling atas (scrollTop <= 0)
     isPulling = activeSlide && activeSlide.scrollTop <= 0;
-    gestureStarted = false;
-  };
+    gestureDetermined = false;
+  }, { passive: true });
 
-  const onTouchMove = (e) => {
+  track.addEventListener('touchmove', (e) => {
     if (!isPulling || !activeSlide) return;
 
     const dy = e.touches[0].clientY - startY;
@@ -201,25 +205,22 @@ function initSwipeToClose() {
     const absDx = Math.abs(dx);
     const absDy = Math.abs(dy);
 
-    // Begitu gerakan horizontal terdeteksi signifikan (>8px) dan lebih besar dari vertikal,
-    // batalkan mode tarik-turun sepenuhnya. Biarkan browser scroll horizontal track.
-    if (!gestureStarted && (absDx > 8 || absDy > 8)) {
+    if (!gestureDetermined && (absDx > 8 || absDy > 8)) {
       if (absDx > absDy) {
         isPulling = false;
         return;
       }
-      gestureStarted = true; // vertikal dominan, kita ambil alih
+      gestureDetermined = true;
     }
 
-    if (gestureStarted && dy > 0) {
-      // hanya prevent default saat kita benar-benar menarik ke bawah
+    if (gestureDetermined && dy > 0) {
       if (e.cancelable) e.preventDefault();
       activeSlide.style.transform = `translateY(${dy * 0.4}px)`;
     }
-  };
+  }, { passive: false });
 
-  const onTouchEnd = (e) => {
-    if (!isPulling || !activeSlide || !gestureStarted) {
+  track.addEventListener('touchend', (e) => {
+    if (!isPulling || !activeSlide || !gestureDetermined) {
       isPulling = false;
       activeSlide = null;
       return;
@@ -239,11 +240,7 @@ function initSwipeToClose() {
       isPulling = false;
       activeSlide = null;
     }, 300);
-  };
-
-  DOM.productPage.addEventListener('touchstart', onTouchStart, { passive: true });
-  DOM.productPage.addEventListener('touchmove', onTouchMove, { passive: false });
-  DOM.productPage.addEventListener('touchend', onTouchEnd, { passive: true });
+  }, { passive: true });
 }
 
 // ---------------------------------------------------------------------------
@@ -409,7 +406,7 @@ function bindEvents() {
       return;
     }
 
-    // Confirm via WA (sebelum cart item actions)
+    // Confirm via WA
     if (e.target.closest('[data-action="confirm-wa"]')) {
       confirmOrder(state.cart, state, updateCartUI)(e);
       return;
@@ -532,7 +529,7 @@ function init() {
   renderMenu();
   renderProductSwiper();
   initCarousel();
-  initSwipeToClose();    // ← gesture tutup yang aman
+  initDetailGestures();   // ← gesture gabungan yang aman
   initAccessibility();
   const updateWelcome = initAIChat();
   if (updateWelcome) updateWelcome(state.customerName || 'Ngoedi');
