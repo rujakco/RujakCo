@@ -55,6 +55,7 @@ const cacheDOM = () => {
   DOM.productPage = document.getElementById('productPage');
   DOM.productSwiperTrack = document.getElementById('productSwiperTrack');
   DOM.cartBadge = document.getElementById('cartBadgeNav');
+  DOM.cartBadgeDetail = document.getElementById('cartBadgeDetail');
   DOM.miniCartModal = document.getElementById('miniCartModal');
   DOM.miniCartList = document.getElementById('miniCartList');
   DOM.cartSubtotal = document.getElementById('cartSubtotalDisplay');
@@ -104,7 +105,7 @@ function updateShippingUI() {
 
 function updateCartUI() {
   saveCart(state.cart);
-  renderCart(state.cart, ['cartBadgeNav']);
+  renderCart(state.cart, ['cartBadgeNav', 'cartBadgeDetail']);
   if (DOM.miniCartModal?.classList.contains('active')) {
     renderMiniCart(state.cart);
     updateShippingUI();
@@ -359,7 +360,7 @@ function bindEvents() {
       return;
     }
 
-    // Add to cart (TIDAK LAGI MENUTUP DETAIL)
+    // Add to cart (TIDAK MENUTUP DETAIL)
     if (e.target.classList.contains('add-to-cart-btn')) {
       if (window.navigator.vibrate) window.navigator.vibrate(10);
       const pid = e.target.dataset.pid;
@@ -479,7 +480,7 @@ function bindEvents() {
     });
   });
 
-  // Navigasi slide produk detail (tombol panah kiri/kanan)
+  // Navigasi slide produk detail (tombol panah)
   document.getElementById('swipePrev')?.addEventListener('click', () => {
     const slide = DOM.productSwiperTrack?.querySelector('.product-slide');
     if (slide && DOM.productSwiperTrack) {
@@ -492,6 +493,16 @@ function bindEvents() {
       DOM.productSwiperTrack.scrollBy({ left: slide.offsetWidth, behavior: 'smooth' });
     }
   });
+
+  // FAB Keranjang di halaman detail
+  const fab = document.getElementById('cartFabDetail');
+  if (fab) {
+    fab.addEventListener('click', () => {
+      openModal(DOM.miniCartModal);
+      renderMiniCart(state.cart);
+      updateShippingUI();
+    });
+  }
 }
 
 // ---------------------------------------------------------------------------
