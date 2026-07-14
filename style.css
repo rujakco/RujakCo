@@ -451,7 +451,12 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 
 /* Product Page Modals */
 .product-swiper-overlay { position: fixed; inset: 0; background: var(--gray-900); z-index: var(--z-product); display: flex; flex-direction: column; overflow: hidden; }
-.floating-close { position: fixed; top: 16px; left: 16px; z-index: var(--z-fab); }
+.floating-close { 
+  position: fixed !important;
+  top: calc(16px + env(safe-area-inset-top)) !important;
+  left: 16px !important;
+  z-index: 9999 !important; 
+}
 .glass-btn { background: rgba(253,251,247,0.9); border: 1px solid rgba(255,255,255,0.8); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--green); cursor: pointer; backdrop-filter: var(--blur-soft); transition: transform 0.2s ease; box-shadow: var(--shadow-card); }
 .glass-btn:active { transform: scale(0.92); }
 .product-swiper-track { display: flex; width: 100vw; max-width: 480px; height: 100dvh; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; }
@@ -474,10 +479,70 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .spice-options { display: flex; justify-content: space-between; margin-bottom: 24px; }
 .spice-option { width: 44px; height: 44px; border: 1px solid var(--gray-200); background: transparent; border-radius: 50%; font-size: 0.875rem; font-weight: 500; color: var(--gray-900); cursor: pointer; transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; }
 .spice-option.active { background: var(--green); color: white; border-color: var(--green); }
-.detail-actions { display: flex; gap: 12px; margin-bottom: 0; }
-.qty-minimal { display: flex; align-items: center; border: 1px solid var(--gray-200); border-radius: 100px; padding: 2px; background: var(--bg-subtle); }
-.qty-minimal button { width: 44px; height: 44px; background: none; border: none; font-size: 1.25rem; color: var(--gray-500); cursor: pointer; }
-.qty-minimal span { width: 24px; text-align: center; font-size: 1rem; font-weight: 600; color: var(--green); }
+.detail-actions { display: flex; gap: 12px; margin-top: 24px; align-items: stretch; }
+.qty-minimal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--gold-soft);
+  border-radius: 100px; /* Bentuk kapsul elegan */
+  padding: 4px;
+  background: transparent;
+  width: auto !important; 
+  height: auto !important;
+}
+.qty-minimal button {
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--green);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+.qty-minimal button:active {
+  background-color: var(--green-light);
+}
+.qty-minimal span {
+  width: 36px;
+  text-align: center;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--gray-900);
+  font-family: 'Fraunces', serif;
+}
+.add-to-cart-btn {
+  flex: 1;
+  background: linear-gradient(135deg, var(--gold) 0%, #B89650 100%);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 100px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-family: 'DM Sans', sans-serif;
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  transition: transform 0.3s var(--transition-spring), box-shadow 0.3s ease;
+}
+.add-to-cart-btn:active {
+  transform: scale(0.96);
+  box-shadow: var(--shadow-soft);
+}
+
+/* =========================================
+   13. DETAIL PENDUKUNG LAINNYA
+========================================= */
 .detail-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; margin: 0 0 32px 0; padding: 0; font-size: 0.875rem; color: var(--gray-500); }
 .detail-specs strong { color: var(--green); font-weight: 600; display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
 .section-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--gray-500); margin-bottom: 16px; font-weight: 600; display: block; text-align: center; border-top: 1px solid rgba(0,0,0,0.06); padding-top: 28px; }
@@ -487,7 +552,20 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .detail-manifesto h4 { font-size: 0.75rem; color: var(--gold); margin-bottom: 12px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; }
 .detail-manifesto p { color: var(--gray-900); font-family: 'Fraunces', serif; font-style: italic; margin: 0; }
 
-/* Forms, Inputs & Logistics — rapi & mudah di‑tap */
+/* Cerita Di Baliknya memakai Playfair Display */
+.detail-content .cerita-teks, 
+.detail-content i, 
+.detail-content em {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--gray-500);
+  font-weight: 400;
+}
+
+/* =========================================
+   14. FORMS, INPUTS & LOGISTICS (RAPI & MUDAH DI‑TAP)
+========================================= */
 .cart-item-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--gray-200); }
 .cart-empty { text-align: center; padding: 40px 16px; color: var(--gray-500); }
 .cart-item-info p { font-size: 0.875rem; color: var(--gold-text); margin: 0; font-weight: 600; }
@@ -515,7 +593,7 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
 .qris-frame img { width: 100%; height: auto; display: block; border-radius: 10px; }
 
 /* =========================================
-   13. CHAT BUBBLES
+   15. CHAT BUBBLES
 ========================================= */
 .chat-body { display: flex; flex-direction: column; padding: 0; background: var(--bg-subtle); }
 .chat-messages { flex: 1; overflow-y: auto; padding: 24px; font-size: 0.9375rem; line-height: 1.6; }
@@ -528,7 +606,7 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
 .btn-gold-round:active { transform: scale(0.9); }
 
 /* =========================================
-   14. TOAST & SKELETON
+   16. TOAST & SKELETON
 ========================================= */
 #toast {
   position: fixed; top: 100px; left: 50%; transform: translateX(-50%) translateY(-16px);
@@ -548,55 +626,7 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
 @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
 /* =========================================
-   15. PERBAIKAN HALAMAN DETAIL PRODUK
-========================================= */
-/* 1. Tombol "Sesuaikan & Pesan" menjadi emas elegan */
-.detail-content button:not(.qty-btn):not(.spice-option):not(.glass-btn) {
-  background: linear-gradient(135deg, var(--gold) 0%, #B89650 100%);
-  color: #FFFFFF;
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 18px 24px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  font-family: 'DM Sans', sans-serif;
-  cursor: pointer;
-  width: 100%;
-  display: block;
-  margin: 24px 0 32px 0;
-  box-shadow: var(--shadow-card);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.detail-content button:not(.qty-btn):not(.spice-option):not(.glass-btn):active {
-  transform: scale(0.98);
-}
-
-/* 2. Titik pemisah pada komposisi & spesifikasi menjadi emas */
-.fruit-list-inline, .detail-specs {
-  line-height: 1.8;
-}
-.fruit-list-inline span, .detail-specs span {
-  color: var(--gold);
-  margin: 0 8px;
-  font-weight: bold;
-}
-
-/* 3. Cerita Di Baliknya memakai Playfair Display */
-.detail-content .cerita-teks, 
-.detail-content i, 
-.detail-content em {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.05rem;
-  line-height: 1.6;
-  color: var(--gray-500);
-  font-weight: 400;
-}
-
-/* =========================================
-   16. REDUCED MOTION & UTILITIES
+   17. REDUCED MOTION & UTILITIES
 ========================================= */
 .icon-sm { width: 18px; height: 18px; }
 .icon-md { width: 20px; height: 20px; }
