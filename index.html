@@ -7,7 +7,6 @@
   <meta name="description" content="Rujak premium asli Bekasi. Asam, pedas, manis, segar." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <!-- Font mewah: Fraunces untuk judul, DM Sans untuk UI, Playfair Display untuk teks insight -->
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <script src="https://unpkg.com/lucide@latest" defer></script>
@@ -179,7 +178,8 @@
           <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS RUJAK.Co" />
         </div>
         <div style="font-size:36px; font-family:'Fraunces',serif; margin:32px 0; color:var(--green);" id="paymentTotalDisplay">Rp0</div>
-        <button type="button" class="btn-dark full-width" id="confirmPaymentBtn"><i data-lucide="check" class="icon-sm inline" style="margin-right:8px;"></i> Validasi Reservasi via WhatsApp</button>
+        <!-- TOMBOL INI YANG DIPERBAIKI: ditambahkan data-action="confirm-wa" -->
+        <button type="button" class="btn-dark full-width" id="confirmPaymentBtn" data-action="confirm-wa"><i data-lucide="check" class="icon-sm inline" style="margin-right:8px;"></i> Validasi Reservasi via WhatsApp</button>
       </div>
     </div>
   </div>
