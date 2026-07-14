@@ -1,4 +1,4 @@
-// app.js — Luxury Edition Final
+// app.js — Luxury Edition
 import { PRODUCTS } from './data/products.js';
 import { DISTRICT_MAP } from './data/districts.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
@@ -139,39 +139,31 @@ function closeModal(modalEl) {
 }
 
 // ---------------------------------------------------------------------------
-// Product page & swiper — DIPERBAIKI
+// Product page & swiper
 // ---------------------------------------------------------------------------
 function openProductPage(globalIndex) {
-  const overlay = DOM.productPage;
-  const track = DOM.productSwiperTrack;
-
-  if (!overlay || !track) return;
-
-  overlay.style.display = 'flex';
-  overlay.setAttribute('aria-hidden', 'false');
+  DOM.productPage.style.display = 'flex';
+  DOM.productPage.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
-
-  setTimeout(() => {
-    const containerWidth = track.clientWidth;
-    const targetPosition = globalIndex * containerWidth;
-    track.scrollLeft = targetPosition;
-  }, 10);
-
-  if (!DOM._productObserver) {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const img = entry.target.querySelector('.lazy-detail');
-          if (img && img.dataset.src && !img.src) {
-            img.src = img.dataset.src;
-            img.onload = () => img.classList.add('loaded');
-          }
-        }
-      });
-    }, { rootMargin: '0px 0px 200px 0px' });
-    document.querySelectorAll('.product-slide').forEach(slide => observer.observe(slide));
-    DOM._productObserver = observer;
+  const targetSlide = document.querySelector(`.product-slide[data-idx="${globalIndex}"]`);
+  if (targetSlide) {
+    DOM.productSwiperTrack.style.scrollBehavior = 'auto';
+    DOM.productSwiperTrack.scrollLeft = targetSlide.offsetLeft;
+    DOM.productSwiperTrack.style.scrollBehavior = 'smooth';
   }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target.querySelector('.lazy-detail');
+        if (img && img.dataset.src && !img.src) {
+          img.src = img.dataset.src;
+          img.onload = () => img.classList.add('loaded');
+        }
+      }
+    });
+  }, { rootMargin: '0px 0px 200px 0px' });
+  document.querySelectorAll('.product-slide').forEach(slide => observer.observe(slide));
+  DOM._productObserver = observer;
 }
 
 function closeProductPage() {
@@ -185,36 +177,35 @@ function closeProductPage() {
 }
 
 // ---------------------------------------------------------------------------
-// Gesture: swipe down to close product page (DIPERBAIKI – TIDAK GANGGU SWIPE)
+// Gesture: swipe down to close product page
 // ---------------------------------------------------------------------------
 function initSwipeToClose() {
-  let startY = 0, startX = 0, isPulling = false, activeSlide = null;
-
+  let startY = 0, startX = 0, isPulling = false, activeSlide = null, axisLocked = null;
   const onTouchStart = (e) => {
     if (e.touches.length > 1) return;
     startY = e.touches[0].clientY;
     startX = e.touches[0].clientX;
     activeSlide = e.target.closest('.product-slide');
     isPulling = activeSlide && activeSlide.scrollTop <= 0;
+    axisLocked = null;
   };
-
   const onTouchMove = (e) => {
     if (!isPulling || !activeSlide) return;
     const dy = e.touches[0].clientY - startY;
     const dx = e.touches[0].clientX - startX;
 
-    // Batalkan jika gerakan horizontal lebih dominan atau lebih dari 10px
-    if (Math.abs(dx) > 10 || Math.abs(dx) > Math.abs(dy)) {
-      isPulling = false;
-      return;
+    // Tentukan arah gesture sekali di awal gerakan (>6px) agar tidak
+    // "nyangkut" translateY saat user sebenarnya swipe horizontal antar produk.
+    if (!axisLocked && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) {
+      axisLocked = Math.abs(dy) > Math.abs(dx) ? 'y' : 'x';
     }
+    if (axisLocked !== 'y') return; // biarkan track yang tangani swipe horizontal
 
     if (dy > 0) {
       activeSlide.style.transform = `translateY(${dy * 0.4}px)`;
       if (e.cancelable) e.preventDefault();
     }
   };
-
   const onTouchEnd = (e) => {
     if (!isPulling || !activeSlide) return;
     const dy = e.changedTouches[0].clientY - startY;
@@ -233,7 +224,6 @@ function initSwipeToClose() {
       activeSlide = null;
     }, 300);
   };
-
   DOM.productPage.addEventListener('touchstart', onTouchStart, { passive: true });
   DOM.productPage.addEventListener('touchmove', onTouchMove, { passive: false });
   DOM.productPage.addEventListener('touchend', onTouchEnd, { passive: true });
@@ -402,7 +392,7 @@ function bindEvents() {
       return;
     }
 
-    // Confirm via WA
+    // Confirm via WA (sebelum cart item actions)
     if (e.target.closest('[data-action="confirm-wa"]')) {
       confirmOrder(state.cart, state, updateCartUI)(e);
       return;
@@ -525,7 +515,7 @@ function init() {
   renderMenu();
   renderProductSwiper();
   initCarousel();
-  initSwipeToClose();    // tidak lagi memblokir swipe horizontal
+  initSwipeToClose();
   initAccessibility();
   const updateWelcome = initAIChat();
   if (updateWelcome) updateWelcome(state.customerName || 'Ngoedi');
