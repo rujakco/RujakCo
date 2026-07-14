@@ -201,7 +201,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .luxury-header.scrolled .user-loc { color: var(--gray-500); text-shadow: none; }
 
 /* =========================================
-   7. HERO — DINAIKKAN 20px & TERPOTONG DI ATAS
+   7. HERO — DINAIKKAN 20px (total -120px)
 ========================================= */
 .content-wrapper {
   padding-bottom: calc(120px + env(safe-area-inset-bottom));
@@ -211,8 +211,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .hero-editorial {
   width: calc(100% - 40px);
   max-width: 440px;
-  /* Margin top dinaikkan 20px (lebih negatif) */
-  margin: calc(-100px - env(safe-area-inset-top)) auto 0;
+  margin: calc(-120px - env(safe-area-inset-top)) auto 0;
   padding: 0 !important;
   position: relative;
   z-index: 1;
@@ -244,7 +243,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   aspect-ratio: 4 / 3;
   position: relative;
   border-radius: var(--radius-xl);
-  overflow: hidden;            /* Bagian atas gambar terpotong karena container bergeser ke atas */
+  overflow: hidden;
   z-index: 0;
 }
 
@@ -474,7 +473,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   12. MODALS & DRAWERS — SWIPE HORIZONTAL PASTI JALAN
+   12. MODALS & DRAWERS — SWIPE HORIZONTAL & VERTICAL AMAN
 ========================================= */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); backdrop-filter: var(--blur-soft); -webkit-backdrop-filter: var(--blur-soft); z-index: var(--z-modal); display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
@@ -502,7 +501,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .glass-btn { background: rgba(253,251,247,0.9); border: 1px solid rgba(255,255,255,0.8); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--green); cursor: pointer; backdrop-filter: var(--blur-soft); transition: transform 0.2s ease; box-shadow: var(--shadow-card); }
 .glass-btn:active { transform: scale(0.92); }
 
-/* Track: hanya horizontal scroll, tanpa hambatan touch-action */
 .product-swiper-track {
   display: flex;
   width: 100%;
@@ -514,7 +512,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 .product-swiper-track::-webkit-scrollbar { display: none; }
 
-/* Slide: scroll vertikal, tidak menghalangi horizontal */
 .product-slide {
   flex: 0 0 100%;
   width: 100%;
@@ -524,6 +521,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   overflow-x: hidden;
   background: var(--bg-surface);
   position: relative;
+  touch-action: pan-y;
 }
 .detail-image-wrap { width: 100%; aspect-ratio: 1 / 1; position: relative; background: var(--bg-subtle); }
 .detail-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
