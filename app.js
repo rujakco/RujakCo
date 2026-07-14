@@ -177,48 +177,6 @@ function closeProductPage() {
 }
 
 // ---------------------------------------------------------------------------
-// Gesture: swipe horizontal untuk navigasi slide produk (BARU)
-// ---------------------------------------------------------------------------
-function initProductSwiperGesture() {
-  const track = DOM.productSwiperTrack;
-  if (!track) return;
-
-  let startX = 0;
-  let startY = 0;
-  let startScrollLeft = 0;
-  let isDragging = false;
-
-  track.addEventListener('touchstart', (e) => {
-    if (e.touches.length !== 1) return;
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-    startScrollLeft = track.scrollLeft;
-    isDragging = true;
-  }, { passive: true });
-
-  track.addEventListener('touchmove', (e) => {
-    if (!isDragging || e.touches.length !== 1) return;
-    const dx = e.touches[0].clientX - startX;
-    const dy = e.touches[0].clientY - startY;
-
-    // Jika gerakan horizontal lebih dominan, cegah scroll vertikal dan geser track
-    if (Math.abs(dx) > Math.abs(dy)) {
-      e.preventDefault();
-      track.scrollLeft = startScrollLeft - dx;
-    }
-    // jika vertikal dominan, biarkan default (scroll konten slide)
-  }, { passive: false });
-
-  track.addEventListener('touchend', () => {
-    isDragging = false;
-    // snap ke slide terdekat
-    const slideWidth = track.querySelector('.product-slide')?.offsetWidth || track.clientWidth;
-    const currentSlide = Math.round(track.scrollLeft / slideWidth);
-    track.scrollTo({ left: currentSlide * slideWidth, behavior: 'smooth' });
-  });
-}
-
-// ---------------------------------------------------------------------------
 // Gesture: swipe down to close product page
 // ---------------------------------------------------------------------------
 function initSwipeToClose() {
@@ -546,7 +504,6 @@ function init() {
   renderMenu();
   renderProductSwiper();
   initCarousel();
-  initProductSwiperGesture(); // ← Gesture swipe horizontal baru
   initSwipeToClose();
   initAccessibility();
   const updateWelcome = initAIChat();
