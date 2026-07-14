@@ -742,71 +742,42 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
 .fade-up.visible { opacity: 1; transform: translateY(0); }
 
 /* =========================================
-   23. TOMBOL NAVIGASI SWIPE DETAIL
-========================================= */
-.swipe-nav-btn {
-  position: fixed;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: calc(var(--z-fab) + 1);
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(197, 160, 89, 0.3);
-  color: var(--green);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: var(--shadow-card);
-  transition: opacity 0.3s ease, transform 0.2s ease;
-  opacity: 0.85;
-}
-.swipe-nav-btn:active {
-  opacity: 1;
-  transform: translateY(-50%) scale(0.92);
-}
-.swipe-prev { left: 12px; }
-.swipe-next { right: 12px; }
-
-/* =========================================
-   24. FAB KERANJANG DI DETAIL
+   23. FAB KERANJANG DI DETAIL (DIPERBAIKI)
 ========================================= */
 .cart-fab-detail {
   position: fixed;
-  bottom: calc(24px + env(safe-area-inset-bottom));
+  bottom: calc(32px + env(safe-area-inset-bottom));
   right: 24px;
   z-index: 600;
-  width: 56px;
-  height: 56px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--gold) 0%, #B89650 100%);
+  background: rgba(197, 160, 89, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   color: white;
-  border: none;
-  box-shadow: var(--shadow-luxury);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: var(--shadow-floating);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, background 0.2s ease;
 }
 .cart-fab-detail:active {
-  transform: scale(0.92);
-  box-shadow: var(--shadow-card);
+  transform: scale(0.9);
+  background: rgba(197, 160, 89, 1);
 }
 .cart-fab-detail #cartBadgeDetail {
   position: absolute;
-  top: -4px;
-  right: -4px;
+  top: -6px;
+  right: -6px;
   background: var(--green);
   color: white;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 700;
   display: none;
   align-items: center;
