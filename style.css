@@ -254,47 +254,30 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   8. CAROUSEL — Bayangan Tepi & Anti-Potong
+   8. CAROUSEL — Tanpa Glow Hijau + Efek 3D Elegan
 ========================================= */
 .carousel-container {
   width: 100%;
   padding: 0;
   margin-top: 16px;
   position: relative;
-  overflow: visible;
+  overflow: visible; 
 }
 
-/* Bayangan transparan kiri & kanan */
+/* Matikan efek glow/fade hijau yang mengganggu */
 .carousel-container::before,
 .carousel-container::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 60px;           /* berhenti sebelum dot navigasi */
-  width: 48px;
-  z-index: 20;
-  pointer-events: none;
-}
-
-.carousel-container::before {
-  left: 0;
-  background: linear-gradient(to right, var(--green) 5%, transparent 100%);
-}
-
-.carousel-container::after {
-  right: 0;
-  background: linear-gradient(to left, var(--green) 5%, transparent 100%);
+  display: none;
 }
 
 .carousel-track {
   display: flex;
   overflow-x: auto;
-  overflow-y: visible;
   scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  padding: 24px 20px 56px;  /* ruang untuk bayangan & translateY */
+  padding: 24px 20px 56px; 
   gap: 16px;
 }
 .carousel-track::-webkit-scrollbar { display: none; }
@@ -303,14 +286,22 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   width: 100%; flex: 0 0 100%; max-width: 440px;
   scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; text-align: center;
   cursor: pointer;
-  transform: scale(0.94) translateZ(0); opacity: 0.75;
+  /* Kartu non-aktif: didorong sedikit ke bawah, lebih kecil, transparan */
+  transform: scale(0.92) translateY(8px) translateZ(0); 
+  opacity: 0.65;
   background: var(--bg-surface); border: 1px solid var(--gray-200); border-radius: var(--radius-xl);
   padding: 36px 32px; z-index: 1;
   transition: transform 0.6s var(--transition-spring), opacity 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
 }
 .boutique-item.active-center {
-  transform: scale(1) translateY(-4px) translateZ(0); opacity: 1; z-index: 10;
-  border-color: var(--gold); box-shadow: var(--shadow-luxury);
+  /* Kartu aktif: melayang ke depan dan diangkat */
+  transform: scale(1.02) translateY(-8px) translateZ(0); 
+  opacity: 1; z-index: 10;
+  border-color: var(--gold); 
+  /* Efek 3D: bayangan dalam + pendaran emas */
+  box-shadow: 
+    0 32px 64px -16px rgba(8, 46, 33, 0.35),
+    0 0 40px rgba(197, 160, 89, 0.25);
 }
 
 .btq-img {
@@ -347,19 +338,19 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .product-insight-container {
   text-align: center;
   padding: 0 24px;
-  margin-top: -12px;         /* tarik lebih dekat ke dot */
+  margin-top: -12px;
   min-height: 48px;
   display: flex;
   align-items: flex-start;
   justify-content: center;
   position: relative;
-  z-index: 10;               /* di atas bayangan tepi */
+  z-index: 10;
 }
 
 .typing-text {
   font-family: 'DM Sans', sans-serif;
   font-size: 0.875rem;
-  color: var(--gold-text);   /* emas lebih pekat */
+  color: var(--gold-text);
   font-weight: 500;
   font-style: italic;
   letter-spacing: 0.02em;
