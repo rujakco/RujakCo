@@ -254,17 +254,17 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   8. CAROUSEL — Tanpa Glow Hijau + Efek 3D Elegan
+   8. CAROUSEL — Cover Flow 3D Sejati (overlap + bayangan samping)
 ========================================= */
 .carousel-container {
   width: 100%;
   padding: 0;
   margin-top: 16px;
   position: relative;
-  overflow: visible; 
+  overflow: visible;
 }
 
-/* Matikan efek glow/fade hijau yang mengganggu */
+/* Matikan efek glow/fade hijau */
 .carousel-container::before,
 .carousel-container::after {
   display: none;
@@ -277,31 +277,45 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   scroll-behavior: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  padding: 24px 20px 56px; 
-  gap: 16px;
+  padding: 32px 20px 64px; 
+  /* gap dihapus, kita atur tumpang tindih manual */
 }
 .carousel-track::-webkit-scrollbar { display: none; }
 
 .boutique-item {
-  width: 100%; flex: 0 0 100%; max-width: 440px;
+  /* Lebar 80% agar kartu kiri & kanan selalu terlihat mengintip */
+  flex: 0 0 80%;
+  max-width: 360px;
+
+  /* KUNCI EFEK 3D: margin negatif menarik kartu agar saling bertumpuk */
+  margin: 0 -12px;
+
   scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; text-align: center;
   cursor: pointer;
-  /* Kartu non-aktif: didorong sedikit ke bawah, lebih kecil, transparan */
-  transform: scale(0.92) translateY(8px) translateZ(0); 
-  opacity: 0.65;
+
+  /* Kartu tidak aktif: Mundur jauh ke belakang, mengecil, dan meredup */
+  transform: scale(0.85) translateY(12px) translateZ(-50px);
+  opacity: 0.45;
+
   background: var(--bg-surface); border: 1px solid var(--gray-200); border-radius: var(--radius-xl);
-  padding: 36px 32px; z-index: 1;
-  transition: transform 0.6s var(--transition-spring), opacity 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+  padding: 36px 32px;
+  z-index: 1; /* Lapisan bawah */
+  transition: transform 0.6s var(--transition-spring), opacity 0.6s ease, border-color 0.6s ease, box-shadow 0.6s ease;
 }
+
 .boutique-item.active-center {
-  /* Kartu aktif: melayang ke depan dan diangkat */
-  transform: scale(1.02) translateY(-8px) translateZ(0); 
-  opacity: 1; z-index: 10;
-  border-color: var(--gold); 
-  /* Efek 3D: bayangan dalam + pendaran emas */
+  /* Kartu aktif: Membesar, maju ke depan, dan tidak transparan */
+  transform: scale(1.05) translateY(-8px) translateZ(0);
+  opacity: 1;
+  z-index: 10; /* Menimpa kartu thumb */
+  border-color: var(--gold);
+
+  /* BAYANGAN 3D: melempar ke kiri, kanan, dan bawah agar jatuh tepat di atas kartu thumb */
   box-shadow: 
-    0 32px 64px -16px rgba(8, 46, 33, 0.35),
-    0 0 40px rgba(197, 160, 89, 0.25);
+    -28px 16px 40px -16px rgba(8, 46, 33, 0.35),  /* ke kartu kiri */
+     28px 16px 40px -16px rgba(8, 46, 33, 0.35),  /* ke kartu kanan */
+      0 40px 60px -16px rgba(8, 46, 33, 0.45),    /* ke bawah */
+      0 0 30px rgba(197, 160, 89, 0.15);          /* glow emas */
 }
 
 .btq-img {
