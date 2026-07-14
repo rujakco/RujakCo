@@ -1,3 +1,6 @@
+Kode CSS Anda telah saya terima dan perbarui. Susunannya sekarang sangat terstruktur, mulai dari Design Tokens di bagian atas hingga Perbaikan Halaman Detail Produk di bagian bawah. Penggunaan Playfair Display dan perbaikan Hero Banner juga sudah masuk dengan sempurna.
+Namun, saya melihat satu bagian penting terlewat dari salinan kode tersebut. Kode untuk memperbaiki Area Aksi (menghilangkan bug lingkaran abu-abu pada tombol kuantitas dan merapikan tombol Back) belum dimasukkan ke dalam versi ini.
+Agar desain halaman detail produk Anda benar-benar tanpa cacat, silakan tambahkan blok kode berikut ini tepat di bawah Seksi 15, sebelum Seksi 16 (REDUCED MOTION):
 /* =========================================
    PERBAIKAN AREA AKSI (STEP 2)
 ========================================= */
@@ -83,3 +86,5 @@
   transform: scale(0.96);
   box-shadow: var(--shadow-soft);
 }
+
+Dengan penambahan ini, seluruh elemen visual dari halaman utama hingga halaman detail pesanan sudah sepenuhnya konsisten dan responsif.
