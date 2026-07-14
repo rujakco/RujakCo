@@ -24,7 +24,7 @@
   --z-product: 500;
   --z-fab: 510;
   --z-modal: 1000;
-  --z-onboard: 9999;
+  --z-onboard: 1100;
 
   --blur-soft: blur(12px);
   --blur-medium: blur(20px);
@@ -105,7 +105,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   transition: opacity 0.8s var(--transition-spring), visibility 0.8s;
 }
 .onboarding-overlay.hidden { opacity: 0; visibility: hidden; }
-.onb-content { width: 100%; max-width: 320px; display: flex; flex-direction: column; align-items: center; color: var(--ivory); }
+.onb-content { width: 100%; max-width: 320px; display: flex; flex-direction: column; align-items: center; color: var(--ivory); gap: 16px; }
 .onb-logo {
   width: 72px; height: 72px; border-radius: 50%; margin-bottom: var(--radius-2xl);
   border: 1px solid var(--gold-soft); padding: 4px; background: rgba(0,0,0,0.2); box-shadow: var(--shadow-luxury);
@@ -126,7 +126,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 #onbDistrictDropdown { background: rgba(4,18,13,0.85); backdrop-filter: var(--blur-soft); border: 1px solid rgba(197,160,89,0.2); border-radius: var(--radius-lg); box-shadow: var(--shadow-luxury); }
 #onbDistrictDropdown div { padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--ivory); font-family: 'DM Sans', sans-serif; font-weight: 400; cursor: pointer; font-size: 1rem; transition: background-color 0.2s ease, color 0.2s ease; }
 #onbDistrictDropdown div:hover { background: rgba(197,160,89,0.1); color: var(--gold); }
-.btn-text-gold { background: none; border: none; color: var(--gold); font-size: 0.75rem; margin-top: 24px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; transition: opacity 0.3s ease; }
+.btn-text-gold { background: none; border: none; color: var(--gold); font-size: 0.75rem; margin-top: 32px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; transition: opacity 0.3s ease; }
 .btn-text-gold:active { opacity: 0.6; }
 
 /* --- Animasi selamat datang kembali --- */
@@ -154,9 +154,10 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .btn-gold { background: linear-gradient(135deg, var(--gold) 0%, #B89650 100%); color: #FFFFFF; box-shadow: var(--shadow-card); }
 .btn-dark { background: var(--green); color: var(--ivory); border: 1px solid var(--gold-soft); box-shadow: var(--shadow-card); }
 .btn-gold:active, .btn-dark:active { transform: scale(0.98); opacity: 0.9; }
+.btn-loading { opacity: 0.7; cursor: wait; pointer-events: none; }
 
 /* =========================================
-   6. HEADER — dinamis mengikuti safe‑area
+   6. HEADER — transisi lambat untuk kesan mewah
 ========================================= */
 .luxury-header {
   position: fixed; top: 0; left: 0; right: 0; margin: 0 auto;
@@ -167,7 +168,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   backdrop-filter: var(--blur-soft) saturate(140%);
   -webkit-backdrop-filter: var(--blur-soft) saturate(140%);
   border-bottom: 1px solid rgba(255,255,255,0.1); border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-  transition: transform 0.5s var(--transition-spring), background-color 0.4s ease, box-shadow 0.4s ease, backdrop-filter 0.4s ease;
+  transition: transform 0.5s var(--transition-spring), background-color 0.5s ease, box-shadow 0.5s ease, backdrop-filter 0.5s ease;
 }
 .luxury-header.scrolled {
   background: var(--bg-surface); border-bottom: 1px solid rgba(0,0,0,0.04);
@@ -189,7 +190,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .luxury-header.scrolled .user-loc { color: var(--gray-500); text-shadow: none; }
 
 /* =========================================
-   7. HERO — Radius Disamakan dengan Carousel & Posisi Pasti
+   7. HERO — Radius Seragam & Posisi Presisi
 ========================================= */
 .content-wrapper {
   padding-bottom: calc(120px + env(safe-area-inset-bottom));
@@ -270,7 +271,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   8. CAROUSEL — 3D, Tanpa Border, Thumbnail Tajam
+   8. CAROUSEL — 3D, Tanpa Border, Thumbnail Presisi
 ========================================= */
 .carousel-container {
   width: 100%;
@@ -366,7 +367,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   9. INSIGHT — Playfair Display & Jarak Dinaikkan
+   9. INSIGHT — Kontras & Keterbacaan Ditingkatkan
 ========================================= */
 .product-insight-container { 
   text-align: center; 
@@ -383,16 +384,17 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 
 .typing-text { 
   font-family: 'Playfair Display', serif;
-  font-size: 0.875rem; 
-  color: var(--gold-bright); 
-  font-weight: 500; 
-  font-style: italic; 
-  letter-spacing: 0.02em; 
-  margin: 0; 
+  font-size: 0.95rem;
+  color: var(--gold-bright);
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  margin: 0;
   line-height: 1.5;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  padding: 0 20px;
   opacity: 1;
-  transition: opacity 0.4s ease; 
+  transition: opacity 0.4s ease;
 }
 
 .typing-text.fade-out { 
@@ -400,7 +402,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   10. FOOTER — tetap di bawah, aman dari bottom nav
+   10. FOOTER — Aman dari Bottom Nav
 ========================================= */
 .luxury-footer {
   padding: 48px 16px calc(48px + env(safe-area-inset-bottom));
@@ -414,7 +416,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .meta-dot { color: var(--gold-soft); }
 
 /* =========================================
-   11. BOTTOM NAV — full dynamic safe‑area
+   11. BOTTOM NAV — Safe‑area Dinamis & Ikon Simetris
 ========================================= */
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0; margin: 0 auto;
@@ -426,16 +428,29 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   box-shadow: 0 -4px 24px rgba(0,0,0,0.02);
 }
 .nav-item {
-  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0;
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 0;
   background: none; border: none; font: inherit; color: var(--gray-500); font-size: 0.75rem; font-weight: 600;
-  cursor: pointer; transition: color 0.3s ease, transform 0.3s var(--transition-spring); position: relative;
+  cursor: pointer; transition: color 0.3s ease, transform 0.2s ease; position: relative;
 }
-.nav-item.active { color: var(--green); transform: translateY(-2px); }
+.nav-item.active { color: var(--green); transform: translateY(-4px); }
 .nav-item.active::after { content: ''; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); width: 20px; height: 2px; background: var(--gold); border-radius: 2px; }
 .nav-icon { width: 24px; height: 24px; }
 .nav-label { display: block; line-height: 1.2; }
 .nav-cart-wrapper { position: relative; display: inline-block; }
-.nav-badge { position: absolute; top: -8px; right: -10px; background: var(--gold); color: white; font-size: 0.6rem; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bg-surface); }
+.nav-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: var(--gold);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--bg-surface);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
 
 /* =========================================
    12. MODALS & DRAWERS
@@ -465,17 +480,33 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .glass-btn:active { transform: scale(0.92); }
 .product-swiper-track { display: flex; width: 100vw; max-width: 480px; height: 100dvh; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; }
 .product-swiper-track::-webkit-scrollbar { display: none; }
-.product-slide { flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: center; overflow-y: auto; overflow-x: hidden; background: var(--bg-surface); position: relative; overscroll-behavior-y: contain; }
+.product-slide {
+  flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: center;
+  overflow-y: auto; overflow-x: hidden; background: var(--bg-surface); position: relative;
+  overscroll-behavior: contain;
+  padding-bottom: env(safe-area-inset-bottom);
+}
 .detail-image-wrap { width: 100%; aspect-ratio: 1 / 1; position: relative; background: var(--bg-subtle); }
 .detail-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .detail-image-wrap img.lazy-detail { opacity: 0; transition: opacity 0.5s ease; }
 .detail-image-wrap img.lazy-detail.loaded { opacity: 1; }
-.detail-content { padding: 28px 20px 60px; background: var(--bg-surface); position: relative; z-index: 2; margin-top: -24px; border-radius: var(--radius-2xl) var(--radius-2xl) 0 0; min-height: 60vh; box-shadow: var(--shadow-soft); }
+.detail-content {
+  padding: 32px 24px 100px;
+  background: var(--bg-surface); position: relative; z-index: 2;
+  margin-top: -24px; border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+  min-height: 60vh; box-shadow: var(--shadow-soft);
+  line-height: 1.8;
+}
 .detail-content h2 { color: var(--green); margin-bottom: 4px; }
 .detail-price-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
 .detail-price { font-size: 1.125rem; color: var(--gold-text); font-weight: 600; letter-spacing: 0.05em; margin: 0; }
 .price-line { flex: 1; height: 1px; background: var(--gold); opacity: 0.35; }
-.detail-desc { color: var(--gray-900); margin-bottom: 32px; text-align: justify; }
+.detail-desc {
+  color: var(--gray-900);
+  margin-bottom: 32px;
+  text-align: left;
+  max-width: 400px;
+}
 .action-area { margin-bottom: 40px; }
 .step-2-content { display: none; animation: fadeUp 0.4s ease forwards; background: white; padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--gray-200); }
 .spice-selector label { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray-500); margin-bottom: 16px; font-weight: 600; }
@@ -493,17 +524,15 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .detail-manifesto p { color: var(--gray-900); font-family: 'Fraunces', serif; font-style: italic; margin: 0; }
 
 /* =========================================
-   13. PERBAIKAN AREA AKSI (STEP 2) — Elegan, Tanpa !important Berlebih
+   13. AREA AKSI — Tombol Taktil & Mewah
 ========================================= */
-/* Kunci Ikon Back agar selalu di pojok kiri atas */
 .floating-close {
   position: fixed !important;
   top: calc(16px + env(safe-area-inset-top)) !important;
   left: 16px !important;
-  z-index: var(--z-fab) !important;   /* gunakan sistem z-index */
+  z-index: var(--z-fab) !important;
 }
 
-/* Tata Letak Baris Tombol */
 .detail-actions {
   display: flex;
   gap: 12px;
@@ -511,7 +540,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   align-items: stretch;
 }
 
-/* Bentuk Kapsul Kuantitas */
 .qty-minimal {
   display: flex;
   align-items: center;
@@ -552,7 +580,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   font-family: 'Fraunces', serif;
 }
 
-/* Tombol "Tambahkan ke Reservasi" Mewah */
 .add-to-cart-btn {
   flex: 1;
   background: linear-gradient(135deg, var(--gold) 0%, #B89650 100%);
@@ -570,16 +597,17 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   align-items: center;
   justify-content: center;
   padding: 0 16px;
-  transition: transform 0.3s var(--transition-spring), box-shadow 0.3s ease;
+  transform: translateY(0);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
 }
 
 .add-to-cart-btn:active {
-  transform: scale(0.96);
-  box-shadow: var(--shadow-soft);
+  transform: translateY(2px) scale(0.97);
+  box-shadow: none;
 }
 
 /* =========================================
-   14. CERITA DI BALIKNYA — Playfair Display
+   14. CERITA — Playfair Display
 ========================================= */
 .detail-content .cerita-teks, 
 .detail-content i, 
@@ -621,7 +649,38 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
 .qris-frame img { width: 100%; height: auto; display: block; border-radius: 10px; }
 
 /* =========================================
-   16. CHAT BUBBLES
+   16. KERANJANG — Kontras & Keterbacaan
+========================================= */
+/* Teks bantuan kecamatan */
+.checkout-forms > div[style*="color:var(--gold)"] {
+  font-size: 0.7rem !important; 
+  color: var(--gold-text) !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+  margin-top: -12px !important; 
+  margin-bottom: 24px !important;
+}
+
+/* =========================================
+   17. PEMBAYARAN — Total Lebih Menonjol
+========================================= */
+#paymentTotalDisplay {
+  font-size: 2.5rem;
+  font-family: 'Fraunces', serif;
+  margin: 32px 0;
+  color: var(--green);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+/* Tombol Selesaikan Reservasi aman dari notch */
+#btnOpenPayment, #confirmPaymentBtn {
+  margin-bottom: env(safe-area-inset-bottom);
+  padding: 18px 24px;
+}
+
+/* =========================================
+   18. CHAT BUBBLES
 ========================================= */
 .chat-body { display: flex; flex-direction: column; padding: 0; background: var(--bg-subtle); }
 .chat-messages { flex: 1; overflow-y: auto; padding: 24px; font-size: 0.9375rem; line-height: 1.6; }
@@ -634,7 +693,7 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
 .btn-gold-round:active { transform: scale(0.9); }
 
 /* =========================================
-   17. TOAST & SKELETON
+   19. TOAST & SKELETON
 ========================================= */
 #toast {
   position: fixed; top: 100px; left: 50%; transform: translateX(-50%) translateY(-16px);
@@ -654,7 +713,7 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
 @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
 /* =========================================
-   18. KEYBOARD FOCUS & AKSESIBILITAS
+   20. FOKUS KEYBOARD & AKSESIBILITAS
 ========================================= */
 .boutique-item:focus-visible,
 .carousel-dot:focus-visible,
@@ -666,7 +725,21 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
 }
 
 /* =========================================
-   19. REDUCED MOTION & UTILITIES
+   21. CUSTOM SCROLLBAR (DESKTOP)
+========================================= */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gold-soft);
+  border-radius: 4px;
+}
+
+/* =========================================
+   22. REDUCED MOTION & UTILITIES
 ========================================= */
 .icon-sm { width: 18px; height: 18px; }
 .icon-md { width: 20px; height: 20px; }
