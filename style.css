@@ -186,7 +186,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .hero-editorial {
   width: calc(100% - 40px);
   max-width: 440px;
-  /* Ditarik naik 20px (dari -72px menjadi -92px) agar atasnya lebih terpotong header */
   margin: calc(-92px - env(safe-area-inset-top)) auto 0;
   padding: 0 !important;
   position: relative;
@@ -219,7 +218,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   aspect-ratio: 4 / 3;
   position: relative;
   border-radius: 28px;
-  overflow: hidden; /* Memotong gambar yang keluar dari bingkai */
+  overflow: hidden;
   z-index: 0;
 }
 
@@ -228,12 +227,10 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   height: 100%;
   object-fit: cover;
   display: block;
-  /* Gambar didorong turun 40px di dalam bingkainya */
   transform: translateY(40px) scale(1.02);
   transition: transform 0.8s var(--transition-spring);
 }
 .hero-editorial.scrolled-past .hero-img { 
-  /* Pastikan saat di-scroll posisinya tetap di bawah */
   transform: translateY(40px) scale(1); 
 }
 
@@ -281,7 +278,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   scroll-behavior: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  padding: 32px 20px 24px;   /* padding bawah dikurangi */
+  padding: 32px 20px 24px;   /* padding bawah untuk ruang bayangan */
 }
 .carousel-track::-webkit-scrollbar { display: none; }
 
@@ -332,14 +329,14 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .btq-price-wrap::before, .btq-price-wrap::after { content: ''; flex: 1; max-width: 40px; height: 1px; background: var(--gold-soft); }
 .btq-price { font-size: 0.875rem; color: var(--gray-500); font-weight: 500; letter-spacing: 0.02em; white-space: nowrap; }
 
+/* Titik Navigasi — ditarik ke atas agar lebih dekat dengan kartu */
 .carousel-dots { 
   display: flex; justify-content: center; align-items: center;
   gap: 8px; 
   padding: 0; 
-  margin: 0 auto; 
+  margin: -12px auto 0;   /* tarikan ke atas supaya tidak terlalu jauh */
   position: relative;
   z-index: 50;
-  transform: translateY(-8px);
 }
 
 .carousel-dot {
@@ -354,14 +351,14 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   9. INSIGHT — Jarak Pasti 25px
+   9. INSIGHT — Jarak Presisi 30px dari Kartu
 ========================================= */
 .product-insight-container { 
   text-align: center; 
   padding: 0 24px; 
   
-  /* Dikunci jarak persis 25px di bawah carousel, dan 48px ke bawah agar aman */
-  margin-top: 25px; 
+  /* 24px (padding bawah track) + 6px (margin-top) = total 30px dari dasar kartu */
+  margin-top: 6px; 
   margin-bottom: 48px; 
   
   min-height: 48px; 
