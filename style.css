@@ -129,6 +129,19 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .btn-text-gold { background: none; border: none; color: var(--gold); font-size: 0.75rem; margin-top: 24px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; transition: opacity 0.3s ease; }
 .btn-text-gold:active { opacity: 0.6; }
 
+/* --- Animasi selamat datang kembali --- */
+#onbWelcomeName,
+#onbWelcomeDistrict {
+  animation: luxuryFadeIn 0.8s var(--transition-spring) both;
+}
+#onbWelcomeDistrict {
+  animation-delay: 0.15s;
+}
+@keyframes luxuryFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* =========================================
    5. BUTTONS
 ========================================= */
@@ -290,7 +303,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   scroll-snap-align: center;
   display: flex; flex-direction: column; align-items: center; text-align: center;
   cursor: pointer;
-  transform: scale(0.85) translateY(12px) translateZ(-50px);
+  transform: scale(0.85) translateY(12px);
   opacity: 0.45;
   background: var(--bg-surface);
   border: none;
@@ -301,7 +314,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 .boutique-item.active-center {
-  transform: scale(1) translateY(-8px) translateZ(0);
+  transform: scale(1) translateY(-8px);
   opacity: 1;
   z-index: 10;
   box-shadow: 
@@ -313,10 +326,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 
 .btq-img {
   width: 100%; aspect-ratio: 1 / 1; object-fit: cover;
-  
-  /* RUMUS PRESISI: Radius Kartu (20px) dikurangi Padding Kiri/Kanan (32px) = -12px ≈ 0px (sudut tajam) */
   border-radius: calc(var(--radius-xl) - 32px); 
-  
   margin-bottom: 0; background: var(--bg-subtle);
   transition: transform 0.6s var(--transition-spring);
 }
@@ -361,8 +371,8 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .product-insight-container { 
   text-align: center; 
   padding: 0 24px; 
-  margin-top: 1px;       /* naik 5px dari sebelumnya */
-  margin-bottom: 48px; 
+  margin-top: 1px;
+  margin-bottom: 24px; 
   min-height: 48px; 
   display: flex; 
   align-items: center; 
@@ -372,7 +382,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 .typing-text { 
-  font-family: 'Playfair Display', serif;   /* font mewah */
+  font-family: 'Playfair Display', serif;
   font-size: 0.875rem; 
   color: var(--gold-bright); 
   font-weight: 500; 
@@ -475,22 +485,22 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .spice-option.active { background: var(--green); color: white; border-color: var(--green); }
 .detail-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; margin: 0 0 32px 0; padding: 0; font-size: 0.875rem; color: var(--gray-500); }
 .detail-specs strong { color: var(--green); font-weight: 600; display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
-.section-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--gray-500); margin-bottom: 16px; font-weight: 600; display: block; text-align: center; border-top: 1px solid rgba(0,0,0,0.06); padding-top: 28px; }
-.fruit-list-inline { text-align: center; color: var(--gray-900); margin-bottom: 32px; padding: 0 8px; }
+.section-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--gray-500); margin-bottom: 16px; font-weight: 600; display: block; text-align: center; padding-top: 32px; margin-top: 8px; }
+.fruit-list-inline { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; line-height: 1.6; color: var(--gray-900); margin-bottom: 32px; padding: 0 8px; }
 .fruit-bullet { color: var(--gold); margin: 0 6px; font-size: 10px; opacity: 0.7; }
 .detail-manifesto { background: transparent; padding: 24px; border-radius: var(--radius-md); border: 1px solid rgba(197,160,89,0.25); text-align: center; margin-top: 16px; }
 .detail-manifesto h4 { font-size: 0.75rem; color: var(--gold); margin-bottom: 12px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; }
 .detail-manifesto p { color: var(--gray-900); font-family: 'Fraunces', serif; font-style: italic; margin: 0; }
 
 /* =========================================
-   13. PERBAIKAN AREA AKSI (STEP 2) — TANPA BUG
+   13. PERBAIKAN AREA AKSI (STEP 2) — Elegan, Tanpa !important Berlebih
 ========================================= */
 /* Kunci Ikon Back agar selalu di pojok kiri atas */
 .floating-close {
   position: fixed !important;
   top: calc(16px + env(safe-area-inset-top)) !important;
   left: 16px !important;
-  z-index: 9999 !important;
+  z-index: var(--z-fab) !important;   /* gunakan sistem z-index */
 }
 
 /* Tata Letak Baris Tombol */
@@ -501,7 +511,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   align-items: stretch;
 }
 
-/* Bentuk Kapsul Kuantitas (Menghilangkan Lingkaran Abu-abu) */
+/* Bentuk Kapsul Kuantitas */
 .qty-minimal {
   display: flex;
   align-items: center;
@@ -510,8 +520,8 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   border-radius: 100px;
   padding: 4px;
   background: transparent;
-  width: auto !important; 
-  height: auto !important;
+  width: auto;
+  height: auto;
 }
 
 .qty-minimal button {
@@ -644,7 +654,19 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
 @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
 /* =========================================
-   18. REDUCED MOTION & UTILITIES
+   18. KEYBOARD FOCUS & AKSESIBILITAS
+========================================= */
+.boutique-item:focus-visible,
+.carousel-dot:focus-visible,
+.nav-item:focus-visible,
+.spice-option:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* =========================================
+   19. REDUCED MOTION & UTILITIES
 ========================================= */
 .icon-sm { width: 18px; height: 18px; }
 .icon-md { width: 20px; height: 20px; }
