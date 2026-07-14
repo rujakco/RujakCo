@@ -264,7 +264,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   overflow: visible;
 }
 
-/* Matikan efek glow/fade hijau */
 .carousel-container::before,
 .carousel-container::after {
   display: none;
@@ -277,21 +276,21 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   scroll-behavior: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  padding: 32px 20px 64px;  /* padding kiri-kanan 20px agar sejajar Hero */
+  padding: 32px 20px 64px;
 }
 .carousel-track::-webkit-scrollbar { display: none; }
 
 .boutique-item {
-  flex: 0 0 100%;            /* selebar penuh seperti Hero */
+  flex: 0 0 100%;
   max-width: 440px;
-  margin: 0 -24px;           /* tumpang tindih untuk efek 3D */
+  margin: 0 -24px;
   scroll-snap-align: center;
   display: flex; flex-direction: column; align-items: center; text-align: center;
   cursor: pointer;
-  transform: scale(0.85) translateY(12px) translateZ(-50px);  /* kartu tidak aktif mengecil & mundur */
+  transform: scale(0.85) translateY(12px) translateZ(-50px);
   opacity: 0.45;
   background: var(--bg-surface);
-  border: none;              /* tanpa bingkai */
+  border: none;
   border-radius: var(--radius-xl);
   padding: 36px 32px;
   z-index: 1;
@@ -299,14 +298,14 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 .boutique-item.active-center {
-  transform: scale(1) translateY(-8px) translateZ(0);  /* sejajar sempurna dengan Hero */
+  transform: scale(1) translateY(-8px) translateZ(0);
   opacity: 1;
   z-index: 10;
   box-shadow: 
-    -24px 16px 32px -12px rgba(8, 46, 33, 0.35),  /* bayangan ke kartu kiri */
-     24px 16px 32px -12px rgba(8, 46, 33, 0.35),  /* bayangan ke kartu kanan */
-      0 32px 48px -12px rgba(8, 46, 33, 0.45),    /* bayangan bawah */
-      0 0 30px rgba(197, 160, 89, 0.15);          /* backlight emas */
+    -24px 16px 32px -12px rgba(8, 46, 33, 0.35),
+     24px 16px 32px -12px rgba(8, 46, 33, 0.35),
+      0 32px 48px -12px rgba(8, 46, 33, 0.45),
+      0 0 30px rgba(197, 160, 89, 0.15);
 }
 
 .btq-img {
@@ -328,7 +327,14 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .btq-price-wrap::before, .btq-price-wrap::after { content: ''; flex: 1; max-width: 40px; height: 1px; background: var(--gold-soft); }
 .btq-price { font-size: 0.875rem; color: var(--gray-500); font-weight: 500; letter-spacing: 0.02em; white-space: nowrap; }
 
-.carousel-dots { display: flex; justify-content: center; gap: 6px; padding: 0 0 4px; }
+/* === DOT NAVIGASI DIPERBAIKI === */
+.carousel-dots { 
+  display: flex; justify-content: center; gap: 6px; 
+  padding: 0; 
+  margin-top: -24px;          /* tarik ke atas, masuk ke ruang kosong track */
+  position: relative;
+  z-index: 20; 
+}
 .carousel-dot {
   width: 24px; height: 24px; padding: 0; border: none; border-radius: 50%;
   background: radial-gradient(circle, var(--gold-soft) 3px, transparent 4px);
@@ -338,34 +344,34 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .carousel-dot.active { background: radial-gradient(circle, var(--gold) 3px, transparent 4px); }
 
 /* =========================================
-   9. INSIGHT — Posisi & Keterbacaan
+   9. INSIGHT — Warna Emas Terang & Posisi Baru
 ========================================= */
-.product-insight-container {
-  text-align: center;
-  padding: 0 24px;
-  margin-top: -12px;
-  min-height: 48px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
+.product-insight-container { 
+  text-align: center; 
+  padding: 0 24px; 
+  margin-top: 16px; 
+  min-height: 48px; 
+  display: flex; 
+  align-items: flex-start; 
+  justify-content: center; 
   position: relative;
-  z-index: 10;
+  z-index: 20; 
 }
 
-.typing-text {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.875rem;
-  color: var(--gold-text);
-  font-weight: 500;
-  font-style: italic;
-  letter-spacing: 0.02em;
-  margin: 0;
+.typing-text { 
+  font-family: 'DM Sans', sans-serif; 
+  font-size: 0.875rem; 
+  color: var(--gold-bright);   /* emas terang, kontras di atas hijau */
+  font-weight: 500; 
+  font-style: italic; 
+  letter-spacing: 0.02em; 
+  margin: 0; 
   line-height: 1.4;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.4s ease; 
 }
 
-.typing-text.fade-out {
-  opacity: 0;
+.typing-text.fade-out { 
+  opacity: 0; 
 }
 
 /* =========================================
