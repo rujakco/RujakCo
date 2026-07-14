@@ -254,7 +254,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   8. CAROUSEL — 3D murni, sejajar Hero, tanpa border
+   8. CAROUSEL — Perbaikan Z-Index & Titik Navigasi
 ========================================= */
 .carousel-container {
   width: 100%;
@@ -276,35 +276,37 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   scroll-behavior: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  padding: 32px 20px 64px;
+  
+  /* Padding bawah sedikit dikurangi agar tidak memakan terlalu banyak ruang */
+  padding: 32px 20px 48px; 
 }
 .carousel-track::-webkit-scrollbar { display: none; }
 
 .boutique-item {
-  flex: 0 0 100%;
-  max-width: 440px;
-  margin: 0 -24px;
-  scroll-snap-align: center;
+  flex: 0 0 100%; 
+  max-width: 440px; 
+  margin: 0 -24px; 
+  scroll-snap-align: center; 
   display: flex; flex-direction: column; align-items: center; text-align: center;
   cursor: pointer;
-  transform: scale(0.85) translateY(12px) translateZ(-50px);
+  transform: scale(0.85) translateY(12px) translateZ(-50px); 
   opacity: 0.45;
-  background: var(--bg-surface);
+  background: var(--bg-surface); 
   border: none;
   border-radius: var(--radius-xl);
-  padding: 36px 32px;
+  padding: 36px 32px; 
   z-index: 1;
   transition: transform 0.6s var(--transition-spring), opacity 0.6s ease, box-shadow 0.6s ease;
 }
 
 .boutique-item.active-center {
-  transform: scale(1) translateY(-8px) translateZ(0);
-  opacity: 1;
+  transform: scale(1) translateY(-8px) translateZ(0); 
+  opacity: 1; 
   z-index: 10;
   box-shadow: 
-    -24px 16px 32px -12px rgba(8, 46, 33, 0.35),
-     24px 16px 32px -12px rgba(8, 46, 33, 0.35),
-      0 32px 48px -12px rgba(8, 46, 33, 0.45),
+    -24px 16px 32px -12px rgba(8, 46, 33, 0.35), 
+     24px 16px 32px -12px rgba(8, 46, 33, 0.35), 
+      0 32px 48px -12px rgba(8, 46, 33, 0.45), 
       0 0 30px rgba(197, 160, 89, 0.15);
 }
 
@@ -327,46 +329,66 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .btq-price-wrap::before, .btq-price-wrap::after { content: ''; flex: 1; max-width: 40px; height: 1px; background: var(--gold-soft); }
 .btq-price { font-size: 0.875rem; color: var(--gray-500); font-weight: 500; letter-spacing: 0.02em; white-space: nowrap; }
 
-/* === DOT NAVIGASI DIPERBAIKI === */
+/* === TITIK NAVIGASI BARU === */
 .carousel-dots { 
-  display: flex; justify-content: center; gap: 6px; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  gap: 8px; 
   padding: 0; 
-  margin-top: -24px;          /* tarik ke atas, masuk ke ruang kosong track */
+  margin: 0 auto; 
   position: relative;
-  z-index: 20; 
+  z-index: 50; /* Memastikan titik selalu di lapisan paling atas */
+  
+  /* Menarik titik ke atas tanpa merusak aliran struktur (layout) */
+  transform: translateY(-16px); 
 }
+
 .carousel-dot {
-  width: 24px; height: 24px; padding: 0; border: none; border-radius: 50%;
-  background: radial-gradient(circle, var(--gold-soft) 3px, transparent 4px);
+  /* Menggunakan bentuk asli (width/height solid) agar pasti dirender browser */
+  width: 8px; 
+  height: 8px; 
+  padding: 0; 
+  border: none; 
+  border-radius: 50%;
+  background: var(--gold-soft);
   cursor: pointer;
-  transition: background 0.4s var(--transition-spring);
+  transition: background 0.3s ease, transform 0.3s ease;
 }
-.carousel-dot.active { background: radial-gradient(circle, var(--gold) 3px, transparent 4px); }
+
+.carousel-dot.active { 
+  background: var(--gold-bright); 
+  transform: scale(1.3); /* Membesar sedikit saat aktif */
+}
 
 /* =========================================
-   9. INSIGHT — Warna Emas Terang & Posisi Baru
+   9. INSIGHT — Teks Emas Terang
 ========================================= */
 .product-insight-container { 
   text-align: center; 
   padding: 0 24px; 
-  margin-top: 16px; 
+  margin-top: 0; /* Dinormalkan karena titik sudah dinaikkan via transform */
   min-height: 48px; 
   display: flex; 
   align-items: flex-start; 
   justify-content: center; 
   position: relative;
-  z-index: 20; 
+  z-index: 50; 
 }
 
 .typing-text { 
   font-family: 'DM Sans', sans-serif; 
   font-size: 0.875rem; 
-  color: var(--gold-bright);   /* emas terang, kontras di atas hijau */
+  color: var(--gold-bright); /* Warna emas terang agar kontras dengan hijau pekat */
   font-weight: 500; 
   font-style: italic; 
   letter-spacing: 0.02em; 
   margin: 0; 
-  line-height: 1.4;
+  line-height: 1.5;
+  
+  /* Memberikan pendaran halus di belakang teks agar lebih terbaca */
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  opacity: 1;
   transition: opacity 0.4s ease; 
 }
 
