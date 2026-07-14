@@ -156,22 +156,28 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .btn-loading { opacity: 0.7; cursor: wait; pointer-events: none; }
 
 /* =========================================
-   6. HEADER
+   6. HEADER — LEBIH RAMPING
 ========================================= */
 .luxury-header {
   position: fixed; top: 0; left: 0; right: 0; margin: 0 auto;
   width: calc(100% - 40px); max-width: 440px;
   display: flex; align-items: center; justify-content: space-between;
-  padding: calc(16px + env(safe-area-inset-top)) 20px 16px;
-  z-index: var(--z-header); background: rgba(253, 251, 247, 0.12);
+  padding: calc(12px + env(safe-area-inset-top)) 20px 12px;
+  height: 56px;
+  z-index: var(--z-header);
+  background: rgba(253, 251, 247, 0.12);
   backdrop-filter: var(--blur-soft) saturate(140%);
   -webkit-backdrop-filter: var(--blur-soft) saturate(140%);
-  border-bottom: 1px solid rgba(255,255,255,0.1); border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   transition: transform 0.5s var(--transition-spring), background-color 0.5s ease, box-shadow 0.5s ease, backdrop-filter 0.5s ease;
 }
 .luxury-header.scrolled {
-  background: var(--bg-surface); border-bottom: 1px solid rgba(0,0,0,0.04);
-  box-shadow: var(--shadow-soft); transform: translateY(-1px); backdrop-filter: var(--blur-medium);
+  background: var(--bg-surface);
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+  box-shadow: var(--shadow-soft);
+  transform: translateY(-1px);
+  backdrop-filter: var(--blur-medium);
 }
 .header-left {
   display: flex; align-items: center; gap: 10px;
@@ -199,7 +205,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .hero-editorial {
   width: calc(100% - 40px);
   max-width: 440px;
-  margin: calc(-92px - env(safe-area-inset-top)) auto 0;
+  margin: calc(-80px - env(safe-area-inset-top)) auto 0; /* menyesuaikan dengan header baru */
   padding: 0 !important;
   position: relative;
   z-index: 1;
@@ -414,20 +420,24 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .meta-dot { color: var(--gold-soft); }
 
 /* =========================================
-   11. BOTTOM NAV
+   11. BOTTOM NAV — LEBIH RAMPING
 ========================================= */
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0; margin: 0 auto;
   width: calc(100% - 40px); max-width: 440px;
-  z-index: var(--z-nav); background: var(--bg-surface); display: flex; justify-content: space-around;
-  align-items: center;
-  padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
-  border-top: 1px solid rgba(197,160,89,0.15); border-radius: 16px 16px 0 0;
+  z-index: var(--z-nav); background: var(--bg-surface);
+  display: flex; justify-content: space-around; align-items: center;
+  height: 60px;
+  padding: 0 0 env(safe-area-inset-bottom);
+  border-top: 1px solid rgba(197,160,89,0.15);
+  border-radius: 16px 16px 0 0;
   box-shadow: 0 -4px 24px rgba(0,0,0,0.02);
 }
 .nav-item {
-  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 0;
-  background: none; border: none; font: inherit; color: var(--gray-500); font-size: 0.75rem; font-weight: 600;
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 6px 0;
+  background: none; border: none; font: inherit; color: var(--gray-500);
+  font-size: 0.7rem; font-weight: 600;
   cursor: pointer; transition: color 0.3s ease, transform 0.2s ease; position: relative;
 }
 .nav-item.active { color: var(--green); transform: translateY(-4px); }
@@ -451,7 +461,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   12. MODALS & DRAWERS
+   12. MODALS & DRAWERS — PERBAIKAN SWIPER
 ========================================= */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); backdrop-filter: var(--blur-soft); -webkit-backdrop-filter: var(--blur-soft); z-index: var(--z-modal); display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
@@ -476,14 +486,31 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .product-swiper-overlay { position: fixed; inset: 0; background: var(--gray-900); z-index: var(--z-product); display: flex; flex-direction: column; overflow: hidden; }
 .glass-btn { background: rgba(253,251,247,0.9); border: 1px solid rgba(255,255,255,0.8); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--green); cursor: pointer; backdrop-filter: var(--blur-soft); transition: transform 0.2s ease; box-shadow: var(--shadow-card); }
 .glass-btn:active { transform: scale(0.92); }
-.product-swiper-track { display: flex; width: 100vw; max-width: 480px; height: 100dvh; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; touch-action: pan-x; }
+.product-swiper-track {
+  display: flex;
+  width: 100%;
+  height: 100dvh;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 .product-swiper-track::-webkit-scrollbar { display: none; }
 .product-slide {
-  flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: center;
-  overflow-y: auto; overflow-x: hidden; background: var(--bg-surface); position: relative;
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--bg-surface);
+  position: relative;
   overscroll-behavior: contain;
   padding-bottom: env(safe-area-inset-bottom);
-  touch-action: pan-y;   /* hanya vertikal, horizontal diteruskan ke track -> swipe ringan */
+  touch-action: pan-y;
 }
 .detail-image-wrap { width: 100%; aspect-ratio: 1 / 1; position: relative; background: var(--bg-subtle); }
 .detail-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -742,7 +769,7 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
 .fade-up.visible { opacity: 1; transform: translateY(0); }
 
 /* =========================================
-   23. FAB KERANJANG DI DETAIL (DIPERBAIKI)
+   23. FAB KERANJANG DI DETAIL
 ========================================= */
 .cart-fab-detail {
   position: fixed;
