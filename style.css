@@ -129,7 +129,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .btn-text-gold { background: none; border: none; color: var(--gold); font-size: 0.75rem; margin-top: 32px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; transition: opacity 0.3s ease; }
 .btn-text-gold:active { opacity: 0.6; }
 
-/* --- Animasi selamat datang kembali --- */
 #onbWelcomeName,
 #onbWelcomeDistrict {
   animation: luxuryFadeIn 0.8s var(--transition-spring) both;
@@ -157,7 +156,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .btn-loading { opacity: 0.7; cursor: wait; pointer-events: none; }
 
 /* =========================================
-   6. HEADER — transisi lambat untuk kesan mewah
+   6. HEADER
 ========================================= */
 .luxury-header {
   position: fixed; top: 0; left: 0; right: 0; margin: 0 auto;
@@ -190,7 +189,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .luxury-header.scrolled .user-loc { color: var(--gray-500); text-shadow: none; }
 
 /* =========================================
-   7. HERO — Radius Seragam & Posisi Presisi
+   7. HERO
 ========================================= */
 .content-wrapper {
   padding-bottom: calc(120px + env(safe-area-inset-bottom));
@@ -271,7 +270,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   8. CAROUSEL — 3D, Tanpa Border, Thumbnail Presisi
+   8. CAROUSEL
 ========================================= */
 .carousel-container {
   width: 100%;
@@ -345,7 +344,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .btq-price-wrap::before, .btq-price-wrap::after { content: ''; flex: 1; max-width: 40px; height: 1px; background: var(--gold-soft); }
 .btq-price { font-size: 0.875rem; color: var(--gray-500); font-weight: 500; letter-spacing: 0.02em; white-space: nowrap; }
 
-/* Titik Navigasi */
 .carousel-dots { 
   display: flex; justify-content: center; align-items: center;
   gap: 8px; 
@@ -367,7 +365,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   9. INSIGHT — Kontras & Keterbacaan Ditingkatkan
+   9. INSIGHT
 ========================================= */
 .product-insight-container { 
   text-align: center; 
@@ -402,7 +400,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   10. FOOTER — Aman dari Bottom Nav
+   10. FOOTER
 ========================================= */
 .luxury-footer {
   padding: 48px 16px calc(48px + env(safe-area-inset-bottom));
@@ -416,7 +414,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .meta-dot { color: var(--gold-soft); }
 
 /* =========================================
-   11. BOTTOM NAV — Safe‑area Dinamis & Ikon Simetris
+   11. BOTTOM NAV
 ========================================= */
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0; margin: 0 auto;
@@ -478,13 +476,14 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .product-swiper-overlay { position: fixed; inset: 0; background: var(--gray-900); z-index: var(--z-product); display: flex; flex-direction: column; overflow: hidden; }
 .glass-btn { background: rgba(253,251,247,0.9); border: 1px solid rgba(255,255,255,0.8); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--green); cursor: pointer; backdrop-filter: var(--blur-soft); transition: transform 0.2s ease; box-shadow: var(--shadow-card); }
 .glass-btn:active { transform: scale(0.92); }
-.product-swiper-track { display: flex; width: 100vw; max-width: 480px; height: 100dvh; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; }
+.product-swiper-track { display: flex; width: 100vw; max-width: 480px; height: 100dvh; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; touch-action: pan-x; }
 .product-swiper-track::-webkit-scrollbar { display: none; }
 .product-slide {
   flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: center;
   overflow-y: auto; overflow-x: hidden; background: var(--bg-surface); position: relative;
   overscroll-behavior: contain;
   padding-bottom: env(safe-area-inset-bottom);
+  touch-action: pan-y;
 }
 .detail-image-wrap { width: 100%; aspect-ratio: 1 / 1; position: relative; background: var(--bg-subtle); }
 .detail-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -524,7 +523,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .detail-manifesto p { color: var(--gray-900); font-family: 'Fraunces', serif; font-style: italic; margin: 0; }
 
 /* =========================================
-   13. AREA AKSI — Tombol Taktil & Mewah
+   13. AREA AKSI
 ========================================= */
 .floating-close {
   position: fixed !important;
@@ -607,7 +606,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   14. CERITA — Playfair Display
+   14. CERITA
 ========================================= */
 .detail-content .cerita-teks, 
 .detail-content i, 
@@ -649,9 +648,8 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
 .qris-frame img { width: 100%; height: auto; display: block; border-radius: 10px; }
 
 /* =========================================
-   16. KERANJANG — Kontras & Keterbacaan
+   16. KERANJANG
 ========================================= */
-/* Teks bantuan kecamatan */
 .checkout-forms > div[style*="color:var(--gold)"] {
   font-size: 0.7rem !important; 
   color: var(--gold-text) !important;
@@ -662,7 +660,7 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
 }
 
 /* =========================================
-   17. PEMBAYARAN — Total Lebih Menonjol
+   17. PEMBAYARAN
 ========================================= */
 #paymentTotalDisplay {
   font-size: 2.5rem;
@@ -673,7 +671,6 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
   letter-spacing: -0.02em;
 }
 
-/* Tombol Selesaikan Reservasi aman dari notch */
 #btnOpenPayment, #confirmPaymentBtn {
   margin-bottom: env(safe-area-inset-bottom);
   padding: 18px 24px;
@@ -727,16 +724,9 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
 /* =========================================
    21. CUSTOM SCROLLBAR (DESKTOP)
 ========================================= */
-::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--gold-soft);
-  border-radius: 4px;
-}
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gold-soft); border-radius: 4px; }
 
 /* =========================================
    22. REDUCED MOTION & UTILITIES
@@ -750,3 +740,79 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
 
 .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
 .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+/* =========================================
+   23. TOMBOL NAVIGASI SWIPE DETAIL
+========================================= */
+.swipe-nav-btn {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: calc(var(--z-fab) + 1);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(197, 160, 89, 0.3);
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-card);
+  transition: opacity 0.3s ease, transform 0.2s ease;
+  opacity: 0.85;
+}
+.swipe-nav-btn:active {
+  opacity: 1;
+  transform: translateY(-50%) scale(0.92);
+}
+.swipe-prev { left: 12px; }
+.swipe-next { right: 12px; }
+
+/* =========================================
+   24. FAB KERANJANG DI DETAIL
+========================================= */
+.cart-fab-detail {
+  position: fixed;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  right: 24px;
+  z-index: 600;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold) 0%, #B89650 100%);
+  color: white;
+  border: none;
+  box-shadow: var(--shadow-luxury);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.cart-fab-detail:active {
+  transform: scale(0.92);
+  box-shadow: var(--shadow-card);
+}
+.cart-fab-detail #cartBadgeDetail {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--green);
+  color: white;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+}
+.cart-fab-detail #cartBadgeDetail.show {
+  display: flex;
+}
