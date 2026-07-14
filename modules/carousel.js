@@ -5,12 +5,17 @@ const LOOP_MULTIPLIER = 3;
 let typeTimeout = null;
 let currentInsightId = null;
 
+// Variabel untuk auto‑play
+let autoScrollInterval = null;
+let scrollTimeout = null;
+const SCROLL_DELAY = 3500;      // jeda antar slide (ms)
+const RESUME_DELAY = 5000;      // tunggu setelah interaksi sebelum auto‑play nyala lagi
+
 export function initCarousel(trackId = 'menuList', insightId = 'productInsightText') {
   const track = document.getElementById(trackId);
   if (!track) return;
 
-  // Fungsi ini sekarang tidak hanya mengubah CSS (active-center), 
-  // tetapi juga mengembalikan 'index' kartu yang sedang aktif
+  // --- Fungsi updateCenter (sama persis seperti sebelumnya) ---
   const updateCenter = () => {
     const items = track.querySelectorAll('.boutique-item');
     if (!items.length) return -1;
@@ -18,7 +23,6 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
     const trackCenter = track.getBoundingClientRect().left + track.clientWidth / 2;
     let closestItem = null, minDistance = Infinity, closestIndex = -1;
     
-    // Cari kartu yang paling dekat dengan titik tengah layar
     items.forEach((item, index) => {
       const itemCenter = item.getBoundingClientRect().left + item.clientWidth / 2;
       const distance = Math.abs(trackCenter - itemCenter);
@@ -61,38 +65,34 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
       }
     }
     
-    return closestIndex; // Kirim index ke listener scroll
+    return closestIndex;
   };
 
+  // --- Infinite loop logic (teleportasi) ---
   let isScrolling;
   
   track.addEventListener('scroll', () => {
-    const currentIndex = updateCenter(); // Jalankan style saat digeser
+    const currentIndex = updateCenter();
     
     window.clearTimeout(isScrolling);
     
-    // Tunggu 250ms sampai CSS Snap benar-benar berhenti (mencegah bentrok)
     isScrolling = setTimeout(() => {
       if (currentIndex === -1) return;
       
       const baseCount = PRODUCTS.length;
       
-      // Jika pengguna sudah menggeser terlalu jauh ke ujung kiri atau kanan
       if (currentIndex < baseCount || currentIndex >= baseCount * (LOOP_MULTIPLIER - 1)) {
-        // Hitung index kembarannya di blok tengah
         const modulo = currentIndex % baseCount;
         const middleTarget = Math.floor(LOOP_MULTIPLIER / 2) * baseCount + modulo;
         const targetItem = track.children[middleTarget];
         
         if (targetItem) {
-          // Matikan smooth scroll sejenak agar teleportasi tidak terlihat
           track.style.scrollBehavior = 'auto';
           track.scrollTo({ 
             left: targetItem.offsetLeft - (track.clientWidth / 2) + (targetItem.clientWidth / 2), 
             behavior: 'instant' 
           });
           
-          // Nyalakan lagi setelah frame ter-render
           requestAnimationFrame(() => {
             track.style.scrollBehavior = 'smooth';
           });
@@ -101,7 +101,44 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
     }, 250); 
   }, { passive: true });
 
-  // Posisi awal saat web pertama kali dimuat (lompat ke tengah)
+  // --- Auto‑play functions ---
+  function startAutoScroll() {
+    stopAutoScroll();
+    autoScrollInterval = setInterval(() => {
+      const firstItem = track.querySelector('.boutique-item');
+      if (!firstItem) return;
+
+      const itemWidth = firstItem.offsetWidth + 16; // 16px gap
+      const maxScroll = track.scrollWidth - track.clientWidth;
+      let nextScroll = track.scrollLeft + itemWidth;
+
+      // Jika sudah di ujung kanan (virtual), reset ke 0 (infinite loop akan tangani teleportasi)
+      if (nextScroll >= maxScroll - 10) {
+        nextScroll = 0;
+      }
+
+      track.scrollTo({
+        left: nextScroll,
+        behavior: 'smooth'
+      });
+    }, SCROLL_DELAY);
+  }
+
+  function stopAutoScroll() {
+    clearInterval(autoScrollInterval);
+  }
+
+  // --- Event listeners untuk auto‑play ---
+  track.addEventListener('touchstart', stopAutoScroll, { passive: true });
+  track.addEventListener('mousedown', stopAutoScroll);
+
+  track.addEventListener('scroll', () => {
+    stopAutoScroll();
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(startAutoScroll, RESUME_DELAY);
+  }, { passive: true });
+
+  // --- Inisialisasi posisi awal & auto‑play ---
   setTimeout(() => {
     track.style.scrollBehavior = 'auto';
     const midPoint = Math.floor(LOOP_MULTIPLIER / 2) * PRODUCTS.length;
@@ -115,5 +152,8 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
        track.style.scrollBehavior = 'smooth';
        updateCenter();
     });
+
+    // Mulai auto‑play setelah posisi awal siap
+    startAutoScroll();
   }, 100);
 }
