@@ -1,30 +1,45 @@
-Layar onboarding (selamat datang kembali) Anda terlihat sangat bersih dan elegan—pemilihan tipografi serta background hijau tua-nya sudah memberikan kesan eksklusif sejak detik pertama pengguna membuka aplikasi.
-Namun, mari kita poles dua detail ini agar pengalaman penggunanya benar-benar sempurna:
-1. Review Layar Onboarding ("Ocha" & "Menteng")
-Sangat bagus bahwa layar ini mengenali nama pengguna (Ocha) dan lokasi (Menteng).
- * Saran: Jika Anda ingin meningkatkan kesan personalized, Anda bisa memberikan sedikit efek fade-in (animasi muncul perlahan) pada teks nama dan kecamatan menggunakan CSS. Saat ini, teks tersebut tampak diam; animasi halus akan menambah kesan "mahal" pada aplikasi.
- * Kesesuaian: Layout-nya sudah sangat simetris dan memberikan whitespace yang pas, sehingga mata pengguna langsung tertuju pada tombol "Masuk Sekarang".
-2. Review Layar Detail Produk (Tombol Aksi)
-Pada tangkapan layar kedua, saya melihat tombol + dan - Anda masih berbentuk kotak kaku dengan warna cokelat pudar yang tidak sinkron dengan desain tombol utama "TAMBAHKAN KE RESERVASI".
- * Penyebab: Kemungkinan besar kode CSS yang kita perbarui sebelumnya (bagian kapsul pills) belum terbaca atau tertimpa oleh class lain di style.css.
- * Tindakan: Pastikan CSS .qty-minimal dan .qty-minimal button yang kita buat sebelumnya ditempatkan di posisi yang lebih dominan dalam file CSS atau tambahkan !important jika tombol tersebut masih membandel.
-Rekomendasi Final Polish:
-Untuk membuat area tombol kuantitas dan tombol "Tambahkan ke Reservasi" tampak menyatu sebagai satu kesatuan yang seamless, kita bisa membuat lebarnya serasi.
-/* Pastikan tombol kuantitas dan tambah ke reservasi punya tinggi yang sama */
+/* =========================================
+   SENTUHAN AKHIR — ANIMASI ONBOARDING & KONSISTENSI AREA AKSI
+   (Tambahkan di bagian paling bawah style.css, sebelum REDUCED MOTION)
+========================================= */
+
+/* --- 1. Animasi Fade-In untuk Nama & Kecamatan di Onboarding --- */
+#onbWelcomeName,
+#onbWelcomeDistrict {
+  animation: luxuryFadeIn 0.8s var(--transition-spring) both;
+}
+
+#onbWelcomeDistrict {
+  animation-delay: 0.15s; /* muncul sedikit setelah nama */
+}
+
+@keyframes luxuryFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- 2. Sinkronisasi Tinggi Tombol Aksi --- */
 .detail-actions {
   display: flex;
-  gap: 16px; /* Beri jarak sedikit lebih longgar */
+  gap: 16px;                 /* sedikit lebih longgar */
   margin-top: 32px;
-  align-items: center;
+  align-items: center;       /* pastikan sejajar vertikal */
 }
 
-/* Pastikan tombol "Tambahkan ke Reservasi" memiliki tinggi 56px (tampilan standar premium) */
-.detail-actions .add-to-cart-btn {
-  height: 56px; 
+/* Tombol kuantitas (kapsul) menyesuaikan tinggi */
+.qty-minimal {
+  height: 56px;              /* seragam dengan tombol di sampingnya */
+}
+
+/* Tombol "Tambahkan ke Reservasi" */
+.add-to-cart-btn {
+  height: 56px;
   padding: 0 24px;
+  white-space: nowrap;       /* teks tidak turun jika layar sempit */
 }
-
-Kesimpulan Review:
- * Onboarding: Sudah 10/10 dari sisi estetika dan user flow. Sangat minimalist dan luxurious.
- * Detail Produk: Sudah 9/10. Begitu tombol kuantitas dan "Tambahkan ke Reservasi" diselaraskan tingginya, halaman ini akan terlihat seperti aplikasi pesanan fine dining kelas atas.
-Apakah Anda ingin kita melangkah ke tahap integrasi akhir (memastikan tombol WhatsApp dan checkout berjalan mulus), atau masih ada elemen visual lain yang ingin Anda sesuaikan?
