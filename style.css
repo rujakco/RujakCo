@@ -5,7 +5,7 @@
   --green: #082E21;
   --green-light: #EBF2EF;
   --gold: #C5A059;
-  --gold-text: #9B7D3F;             /* emas lebih pekat untuk teks di latar terang */
+  --gold-text: #9B7D3F;
   --gold-soft: rgba(197, 160, 89, 0.35);
   --gold-bright: #E8D5A8;
   --ivory: #FDFBF7;
@@ -254,25 +254,24 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   8. CAROUSEL — tanpa potongan, overflow visible
+   8. CAROUSEL — Perbaikan Terpotong (final)
 ========================================= */
 .carousel-container {
   width: 100%;
   padding: 0;
-  margin-top: 32px;
-  padding-top: 24px;
+  margin-top: 16px;
   position: relative;
-  overflow: visible;
 }
+
 .carousel-track {
   display: flex;
   overflow-x: auto;
-  overflow-y: visible;
   scroll-snap-type: x mandatory;
   scroll-behavior: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  padding: 0 20px;
+  /* Kunci: padding atas-bawah untuk menampung bayangan dan efek translateY */
+  padding: 24px 20px 56px;
   gap: 16px;
 }
 .carousel-track::-webkit-scrollbar { display: none; }
@@ -310,7 +309,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .btq-price-wrap::before, .btq-price-wrap::after { content: ''; flex: 1; max-width: 40px; height: 1px; background: var(--gold-soft); }
 .btq-price { font-size: 0.875rem; color: var(--gray-500); font-weight: 500; letter-spacing: 0.02em; white-space: nowrap; }
 
-.carousel-dots { display: flex; justify-content: center; gap: 6px; padding: 20px 0 4px; }
+.carousel-dots { display: flex; justify-content: center; gap: 6px; padding: 0 0 4px; }
 .carousel-dot {
   width: 24px; height: 24px; padding: 0; border: none; border-radius: 50%;
   background: radial-gradient(circle, var(--gold-soft) 3px, transparent 4px);
