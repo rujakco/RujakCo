@@ -254,24 +254,47 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   8. CAROUSEL — Perbaikan Terpotong (final)
+   8. CAROUSEL — Bayangan Tepi & Anti-Potong
 ========================================= */
 .carousel-container {
   width: 100%;
   padding: 0;
   margin-top: 16px;
   position: relative;
+  overflow: visible;
+}
+
+/* Bayangan transparan kiri & kanan */
+.carousel-container::before,
+.carousel-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 60px;           /* berhenti sebelum dot navigasi */
+  width: 48px;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.carousel-container::before {
+  left: 0;
+  background: linear-gradient(to right, var(--green) 5%, transparent 100%);
+}
+
+.carousel-container::after {
+  right: 0;
+  background: linear-gradient(to left, var(--green) 5%, transparent 100%);
 }
 
 .carousel-track {
   display: flex;
   overflow-x: auto;
+  overflow-y: visible;
   scroll-snap-type: x mandatory;
-  scroll-behavior: auto;
+  scroll-behavior: smooth;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  /* Kunci: padding atas-bawah untuk menampung bayangan dan efek translateY */
-  padding: 24px 20px 56px;
+  padding: 24px 20px 56px;  /* ruang untuk bayangan & translateY */
   gap: 16px;
 }
 .carousel-track::-webkit-scrollbar { display: none; }
@@ -319,11 +342,35 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .carousel-dot.active { background: radial-gradient(circle, var(--gold) 3px, transparent 4px); }
 
 /* =========================================
-   9. INSIGHT
+   9. INSIGHT — Posisi & Keterbacaan
 ========================================= */
-.product-insight-container { text-align: center; padding: 0 24px; margin-top: 16px; min-height: 56px; display: flex; align-items: flex-start; justify-content: center; }
-.typing-text { font-family: 'DM Sans', sans-serif; color: var(--gold); font-style: italic; letter-spacing: 0.02em; margin: 0; transition: opacity 0.4s ease; }
-.typing-text.fade-out { opacity: 0; }
+.product-insight-container {
+  text-align: center;
+  padding: 0 24px;
+  margin-top: -12px;         /* tarik lebih dekat ke dot */
+  min-height: 48px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+  z-index: 10;               /* di atas bayangan tepi */
+}
+
+.typing-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.875rem;
+  color: var(--gold-text);   /* emas lebih pekat */
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  margin: 0;
+  line-height: 1.4;
+  transition: opacity 0.4s ease;
+}
+
+.typing-text.fade-out {
+  opacity: 0;
+}
 
 /* =========================================
    10. FOOTER — aman dari bottom nav
