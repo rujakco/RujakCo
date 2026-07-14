@@ -251,20 +251,24 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   8. CAROUSEL — ruang napas ekstra & perbaikan potongan
+   8. CAROUSEL — tanpa potongan atas (overflow visible, tanpa container-type)
 ========================================= */
 .carousel-container {
   width: 100%;
   padding: 0;
-  margin-top: 32px;        /* ruang vertikal lebih dari hero */
-  padding-top: 24px;       /* memberi ruang bagi shadow & efek angkat item aktif */
-  container-type: inline-size;
+  margin-top: 32px;
+  padding-top: 24px;
   position: relative;
+  overflow: visible;                /* mengatasi containment clipping */
 }
 .carousel-track {
-  display: flex; overflow-x: auto;
-  scroll-snap-type: x mandatory; scroll-behavior: auto;
-  -ms-overflow-style: none; scrollbar-width: none;
+  display: flex;
+  overflow-x: auto;
+  overflow-y: visible;             /* pastikan tidak terpotong vertikal */
+  scroll-snap-type: x mandatory;
+  scroll-behavior: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   padding: 0 20px;
   gap: 16px;
 }
