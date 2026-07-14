@@ -9,7 +9,7 @@ import { renderMenu, renderProductSwiper, renderCart, renderMiniCart } from './m
 import { initCarousel } from './modules/carousel.js';
 import { initAIChat } from './modules/chat.js';
 import { initAccessibility } from './modules/accessibility.js';
-import { validatePhone, validateAddress, processPayment, confirmOrder } from './modules/checkout.js';
+import { validatePhone, validateAddress, processPayment, confirmOrder, getCartSummary } from './modules/checkout.js';
 
 // ---------------------------------------------------------------------------
 // STATE
@@ -63,6 +63,7 @@ const cacheDOM = () => {
   DOM.paymentModal = document.getElementById('paymentModal');
   DOM.paymentTotal = document.getElementById('paymentTotalDisplay');
   DOM.aiChatBox = document.getElementById('aiChatBox');
+  DOM.aboutModal = document.getElementById('aboutModal');
   DOM.shippingSection = document.getElementById('shippingSection');
   DOM.rujakcoOptions = document.getElementById('rujakcoOptions');
   DOM.paxelOptions = document.getElementById('paxelOptions');
@@ -86,30 +87,15 @@ function applyPersonalization() {
 // ---------------------------------------------------------------------------
 // Cart utilities
 // ---------------------------------------------------------------------------
-function getCartSummary() {
-  const items = [];
-  let subtotal = 0;
-  let mainProductQty = 0;
-  Object.keys(state.cart).forEach(key => {
-    const entry = state.cart[key];
-    const [pid] = key.split('_spice');
-    const product = PRODUCTS.find(p => p.id === pid);
-    if (!product || !entry || entry.qty <= 0) {
-      delete state.cart[key];
-      return;
-    }
-    items.push({ cartId: key, id: pid, name: product.name, price: product.price, qty: entry.qty, spice: entry.spice });
-    subtotal += product.price * entry.qty;
-    mainProductQty += entry.qty;
-  });
-  return { items, subtotal, mainProductQty };
+function getCartSummaryLocal() {
+  return getCartSummary(state.cart); // gunakan dari checkout.js
 }
 
 function updateShippingUI() {
   if (!DOM.shippingSection) return;
   const dist = state.selectedDistrict ? getDistance(state.selectedDistrict) : state.userDistance;
   if (dist) DOM.shippingSection.style.display = 'block';
-  const { subtotal, mainProductQty } = getCartSummary();
+  const { subtotal, mainProductQty } = getCartSummaryLocal();
   const ship = calculateShipping(dist ?? SYSTEM.DEFAULT_DISTANCE, mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority);
   document.getElementById('shippingDistance').textContent = dist ? `${dist} km` : '';
   DOM.finalShipping.textContent = ship.cost ? fmt(ship.cost) : '...';
@@ -177,12 +163,18 @@ function openProductPage(globalIndex) {
     });
   }, { rootMargin: '0px 0px 200px 0px' });
   document.querySelectorAll('.product-slide').forEach(slide => observer.observe(slide));
+  // Simpan observer untuk disconnect nanti
+  DOM._productObserver = observer;
 }
 
 function closeProductPage() {
   DOM.productPage.style.display = 'none';
   DOM.productPage.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
+  if (DOM._productObserver) {
+    DOM._productObserver.disconnect();
+    DOM._productObserver = null;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -312,6 +304,16 @@ function initScrollReveal() {
 // Main delegation & event binding
 // ---------------------------------------------------------------------------
 function bindEvents() {
+  // --- About modal (new) ---
+  const aboutTrigger = document.getElementById('aboutTrigger');
+  const aboutClose = document.getElementById('aboutClose');
+  if (aboutTrigger && DOM.aboutModal) {
+    aboutTrigger.addEventListener('click', () => openModal(DOM.aboutModal));
+  }
+  if (aboutClose && DOM.aboutModal) {
+    aboutClose.addEventListener('click', () => closeModal(DOM.aboutModal));
+  }
+
   document.addEventListener('click', (e) => {
     // Carousel boutique item
     const boutique = e.target.closest('.boutique-item');
@@ -330,13 +332,11 @@ function bindEvents() {
       const step2 = document.getElementById(`step2_${idx}_${pid}`);
 
       if (step1 && step2) {
-        // Efek hilang yang lembut pada tombol
         step1.style.transition = 'opacity 0.3s ease';
         step1.style.opacity = '0';
         setTimeout(() => {
           step1.style.display = 'none';
           step2.style.display = 'block';
-          // Fokus ke opsi pertama untuk aksesibilitas
           const firstOption = step2.querySelector('.spice-option');
           if (firstOption) firstOption.focus();
         }, 300);
@@ -369,7 +369,7 @@ function bindEvents() {
 
     // Add to cart
     if (e.target.classList.contains('add-to-cart-btn')) {
-      if (window.navigator.vibrate) window.navigator.vibrate(10); // Lebih halus
+      if (window.navigator.vibrate) window.navigator.vibrate(10);
       const pid = e.target.dataset.pid;
       const draft = state.drafts[pid];
       const cartKey = pid + '_spice' + draft.spice;
@@ -516,13 +516,14 @@ function init() {
     DOM.header?.classList.toggle('scrolled', window.scrollY > 50);
   }, { passive: true });
 
-  // Keyboard accessibility: close modal with Escape
+  // Keyboard accessibility: close modal with Escape (handles all modals)
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       if (DOM.productPage.style.display === 'flex') closeProductPage();
       else if (DOM.miniCartModal.classList.contains('active')) closeModal(DOM.miniCartModal);
       else if (DOM.paymentModal.classList.contains('active')) closeModal(DOM.paymentModal);
       else if (DOM.aiChatBox.classList.contains('active')) closeModal(DOM.aiChatBox);
+      else if (DOM.aboutModal?.classList.contains('active')) closeModal(DOM.aboutModal);
     }
   });
 }
