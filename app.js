@@ -1,4 +1,4 @@
-// app.js — Luxury Edition: tenang, presisi, dan penuh perhatian pada detail
+// app.js — Luxury Edition
 import { PRODUCTS } from './data/products.js';
 import { DISTRICT_MAP } from './data/districts.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
