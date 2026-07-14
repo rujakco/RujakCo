@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (swipe horizontal + swipe‑to‑close harmonis)
+// app.js — Luxury Edition (swipe horizontal + swipe‑to‑close + history back aman)
 import { PRODUCTS } from './data/products.js';
 import { DISTRICT_MAP } from './data/districts.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
@@ -139,18 +139,23 @@ function closeModal(modalEl) {
 }
 
 // ---------------------------------------------------------------------------
-// Product page & swiper
+// Product page & swiper (dengan History API)
 // ---------------------------------------------------------------------------
 function openProductPage(globalIndex) {
   DOM.productPage.style.display = 'flex';
   DOM.productPage.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
+
+  // Dorong state baru agar gesture back Android bisa kembali ke halaman utama
+  history.pushState({ detailOpen: true, productIndex: globalIndex }, '');
+
   const targetSlide = document.querySelector(`.product-slide[data-idx="${globalIndex}"]`);
   if (targetSlide) {
     DOM.productSwiperTrack.style.scrollBehavior = 'auto';
     DOM.productSwiperTrack.scrollLeft = targetSlide.offsetLeft;
     DOM.productSwiperTrack.style.scrollBehavior = 'smooth';
   }
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -166,18 +171,24 @@ function openProductPage(globalIndex) {
   DOM._productObserver = observer;
 }
 
-function closeProductPage() {
+function closeProductPage(useHistoryBack = true) {
   DOM.productPage.style.display = 'none';
   DOM.productPage.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
+
   if (DOM._productObserver) {
     DOM._productObserver.disconnect();
     DOM._productObserver = null;
   }
+
+  // Jika diminta, lakukan history.back() untuk sinkronisasi state
+  if (useHistoryBack && history.state?.detailOpen) {
+    history.back();
+  }
 }
 
 // ---------------------------------------------------------------------------
-// Gesture: swipe produk & tutup detail (HANDAL, TIDAK KONFLIK)
+// Gesture: swipe produk & tutup detail (AMAN, HORMATI GESTURE BACK)
 // ---------------------------------------------------------------------------
 function initDetailGestures() {
   const track = DOM.productSwiperTrack;
@@ -190,8 +201,18 @@ function initDetailGestures() {
 
   track.addEventListener('touchstart', (e) => {
     if (e.touches.length > 1) return;
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
+    
+    const touch = e.touches[0];
+    startX = touch.clientX;
+    startY = touch.clientY;
+
+    // Abaikan sentuhan dari 30px kiri/kanan untuk gesture back Android
+    if (startX < 30 || startX > window.innerWidth - 30) {
+      isPulling = false;
+      activeSlide = null;
+      return;
+    }
+
     activeSlide = e.target.closest('.product-slide');
     isPulling = activeSlide && activeSlide.scrollTop <= 0;
     gestureDetermined = false;
@@ -228,7 +249,7 @@ function initDetailGestures() {
     const dy = e.changedTouches[0].clientY - startY;
     activeSlide.style.transition = 'all 0.3s ease';
     if (dy > 120) {
-      closeProductPage();
+      closeProductPage(true);   // memanggil history.back()
     } else {
       activeSlide.style.transform = 'translateY(0)';
     }
@@ -406,7 +427,7 @@ function bindEvents() {
       return;
     }
 
-    // Confirm via WA
+    // Confirm via WA (sebelum cart item actions)
     if (e.target.closest('[data-action="confirm-wa"]')) {
       confirmOrder(state.cart, state, updateCartUI)(e);
       return;
@@ -479,7 +500,7 @@ function bindEvents() {
 
     // Back from product
     if (e.target.closest('#backFromProduct')) {
-      closeProductPage();
+      closeProductPage(true);
       return;
     }
 
@@ -529,7 +550,7 @@ function init() {
   renderMenu();
   renderProductSwiper();
   initCarousel();
-  initDetailGestures();   // ← gesture gabungan yang aman
+  initDetailGestures();       // gesture swipe horizontal & tarik-turun yang aman
   initAccessibility();
   const updateWelcome = initAIChat();
   if (updateWelcome) updateWelcome(state.customerName || 'Ngoedi');
@@ -538,13 +559,21 @@ function init() {
   initOnboarding();
   updateCartUI();
 
+  // Listener untuk gesture back Android / tombol back browser
+  window.addEventListener('popstate', (event) => {
+    if (DOM.productPage.style.display === 'flex') {
+      // Tutup detail tanpa memanggil history.back() lagi (karena sudah dipicu oleh popstate)
+      closeProductPage(false);
+    }
+  });
+
   window.addEventListener('scroll', () => {
     DOM.header?.classList.toggle('scrolled', window.scrollY > 50);
   }, { passive: true });
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      if (DOM.productPage.style.display === 'flex') closeProductPage();
+      if (DOM.productPage.style.display === 'flex') closeProductPage(true);
       else if (DOM.miniCartModal.classList.contains('active')) closeModal(DOM.miniCartModal);
       else if (DOM.paymentModal.classList.contains('active')) closeModal(DOM.paymentModal);
       else if (DOM.aiChatBox.classList.contains('active')) closeModal(DOM.aiChatBox);
