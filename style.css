@@ -5,12 +5,13 @@
   --green: #082E21;
   --green-light: #EBF2EF;
   --gold: #C5A059;
+  --gold-text: #9B7D3F;             /* emas lebih pekat untuk teks di latar terang */
   --gold-soft: rgba(197, 160, 89, 0.35);
   --gold-bright: #E8D5A8;
   --ivory: #FDFBF7;
   --bg-surface: #FDFBF7;
   --bg-subtle: #F6F4F0;
-  
+
   --gray-100: #F4F2EE;
   --gray-200: #E6E4DF;
   --gray-300: #D1CFCA;
@@ -142,13 +143,13 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .btn-gold:active, .btn-dark:active { transform: scale(0.98); opacity: 0.9; }
 
 /* =========================================
-   6. HEADER
+   6. HEADER — dinamis mengikuti safe‑area
 ========================================= */
 .luxury-header {
   position: fixed; top: 0; left: 0; right: 0; margin: 0 auto;
   width: calc(100% - 40px); max-width: 440px;
   display: flex; align-items: center; justify-content: space-between;
-  padding: calc(12px + env(safe-area-inset-top)) 16px 12px;
+  padding: calc(16px + env(safe-area-inset-top)) 20px 16px;
   z-index: var(--z-header); background: rgba(253, 251, 247, 0.12);
   backdrop-filter: var(--blur-soft) saturate(140%);
   -webkit-backdrop-filter: var(--blur-soft) saturate(140%);
@@ -175,14 +176,17 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .luxury-header.scrolled .user-loc { color: var(--gray-500); text-shadow: none; }
 
 /* =========================================
-   7. HERO — margin baru & frame perbaikan
+   7. HERO — posisi dinamis & frame emas
 ========================================= */
-.content-wrapper { padding-bottom: 80px; overflow-x: hidden; }
+.content-wrapper {
+  padding-bottom: calc(120px + env(safe-area-inset-bottom));
+  overflow-x: hidden;
+}
 
 .hero-editorial {
   width: calc(100% - 40px);
   max-width: 440px;
-  margin: -110px auto 0;
+  margin: calc(-72px - env(safe-area-inset-top)) auto 0;
   padding: 0 !important;
   position: relative;
   z-index: 1;
@@ -194,7 +198,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   box-shadow: var(--shadow-floating);
 }
 
-/* Bingkai emas melalui pseudo-element dengan masking */
 .hero-gold-frame::before {
   content: '';
   position: absolute;
@@ -246,12 +249,12 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   text-transform: uppercase;
   color: rgba(255,255,255,0.9);
   margin: 0;
-  font-size: 0.7rem;               /* diperkecil */
-  transform: translateY(5px);      /* turun 5px */
+  font-size: 0.7rem;
+  transform: translateY(5px);
 }
 
 /* =========================================
-   8. CAROUSEL — tanpa potongan atas (overflow visible, tanpa container-type)
+   8. CAROUSEL — tanpa potongan, overflow visible
 ========================================= */
 .carousel-container {
   width: 100%;
@@ -259,12 +262,12 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   margin-top: 32px;
   padding-top: 24px;
   position: relative;
-  overflow: visible;                /* mengatasi containment clipping */
+  overflow: visible;
 }
 .carousel-track {
   display: flex;
   overflow-x: auto;
-  overflow-y: visible;             /* pastikan tidak terpotong vertikal */
+  overflow-y: visible;
   scroll-snap-type: x mandatory;
   scroll-behavior: auto;
   -ms-overflow-style: none;
@@ -324,9 +327,13 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .typing-text.fade-out { opacity: 0; }
 
 /* =========================================
-   10. FOOTER
+   10. FOOTER — aman dari bottom nav
 ========================================= */
-.luxury-footer { padding: 48px 16px 120px; background: var(--green); border-top: 1px solid rgba(197,160,89,0.12); }
+.luxury-footer {
+  padding: 48px 16px calc(48px + env(safe-area-inset-bottom));
+  background: var(--green);
+  border-top: 1px solid rgba(197,160,89,0.12);
+}
 .footer-row { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; width: 100%; max-width: 448px; margin: 0 auto; text-align: center; }
 .footer-brand { color: var(--gold); margin-bottom: 4px; }
 .footer-tagline { font-family: 'DM Sans', sans-serif; font-size: 0.875rem; color: rgba(255,255,255,0.7); font-style: italic; letter-spacing: 0.05em; margin-bottom: 16px; }
@@ -334,13 +341,14 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .meta-dot { color: var(--gold-soft); }
 
 /* =========================================
-   11. BOTTOM NAV — margin baru
+   11. BOTTOM NAV — full dynamic safe‑area
 ========================================= */
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0; margin: 0 auto;
   width: calc(100% - 40px); max-width: 440px;
   z-index: var(--z-nav); background: var(--bg-surface); display: flex; justify-content: space-around;
-  align-items: center; padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+  align-items: center;
+  padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
   border-top: 1px solid rgba(197,160,89,0.15); border-radius: 16px 16px 0 0;
   box-shadow: 0 -4px 24px rgba(0,0,0,0.02);
 }
@@ -372,7 +380,11 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .drawer-header h3 { color: var(--green); }
 .glass-btn-dark { background: var(--bg-subtle); border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gray-900); cursor: pointer; transition: background-color 0.2s ease; }
 .glass-btn-dark:active { background: var(--gray-200); }
-.drawer-body { flex: 1; overflow-y: auto; padding: 24px 24px 32px; }
+.drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 24px calc(40px + env(safe-area-inset-bottom));
+}
 
 /* Product Page Modals */
 .product-swiper-overlay { position: fixed; inset: 0; background: var(--gray-900); z-index: var(--z-product); display: flex; flex-direction: column; overflow: hidden; }
@@ -389,7 +401,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .detail-content { padding: 28px 20px 60px; background: var(--bg-surface); position: relative; z-index: 2; margin-top: -24px; border-radius: var(--radius-2xl) var(--radius-2xl) 0 0; min-height: 60vh; box-shadow: var(--shadow-soft); }
 .detail-content h2 { color: var(--green); margin-bottom: 4px; }
 .detail-price-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-.detail-price { font-size: 1.125rem; color: var(--gold); font-weight: 500; letter-spacing: 0.05em; margin: 0; }
+.detail-price { font-size: 1.125rem; color: var(--gold-text); font-weight: 600; letter-spacing: 0.05em; margin: 0; }
 .price-line { flex: 1; height: 1px; background: var(--gold); opacity: 0.35; }
 .detail-desc { color: var(--gray-900); margin-bottom: 32px; text-align: justify; }
 .action-area { margin-bottom: 40px; }
@@ -412,14 +424,14 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .detail-manifesto h4 { font-size: 0.75rem; color: var(--gold); margin-bottom: 12px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; }
 .detail-manifesto p { color: var(--gray-900); font-family: 'Fraunces', serif; font-style: italic; margin: 0; }
 
-/* Forms, Inputs & Logistics */
+/* Forms, Inputs & Logistics — rapi & mudah di‑tap */
 .cart-item-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--gray-200); }
 .cart-empty { text-align: center; padding: 40px 16px; color: var(--gray-500); }
-.cart-item-info p { font-size: 0.875rem; color: var(--gold); margin: 0; font-weight: 500; }
+.cart-item-info p { font-size: 0.875rem; color: var(--gold-text); margin: 0; font-weight: 600; }
 .drawer-subtotal { display: flex; justify-content: space-between; font-weight: 600; padding: 24px 0; border-bottom: 1px solid var(--gray-200); margin-bottom: 32px; color: var(--gray-500); }
 .input-minimal {
   width: 100%; border: none; border-bottom: 1px solid var(--gray-300); background: transparent;
-  padding: 14px 0; font-family: inherit; font-size: 1rem; margin-bottom: 24px; border-radius: 0;
+  padding: 16px 0; font-family: inherit; font-size: 1rem; margin-bottom: 24px; border-radius: 0;
   transition: border-color 0.3s ease, box-shadow 0.3s ease; outline: none; color: var(--gray-900);
 }
 .input-minimal:focus { border-bottom-color: var(--gold); box-shadow: var(--shadow-glow); }
@@ -428,8 +440,8 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
 .minimal-dropdown { display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--gray-200); z-index: 10; max-height: 200px; overflow-y: auto; box-shadow: var(--shadow-floating); border-radius: var(--radius-md); margin-top: 4px; }
 .minimal-dropdown div { padding: 14px 20px; font-size: 0.875rem; cursor: pointer; border-bottom: 1px solid var(--gray-100); transition: background-color 0.2s ease, color 0.2s ease; }
 .minimal-dropdown div:hover { background: var(--green-light); color: var(--green); }
-.logistic-options { display: flex; gap: 12px; margin-bottom: 20px; }
-.log-btn, .veh-btn { flex: 1; padding: 14px; background: transparent; border: 1px solid var(--gray-300); border-radius: var(--radius-md); font-size: 0.875rem; color: var(--gray-500); cursor: pointer; transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease; font-weight: 500; }
+.logistic-options { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.log-btn, .veh-btn { flex: 1; padding: 14px; background: transparent; border: 1px solid var(--gray-300); border-radius: var(--radius-md); font-size: 0.875rem; color: var(--gray-500); cursor: pointer; transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease; font-weight: 500; white-space: nowrap; }
 .log-btn.active, .veh-btn.active { border-color: var(--green); color: var(--green); background: var(--green-light); font-weight: 600; }
 .priority-label { font-size: 0.875rem; color: var(--gray-500); display: flex; align-items: center; gap: 10px; cursor: pointer; }
 .priority-label input { accent-color: var(--green); width: 20px; height: 20px; }
