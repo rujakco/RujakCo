@@ -162,8 +162,8 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   position: fixed; top: 0; left: 0; right: 0; margin: 0 auto;
   width: calc(100% - 40px); max-width: 440px;
   display: flex; align-items: center; justify-content: space-between;
-  padding: calc(12px + env(safe-area-inset-top)) 20px 12px;
-  height: 56px;
+  /* Padding atas-bawah dikurangi menjadi 10px */
+  padding: calc(10px + env(safe-area-inset-top)) 16px 10px; 
   z-index: var(--z-header);
   background: rgba(253, 251, 247, 0.12);
   backdrop-filter: var(--blur-soft) saturate(140%);
@@ -183,8 +183,15 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   display: flex; align-items: center; gap: 10px;
   background: none; border: none; font: inherit; color: inherit; padding: 0; cursor: pointer;
 }
-.brand-logo img { width: 32px; height: 32px; border-radius: 50%; box-shadow: var(--shadow-soft); }
-.brand-name { font-size: 1.125rem; color: #FFFFFF; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.2); transition: color 0.4s ease, text-shadow 0.4s ease; }
+.brand-logo img { 
+  width: 28px; /* Dikecilkan dari 32px */
+  height: 28px; 
+  border-radius: 50%; box-shadow: var(--shadow-soft);
+}
+.brand-name { 
+  font-size: 1rem; /* Dikecilkan sedikit */
+  color: #FFFFFF; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.2); transition: color 0.4s ease, text-shadow 0.4s ease; 
+}
 .luxury-header.scrolled .brand-name { color: var(--green); text-shadow: none; }
 
 .header-right { display: flex; align-items: center; gap: 4px; }
@@ -205,7 +212,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .hero-editorial {
   width: calc(100% - 40px);
   max-width: 440px;
-  margin: calc(-80px - env(safe-area-inset-top)) auto 0; /* menyesuaikan dengan header baru */
+  margin: calc(-80px - env(safe-area-inset-top)) auto 0;
   padding: 0 !important;
   position: relative;
   z-index: 1;
@@ -427,23 +434,30 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   width: calc(100% - 40px); max-width: 440px;
   z-index: var(--z-nav); background: var(--bg-surface);
   display: flex; justify-content: space-around; align-items: center;
-  height: 60px;
-  padding: 0 0 env(safe-area-inset-bottom);
+  /* Padding atas-bawah dikurangi menjadi 8px */
+  padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
   border-top: 1px solid rgba(197,160,89,0.15);
   border-radius: 16px 16px 0 0;
   box-shadow: 0 -4px 24px rgba(0,0,0,0.02);
 }
 .nav-item {
   flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
-  padding: 6px 0;
+  padding: 4px 0; /* lebih kecil */
   background: none; border: none; font: inherit; color: var(--gray-500);
   font-size: 0.7rem; font-weight: 600;
   cursor: pointer; transition: color 0.3s ease, transform 0.2s ease; position: relative;
 }
 .nav-item.active { color: var(--green); transform: translateY(-4px); }
 .nav-item.active::after { content: ''; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); width: 20px; height: 2px; background: var(--gold); border-radius: 2px; }
-.nav-icon { width: 24px; height: 24px; }
-.nav-label { display: block; line-height: 1.2; }
+.nav-icon { 
+  width: 20px; /* Ikon dikecilkan dari 24px */
+  height: 20px; 
+}
+.nav-label { 
+  display: block; line-height: 1.2; 
+  font-size: 0.65rem; 
+  margin-top: 2px; 
+}
 .nav-cart-wrapper { position: relative; display: inline-block; }
 .nav-badge {
   position: absolute;
@@ -461,7 +475,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   12. MODALS & DRAWERS — PERBAIKAN SWIPER
+   12. MODALS & DRAWERS — GARANSI SWIPER JALAN
 ========================================= */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); backdrop-filter: var(--blur-soft); -webkit-backdrop-filter: var(--blur-soft); z-index: var(--z-modal); display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
@@ -483,18 +497,25 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* Product Page Modals */
-.product-swiper-overlay { position: fixed; inset: 0; background: var(--gray-900); z-index: var(--z-product); display: flex; flex-direction: column; overflow: hidden; }
+.product-swiper-overlay {
+  display: none; 
+  align-items: center;
+  position: fixed; inset: 0; background: var(--gray-900); z-index: var(--z-product);
+  flex-direction: column; overflow: hidden;
+}
 .glass-btn { background: rgba(253,251,247,0.9); border: 1px solid rgba(255,255,255,0.8); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--green); cursor: pointer; backdrop-filter: var(--blur-soft); transition: transform 0.2s ease; box-shadow: var(--shadow-card); }
 .glass-btn:active { transform: scale(0.92); }
 .product-swiper-track {
   display: flex;
   width: 100%;
+  max-width: 480px;
   height: 100dvh;
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
+  /* WAJIB AUTO agar JS bisa melempar scroll secara instan */
+  scroll-behavior: auto !important;
   -webkit-overflow-scrolling: touch;
-  touch-action: pan-x;
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
@@ -502,6 +523,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .product-slide {
   flex: 0 0 100%;
   width: 100%;
+  max-width: 100%;
   height: 100%;
   scroll-snap-align: start;
   overflow-y: auto;
