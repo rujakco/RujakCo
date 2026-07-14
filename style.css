@@ -176,11 +176,9 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .luxury-header.scrolled .user-loc { color: var(--gray-500); text-shadow: none; }
 
 /* =========================================
-   7. HERO & CONTENT WRAPPER (block, bukan flex)
+   7. HERO — Posisi Pasti (Statis)
 ========================================= */
 .content-wrapper {
-  display: block;          /* kembali ke layout normal */
-  /* ruang aman di bawah agar tidak tertabrak bottom nav */
   padding-bottom: calc(120px + env(safe-area-inset-bottom));
   overflow-x: hidden;
 }
@@ -188,7 +186,8 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .hero-editorial {
   width: calc(100% - 40px);
   max-width: 440px;
-  margin: calc(-72px - env(safe-area-inset-top)) auto 0;
+  /* Ditarik naik 20px (dari -72px menjadi -92px) agar atasnya lebih terpotong header */
+  margin: calc(-92px - env(safe-area-inset-top)) auto 0;
   padding: 0 !important;
   position: relative;
   z-index: 1;
@@ -220,7 +219,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   aspect-ratio: 4 / 3;
   position: relative;
   border-radius: 28px;
-  overflow: hidden;
+  overflow: hidden; /* Memotong gambar yang keluar dari bingkai */
   z-index: 0;
 }
 
@@ -229,10 +228,14 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   height: 100%;
   object-fit: cover;
   display: block;
-  transform: scale(1.02);
+  /* Gambar didorong turun 40px di dalam bingkainya */
+  transform: translateY(40px) scale(1.02);
   transition: transform 0.8s var(--transition-spring);
 }
-.hero-editorial.scrolled-past .hero-img { transform: scale(1); }
+.hero-editorial.scrolled-past .hero-img { 
+  /* Pastikan saat di-scroll posisinya tetap di bawah */
+  transform: translateY(40px) scale(1); 
+}
 
 .hero-overlay-new {
   position: absolute; inset: auto 0 0 0;
@@ -278,7 +281,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   scroll-behavior: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  padding: 32px 20px 24px;   /* padding bawah dikurangi agar ruang di bawahnya cukup */
+  padding: 32px 20px 24px;   /* padding bawah dikurangi */
 }
 .carousel-track::-webkit-scrollbar { display: none; }
 
@@ -351,12 +354,17 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   9. INSIGHT — Margin Seimbang, Tengah
+   9. INSIGHT — Jarak Pasti 25px
 ========================================= */
 .product-insight-container { 
   text-align: center; 
   padding: 0 24px; 
-  margin: 24px 0 48px;       /* atas 24px, bawah 48px agar jauh dari nav bar */
+  
+  /* Dikunci jarak persis 25px di bawah carousel, dan 48px ke bawah agar aman */
+  margin-top: 25px; 
+  margin-bottom: 48px; 
+  
+  min-height: 48px; 
   display: flex; 
   align-items: center; 
   justify-content: center; 
