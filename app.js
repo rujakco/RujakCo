@@ -88,7 +88,7 @@ function applyPersonalization() {
 // Cart utilities
 // ---------------------------------------------------------------------------
 function getCartSummaryLocal() {
-  return getCartSummary(state.cart); // gunakan dari checkout.js
+  return getCartSummary(state.cart);
 }
 
 function updateShippingUI() {
@@ -150,7 +150,6 @@ function openProductPage(globalIndex) {
     DOM.productSwiperTrack.scrollLeft = targetSlide.offsetLeft;
     DOM.productSwiperTrack.style.scrollBehavior = 'smooth';
   }
-  // lazy load detail images
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -235,7 +234,6 @@ function initOnboarding() {
     DOM.onbStep1.classList.add('active');
   }
 
-  // Step 1 -> Step 2
   document.getElementById('onbNextBtn').addEventListener('click', () => {
     const name = DOM.onbName.value.trim();
     if (!name) return showToast('Mohon isi nama Anda.');
@@ -247,7 +245,6 @@ function initOnboarding() {
     }, 100);
   });
 
-  // District filtering
   const dropdown = DOM.onbDistrictDropdown;
   const filterDistricts = debounce((val) => {
     const v = val.toLowerCase();
@@ -265,7 +262,6 @@ function initOnboarding() {
     DOM.onbDistrict.value = div.textContent;
   });
 
-  // Start
   document.getElementById('onbStartBtn').addEventListener('click', () => {
     if (!state.selectedDistrict) return showToast('Mohon pilih kecamatan tujuan.');
     saveUser(state.customerName, state.selectedDistrict);
@@ -275,7 +271,6 @@ function initOnboarding() {
     initScrollReveal();
   });
 
-  // Returning user enter
   document.getElementById('onbEnterBtn').addEventListener('click', () => {
     DOM.onboardingOverlay.classList.add('hidden');
     setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, 600);
@@ -283,7 +278,6 @@ function initOnboarding() {
     initScrollReveal();
   });
 
-  // Reset
   document.getElementById('onbResetBtn').addEventListener('click', () => {
     clearUser();
     DOM.onbReturningUser.style.display = 'none';
@@ -303,7 +297,7 @@ function initScrollReveal() {
 // Main delegation & event binding
 // ---------------------------------------------------------------------------
 function bindEvents() {
-  // --- About modal (new) ---
+  // About modal
   const aboutTrigger = document.getElementById('aboutTrigger');
   const aboutClose = document.getElementById('aboutClose');
   if (aboutTrigger && DOM.aboutModal) {
@@ -321,7 +315,7 @@ function bindEvents() {
       return;
     }
 
-    // Step 1 -> 2 (detail page) - Peningkatan subtle: transisi halus
+    // Step 1 -> 2 (detail page)
     if (e.target.classList.contains('step-1-btn')) {
       if (window.navigator.vibrate) window.navigator.vibrate(10);
       const btn = e.target;
@@ -329,7 +323,6 @@ function bindEvents() {
       const pid = btn.dataset.pid;
       const step1 = document.getElementById(`step1_${idx}_${pid}`);
       const step2 = document.getElementById(`step2_${idx}_${pid}`);
-
       if (step1 && step2) {
         step1.style.transition = 'opacity 0.3s ease';
         step1.style.opacity = '0';
@@ -366,7 +359,7 @@ function bindEvents() {
       return;
     }
 
-    // Add to cart
+    // Add to cart (TIDAK LAGI MENUTUP DETAIL)
     if (e.target.classList.contains('add-to-cart-btn')) {
       if (window.navigator.vibrate) window.navigator.vibrate(10);
       const pid = e.target.dataset.pid;
@@ -378,8 +371,6 @@ function bindEvents() {
       document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = 1);
       updateCartUI();
       showToast('Sajian ditambahkan ke reservasi.');
-      closeProductPage();
-      // reset steps
       const idx = e.target.dataset.idx;
       setTimeout(() => {
         const step1 = document.getElementById(`step1_${idx}_${pid}`);
@@ -389,13 +380,13 @@ function bindEvents() {
       return;
     }
 
-    // +++ DIPINDAHKAN LEBIH AWAL: Confirm via WA (sebelum cart item actions) +++
+    // Confirm via WA (sebelum cart item actions)
     if (e.target.closest('[data-action="confirm-wa"]')) {
       confirmOrder(state.cart, state, updateCartUI)(e);
       return;
     }
 
-    // Cart item actions (hanya untuk increase/decrease pada mini cart)
+    // Cart item actions
     const actionBtn = e.target.closest('[data-action]');
     if (actionBtn && !actionBtn.classList.contains('add-to-cart-btn') && !actionBtn.classList.contains('step-1-btn')) {
       const id = actionBtn.dataset.id;
@@ -474,7 +465,7 @@ function bindEvents() {
       updateShippingUI();
       return;
     }
-    // Mini cart close (inside modal)
+    // Mini cart close
     if (e.target.closest('#miniCartClose')) {
       closeModal(DOM.miniCartModal);
       return;
@@ -486,6 +477,20 @@ function bindEvents() {
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) closeModal(overlay);
     });
+  });
+
+  // Navigasi slide produk detail (tombol panah kiri/kanan)
+  document.getElementById('swipePrev')?.addEventListener('click', () => {
+    const slide = DOM.productSwiperTrack?.querySelector('.product-slide');
+    if (slide && DOM.productSwiperTrack) {
+      DOM.productSwiperTrack.scrollBy({ left: -slide.offsetWidth, behavior: 'smooth' });
+    }
+  });
+  document.getElementById('swipeNext')?.addEventListener('click', () => {
+    const slide = DOM.productSwiperTrack?.querySelector('.product-slide');
+    if (slide && DOM.productSwiperTrack) {
+      DOM.productSwiperTrack.scrollBy({ left: slide.offsetWidth, behavior: 'smooth' });
+    }
   });
 }
 
@@ -515,7 +520,6 @@ function init() {
     DOM.header?.classList.toggle('scrolled', window.scrollY > 50);
   }, { passive: true });
 
-  // Keyboard accessibility: close modal with Escape (handles all modals)
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       if (DOM.productPage.style.display === 'flex') closeProductPage();
