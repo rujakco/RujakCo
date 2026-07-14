@@ -163,7 +163,6 @@ function openProductPage(globalIndex) {
     });
   }, { rootMargin: '0px 0px 200px 0px' });
   document.querySelectorAll('.product-slide').forEach(slide => observer.observe(slide));
-  // Simpan observer untuk disconnect nanti
   DOM._productObserver = observer;
 }
 
@@ -390,7 +389,13 @@ function bindEvents() {
       return;
     }
 
-    // Cart item actions
+    // +++ DIPINDAHKAN LEBIH AWAL: Confirm via WA (sebelum cart item actions) +++
+    if (e.target.closest('[data-action="confirm-wa"]')) {
+      confirmOrder(state.cart, state, updateCartUI)(e);
+      return;
+    }
+
+    // Cart item actions (hanya untuk increase/decrease pada mini cart)
     const actionBtn = e.target.closest('[data-action]');
     if (actionBtn && !actionBtn.classList.contains('add-to-cart-btn') && !actionBtn.classList.contains('step-1-btn')) {
       const id = actionBtn.dataset.id;
@@ -441,12 +446,6 @@ function bindEvents() {
     // Close payment
     if (e.target.id === 'paymentClose') {
       closeModal(DOM.paymentModal);
-      return;
-    }
-
-    // Confirm via WA
-    if (e.target.closest('[data-action="confirm-wa"]')) {
-      confirmOrder(state.cart, state, updateCartUI)(e);
       return;
     }
 
