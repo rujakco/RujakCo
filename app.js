@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (tanpa swipe‑to‑close, hanya tombol kembali)
+// app.js — Luxury Edition (dengan swipe‑to‑close yang aman)
 import { PRODUCTS } from './data/products.js';
 import { DISTRICT_MAP } from './data/districts.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
@@ -174,6 +174,76 @@ function closeProductPage() {
     DOM._productObserver.disconnect();
     DOM._productObserver = null;
   }
+}
+
+// ---------------------------------------------------------------------------
+// Gesture: swipe down to close product page (AMAN, tidak ganggu horizontal)
+// ---------------------------------------------------------------------------
+function initSwipeToClose() {
+  let startY = 0, startX = 0, isPulling = false, activeSlide = null;
+  let gestureStarted = false; // sudah melewati threshold gerakan
+
+  const onTouchStart = (e) => {
+    if (e.touches.length > 1) return;
+    startY = e.touches[0].clientY;
+    startX = e.touches[0].clientX;
+    activeSlide = e.target.closest('.product-slide');
+    // hanya bisa tarik jika konten di posisi paling atas (scrollTop <= 0)
+    isPulling = activeSlide && activeSlide.scrollTop <= 0;
+    gestureStarted = false;
+  };
+
+  const onTouchMove = (e) => {
+    if (!isPulling || !activeSlide) return;
+
+    const dy = e.touches[0].clientY - startY;
+    const dx = e.touches[0].clientX - startX;
+    const absDx = Math.abs(dx);
+    const absDy = Math.abs(dy);
+
+    // Begitu gerakan horizontal terdeteksi signifikan (>8px) dan lebih besar dari vertikal,
+    // batalkan mode tarik-turun sepenuhnya. Biarkan browser scroll horizontal track.
+    if (!gestureStarted && (absDx > 8 || absDy > 8)) {
+      if (absDx > absDy) {
+        isPulling = false;
+        return;
+      }
+      gestureStarted = true; // vertikal dominan, kita ambil alih
+    }
+
+    if (gestureStarted && dy > 0) {
+      // hanya prevent default saat kita benar-benar menarik ke bawah
+      if (e.cancelable) e.preventDefault();
+      activeSlide.style.transform = `translateY(${dy * 0.4}px)`;
+    }
+  };
+
+  const onTouchEnd = (e) => {
+    if (!isPulling || !activeSlide || !gestureStarted) {
+      isPulling = false;
+      activeSlide = null;
+      return;
+    }
+    const dy = e.changedTouches[0].clientY - startY;
+    activeSlide.style.transition = 'all 0.3s ease';
+    if (dy > 120) {
+      closeProductPage();
+    } else {
+      activeSlide.style.transform = 'translateY(0)';
+    }
+    setTimeout(() => {
+      if (activeSlide) {
+        activeSlide.style.transition = '';
+        activeSlide.style.transform = '';
+      }
+      isPulling = false;
+      activeSlide = null;
+    }, 300);
+  };
+
+  DOM.productPage.addEventListener('touchstart', onTouchStart, { passive: true });
+  DOM.productPage.addEventListener('touchmove', onTouchMove, { passive: false });
+  DOM.productPage.addEventListener('touchend', onTouchEnd, { passive: true });
 }
 
 // ---------------------------------------------------------------------------
@@ -462,7 +532,7 @@ function init() {
   renderMenu();
   renderProductSwiper();
   initCarousel();
-  // SWIPE-TO-CLOSE DIHAPUS TOTAL
+  initSwipeToClose();    // ← gesture tutup yang aman
   initAccessibility();
   const updateWelcome = initAIChat();
   if (updateWelcome) updateWelcome(state.customerName || 'Ngoedi');
