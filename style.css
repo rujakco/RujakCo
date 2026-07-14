@@ -176,13 +176,12 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .luxury-header.scrolled .user-loc { color: var(--gray-500); text-shadow: none; }
 
 /* =========================================
-   7. HERO & FLEX LAYOUT UTAMA
+   7. HERO & CONTENT WRAPPER (block, bukan flex)
 ========================================= */
 .content-wrapper {
-  display: flex;
-  flex-direction: column;
-  min-height: 100dvh;
-  padding-bottom: calc(88px + env(safe-area-inset-bottom)); /* aman dari bottom nav */
+  display: block;          /* kembali ke layout normal */
+  /* ruang aman di bawah agar tidak tertabrak bottom nav */
+  padding-bottom: calc(120px + env(safe-area-inset-bottom));
   overflow-x: hidden;
 }
 
@@ -279,7 +278,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   scroll-behavior: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  padding: 32px 20px 24px;   /* padding bawah dikurangi */
+  padding: 32px 20px 24px;   /* padding bawah dikurangi agar ruang di bawahnya cukup */
 }
 .carousel-track::-webkit-scrollbar { display: none; }
 
@@ -337,7 +336,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   margin: 0 auto; 
   position: relative;
   z-index: 50;
-  transform: translateY(-8px);   /* tarik lebih kecil */
+  transform: translateY(-8px);
 }
 
 .carousel-dot {
@@ -352,16 +351,15 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   9. INSIGHT — Tengah Otomatis (Flex Grow)
+   9. INSIGHT — Margin Seimbang, Tengah
 ========================================= */
 .product-insight-container { 
-  flex-grow: 1;                      /* mengisi sisa ruang vertikal */
-  display: flex; 
-  align-items: center;              /* vertikal tengah */
-  justify-content: center;          /* horizontal tengah */
   text-align: center; 
-  padding: 16px 24px; 
-  margin: 0; 
+  padding: 0 24px; 
+  margin: 24px 0 48px;       /* atas 24px, bawah 48px agar jauh dari nav bar */
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
   position: relative;
   z-index: 50; 
 }
@@ -385,10 +383,9 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   10. FOOTER — terdorong otomatis ke bawah
+   10. FOOTER — tetap di bawah, aman dari bottom nav
 ========================================= */
 .luxury-footer {
-  margin-top: auto;   /* ajaibnya flexbox: footer selalu di bawah */
   padding: 48px 16px calc(48px + env(safe-area-inset-bottom));
   background: var(--green);
   border-top: 1px solid rgba(197,160,89,0.12);
