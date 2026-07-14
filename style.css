@@ -483,7 +483,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .detail-manifesto p { color: var(--gray-900); font-family: 'Fraunces', serif; font-style: italic; margin: 0; }
 
 /* =========================================
-   13. PERBAIKAN AREA AKSI (STEP 2)
+   13. PERBAIKAN AREA AKSI (STEP 2) — TANPA BUG
 ========================================= */
 /* Kunci Ikon Back agar selalu di pojok kiri atas */
 .floating-close {
@@ -507,7 +507,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   align-items: center;
   justify-content: space-between;
   border: 1px solid var(--gold-soft);
-  border-radius: 100px; /* Bentuk kapsul elegan */
+  border-radius: 100px;
   padding: 4px;
   background: transparent;
   width: auto !important; 
@@ -539,7 +539,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   font-size: 1.125rem;
   font-weight: 500;
   color: var(--gray-900);
-  font-family: 'Fraunces', serif; /* Angka bergaya serif mewah */
+  font-family: 'Fraunces', serif;
 }
 
 /* Tombol "Tambahkan ke Reservasi" Mewah */
@@ -548,7 +548,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   background: linear-gradient(135deg, var(--gold) 0%, #B89650 100%);
   color: #FFFFFF;
   border: none;
-  border-radius: 100px; /* Bentuk kapsul senada */
+  border-radius: 100px;
   font-size: 0.875rem;
   font-weight: 600;
   text-transform: uppercase;
