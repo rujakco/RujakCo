@@ -8,6 +8,8 @@
   --gold-text: #9B7D3F;
   --gold-soft: rgba(197, 160, 89, 0.35);
   --gold-bright: #E8D5A8;
+  --danger: #B54A3F;
+  --danger-soft: rgba(181, 74, 63, 0.35);
   --ivory: #FDFBF7;
   --bg-surface: #FDFBF7;
   --bg-subtle: #F6F4F0;
@@ -20,7 +22,7 @@
   --gray-900: #1A1816;
 
   --z-header: 100;
-  --z-nav: 600;            /* dinaikkan agar di atas product overlay */
+  --z-nav: 600;            /* di atas overlay produk */
   --z-product: 500;
   --z-fab: 510;
   --z-modal: 1000;
@@ -890,4 +892,12 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
   color: var(--gold-bright);
   letter-spacing: 0.05em;
   display: block;
+}
+
+/* =========================================
+   26. ACCESSIBLE DROPDOWN HIGHLIGHT
+========================================= */
+.minimal-dropdown div[aria-selected="true"] {
+  background: var(--green-light);
+  color: var(--green);
 }
