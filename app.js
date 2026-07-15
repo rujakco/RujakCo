@@ -499,6 +499,7 @@ function initOnboarding() {
     clearUser();
     DOM.onbReturningUser.style.display = 'none';
     DOM.onbNewUser.style.display = 'block';
+    DOM.onbStep2.classList.remove('active'); // perbaikan: hapus active dari step2
     DOM.onbStep1.classList.add('active');
   });
 }
@@ -601,6 +602,7 @@ async function downloadReceiptPNG() {
   const element = document.getElementById('orderConfirmContent');
   if (!element) return;
 
+  // Perbaikan: fallback html2canvas
   if (typeof html2canvas === 'undefined') {
     showToast('⚠️ Gagal menghasilkan struk. Coba lagi nanti.');
     return;
@@ -669,6 +671,7 @@ async function sendReceiptToTelegram() {
   const element = document.getElementById('orderConfirmContent');
   if (!element) return;
 
+  // Perbaikan: fallback html2canvas
   if (typeof html2canvas === 'undefined') {
     console.warn('html2canvas tidak tersedia, tidak dapat mengirim ke Telegram.');
     return;
@@ -767,10 +770,9 @@ function showOrderConfirmation() {
   if (modal) {
     openModal(modal);
 
-    // Tombol Kembali
-    document.getElementById('orderConfirmBack')?.addEventListener('click', () => {
-      closeModal(modal);
-    });
+    // Perbaikan: gunakan onclick agar tidak menumpuk
+    const backBtn = document.getElementById('orderConfirmBack');
+    if (backBtn) backBtn.onclick = () => closeModal(modal);
 
     // Tombol Lanjutkan → unduh otomatis, lalu buka pembayaran
     document.getElementById('orderConfirmLanjut').onclick = async () => {
@@ -1142,9 +1144,10 @@ function bindEvents() {
 function init() {
   cacheDOM();
   const saved = loadState();
-  state.cart = saved.cart || {};
-  if (saved.name) state.customerName = saved.name;
-  if (saved.district) state.selectedDistrict = saved.district;
+  // Perbaikan: optional chaining untuk mencegah error
+  state.cart = saved?.cart || {};
+  if (saved?.name) state.customerName = saved.name;
+  if (saved?.district) state.selectedDistrict = saved.district;
   const cust = loadCustomer();
   if (cust) {
     state.customerPhone = cust.phone || '';
