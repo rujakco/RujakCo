@@ -52,9 +52,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 
-  <!-- Pustaka eksternal (versi dipin, tanpa integrity agar tidak diblokir) -->
-  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+  <!-- pinned version + integrity (ganti hash dengan yang sebenarnya dari CDN) -->
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js" defer
+          integrity="sha384-REPLACE_WITH_ACTUAL_HASH"
+          crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer
+          integrity="sha384-REPLACE_WITH_ACTUAL_HASH"
+          crossorigin="anonymous"></script>
 </head>
 <body>
 <noscript>
