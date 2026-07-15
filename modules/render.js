@@ -1,3 +1,4 @@
+// modules/render.js — dengan fallback gambar
 import { PRODUCTS } from '../data/products.js';
 import { SPICE_LABELS } from '../data/config.js';
 import { fmt } from '../utils/helpers.js';
@@ -16,7 +17,8 @@ export function renderMenu(containerId = 'menuList') {
     .map(
       (p, index) => `
     <div class="boutique-item" data-id="${p.id}" data-idx="${index}">
-      <img class="btq-img" src="${p.thumbnail}" loading="lazy" alt="${p.name}" />
+      <img class="btq-img" src="${p.thumbnail}" loading="lazy" alt="${p.name}" 
+        onerror="this.style.display='none';var fb=document.createElement('div');fb.style.cssText='width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e8efeb;color:#6B7280;font-size:12px;font-weight:600;text-align:center;padding:8px;';fb.textContent=this.alt.substring(0,30);this.parentElement.appendChild(fb);" />
       <div class="btq-text-container">
         <h3 class="btq-name">${p.name}</h3>
         ${p.badge ? `<span class="btq-badge">${p.badge}</span>` : ''}
@@ -37,7 +39,8 @@ export function renderProductSwiper(trackId = 'productSwiperTrack') {
       (p, index) => `
     <div class="product-slide" data-id="${p.id}" data-idx="${index}">
       <div class="detail-image-wrap">
-        <img class="lazy-detail" data-src="${p.image}" alt="${p.name}" loading="lazy" />
+        <img class="lazy-detail" data-src="${p.image}" alt="${p.name}" loading="lazy"
+          onerror="this.style.display='none';var fb=document.createElement('div');fb.style.cssText='width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e8efeb;color:#6B7280;font-size:12px;font-weight:600;text-align:center;padding:8px;';fb.textContent=this.alt.substring(0,30);this.parentElement.appendChild(fb);" />
       </div>
       <div class="detail-content">
         <h2>${p.name}</h2>
@@ -98,7 +101,7 @@ export function renderProductSwiper(trackId = 'productSwiperTrack') {
   if (window.lucide) window.lucide.createIcons();
 }
 
-export function renderCart(cart, badgeIds = ['cartBadgeNav']) {
+export function renderCart(cart, badgeIds = ['cartBadgeNav', 'cartBadgeDetail']) {
   const totalQty = Object.values(cart).reduce((sum, entry) => sum + (entry.qty || 0), 0);
   badgeIds.forEach(id => {
     const badge = document.getElementById(id);
