@@ -548,8 +548,9 @@ function bindEvents() {
   const deliveryLabel = document.getElementById('deliveryTimeLabel');
 
   deliveryTrigger?.addEventListener('click', () => {
-    deliveryDropdown.style.display = deliveryDropdown.style.display === 'block' ? 'none' : 'block';
-    deliveryTrigger.setAttribute('aria-expanded', deliveryDropdown.style.display === 'block' ? 'true' : 'false');
+    const isOpen = deliveryDropdown.style.display === 'block';
+    deliveryDropdown.style.display = isOpen ? 'none' : 'block';
+    deliveryTrigger.setAttribute('aria-expanded', !isOpen);
   });
 
   deliveryDropdown?.addEventListener('click', (e) => {
