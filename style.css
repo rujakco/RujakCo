@@ -715,6 +715,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .qris-total {
   font-size: 2.25rem; font-family: 'Fraunces', serif;
   color: var(--green); margin-top: var(--space-2);
+  font-weight: 400; letter-spacing: -0.02em;
 }
 
 /* =========================================
@@ -732,15 +733,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 /* =========================================
    17. PEMBAYARAN
 ========================================= */
-#paymentTotalDisplay {
-  font-size: 2.25rem;
-  font-family: 'Fraunces', serif;
-  margin: 0;
-  color: var(--green);
-  font-weight: 400;
-  letter-spacing: -0.02em;
-}
-
 #btnOpenPayment, #confirmPaymentBtn {
   margin-bottom: env(safe-area-inset-bottom);
   padding: 18px var(--space-4);
@@ -931,43 +923,4 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   max-height: 0;
   overflow: hidden;
   transition: max-height var(--dur-normal) ease, padding var(--dur-normal) ease;
-}
-.faq-item.open .faq-answer {
-  max-height: 200px;
-  padding-bottom: var(--space-3);
-}
-
-/* =========================================
-   26. DIVIDER & SECTION HEADER
-========================================= */
-.divider {
-  width: calc(100% - 40px);
-  max-width: var(--content-max);
-  margin: var(--space-3) auto;
-  border-top: 1px solid rgba(197, 160, 89, 0.25);
-}
-
-.sec-header {
-  width: calc(100% - 40px);
-  max-width: var(--content-max);
-  margin: 0 auto var(--space-2);
-  padding: 0;
-  background: transparent;
-}
-
-.sec-title {
-  font-family: 'Fraunces', serif;
-  font-weight: 400;
-  font-size: 1rem;
-  color: var(--gold-bright);
-  letter-spacing: 0.05em;
-  display: block;
-}
-
-/* =========================================
-   27. ACCESSIBLE DROPDOWN HIGHLIGHT
-========================================= */
-.minimal-dropdown div[aria-selected="true"] {
-  background: var(--green-light);
-  color: var(--green);
 }
