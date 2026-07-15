@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (final)
+// app.js — Luxury Edition (final dengan struk, logo, download, share)
 import { PRODUCTS } from './data/products.js';
 import { DISTRICT_MAP } from './data/districts.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
@@ -66,6 +66,8 @@ const cacheDOM = () => {
   DOM.paymentTotal = document.getElementById('paymentTotalDisplay');
   DOM.aiChatBox = document.getElementById('aiChatBox');
   DOM.aboutModal = document.getElementById('aboutModal');
+  DOM.orderConfirmModal = document.getElementById('orderConfirmModal');
+  DOM.orderConfirmContent = document.getElementById('orderConfirmContent');
   DOM.shippingSection = document.getElementById('shippingSection');
   DOM.rujakcoOptions = document.getElementById('rujakcoOptions');
   DOM.paxelOptions = document.getElementById('paxelOptions');
@@ -477,6 +479,167 @@ function initScrollReveal() {
 }
 
 // ---------------------------------------------------------------------------
+// STRUK & SHARE FUNCTIONS
+// ---------------------------------------------------------------------------
+async function downloadReceiptPNG() {
+  const element = DOM.orderConfirmContent;
+  if (!element) return;
+
+  try {
+    const footer = document.querySelector('#orderConfirmModal .drawer-footer');
+    if (footer) footer.style.display = 'none';
+
+    const canvas = await html2canvas(element, {
+      backgroundColor: '#ffffff',
+      scale: 2,
+      useCORS: true,
+    });
+
+    if (footer) footer.style.display = '';
+
+    canvas.toBlob((blob) => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Struk_RujakCo_${Date.now()}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('✅ Struk berhasil diunduh!');
+    });
+  } catch (err) {
+    console.error('Gagal generate struk:', err);
+    showToast('⚠️ Gagal mengunduh struk');
+    const footer = document.querySelector('#orderConfirmModal .drawer-footer');
+    if (footer) footer.style.display = '';
+  }
+}
+
+function sendReceiptToWhatsApp() {
+  const summary = getCartSummary(state.cart);
+  const name = DOM.customerNameInput?.value || state.customerName || '—';
+  const phone = document.getElementById('customerPhone')?.value || state.customerPhone || '—';
+  const address = document.getElementById('customerAddress')?.value || state.customerAddress || '—';
+  const deliveryTime = document.getElementById('deliveryTimeLabel')?.textContent || '—';
+
+  let msg = `🧾 *STRUK PESANAN RUJAK.CO*\n\n`;
+  msg += `👤 *Pelanggan:* ${name}\n`;
+  msg += `📞 *HP:* ${phone}\n`;
+  msg += `📍 *Alamat:* ${address}\n`;
+  msg += `🕒 *Pengantaran:* ${deliveryTime}\n\n`;
+  msg += `📦 *Pesanan:*\n`;
+  summary.items.forEach(item => {
+    msg += `- ${item.name}${item.spice ? ' (Lv' + item.spice + ')' : ''} x${item.qty} = ${fmt(item.price * item.qty)}\n`;
+  });
+  msg += `\n💰 *Total:* ${DOM.finalTotal?.textContent || '—'}\n`;
+  msg += `\n📎 *Struk gambar dapat diunduh di menu konfirmasi.*`;
+
+  const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+  window.open(waUrl, '_blank');
+}
+
+async function sendReceiptToTelegram() {
+  if (!SYSTEM.TELEGRAM_BOT_TOKEN || !SYSTEM.TELEGRAM_CHAT_ID) {
+    showToast('⚠️ Telegram belum dikonfigurasi');
+    return;
+  }
+
+  const element = DOM.orderConfirmContent;
+  if (!element) return;
+
+  try {
+    const canvas = await html2canvas(element, {
+      backgroundColor: '#ffffff',
+      scale: 2,
+    });
+
+    canvas.toBlob(async (blob) => {
+      const formData = new FormData();
+      formData.append('chat_id', SYSTEM.TELEGRAM_CHAT_ID);
+      formData.append('photo', blob, 'struk_rujakco.png');
+      formData.append('caption', '🧾 Struk pesanan baru dari ' + (state.customerName || 'Pelanggan'));
+
+      const res = await fetch(`https://api.telegram.org/bot${SYSTEM.TELEGRAM_BOT_TOKEN}/sendPhoto`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (res.ok) {
+        showToast('✅ Struk terkirim ke Telegram');
+      } else {
+        throw new Error('Gagal kirim');
+      }
+    });
+  } catch (err) {
+    console.error('Gagal kirim ke Telegram:', err);
+    showToast('⚠️ Gagal mengirim ke Telegram');
+  }
+}
+
+function showOrderConfirmation() {
+  const summary = getCartSummaryLocal();
+  const dist = state.selectedDistrict ? getDistance(state.selectedDistrict) : null;
+  const ship = dist ? calculateShipping(dist, summary.mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority) : { cost: 0 };
+  const total = summary.subtotal + (ship.cost || 0);
+
+  const name = DOM.customerNameInput?.value || state.customerName || '—';
+  const phone = document.getElementById('customerPhone')?.value || state.customerPhone || '—';
+  const address = document.getElementById('customerAddress')?.value || state.customerAddress || '—';
+  const deliveryTime = document.getElementById('deliveryTimeLabel')?.textContent || '—';
+
+  let itemsHtml = '';
+  summary.items.forEach(item => {
+    const spiceText = item.spice ? ` (Lv ${item.spice})` : '';
+    itemsHtml += `<div class="confirm-row"><span>${item.name}${spiceText} x${item.qty}</span><span>${fmt(item.price * item.qty)}</span></div>`;
+  });
+
+  DOM.orderConfirmContent.innerHTML = `
+    <div style="text-align:center; margin-bottom:16px;">
+      <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp"
+           alt="RUJAK.Co" style="width:56px; height:56px; border-radius:50%; margin-bottom:8px;" />
+      <h3 style="font-family:'Fraunces',serif; color:var(--green); margin:0; font-size:1.25rem;">RUJAK.Co</h3>
+      <p style="font-size:0.7rem; color:var(--gray-600); margin:4px 0 0;">Indonesia dalam Satu Wadah</p>
+    </div>
+    <div class="confirm-section">
+      <h4>Data Penerima</h4>
+      <div class="confirm-row"><span>Nama</span><span>${name}</span></div>
+      <div class="confirm-row"><span>Telepon</span><span>${phone}</span></div>
+      <div class="confirm-row"><span>Alamat</span><span>${address}</span></div>
+      <div class="confirm-row"><span>Waktu Pengantaran</span><span>${deliveryTime}</span></div>
+    </div>
+    <div class="confirm-section">
+      <h4>Pesanan</h4>
+      ${itemsHtml}
+    </div>
+    <div class="confirm-section">
+      <h4>Rincian Biaya</h4>
+      <div class="confirm-row"><span>Subtotal</span><span>${fmt(summary.subtotal)}</span></div>
+      <div class="confirm-row"><span>Ongkir</span><span>${fmt(ship.cost || 0)}</span></div>
+      <div class="confirm-row total"><span>Total</span><span>${fmt(total)}</span></div>
+    </div>
+  `;
+
+  openModal(DOM.orderConfirmModal);
+
+  // Pasang event listener tombol aksi
+  document.getElementById('orderConfirmDownload').onclick = () => downloadReceiptPNG();
+  document.getElementById('orderConfirmShare').onclick = () => sendReceiptToWhatsApp();
+  document.getElementById('orderConfirmPay').onclick = () => {
+    closeModal(DOM.orderConfirmModal);
+    processPayment(state.cart, state, updateCartUI)();
+  };
+  document.getElementById('orderConfirmBack')?.addEventListener('click', () => {
+    closeModal(DOM.orderConfirmModal);
+  });
+
+  // Kirim otomatis ke Telegram jika dikonfigurasi
+  if (SYSTEM.TELEGRAM_BOT_TOKEN) {
+    sendReceiptToTelegram();
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Main delegation & event binding
 // ---------------------------------------------------------------------------
 function bindEvents() {
@@ -549,7 +712,6 @@ function bindEvents() {
   const deliveryLabel = document.getElementById('deliveryTimeLabel');
   let deliveryActiveIndex = 0;
 
-  // Sinkronkan label dengan opsi preselected
   const preselected = deliveryDropdown?.querySelector('[aria-selected="true"]');
   if (preselected) {
     deliveryLabel.textContent = preselected.textContent;
@@ -632,6 +794,10 @@ function bindEvents() {
 
   document.getElementById('aiChatClose')?.addEventListener('click', () => {
     closeModal(DOM.aiChatBox);
+  });
+
+  document.getElementById('orderConfirmClose')?.addEventListener('click', () => {
+    closeModal(DOM.orderConfirmModal);
   });
 
   // === EVENT DELEGATION UTAMA (TANPA HANDLER UNTUK TOMBOL X) ===
@@ -769,9 +935,9 @@ function bindEvents() {
       return;
     }
 
-    // Open payment
+    // Open payment → sekarang menampilkan struk konfirmasi dulu
     if (e.target.id === 'btnOpenPayment') {
-      processPayment(state.cart, state, updateCartUI)(e);
+      showOrderConfirmation();
       return;
     }
 
@@ -797,7 +963,7 @@ function bindEvents() {
       return;
     }
 
-    // FAQ toggle (accordion) — updated for button + aria-expanded
+    // FAQ toggle (accordion)
     const faqToggle = e.target.closest('[data-toggle="faq"]');
     if (faqToggle) {
       const item = faqToggle.closest('.faq-item');
@@ -873,6 +1039,7 @@ function init() {
       else if (DOM.paymentModal.classList.contains('active')) closeModal(DOM.paymentModal);
       else if (DOM.aiChatBox.classList.contains('active')) closeModal(DOM.aiChatBox);
       else if (DOM.aboutModal?.classList.contains('active')) closeModal(DOM.aboutModal);
+      else if (DOM.orderConfirmModal?.classList.contains('active')) closeModal(DOM.orderConfirmModal);
     }
   });
 }
