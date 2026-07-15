@@ -473,7 +473,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   12. MODALS & DRAWERS — SWIPE HORIZONTAL & VERTICAL AMAN
+   12. MODALS & DRAWERS
 ========================================= */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); backdrop-filter: var(--blur-soft); -webkit-backdrop-filter: var(--blur-soft); z-index: var(--z-modal); display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
@@ -566,6 +566,13 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   position: fixed !important;
   top: calc(16px + env(safe-area-inset-top)) !important;
   left: 16px !important;
+  z-index: var(--z-fab) !important;
+}
+
+.floating-share {
+  position: fixed !important;
+  top: calc(16px + env(safe-area-inset-top)) !important;
+  right: 16px !important;
   z-index: var(--z-fab) !important;
 }
 
