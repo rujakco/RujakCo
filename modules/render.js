@@ -1,4 +1,3 @@
-// modules/render.js — dengan fallback gambar
 import { PRODUCTS } from '../data/products.js';
 import { SPICE_LABELS } from '../data/config.js';
 import { fmt } from '../utils/helpers.js';
@@ -141,4 +140,11 @@ export function renderMiniCart(cart, listId = 'miniCartList', subtotalId = 'cart
   if (subtotalEl) subtotalEl.textContent = fmt(sum.subtotal);
 
   return sum;
+}
+
+// DEEP‑LINK: mengembalikan index global produk di loopedProducts (tengah)
+export function getProductGlobalIndex(productId) {
+  const baseIndex = PRODUCTS.findIndex(p => p.id === productId);
+  if (baseIndex === -1) return -1;
+  return Math.floor(LOOP_MULTIPLIER / 2) * PRODUCTS.length + baseIndex;
 }
