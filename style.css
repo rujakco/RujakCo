@@ -906,9 +906,21 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 .faq-question {
   color: #fff;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.5;
 }
 .faq-answer {
   color: rgba(255,255,255,0.8);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--dur-normal) ease, padding var(--dur-normal) ease;
+}
+.faq-item.open .faq-answer {
+  max-height: 200px;
+  padding-bottom: 16px;
 }
 
 /* =========================================
