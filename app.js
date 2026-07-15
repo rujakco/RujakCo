@@ -587,6 +587,14 @@ function bindEvents() {
       closeModal(DOM.miniCartModal);
       return;
     }
+
+    // FAQ toggle (accordion)
+    const faqToggle = e.target.closest('[data-toggle="faq"]');
+    if (faqToggle) {
+      const item = faqToggle.closest('.faq-item');
+      if (item) item.classList.toggle('open');
+      return;
+    }
   });
 
   // Prevent modal overlay click from closing if clicking inside drawer
