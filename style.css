@@ -5,7 +5,7 @@
   --green: #082E21;
   --green-light: #EBF2EF;
   --gold: #C5A059;
-  --gold-text: #8C6A2E;        /* naik dari #9B7D3F → 4.8:1 di atas ivory */
+  --gold-text: #8C6A2E;
   --gold-soft: rgba(197, 160, 89, 0.35);
   --gold-bright: #E8D5A8;
   --danger: #B54A3F;
@@ -18,8 +18,8 @@
   --gray-200: #E6E4DF;
   --gray-300: #D1CFCA;
   --gray-400: #A8A6A0;
-  --gray-500: #888681;         /* hanya untuk dekorasi/ikon */
-  --gray-600: #6E6C67;         /* teks sekunder di atas bg-surface */
+  --gray-500: #888681;
+  --gray-600: #6E6C67;
   --gray-900: #1A1816;
 
   --z-header: 100;
@@ -434,13 +434,14 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0; margin: 0 auto;
   width: calc(100% - 40px); max-width: 440px;
-  z-index: var(--z-nav);    /* 600, di atas product overlay */
+  z-index: var(--z-nav);
   background: var(--bg-surface);
   display: flex; justify-content: space-around; align-items: center;
   padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
   border-top: 1px solid rgba(197,160,89,0.15);
   border-radius: 16px 16px 0 0;
   box-shadow: 0 -4px 24px rgba(0,0,0,0.02);
+  transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
 .nav-item {
   flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
@@ -470,6 +471,16 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   border: 2px solid var(--bg-surface);
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
+
+.bottom-nav.nav-gold {
+  background: linear-gradient(135deg, var(--gold) 0%, #B89650 100%);
+  border-top: 1px solid rgba(255,255,255,0.25);
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
+}
+.bottom-nav.nav-gold .nav-item { color: rgba(255,255,255,0.75); }
+.bottom-nav.nav-gold .nav-item.active { color: #FFFFFF; }
+.bottom-nav.nav-gold .nav-item.active::after { background: #FFFFFF; }
+.bottom-nav.nav-gold .nav-badge { border-color: var(--gold); }
 
 /* =========================================
    12. MODALS & DRAWERS
@@ -785,50 +796,83 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
 .fade-up.visible { opacity: 1; transform: translateY(0); }
 
 /* =========================================
-   23. FAB KERANJANG DI DETAIL
+   23. WA VIP SIDE TAB (DETAIL PRODUK)
 ========================================= */
-.cart-fab-detail {
+.wa-vip-side-tab {
   position: fixed;
-  bottom: calc(32px + env(safe-area-inset-bottom));
-  right: 24px;
+  left: -36px;
+  bottom: 120px;
   z-index: 600;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(197, 160, 89, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: var(--shadow-floating);
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: row;
+  width: 48px;
+  height: 120px;
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wa-vip-side-tab.open {
+  left: 0;
+}
+
+.wa-vip-handle {
+  width: 12px;
+  height: 100%;
+  background: linear-gradient(135deg, #1A1816 0%, #082E21 100%);
+  border: 1px solid var(--gold-soft);
+  border-right: none;
+  border-radius: 12px 0 0 12px;
   cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease;
+  flex-shrink: 0;
+  position: relative;
 }
-.cart-fab-detail:active {
-  transform: scale(0.9);
-  background: rgba(197, 160, 89, 1);
-}
-.cart-fab-detail #cartBadgeDetail {
+
+.wa-vip-handle::after {
+  content: '';
   position: absolute;
-  top: -6px;
-  right: -6px;
-  background: var(--green);
-  color: white;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  font-size: 0.6rem;
-  font-weight: 700;
-  display: none;
+  top: 50%;
+  right: 2px;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 24px;
+  background: var(--gold);
+  border-radius: 2px;
+}
+
+.wa-vip-body {
+  flex: 1;
+  background: linear-gradient(135deg, #1A1816 0%, #082E21 100%);
+  border: 1px solid var(--gold-soft);
+  border-left: none;
+  border-radius: 0 12px 12px 0;
+  display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid white;
+  overflow: hidden;
 }
-.cart-fab-detail #cartBadgeDetail.show {
+
+.wa-vip-link {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  color: var(--gold-bright);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+}
+
+.wa-vip-link i {
+  color: var(--gold);
+  width: 18px;
+  height: 18px;
+}
+
+.wa-vip-vertical-text {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-transform: uppercase;
 }
 
 /* =========================================
