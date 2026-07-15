@@ -2,9 +2,10 @@
 import { PRODUCTS } from '../data/products.js';
 
 const LOOP_MULTIPLIER = 3;
-let typeTimeout = null;
 let currentInsightId = null;
-let typeCancelled = false;        // flag pembatalan untuk efek ketik
+let typeQueue = [];               // antrian karakter yang akan diketik
+let typeTimer = null;
+let isTyping = false;
 
 let autoScrollInterval = null;
 let scrollTimeout = null;
@@ -15,6 +16,7 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
   const track = document.getElementById(trackId);
   if (!track) return;
 
+  // --- Fungsi updateCenter ---
   const updateCenter = () => {
     const items = track.querySelectorAll('.boutique-item');
     if (!items.length) return -1;
@@ -34,42 +36,29 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
     
     items.forEach(item => item.classList.toggle('active-center', item === closestItem));
     
+    // Animasi efek ketik (typing effect) — DIPERBAIKI TOTAL
     if (closestItem) {
       const newId = closestItem.dataset.id;
       if (currentInsightId !== newId) {
-        // Batalkan animasi sebelumnya
-        typeCancelled = true;
-        clearTimeout(typeTimeout);
-        
         currentInsightId = newId;
         const prod = PRODUCTS.find(p => p.id === newId);
         const insightEl = document.getElementById(insightId);
         
         if (insightEl && prod) {
+          // Batalkan animasi yang sedang berjalan
+          stopTyping();
+          
+          // Siapkan teks baru
+          const txt = prod.insight || prod.desc;
+          typeQueue = txt.split('');   // ubah string jadi array karakter
+          
           insightEl.classList.add('fade-out');
           
+          // Tunggu fade-out selesai, lalu mulai animasi
           setTimeout(() => {
-            // Mulai animasi baru hanya jika belum dibatalkan
-            if (!typeCancelled) {
-              insightEl.innerHTML = '';
-              let txt = prod.insight || prod.desc;
-              let i = 0;
-              
-              function type() {
-                if (typeCancelled) return;   // hentikan jika ada pembatalan
-                if (i < txt.length) {
-                  insightEl.innerHTML += txt.charAt(i);
-                  i++;
-                  typeTimeout = setTimeout(type, 30);
-                } else {
-                  insightEl.classList.remove('fade-out');
-                }
-              }
-              
-              insightEl.classList.remove('fade-out');
-              typeCancelled = false;         // reset flag
-              type();
-            }
+            insightEl.innerHTML = '';
+            insightEl.classList.remove('fade-out');
+            startTyping(insightEl);
           }, 300);
         }
       }
@@ -78,7 +67,30 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
     return closestIndex;
   };
 
-  // --- Infinite loop logic ---
+  // --- Fungsi ketik yang aman dari race condition ---
+  function startTyping(el) {
+    isTyping = true;
+    typeNextChar(el);
+  }
+
+  function typeNextChar(el) {
+    if (!isTyping || typeQueue.length === 0) {
+      isTyping = false;
+      return;
+    }
+    
+    const char = typeQueue.shift();
+    el.innerHTML += char;
+    typeTimer = setTimeout(() => typeNextChar(el), 30);
+  }
+
+  function stopTyping() {
+    isTyping = false;
+    clearTimeout(typeTimer);
+    typeQueue = [];
+  }
+
+  // --- Infinite loop logic (teleportasi) ---
   let isScrolling;
   
   track.addEventListener('scroll', () => {
@@ -87,6 +99,7 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
     
     isScrolling = setTimeout(() => {
       if (currentIndex === -1) return;
+      
       const baseCount = PRODUCTS.length;
       
       if (currentIndex < baseCount || currentIndex >= baseCount * (LOOP_MULTIPLIER - 1)) {
@@ -100,6 +113,7 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
             left: targetItem.offsetLeft - (track.clientWidth / 2) + (targetItem.clientWidth / 2), 
             behavior: 'instant' 
           });
+          
           requestAnimationFrame(() => {
             track.style.scrollBehavior = 'smooth';
           });
@@ -114,11 +128,19 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
     autoScrollInterval = setInterval(() => {
       const firstItem = track.querySelector('.boutique-item');
       if (!firstItem) return;
+
       const itemWidth = firstItem.offsetWidth + 16;
       const maxScroll = track.scrollWidth - track.clientWidth;
       let nextScroll = track.scrollLeft + itemWidth;
-      if (nextScroll >= maxScroll - 10) nextScroll = 0;
-      track.scrollTo({ left: nextScroll, behavior: 'smooth' });
+
+      if (nextScroll >= maxScroll - 10) {
+        nextScroll = 0;
+      }
+
+      track.scrollTo({
+        left: nextScroll,
+        behavior: 'smooth'
+      });
     }, SCROLL_DELAY);
   }
 
@@ -135,7 +157,7 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
     scrollTimeout = setTimeout(startAutoScroll, RESUME_DELAY);
   }, { passive: true });
 
-  // --- Inisialisasi ---
+  // --- Inisialisasi posisi awal & auto‑play ---
   setTimeout(() => {
     track.style.scrollBehavior = 'auto';
     const midPoint = Math.floor(LOOP_MULTIPLIER / 2) * PRODUCTS.length;
