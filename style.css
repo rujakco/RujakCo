@@ -5,7 +5,7 @@
   --green: #082E21;
   --green-light: #EBF2EF;
   --gold: #C5A059;
-  --gold-text: #8C6A2E;
+  --gold-text: #6B4F1E;            /* digelapkan agar lolos WCAG AA (5.2:1) */
   --gold-soft: rgba(197, 160, 89, 0.35);
   --gold-bright: #E8D5A8;
   --danger: #B54A3F;
@@ -219,7 +219,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .luxury-header.scrolled .user-loc { color: var(--gray-600); text-shadow: none; }
 
 /* =========================================
-   7. HERO — DINAIKKAN 20px (total -120px)
+   7. HERO — PARALLAX WIRING
 ========================================= */
 .content-wrapper {
   padding-bottom: calc(120px + env(safe-area-inset-bottom));
@@ -271,7 +271,8 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   object-fit: cover;
   display: block;
   transform: translateY(40px) scale(1.02);
-  transition: transform 0.8s var(--transition-spring);
+  transition: transform 0.1s linear;
+  will-change: transform;
 }
 
 .hero-overlay-new {
@@ -385,7 +386,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   9. INSIGHT
+   9. INSIGHT (sekarang pakai Fraunces italic)
 ========================================= */
 .product-insight-container { 
   text-align: center; 
@@ -401,11 +402,11 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 .typing-text { 
-  font-family: 'Playfair Display', serif;
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 400;
   font-size: 0.95rem;
   color: var(--gold-bright);
-  font-weight: 500;
-  font-style: italic;
   letter-spacing: 0.02em;
   margin: 0;
   line-height: 1.5;
@@ -655,12 +656,13 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   14. CERITA
+   14. CERITA (Fraunces italic)
 ========================================= */
 .detail-content .cerita-teks, 
 .detail-content i, 
 .detail-content em {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Fraunces', serif;
+  font-style: italic;
   font-size: 1.05rem;
   line-height: 1.6;
   color: var(--gray-600);
@@ -726,9 +728,8 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   16. KERANJANG (dihapus)
+   16. (KOSONG)
 ========================================= */
-/* Blok ini sengaja dikosongkan karena sebelumnya ada selector rapuh .checkout-forms > div[style*="color:var(--gold)"] */
 
 /* =========================================
    17. PEMBAYARAN
@@ -884,20 +885,49 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   24. TESTIMONI — FRAME GOLD, TEKS PUTIH
+   24. TESTIMONI — MODULE, KELAS BERSIH
 ========================================= */
 .testi-flip-container {
+  position: relative;
+  overflow: hidden;
+  height: 140px;
+  margin: 24px 20px 16px;
+  border-radius: 14px;
+  padding: 20px;
   background: transparent !important;
   border: 1px solid var(--gold-soft) !important;
   color: #fff;
 }
-.testi-card p { color: rgba(255,255,255,0.9); }
-.testi-card span { color: rgba(255,255,255,0.7); }
-.testi-dot[aria-current="true"] { background: var(--gold-bright) !important; }
-.testi-dot:not([aria-current="true"]) { background: rgba(255,255,255,0.4) !important; }
+.testi-pause-btn {
+  position: absolute; top: 10px; right: 10px; z-index: 3;
+  background: rgba(255,255,255,0.15); border: 1px solid var(--gold-soft);
+  border-radius: 50%; width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; padding: 0; color: var(--gold-bright);
+}
+.testi-card {
+  position: absolute; top: 0; left: 0; right: 0; padding: 20px;
+  transition: transform 0.6s cubic-bezier(0.4,0,0.2,1), opacity 0.6s;
+  transform: translateY(100%); opacity: 0;
+}
+.testi-card.is-active { transform: translateY(0); opacity: 1; }
+.testi-card.is-prev { transform: translateY(-100%); opacity: 0; }
+.testi-stars { font-size: 18px; margin-bottom: 4px; letter-spacing: 2px; }
+.testi-card p { font-size: 16px; font-weight: 600; margin: 0 0 6px; line-height: 1.4; color: rgba(255,255,255,0.9); }
+.testi-card span { font-size: 13px; color: rgba(255,255,255,0.7); }
+.testi-dots {
+  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 6px; z-index: 2;
+}
+.testi-dot { width: 6px; height: 6px; border-radius: 50%; border: none; padding: 0; cursor: pointer; background: rgba(255,255,255,0.4); }
+.testi-dot[aria-current="true"] { background: var(--gold-bright); width: 16px; border-radius: 10px; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap;
+}
 
 /* =========================================
-   25. FAQ ACCORDION — FRAME GOLD, TEKS PUTIH
+   25. FAQ ACCORDION — BUTTON, AKSESIBEL
 ========================================= */
 .faq-container {
   margin: 0 20px var(--space-3);
@@ -911,10 +941,25 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   border-bottom: 1px solid var(--gold-soft);
 }
 .faq-question {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: none;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+  padding: var(--space-3) 0;
+  text-align: left;
   color: #fff;
   font-size: 0.9375rem;
   font-weight: 600;
   line-height: 1.5;
+}
+.faq-question:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 .faq-question i {
   transition: transform var(--dur-normal) ease;
