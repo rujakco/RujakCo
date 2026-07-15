@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (final dengan penyimpanan data pelanggan & dropdown kecamatan di drawer)
+// app.js — Luxury Edition (final dengan semua perbaikan bug & aksesibilitas)
 import { PRODUCTS } from './data/products.js';
 import { DISTRICT_MAP } from './data/districts.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
@@ -137,14 +137,13 @@ function updateCartUI() {
 }
 
 // ---------------------------------------------------------------------------
-// Prefill data pelanggan dari localStorage (diperbaiki: jangan timpa distrik jika sudah ada)
+// Prefill data pelanggan dari localStorage (hanya fallback, tidak timpa)
 // ---------------------------------------------------------------------------
 function prefillCustomerData() {
   const saved = loadCustomer();
   if (saved) {
     if (saved.phone && DOM.customerPhoneInput) DOM.customerPhoneInput.value = saved.phone;
     if (saved.address && DOM.customerAddressInput) DOM.customerAddressInput.value = saved.address;
-    // Hanya isi kecamatan jika state.selectedDistrict masih kosong
     if (saved.district && !state.selectedDistrict) {
       state.selectedDistrict = saved.district;
       if (DOM.districtInput) DOM.districtInput.value = saved.district.replace(/\b\w/g, l => l.toUpperCase());
@@ -220,6 +219,7 @@ function showConfirmModal(title, message, onConfirm) {
   function onKeydown(e) {
     if (e.key === 'Escape') {
       e.preventDefault();
+      e.stopImmediatePropagation(); // ✅ perbaikan bug #5: cegah listener global
       cleanup();
       return;
     }
@@ -300,7 +300,7 @@ function closeProductPage(useHistoryBack = true) {
 }
 
 // ---------------------------------------------------------------------------
-// Gesture: swipe produk & tutup detail (AMAN, HORMATI GESTURE BACK)
+// Gesture: swipe produk & tutup detail
 // ---------------------------------------------------------------------------
 function initDetailGestures() {
   const track = DOM.productSwiperTrack;
@@ -376,7 +376,7 @@ function initDetailGestures() {
 }
 
 // ---------------------------------------------------------------------------
-// Onboarding (dropdown ARIA combobox)
+// Onboarding
 // ---------------------------------------------------------------------------
 function initOnboarding() {
   const saved = loadState();
@@ -443,7 +443,13 @@ function initOnboarding() {
     const matches = Object.keys(DISTRICT_MAP).filter(k => k.includes(v));
     renderDropdown(matches);
   }, 150);
+
   DOM.onbDistrict.addEventListener('input', (e) => filterDistricts(e.target.value));
+
+  // ✅ perbaikan bug #6: tampilkan semua kecamatan saat fokus pertama
+  DOM.onbDistrict.addEventListener('focus', () => {
+    if (!DOM.onbDistrict.value) filterDistricts('');
+  });
 
   DOM.onbDistrict.addEventListener('keydown', (e) => {
     const opts = dropdown.querySelectorAll('div[role="option"]');
@@ -506,7 +512,7 @@ function initOnboarding() {
 }
 
 // ---------------------------------------------------------------------------
-// Dropdown kecamatan di drawer (pattern sama dengan onboarding)
+// Dropdown kecamatan di drawer
 // ---------------------------------------------------------------------------
 function initDrawerDistrictDropdown() {
   const input = DOM.districtInput;
@@ -701,14 +707,19 @@ async function sendReceiptToTelegram() {
 }
 
 function showOrderConfirmation() {
+  // ✅ Simpan data pelanggan terbaru sebelum melanjutkan
+  const currentPhone = DOM.customerPhoneInput?.value || state.customerPhone;
+  const currentAddress = DOM.customerAddressInput?.value || state.customerAddress;
+  saveCustomer(currentPhone, currentAddress, state.selectedDistrict);
+
   const summary = getCartSummaryLocal();
   const dist = state.selectedDistrict ? getDistance(state.selectedDistrict) : null;
   const ship = dist ? calculateShipping(dist, summary.mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority) : { cost: 0 };
   const total = summary.subtotal + (ship.cost || 0);
 
   const name = DOM.customerNameInput?.value || state.customerName || '—';
-  const phone = document.getElementById('customerPhone')?.value || state.customerPhone || '—';
-  const address = document.getElementById('customerAddress')?.value || state.customerAddress || '—';
+  const phone = currentPhone;
+  const address = currentAddress;
   const deliveryTime = document.getElementById('deliveryTimeLabel')?.textContent || '—';
 
   let itemsHtml = '';
@@ -769,7 +780,6 @@ function showOrderConfirmation() {
   if (modal) {
     openModal(modal);
 
-    // Perbaikan bug #3: onclick alih-alih addEventListener
     const backBtn = document.getElementById('orderConfirmBack');
     if (backBtn) backBtn.onclick = () => closeModal(modal);
 
@@ -834,7 +844,7 @@ function bindEvents() {
     document.getElementById('waVipSideTab')?.classList.toggle('open');
   });
 
-  // Nav: Home — tutup detail & kembali ke atas
+  // Nav: Home
   document.getElementById('navHomeBtn')?.addEventListener('click', () => {
     if (DOM.productPage.style.display === 'flex') {
       closeProductPage(true);
@@ -842,16 +852,13 @@ function bindEvents() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  // Nav: Lihat Produk — buka detail produk terakhir, atau produk pertama
+  // Nav: Lihat Produk (dengan cegah tumpukan history) ✅ bug #7
   document.getElementById('navProductBtn')?.addEventListener('click', () => {
-    if (state.lastViewedProductIndex >= 0) {
-      openProductPage(state.lastViewedProductIndex);
-    } else {
-      openProductPage(0);
-    }
+    if (DOM.productPage.style.display === 'flex') return; // sudah terbuka, abaikan
+    openProductPage(state.lastViewedProductIndex >= 0 ? state.lastViewedProductIndex : 0);
   });
 
-  // Custom delivery time dropdown (KEYBOARD-ACCESSIBLE)
+  // Custom delivery time dropdown
   const deliveryTrigger = document.getElementById('deliveryTimeTrigger');
   const deliveryDropdown = document.getElementById('deliveryTimeDropdown');
   const deliveryHidden = document.getElementById('deliveryTime');
@@ -928,24 +935,13 @@ function bindEvents() {
     }
   });
 
-  // === LISTENER LANGSUNG UNTUK SEMUA TOMBOL X (SATU KLIK) ===
-  document.getElementById('miniCartClose')?.addEventListener('click', () => {
-    closeModal(DOM.miniCartModal);
-  });
+  // Tombol X
+  document.getElementById('miniCartClose')?.addEventListener('click', () => closeModal(DOM.miniCartModal));
+  document.getElementById('paymentClose')?.addEventListener('click', () => closeModal(DOM.paymentModal));
+  document.getElementById('aiChatClose')?.addEventListener('click', () => closeModal(DOM.aiChatBox));
+  document.getElementById('orderConfirmClose')?.addEventListener('click', () => closeModal(document.getElementById('orderConfirmModal')));
 
-  document.getElementById('paymentClose')?.addEventListener('click', () => {
-    closeModal(DOM.paymentModal);
-  });
-
-  document.getElementById('aiChatClose')?.addEventListener('click', () => {
-    closeModal(DOM.aiChatBox);
-  });
-
-  document.getElementById('orderConfirmClose')?.addEventListener('click', () => {
-    closeModal(document.getElementById('orderConfirmModal'));
-  });
-
-  // === Simpan data pelanggan saat mengetik (termasuk nama) ===
+  // Simpan data pelanggan
   DOM.customerNameInput?.addEventListener('input', () => {
     state.customerName = DOM.customerNameInput.value;
     saveUser(state.customerName, state.selectedDistrict);
@@ -962,16 +958,14 @@ function bindEvents() {
     saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict);
   });
 
-  // === EVENT DELEGATION UTAMA (diperbaiki: semua pakai closest) ===
+  // Event delegation (semua menggunakan closest)
   document.addEventListener('click', (e) => {
-    // Carousel boutique item
     const boutique = e.target.closest('.boutique-item');
     if (boutique) {
       openProductPage(parseInt(boutique.dataset.idx));
       return;
     }
 
-    // Step 1 -> 2 (detail page)
     const step1Btn = e.target.closest('.step-1-btn');
     if (step1Btn) {
       if (window.navigator.vibrate) window.navigator.vibrate(10);
@@ -992,7 +986,6 @@ function bindEvents() {
       return;
     }
 
-    // Spice selector
     const spiceOption = e.target.closest('.spice-option');
     if (spiceOption) {
       const pid = spiceOption.dataset.pid;
@@ -1007,7 +1000,6 @@ function bindEvents() {
       return;
     }
 
-    // Qty controls (detail page)
     const qtyPlus = e.target.closest('.qty-plus');
     const qtyMinus = e.target.closest('.qty-minus');
     if (qtyPlus || qtyMinus) {
@@ -1018,7 +1010,6 @@ function bindEvents() {
       return;
     }
 
-    // Add to cart
     const addBtn = e.target.closest('.add-to-cart-btn');
     if (addBtn) {
       if (window.navigator.vibrate) window.navigator.vibrate(10);
@@ -1040,13 +1031,12 @@ function bindEvents() {
       return;
     }
 
-    // Confirm via WA
     if (e.target.closest('[data-action="confirm-wa"]')) {
       confirmOrder(state.cart, state, updateCartUI)(e);
+      saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict);
       return;
     }
 
-    // Cart item actions
     const actionBtn = e.target.closest('[data-action]');
     if (actionBtn && !actionBtn.classList.contains('add-to-cart-btn') && !actionBtn.classList.contains('step-1-btn')) {
       const id = actionBtn.dataset.id;
@@ -1074,7 +1064,6 @@ function bindEvents() {
       return;
     }
 
-    // Shipping provider
     const logBtn = e.target.closest('.log-btn');
     if (logBtn) {
       document.querySelectorAll('.log-btn').forEach(b => b.classList.remove('active'));
@@ -1086,7 +1075,6 @@ function bindEvents() {
       return;
     }
 
-    // Vehicle type
     const vehBtn = e.target.closest('.veh-btn');
     if (vehBtn) {
       document.querySelectorAll('.veh-btn').forEach(b => b.classList.remove('active'));
@@ -1096,33 +1084,28 @@ function bindEvents() {
       return;
     }
 
-    // Priority toggle
     if (e.target.id === 'priorityToggleMini') {
       state.isPriority = e.target.checked;
       updateShippingUI();
       return;
     }
 
-    // Open payment
     if (e.target.id === 'btnOpenPayment') {
       showOrderConfirmation();
       return;
     }
 
-    // AI Chat
     if (e.target.closest('#aiChatToggle')) {
       e.preventDefault();
       openModal(DOM.aiChatBox);
       return;
     }
 
-    // Back from product
     if (e.target.closest('#backFromProduct')) {
       closeProductPage(true);
       return;
     }
 
-    // Nav cart btn
     if (e.target.closest('#navCartBtn')) {
       e.preventDefault();
       openModal(DOM.miniCartModal);
@@ -1131,7 +1114,6 @@ function bindEvents() {
       return;
     }
 
-    // FAQ toggle
     const faqToggle = e.target.closest('[data-toggle="faq"]');
     if (faqToggle) {
       const item = faqToggle.closest('.faq-item');
@@ -1141,7 +1123,6 @@ function bindEvents() {
     }
   });
 
-  // Prevent modal overlay click from closing if clicking inside drawer
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) closeModal(overlay);
@@ -1181,7 +1162,6 @@ function init() {
   initTestimonials();
   updateCartUI();
 
-  // Hero parallax wiring
   const heroImg = document.querySelector('.hero-img');
   window.addEventListener('scroll', () => {
     DOM.header?.classList.toggle('scrolled', window.scrollY > 50);
@@ -1191,7 +1171,6 @@ function init() {
     }
   }, { passive: true });
 
-  // DEEP‑LINK PRODUK (?product=...)
   const urlParams = new URLSearchParams(window.location.search);
   const productId = urlParams.get('product');
   if (productId) {
@@ -1199,7 +1178,6 @@ function init() {
     if (idx !== -1) setTimeout(() => openProductPage(idx), 400);
   }
 
-  // Listener untuk gesture back Android / tombol back browser
   window.addEventListener('popstate', (event) => {
     if (DOM.productPage.style.display === 'flex') {
       closeProductPage(false);
