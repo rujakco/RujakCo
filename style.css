@@ -867,49 +867,41 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
 }
 
 /* =========================================
-   24. FAQ ACCORDION — CARD PUTIH AGAR KONTRAS
+   24. TESTIMONI — FRAME GOLD, TEKS PUTIH
+========================================= */
+.testi-flip-container {
+  background: transparent;
+  border: 1px solid var(--gold-soft);
+  color: #fff;
+}
+.testi-card p { color: rgba(255,255,255,0.9); }
+.testi-card span { color: rgba(255,255,255,0.7); }
+.testi-dot[aria-current="true"] { background: var(--gold-bright) !important; }
+.testi-dot:not([aria-current="true"]) { background: rgba(255,255,255,0.4) !important; }
+
+/* =========================================
+   25. FAQ ACCORDION — FRAME GOLD, TEKS PUTIH
 ========================================= */
 .faq-container {
   margin: 0 20px 16px;
-  background: var(--bg-surface);
+  background: transparent;
+  border: 1px solid var(--gold-soft);
   border-radius: var(--radius-lg);
   padding: 12px 16px;
-  box-shadow: var(--shadow-soft);
+  box-shadow: none;
 }
 .faq-item {
-  border-bottom: 1px solid var(--gray-200);
+  border-bottom: 1px solid var(--gold-soft);
 }
 .faq-question {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 0;
-  font-weight: 600;
-  font-size: 0.9375rem;
-  cursor: pointer;
-  color: var(--green);
-}
-.faq-question i {
-  transition: transform 0.3s ease;
-}
-.faq-item.open .faq-question i {
-  transform: rotate(180deg);
+  color: #fff;
 }
 .faq-answer {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.4s ease, padding 0.4s ease;
-  font-size: 0.875rem;
-  color: var(--gray-600);
-  line-height: 1.6;
-}
-.faq-item.open .faq-answer {
-  max-height: 200px;
-  padding-bottom: 16px;
+  color: rgba(255,255,255,0.8);
 }
 
 /* =========================================
-   25. DIVIDER & SECTION HEADER
+   26. DIVIDER & SECTION HEADER
 ========================================= */
 .divider {
   width: calc(100% - 40px);
@@ -936,7 +928,7 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
 }
 
 /* =========================================
-   26. ACCESSIBLE DROPDOWN HIGHLIGHT
+   27. ACCESSIBLE DROPDOWN HIGHLIGHT
 ========================================= */
 .minimal-dropdown div[aria-selected="true"] {
   background: var(--green-light);
