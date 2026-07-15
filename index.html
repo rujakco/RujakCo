@@ -122,30 +122,30 @@
     </div>
 
     <!-- TESTIMONI AUTO-ROTATE -->
-    <div class="testi-flip-container" id="testiFlipContainer" role="region" aria-roledescription="carousel" aria-label="Testimoni pelanggan" style="position:relative;overflow:hidden;height:140px;margin:0 20px 16px;background:#FFFDF5;border:1px solid #F0E6C0;border-radius:14px;padding:20px;">
-      <button type="button" id="testiPauseBtn" aria-label="Jeda testimoni otomatis" aria-pressed="false" style="position:absolute;top:10px;right:10px;z-index:3;background:rgba(255,255,255,0.8);border:1px solid #F0E6C0;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;">
+    <div class="testi-flip-container" id="testiFlipContainer" role="region" aria-roledescription="carousel" aria-label="Testimoni pelanggan" style="position:relative;overflow:hidden;height:140px;margin:0 20px 16px;border-radius:14px;padding:20px;">
+      <button type="button" id="testiPauseBtn" aria-label="Jeda testimoni otomatis" aria-pressed="false" style="position:absolute;top:10px;right:10px;z-index:3;background:rgba(255,255,255,0.15);border:1px solid var(--gold-soft);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;color:var(--gold-bright);">
         <i data-lucide="pause" style="width:14px;height:14px;"></i>
       </button>
       <div id="testiLiveRegion" aria-live="polite" aria-atomic="true" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;"></div>
       <div class="testi-card active" data-index="0" style="position:absolute;top:0;left:0;right:0;padding:20px;transition:transform 0.6s cubic-bezier(0.4,0,0.2,1),opacity 0.6s;transform:translateY(0);opacity:1;">
         <div style="font-size:18px;margin-bottom:4px;letter-spacing:2px;">★★★★★</div>
-        <p style="font-size:16px;color:#3d2b00;font-weight:600;margin:0 0 6px;line-height:1.4;">"Buset ini rujak bukan kaleng-kaleng. Sambel metenya berasa banget, nggak pelit sama sekali."</p>
-        <span style="font-size:13px;color:#8B7355;">— Dina, Bekasi</span>
+        <p style="font-size:16px;font-weight:600;margin:0 0 6px;line-height:1.4;">"Buset ini rujak bukan kaleng-kaleng. Sambel metenya berasa banget, nggak pelit sama sekali."</p>
+        <span style="font-size:13px;">— Dina, Bekasi</span>
       </div>
       <div class="testi-card" data-index="1" style="position:absolute;top:0;left:0;right:0;padding:20px;transition:transform 0.6s cubic-bezier(0.4,0,0.2,1),opacity 0.6s;transform:translateY(100%);opacity:0;">
         <div style="font-size:18px;margin-bottom:4px;letter-spacing:2px;">★★★★★</div>
-        <p style="font-size:16px;color:#3d2b00;font-weight:600;margin:0 0 6px;line-height:1.4;">"Ngidam rujak pas hamil, ini satu-satunya yang nggak ngecewain. Asem pedesnya pas banget."</p>
-        <span style="font-size:13px;color:#8B7355;">— Rina, Jakarta Timur</span>
+        <p style="font-size:16px;font-weight:600;margin:0 0 6px;line-height:1.4;">"Ngidam rujak pas hamil, ini satu-satunya yang nggak ngecewain. Asem pedesnya pas banget."</p>
+        <span style="font-size:13px;">— Rina, Jakarta Timur</span>
       </div>
       <div class="testi-card" data-index="2" style="position:absolute;top:0;left:0;right:0;padding:20px;transition:transform 0.6s cubic-bezier(0.4,0,0.2,1),opacity 0.6s;transform:translateY(100%);opacity:0;">
         <div style="font-size:18px;margin-bottom:4px;letter-spacing:2px;">★★★★★</div>
-        <p style="font-size:16px;color:#3d2b00;font-weight:600;margin:0 0 6px;line-height:1.4;">"Gue kira overhype, ternyata emang enak. Buahnya masih seger, nggak kayak yang udah dipotong lama."</p>
-        <span style="font-size:13px;color:#8B7355;">— Aldo, Depok</span>
+        <p style="font-size:16px;font-weight:600;margin:0 0 6px;line-height:1.4;">"Gue kira overhype, ternyata emang enak. Buahnya masih seger, nggak kayak yang udah dipotong lama."</p>
+        <span style="font-size:13px;">— Aldo, Depok</span>
       </div>
       <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:2;">
-        <button type="button" class="testi-dot active" data-dot="0" aria-label="Testimoni 1" aria-current="true" style="width:16px;height:6px;border-radius:10px;background:#0F4D37;border:none;padding:0;cursor:pointer;"></button>
-        <button type="button" class="testi-dot" data-dot="1" aria-label="Testimoni 2" aria-current="false" style="width:6px;height:6px;border-radius:50%;background:#D4C9A8;border:none;padding:0;cursor:pointer;"></button>
-        <button type="button" class="testi-dot" data-dot="2" aria-label="Testimoni 3" aria-current="false" style="width:6px;height:6px;border-radius:50%;background:#D4C9A8;border:none;padding:0;cursor:pointer;"></button>
+        <button type="button" class="testi-dot active" data-dot="0" aria-label="Testimoni 1" aria-current="true" style="width:16px;height:6px;border-radius:10px;border:none;padding:0;cursor:pointer;"></button>
+        <button type="button" class="testi-dot" data-dot="1" aria-label="Testimoni 2" aria-current="false" style="width:6px;height:6px;border-radius:50%;border:none;padding:0;cursor:pointer;"></button>
+        <button type="button" class="testi-dot" data-dot="2" aria-label="Testimoni 3" aria-current="false" style="width:6px;height:6px;border-radius:50%;border:none;padding:0;cursor:pointer;"></button>
       </div>
     </div>
     <script>
@@ -175,8 +175,8 @@
         dots.forEach(function(dot, i) {
           var active = i === index;
           dot.setAttribute('aria-current', active ? 'true' : 'false');
-          if (active) { dot.style.background = '#0F4D37'; dot.style.width = '16px'; dot.style.borderRadius = '10px'; }
-          else { dot.style.background = '#D4C9A8'; dot.style.width = '6px'; dot.style.borderRadius = '50%'; }
+          if (active) { dot.style.background = '#E8D5A8'; dot.style.width = '16px'; dot.style.borderRadius = '10px'; }
+          else { dot.style.background = 'rgba(255,255,255,0.4)'; dot.style.width = '6px'; dot.style.borderRadius = '50%'; }
         });
         currentIndex = index;
         if (announce && liveRegion) {
