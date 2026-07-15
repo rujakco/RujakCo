@@ -219,7 +219,7 @@ function showConfirmModal(title, message, onConfirm) {
   function onKeydown(e) {
     if (e.key === 'Escape') {
       e.preventDefault();
-      e.stopImmediatePropagation(); // ✅ perbaikan bug #5: cegah listener global
+      e.stopImmediatePropagation(); // perbaikan bug #5
       cleanup();
       return;
     }
@@ -376,7 +376,7 @@ function initDetailGestures() {
 }
 
 // ---------------------------------------------------------------------------
-// Onboarding
+// Onboarding (dengan listener fokus untuk dropdown)
 // ---------------------------------------------------------------------------
 function initOnboarding() {
   const saved = loadState();
@@ -403,7 +403,6 @@ function initOnboarding() {
     }, 100);
   });
 
-  // --- Dropdown kecamatan: ARIA combobox pattern ---
   const dropdown = DOM.onbDistrictDropdown;
   let activeOptionIndex = -1;
   let currentMatches = [];
@@ -446,7 +445,7 @@ function initOnboarding() {
 
   DOM.onbDistrict.addEventListener('input', (e) => filterDistricts(e.target.value));
 
-  // ✅ perbaikan bug #6: tampilkan semua kecamatan saat fokus pertama
+  // perbaikan bug #6: tampilkan semua kecamatan saat fokus
   DOM.onbDistrict.addEventListener('focus', () => {
     if (!DOM.onbDistrict.value) filterDistricts('');
   });
@@ -707,7 +706,7 @@ async function sendReceiptToTelegram() {
 }
 
 function showOrderConfirmation() {
-  // ✅ Simpan data pelanggan terbaru sebelum melanjutkan
+  // Simpan data pelanggan terbaru sebelum melanjutkan
   const currentPhone = DOM.customerPhoneInput?.value || state.customerPhone;
   const currentAddress = DOM.customerAddressInput?.value || state.customerAddress;
   saveCustomer(currentPhone, currentAddress, state.selectedDistrict);
@@ -809,7 +808,7 @@ function bindEvents() {
     aboutClose.addEventListener('click', () => closeModal(DOM.aboutModal));
   }
 
-  // Share produk di halaman detail
+  // Share produk
   const shareBtn = document.getElementById('shareProductBtn');
   if (shareBtn) {
     shareBtn.addEventListener('click', () => {
@@ -838,7 +837,7 @@ function bindEvents() {
     });
   }
 
-  // Toggle VIP side tab
+  // VIP side tab
   document.getElementById('waVipHandle')?.addEventListener('click', (e) => {
     e.stopPropagation();
     document.getElementById('waVipSideTab')?.classList.toggle('open');
@@ -852,13 +851,13 @@ function bindEvents() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  // Nav: Lihat Produk (dengan cegah tumpukan history) ✅ bug #7
+  // Nav: Lihat Produk (cegah tumpukan history)
   document.getElementById('navProductBtn')?.addEventListener('click', () => {
-    if (DOM.productPage.style.display === 'flex') return; // sudah terbuka, abaikan
+    if (DOM.productPage.style.display === 'flex') return; // bug #7
     openProductPage(state.lastViewedProductIndex >= 0 ? state.lastViewedProductIndex : 0);
   });
 
-  // Custom delivery time dropdown
+  // Delivery time dropdown
   const deliveryTrigger = document.getElementById('deliveryTimeTrigger');
   const deliveryDropdown = document.getElementById('deliveryTimeDropdown');
   const deliveryHidden = document.getElementById('deliveryTime');
@@ -1090,7 +1089,14 @@ function bindEvents() {
       return;
     }
 
+    // Tombol Selesaikan Reservasi — validasi & keranjang kosong (bug #8 & #9)
     if (e.target.id === 'btnOpenPayment') {
+      if (!Object.keys(state.cart).length) return showToast('Keranjang masih kosong.');
+      const phone = DOM.customerPhoneInput?.value.trim() || '';
+      const address = DOM.customerAddressInput?.value.trim() || '';
+      if (!validatePhone(phone)) return showToast('Nomor HP tidak valid.');
+      if (!validateAddress(address)) return showToast('Mohon lengkapi alamat pengantaran.');
+      if (!state.selectedDistrict) return showToast('Mohon pilih kecamatan tujuan.');
       showOrderConfirmation();
       return;
     }
