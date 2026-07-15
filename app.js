@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (deep‑link, konfirmasi hapus, semua perbaikan)
+// app.js — Luxury Edition (deep‑link, konfirmasi hapus, share, semua perbaikan)
 import { PRODUCTS } from './data/products.js';
 import { DISTRICT_MAP } from './data/districts.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
@@ -379,6 +379,35 @@ function bindEvents() {
   }
   if (aboutClose && DOM.aboutModal) {
     aboutClose.addEventListener('click', () => closeModal(DOM.aboutModal));
+  }
+
+  // Share produk di halaman detail
+  const shareBtn = document.getElementById('shareProductBtn');
+  if (shareBtn) {
+    shareBtn.addEventListener('click', () => {
+      const track = DOM.productSwiperTrack;
+      if (!track) return;
+      const slideWidth = track.querySelector('.product-slide')?.offsetWidth || track.clientWidth;
+      const currentIndex = Math.round(track.scrollLeft / slideWidth);
+      const productId = PRODUCTS[currentIndex % PRODUCTS.length]?.id;
+      if (!productId) return;
+
+      const product = PRODUCTS.find(p => p.id === productId);
+      if (!product) return;
+
+      const shareUrl = window.location.origin + window.location.pathname + '?product=' + productId;
+      const shareText = `🍜 ${product.name} — ${product.desc}\nPesan sekarang di Rujak.Co!`;
+
+      if (navigator.share) {
+        navigator.share({ title: product.name, text: shareText, url: shareUrl }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(shareUrl + '\n' + shareText).then(() => {
+          showToast('📋 Link produk disalin!');
+        }).catch(() => {
+          showToast('📋 Gagal menyalin link');
+        });
+      }
+    });
   }
 
   document.addEventListener('click', (e) => {
