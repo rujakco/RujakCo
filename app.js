@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (navbar selalu gold, produk pertama fallback, aksesibel penuh)
+// app.js — Luxury Edition (navbar ivory, custom delivery dropdown, produk pertama fallback)
 import { PRODUCTS } from './data/products.js';
 import { DISTRICT_MAP } from './data/districts.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
@@ -25,7 +25,7 @@ const state = {
   vehicleType: 'motor',
   isPriority: false,
   userDistance: null,
-  lastViewedProductIndex: -1   // untuk tombol "Lihat Produk" di navbar
+  lastViewedProductIndex: -1
 };
 
 PRODUCTS.forEach(p => {
@@ -538,6 +538,33 @@ function bindEvents() {
       openProductPage(state.lastViewedProductIndex);
     } else {
       openProductPage(0);
+    }
+  });
+
+  // Custom delivery time dropdown
+  const deliveryTrigger = document.getElementById('deliveryTimeTrigger');
+  const deliveryDropdown = document.getElementById('deliveryTimeDropdown');
+  const deliveryHidden = document.getElementById('deliveryTime');
+  const deliveryLabel = document.getElementById('deliveryTimeLabel');
+
+  deliveryTrigger?.addEventListener('click', () => {
+    deliveryDropdown.style.display = deliveryDropdown.style.display === 'block' ? 'none' : 'block';
+    deliveryTrigger.setAttribute('aria-expanded', deliveryDropdown.style.display === 'block' ? 'true' : 'false');
+  });
+
+  deliveryDropdown?.addEventListener('click', (e) => {
+    const option = e.target.closest('[role="option"]');
+    if (!option) return;
+    deliveryLabel.textContent = option.textContent;
+    deliveryHidden.value = option.dataset.value;
+    deliveryDropdown.style.display = 'none';
+    deliveryTrigger.setAttribute('aria-expanded', 'false');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!deliveryTrigger?.contains(e.target) && !deliveryDropdown?.contains(e.target)) {
+      deliveryDropdown.style.display = 'none';
+      deliveryTrigger?.setAttribute('aria-expanded', 'false');
     }
   });
 
