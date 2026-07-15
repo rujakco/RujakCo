@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (perbaikan aksesibilitas penuh)
+// app.js — Luxury Edition (navbar gold, side tab VIP, aksesibilitas penuh)
 import { PRODUCTS } from './data/products.js';
 import { DISTRICT_MAP } from './data/districts.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
@@ -24,7 +24,8 @@ const state = {
   shippingProvider: 'rujakco',
   vehicleType: 'motor',
   isPriority: false,
-  userDistance: null
+  userDistance: null,
+  lastViewedProductIndex: -1
 };
 
 PRODUCTS.forEach(p => {
@@ -54,8 +55,8 @@ const cacheDOM = () => {
   DOM.aiWelcome = document.getElementById('aiWelcomeMsg');
   DOM.productPage = document.getElementById('productPage');
   DOM.productSwiperTrack = document.getElementById('productSwiperTrack');
+  DOM.bottomNav = document.getElementById('bottomNav');
   DOM.cartBadge = document.getElementById('cartBadgeNav');
-  DOM.cartBadgeDetail = document.getElementById('cartBadgeDetail');
   DOM.miniCartModal = document.getElementById('miniCartModal');
   DOM.miniCartList = document.getElementById('miniCartList');
   DOM.cartSubtotal = document.getElementById('cartSubtotalDisplay');
@@ -111,7 +112,7 @@ function updateShippingUI() {
 
 function updateCartUI() {
   saveCart(state.cart);
-  renderCart(state.cart, ['cartBadgeNav', 'cartBadgeDetail']);
+  renderCart(state.cart, ['cartBadgeNav']);
   if (DOM.miniCartModal?.classList.contains('active')) {
     renderMiniCart(state.cart);
     updateShippingUI();
@@ -218,6 +219,8 @@ function openProductPage(globalIndex) {
   DOM.productPage.style.display = 'flex';
   DOM.productPage.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
+  DOM.bottomNav?.classList.add('nav-gold');
+  state.lastViewedProductIndex = globalIndex;
 
   history.pushState({ detailOpen: true, productIndex: globalIndex }, '');
 
@@ -250,6 +253,8 @@ function closeProductPage(useHistoryBack = true) {
   DOM.productPage.style.display = 'none';
   DOM.productPage.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
+  DOM.bottomNav?.classList.remove('nav-gold');
+  document.getElementById('waVipSideTab')?.classList.remove('open');
 
   if (DOM._productObserver) {
     DOM._productObserver.disconnect();
@@ -516,6 +521,29 @@ function bindEvents() {
     });
   }
 
+  // Toggle VIP side tab
+  document.getElementById('waVipHandle')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('waVipSideTab')?.classList.toggle('open');
+  });
+
+  // Nav: Home — tutup detail & kembali ke atas
+  document.getElementById('navHomeBtn')?.addEventListener('click', () => {
+    if (DOM.productPage.style.display === 'flex') {
+      closeProductPage(true);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // Nav: Lihat Produk — buka detail produk terakhir
+  document.getElementById('navProductBtn')?.addEventListener('click', () => {
+    if (state.lastViewedProductIndex >= 0) {
+      openProductPage(state.lastViewedProductIndex);
+    } else {
+      showToast('Belum ada produk yang dilihat');
+    }
+  });
+
   document.addEventListener('click', (e) => {
     // Carousel boutique item
     const boutique = e.target.closest('.boutique-item');
@@ -709,16 +737,6 @@ function bindEvents() {
       if (e.target === overlay) closeModal(overlay);
     });
   });
-
-  // FAB Keranjang di halaman detail
-  const fab = document.getElementById('cartFabDetail');
-  if (fab) {
-    fab.addEventListener('click', () => {
-      openModal(DOM.miniCartModal);
-      renderMiniCart(state.cart);
-      updateShippingUI();
-    });
-  }
 }
 
 // ---------------------------------------------------------------------------
