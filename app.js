@@ -137,16 +137,17 @@ function updateCartUI() {
 }
 
 // ---------------------------------------------------------------------------
-// Prefill data pelanggan dari localStorage
+// Prefill data pelanggan dari localStorage (diperbaiki: jangan timpa distrik jika sudah ada)
 // ---------------------------------------------------------------------------
 function prefillCustomerData() {
   const saved = loadCustomer();
   if (saved) {
     if (saved.phone && DOM.customerPhoneInput) DOM.customerPhoneInput.value = saved.phone;
     if (saved.address && DOM.customerAddressInput) DOM.customerAddressInput.value = saved.address;
-    if (saved.district) {
+    // Hanya isi kecamatan jika state.selectedDistrict masih kosong
+    if (saved.district && !state.selectedDistrict) {
       state.selectedDistrict = saved.district;
-      DOM.districtInput.value = saved.district.replace(/\b\w/g, l => l.toUpperCase());
+      if (DOM.districtInput) DOM.districtInput.value = saved.district.replace(/\b\w/g, l => l.toUpperCase());
     }
   }
   if (state.customerPhone && DOM.customerPhoneInput) DOM.customerPhoneInput.value = state.customerPhone;
@@ -366,7 +367,7 @@ function initDetailGestures() {
     setTimeout(() => {
       if (activeSlide) {
         activeSlide.style.transition = '';
-        activeSlide.style.transform = '';   // perbaikan: reset inline transform
+        activeSlide.style.transform = '';
       }
       isPulling = false;
       activeSlide = null;
@@ -499,7 +500,7 @@ function initOnboarding() {
     clearUser();
     DOM.onbReturningUser.style.display = 'none';
     DOM.onbNewUser.style.display = 'block';
-    DOM.onbStep2.classList.remove('active'); // perbaikan: hapus active dari step2
+    DOM.onbStep2.classList.remove('active');
     DOM.onbStep1.classList.add('active');
   });
 }
@@ -602,7 +603,6 @@ async function downloadReceiptPNG() {
   const element = document.getElementById('orderConfirmContent');
   if (!element) return;
 
-  // Perbaikan: fallback html2canvas
   if (typeof html2canvas === 'undefined') {
     showToast('⚠️ Gagal menghasilkan struk. Coba lagi nanti.');
     return;
@@ -671,7 +671,6 @@ async function sendReceiptToTelegram() {
   const element = document.getElementById('orderConfirmContent');
   if (!element) return;
 
-  // Perbaikan: fallback html2canvas
   if (typeof html2canvas === 'undefined') {
     console.warn('html2canvas tidak tersedia, tidak dapat mengirim ke Telegram.');
     return;
@@ -770,11 +769,10 @@ function showOrderConfirmation() {
   if (modal) {
     openModal(modal);
 
-    // Perbaikan: gunakan onclick agar tidak menumpuk
+    // Perbaikan bug #3: onclick alih-alih addEventListener
     const backBtn = document.getElementById('orderConfirmBack');
     if (backBtn) backBtn.onclick = () => closeModal(modal);
 
-    // Tombol Lanjutkan → unduh otomatis, lalu buka pembayaran
     document.getElementById('orderConfirmLanjut').onclick = async () => {
       await downloadReceiptPNG();
       closeModal(modal);
@@ -947,7 +945,14 @@ function bindEvents() {
     closeModal(document.getElementById('orderConfirmModal'));
   });
 
-  // === Simpan data pelanggan saat mengetik ===
+  // === Simpan data pelanggan saat mengetik (termasuk nama) ===
+  DOM.customerNameInput?.addEventListener('input', () => {
+    state.customerName = DOM.customerNameInput.value;
+    saveUser(state.customerName, state.selectedDistrict);
+    DOM.headerName.textContent = state.customerName || 'Ngoedi';
+    if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Halo, ${state.customerName || 'Ngoedi'}! Ada yang bisa kami bantu untuk pesanan Anda?`;
+  });
+
   DOM.customerPhoneInput?.addEventListener('input', () => {
     state.customerPhone = DOM.customerPhoneInput.value;
     saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict);
@@ -957,7 +962,7 @@ function bindEvents() {
     saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict);
   });
 
-  // === EVENT DELEGATION UTAMA (TANPA HANDLER UNTUK TOMBOL X) ===
+  // === EVENT DELEGATION UTAMA (diperbaiki: semua pakai closest) ===
   document.addEventListener('click', (e) => {
     // Carousel boutique item
     const boutique = e.target.closest('.boutique-item');
@@ -967,11 +972,11 @@ function bindEvents() {
     }
 
     // Step 1 -> 2 (detail page)
-    if (e.target.classList.contains('step-1-btn')) {
+    const step1Btn = e.target.closest('.step-1-btn');
+    if (step1Btn) {
       if (window.navigator.vibrate) window.navigator.vibrate(10);
-      const btn = e.target;
-      const idx = btn.dataset.idx;
-      const pid = btn.dataset.pid;
+      const idx = step1Btn.dataset.idx;
+      const pid = step1Btn.dataset.pid;
       const step1 = document.getElementById(`step1_${idx}_${pid}`);
       const step2 = document.getElementById(`step2_${idx}_${pid}`);
       if (step1 && step2) {
@@ -988,9 +993,10 @@ function bindEvents() {
     }
 
     // Spice selector
-    if (e.target.classList.contains('spice-option')) {
-      const pid = e.target.dataset.pid;
-      const val = parseInt(e.target.dataset.spice);
+    const spiceOption = e.target.closest('.spice-option');
+    if (spiceOption) {
+      const pid = spiceOption.dataset.pid;
+      const val = parseInt(spiceOption.dataset.spice);
       state.drafts[pid].spice = val;
       document.querySelectorAll(`.spice-option[data-pid="${pid}"]`).forEach(b => {
         b.classList.toggle('active', parseInt(b.dataset.spice) === val);
@@ -1002,18 +1008,22 @@ function bindEvents() {
     }
 
     // Qty controls (detail page)
-    if (e.target.classList.contains('qty-plus') || e.target.classList.contains('qty-minus')) {
-      const pid = e.target.dataset.pid;
-      if (e.target.classList.contains('qty-plus')) state.drafts[pid].qty++;
+    const qtyPlus = e.target.closest('.qty-plus');
+    const qtyMinus = e.target.closest('.qty-minus');
+    if (qtyPlus || qtyMinus) {
+      const pid = (qtyPlus || qtyMinus).dataset.pid;
+      if (qtyPlus) state.drafts[pid].qty++;
       else if (state.drafts[pid].qty > 1) state.drafts[pid].qty--;
       document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = state.drafts[pid].qty);
       return;
     }
 
-    // Add to cart (TIDAK MENUTUP DETAIL)
-    if (e.target.classList.contains('add-to-cart-btn')) {
+    // Add to cart
+    const addBtn = e.target.closest('.add-to-cart-btn');
+    if (addBtn) {
       if (window.navigator.vibrate) window.navigator.vibrate(10);
-      const pid = e.target.dataset.pid;
+      const pid = addBtn.dataset.pid;
+      const idx = addBtn.dataset.idx;
       const draft = state.drafts[pid];
       const cartKey = pid + '_spice' + draft.spice;
       if (!state.cart[cartKey]) state.cart[cartKey] = { qty: 0, spice: draft.spice };
@@ -1022,7 +1032,6 @@ function bindEvents() {
       document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = 1);
       updateCartUI();
       showToast('Sajian ditambahkan ke reservasi.');
-      const idx = e.target.dataset.idx;
       setTimeout(() => {
         const step1 = document.getElementById(`step1_${idx}_${pid}`);
         const step2 = document.getElementById(`step2_${idx}_${pid}`);
@@ -1031,7 +1040,7 @@ function bindEvents() {
       return;
     }
 
-    // Confirm via WA (sebelum cart item actions)
+    // Confirm via WA
     if (e.target.closest('[data-action="confirm-wa"]')) {
       confirmOrder(state.cart, state, updateCartUI)(e);
       return;
@@ -1066,10 +1075,11 @@ function bindEvents() {
     }
 
     // Shipping provider
-    if (e.target.classList.contains('log-btn')) {
+    const logBtn = e.target.closest('.log-btn');
+    if (logBtn) {
       document.querySelectorAll('.log-btn').forEach(b => b.classList.remove('active'));
-      e.target.classList.add('active');
-      state.shippingProvider = e.target.dataset.provider;
+      logBtn.classList.add('active');
+      state.shippingProvider = logBtn.dataset.provider;
       DOM.rujakcoOptions.style.display = state.shippingProvider === 'paxel' ? 'none' : 'block';
       DOM.paxelOptions.style.display = state.shippingProvider === 'paxel' ? 'block' : 'none';
       updateShippingUI();
@@ -1077,10 +1087,11 @@ function bindEvents() {
     }
 
     // Vehicle type
-    if (e.target.classList.contains('veh-btn')) {
+    const vehBtn = e.target.closest('.veh-btn');
+    if (vehBtn) {
       document.querySelectorAll('.veh-btn').forEach(b => b.classList.remove('active'));
-      e.target.classList.add('active');
-      state.vehicleType = e.target.dataset.vehicle;
+      vehBtn.classList.add('active');
+      state.vehicleType = vehBtn.dataset.vehicle;
       updateShippingUI();
       return;
     }
@@ -1092,7 +1103,7 @@ function bindEvents() {
       return;
     }
 
-    // Open payment → sekarang menampilkan struk konfirmasi dulu
+    // Open payment
     if (e.target.id === 'btnOpenPayment') {
       showOrderConfirmation();
       return;
@@ -1120,7 +1131,7 @@ function bindEvents() {
       return;
     }
 
-    // FAQ toggle (accordion)
+    // FAQ toggle
     const faqToggle = e.target.closest('[data-toggle="faq"]');
     if (faqToggle) {
       const item = faqToggle.closest('.faq-item');
@@ -1144,7 +1155,6 @@ function bindEvents() {
 function init() {
   cacheDOM();
   const saved = loadState();
-  // Perbaikan: optional chaining untuk mencegah error
   state.cart = saved?.cart || {};
   if (saved?.name) state.customerName = saved.name;
   if (saved?.district) state.selectedDistrict = saved.district;
