@@ -66,8 +66,6 @@ const cacheDOM = () => {
   DOM.paymentTotal = document.getElementById('paymentTotalDisplay');
   DOM.aiChatBox = document.getElementById('aiChatBox');
   DOM.aboutModal = document.getElementById('aboutModal');
-  DOM.orderConfirmModal = document.getElementById('orderConfirmModal');
-  DOM.orderConfirmContent = document.getElementById('orderConfirmContent');
   DOM.shippingSection = document.getElementById('shippingSection');
   DOM.rujakcoOptions = document.getElementById('rujakcoOptions');
   DOM.paxelOptions = document.getElementById('paxelOptions');
@@ -482,7 +480,7 @@ function initScrollReveal() {
 // STRUK & SHARE FUNCTIONS
 // ---------------------------------------------------------------------------
 async function downloadReceiptPNG() {
-  const element = DOM.orderConfirmContent;
+  const element = document.getElementById('orderConfirmContent');
   if (!element) return;
 
   try {
@@ -541,11 +539,10 @@ function sendReceiptToWhatsApp() {
 
 async function sendReceiptToTelegram() {
   if (!SYSTEM.TELEGRAM_BOT_TOKEN || !SYSTEM.TELEGRAM_CHAT_ID) {
-    // Telegram tidak dikonfigurasi, lewati
     return;
   }
 
-  const element = DOM.orderConfirmContent;
+  const element = document.getElementById('orderConfirmContent');
   if (!element) return;
 
   try {
@@ -591,7 +588,13 @@ function showOrderConfirmation() {
     itemsHtml += `<div class="confirm-row"><span>${item.name}${spiceText} x${item.qty}</span><span>${fmt(item.price * item.qty)}</span></div>`;
   });
 
-  DOM.orderConfirmContent.innerHTML = `
+  const contentEl = document.getElementById('orderConfirmContent');
+  if (!contentEl) {
+    console.error('Elemen #orderConfirmContent tidak ditemukan');
+    return;
+  }
+
+  contentEl.innerHTML = `
     <div style="text-align:center; margin-bottom:16px;">
       <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp"
            alt="RUJAK.Co" style="width:56px; height:56px; border-radius:50%; margin-bottom:8px;" />
@@ -617,21 +620,26 @@ function showOrderConfirmation() {
     </div>
   `;
 
-  openModal(DOM.orderConfirmModal);
+  const modal = document.getElementById('orderConfirmModal');
+  if (modal) {
+    openModal(modal);
 
-  // Tombol aksi
-  document.getElementById('orderConfirmDownload').onclick = () => downloadReceiptPNG();
-  document.getElementById('orderConfirmShare').onclick = () => sendReceiptToWhatsApp();
-  document.getElementById('orderConfirmPay').onclick = () => {
-    closeModal(DOM.orderConfirmModal);
-    processPayment(state.cart, state, updateCartUI)();
-  };
-  document.getElementById('orderConfirmBack')?.addEventListener('click', () => {
-    closeModal(DOM.orderConfirmModal);
-  });
+    // Tombol aksi
+    document.getElementById('orderConfirmDownload').onclick = () => downloadReceiptPNG();
+    document.getElementById('orderConfirmShare').onclick = () => sendReceiptToWhatsApp();
+    document.getElementById('orderConfirmPay').onclick = () => {
+      closeModal(modal);
+      processPayment(state.cart, state, updateCartUI)();
+    };
+    document.getElementById('orderConfirmBack')?.addEventListener('click', () => {
+      closeModal(modal);
+    });
 
-  // Kirim otomatis ke Telegram jika dikonfigurasi
-  sendReceiptToTelegram();
+    // Kirim otomatis ke Telegram jika dikonfigurasi
+    sendReceiptToTelegram();
+  } else {
+    console.error('Modal #orderConfirmModal tidak ditemukan');
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -792,7 +800,7 @@ function bindEvents() {
   });
 
   document.getElementById('orderConfirmClose')?.addEventListener('click', () => {
-    closeModal(DOM.orderConfirmModal);
+    closeModal(document.getElementById('orderConfirmModal'));
   });
 
   // === EVENT DELEGATION UTAMA (TANPA HANDLER UNTUK TOMBOL X) ===
@@ -1034,7 +1042,7 @@ function init() {
       else if (DOM.paymentModal.classList.contains('active')) closeModal(DOM.paymentModal);
       else if (DOM.aiChatBox.classList.contains('active')) closeModal(DOM.aiChatBox);
       else if (DOM.aboutModal?.classList.contains('active')) closeModal(DOM.aboutModal);
-      else if (DOM.orderConfirmModal?.classList.contains('active')) closeModal(DOM.orderConfirmModal);
+      else if (document.getElementById('orderConfirmModal')?.classList.contains('active')) closeModal(document.getElementById('orderConfirmModal'));
     }
   });
 }
