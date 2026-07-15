@@ -5,7 +5,7 @@
   --green: #082E21;
   --green-light: #EBF2EF;
   --gold: #C5A059;
-  --gold-text: #6B4F1E;            /* digelapkan agar lolos WCAG AA (5.2:1) */
+  --gold-text: #6B4F1E;
   --gold-soft: rgba(197, 160, 89, 0.35);
   --gold-bright: #E8D5A8;
   --danger: #B54A3F;
@@ -386,7 +386,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   9. INSIGHT (sekarang pakai Fraunces italic)
+   9. INSIGHT (Fraunces italic)
 ========================================= */
 .product-insight-container { 
   text-align: center; 
@@ -1014,3 +1014,80 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   background: var(--green-light);
   color: var(--green);
 }
+
+/* =========================================
+   28. STRUK / RECEIPT — EDITORIAL PREMIUM
+========================================= */
+.receipt-wrap {
+  background: #FFFFFF;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-200);
+  position: relative;
+  overflow: hidden;
+}
+
+.receipt-stamp {
+  position: absolute;
+  top: 22px; right: -34px;
+  width: 140px;
+  transform: rotate(35deg);
+  text-align: center;
+  padding: 5px 0;
+  border-top: 1.5px solid var(--gold);
+  border-bottom: 1.5px solid var(--gold);
+  color: var(--gold-text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.receipt-header { text-align: center; padding: 28px 20px 18px; }
+.receipt-logo { width: 48px; height: 48px; border-radius: 50%; margin-bottom: 10px; border: 1px solid var(--gold-soft); padding: 3px; }
+.receipt-brand { font-family: 'Fraunces', serif; color: var(--green); font-size: 1.15rem; font-weight: 400; }
+.receipt-tagline { font-size: 0.65rem; color: var(--gray-500); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 3px; }
+
+.receipt-meta {
+  display: flex; justify-content: space-between; align-items: center;
+  margin: 18px 20px 0; padding-bottom: 18px;
+  border-bottom: 1px dashed rgba(197,160,89,0.45);
+  font-size: 0.7rem; color: var(--gray-500); font-family: 'DM Sans', sans-serif;
+}
+.receipt-meta .code { color: var(--gold-text); font-weight: 700; letter-spacing: 0.05em; }
+
+.receipt-section { padding: 16px 20px; border-bottom: 1px dashed rgba(0,0,0,0.08); }
+.receipt-section:last-of-type { border-bottom: none; }
+.receipt-section-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.18em;
+  color: var(--gold-text); font-weight: 700; margin-bottom: 10px;
+}
+.receipt-section-title::after { content: ''; flex: 1; height: 1px; background: rgba(197,160,89,0.25); }
+
+.confirm-row { display: flex; justify-content: space-between; gap: 12px; font-size: 0.875rem; padding: 5px 0; }
+.confirm-row span:first-child { color: var(--gray-500); }
+.confirm-row span:last-child { font-weight: 500; color: var(--gray-900); text-align: right; }
+
+.confirm-row.total {
+  margin-top: 6px; padding-top: 14px; border-top: 1px solid var(--gray-200);
+  align-items: baseline;
+}
+.confirm-row.total span:first-child {
+  font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 0.7rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--green);
+}
+.confirm-row.total span:last-child {
+  font-family: 'Fraunces', serif; font-size: 1.4rem; color: var(--green); font-weight: 400;
+}
+
+.receipt-footer { text-align: center; padding: 22px 20px 26px; }
+.receipt-footer p { font-family: 'Fraunces', serif; font-style: italic; color: var(--gray-600); font-size: 0.875rem; margin: 0 0 10px; }
+.receipt-barcode {
+  height: 28px; max-width: 180px; margin: 0 auto 6px;
+  background: repeating-linear-gradient(90deg, var(--gray-900) 0 2px, transparent 2px 5px, var(--gray-900) 5px 6px, transparent 6px 9px);
+  opacity: 0.65;
+}
+.receipt-code-text { font-size: 0.6rem; letter-spacing: 0.25em; color: var(--gray-400); font-family: 'DM Sans', monospace; }
