@@ -1,9 +1,9 @@
-// app.js — Luxury Edition (final dengan struk, logo, download, share, Telegram)
+// app.js — Luxury Edition (final dengan penyimpanan data pelanggan & dropdown kecamatan di drawer)
 import { PRODUCTS } from './data/products.js';
 import { DISTRICT_MAP } from './data/districts.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce } from './utils/helpers.js';
-import { loadState, saveCart, saveUser, clearUser } from './modules/storage.js';
+import { loadState, saveCart, saveUser, clearUser, saveCustomer, loadCustomer } from './modules/storage.js';
 import { getDistance, calculateShipping } from './modules/shipping.js';
 import { renderMenu, renderProductSwiper, renderCart, renderMiniCart, getProductGlobalIndex } from './modules/render.js';
 import { initCarousel } from './modules/carousel.js';
@@ -52,7 +52,10 @@ const cacheDOM = () => {
   DOM.headerName = document.getElementById('headerNameDisplay');
   DOM.headerLoc = document.getElementById('headerLocDisplay');
   DOM.customerNameInput = document.getElementById('customerName');
+  DOM.customerPhoneInput = document.getElementById('customerPhone');
+  DOM.customerAddressInput = document.getElementById('customerAddress');
   DOM.districtInput = document.getElementById('districtInput');
+  DOM.drawerDistrictDropdown = document.getElementById('drawerDistrictDropdown');
   DOM.aiWelcome = document.getElementById('aiWelcomeMsg');
   DOM.productPage = document.getElementById('productPage');
   DOM.productSwiperTrack = document.getElementById('productSwiperTrack');
@@ -114,9 +117,27 @@ function updateCartUI() {
   saveCart(state.cart);
   renderCart(state.cart, ['cartBadgeNav']);
   if (DOM.miniCartModal?.classList.contains('active')) {
+    prefillCustomerData();
     renderMiniCart(state.cart);
     updateShippingUI();
   }
+}
+
+// ---------------------------------------------------------------------------
+// Prefill data pelanggan dari localStorage
+// ---------------------------------------------------------------------------
+function prefillCustomerData() {
+  const saved = loadCustomer();
+  if (saved) {
+    if (saved.phone && DOM.customerPhoneInput) DOM.customerPhoneInput.value = saved.phone;
+    if (saved.address && DOM.customerAddressInput) DOM.customerAddressInput.value = saved.address;
+    if (saved.district) {
+      state.selectedDistrict = saved.district;
+      DOM.districtInput.value = saved.district.replace(/\b\w/g, l => l.toUpperCase());
+    }
+  }
+  if (state.customerPhone && DOM.customerPhoneInput) DOM.customerPhoneInput.value = state.customerPhone;
+  if (state.customerAddress && DOM.customerAddressInput) DOM.customerAddressInput.value = state.customerAddress;
 }
 
 // ---------------------------------------------------------------------------
@@ -469,11 +490,95 @@ function initOnboarding() {
   });
 }
 
-function initScrollReveal() {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+// ---------------------------------------------------------------------------
+// Dropdown kecamatan di drawer (pattern sama dengan onboarding)
+// ---------------------------------------------------------------------------
+function initDrawerDistrictDropdown() {
+  const input = DOM.districtInput;
+  const dropdown = DOM.drawerDistrictDropdown;
+  if (!input || !dropdown) return;
+
+  let activeOptionIndex = -1;
+  let currentMatches = [];
+
+  function renderDropdown(matches) {
+    currentMatches = matches;
+    activeOptionIndex = -1;
+    dropdown.innerHTML = matches.map((k, i) =>
+      `<div role="option" id="drawerDistrictOpt-${i}" data-val="${k}" aria-selected="false">${k.replace(/\b\w/g, l => l.toUpperCase())}</div>`
+    ).join('');
+    dropdown.style.display = matches.length ? 'block' : 'none';
+    input.setAttribute('aria-expanded', matches.length ? 'true' : 'false');
+    input.removeAttribute('aria-activedescendant');
+  }
+
+  function setActiveOption(index) {
+    const opts = dropdown.querySelectorAll('div[role="option"]');
+    opts.forEach(o => o.setAttribute('aria-selected', 'false'));
+    if (index >= 0 && index < opts.length) {
+      opts[index].setAttribute('aria-selected', 'true');
+      opts[index].scrollIntoView({ block: 'nearest' });
+      input.setAttribute('aria-activedescendant', opts[index].id);
+      activeOptionIndex = index;
+    }
+  }
+
+  function selectDistrict(val, label) {
+    state.selectedDistrict = val;
+    dropdown.style.display = 'none';
+    input.setAttribute('aria-expanded', 'false');
+    input.removeAttribute('aria-activedescendant');
+    input.value = label;
+    updateShippingUI();
+    if (DOM.miniCartModal?.classList.contains('active')) renderMiniCart(state.cart);
+    saveCustomer(state.customerPhone, state.customerAddress, val);
+  }
+
+  const filterDistricts = debounce((val) => {
+    const v = val.toLowerCase();
+    const matches = Object.keys(DISTRICT_MAP).filter(k => k.includes(v));
+    renderDropdown(matches);
+  }, 150);
+
+  input.addEventListener('input', (e) => filterDistricts(e.target.value));
+  input.addEventListener('focus', () => {
+    if (!input.value) filterDistricts('');
+  });
+
+  input.addEventListener('keydown', (e) => {
+    const opts = dropdown.querySelectorAll('div[role="option"]');
+    if (!opts.length || dropdown.style.display === 'none') return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveOption(Math.min(activeOptionIndex + 1, opts.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveOption(Math.max(activeOptionIndex - 1, 0));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (activeOptionIndex >= 0) {
+        const val = currentMatches[activeOptionIndex];
+        selectDistrict(val, opts[activeOptionIndex].textContent);
+      }
+    } else if (e.key === 'Escape') {
+      dropdown.style.display = 'none';
+      input.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  dropdown.addEventListener('click', (e) => {
+    const div = e.target.closest('div[role="option"]');
+    if (!div) return;
+    selectDistrict(div.dataset.val, div.textContent);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!input?.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.style.display = 'none';
+      input.setAttribute('aria-expanded', 'false');
+    }
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -541,9 +646,7 @@ function sendReceiptToWhatsApp() {
 }
 
 async function sendReceiptToTelegram() {
-  if (!SYSTEM.TELEGRAM_BOT_TOKEN || !SYSTEM.TELEGRAM_CHAT_ID) {
-    return;
-  }
+  if (!SYSTEM.TELEGRAM_BOT_TOKEN || !SYSTEM.TELEGRAM_CHAT_ID) return;
 
   const element = document.getElementById('orderConfirmContent');
   if (!element) return;
@@ -565,9 +668,7 @@ async function sendReceiptToTelegram() {
         body: formData,
       });
 
-      if (!res.ok) {
-        console.error('Gagal kirim ke Telegram');
-      }
+      if (!res.ok) console.error('Gagal kirim ke Telegram');
     });
   } catch (err) {
     console.error('Gagal kirim ke Telegram:', err);
@@ -643,21 +744,18 @@ function showOrderConfirmation() {
   if (modal) {
     openModal(modal);
 
-    document.getElementById('orderConfirmDownload').onclick = () => downloadReceiptPNG();
-    document.getElementById('orderConfirmShare').onclick = () => sendReceiptToWhatsApp();
-
-    // === PERUBAHAN: unduh otomatis sebelum pembayaran ===
-    document.getElementById('orderConfirmPay').onclick = async () => {
-      await downloadReceiptPNG();       // tunggu unduhan selesai
-      closeModal(modal);
-      processPayment(state.cart, state, updateCartUI)();
-    };
-
+    // Tombol Kembali
     document.getElementById('orderConfirmBack')?.addEventListener('click', () => {
       closeModal(modal);
     });
 
-    // Kirim otomatis ke Telegram jika dikonfigurasi
+    // Tombol Lanjutkan → unduh otomatis, lalu buka pembayaran
+    document.getElementById('orderConfirmLanjut').onclick = async () => {
+      await downloadReceiptPNG();
+      closeModal(modal);
+      processPayment(state.cart, state, updateCartUI)();
+    };
+
     sendReceiptToTelegram();
   } else {
     console.error('Modal #orderConfirmModal tidak ditemukan');
@@ -823,6 +921,16 @@ function bindEvents() {
 
   document.getElementById('orderConfirmClose')?.addEventListener('click', () => {
     closeModal(document.getElementById('orderConfirmModal'));
+  });
+
+  // === Simpan data pelanggan saat mengetik ===
+  DOM.customerPhoneInput?.addEventListener('input', () => {
+    state.customerPhone = DOM.customerPhoneInput.value;
+    saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict);
+  });
+  DOM.customerAddressInput?.addEventListener('input', () => {
+    state.customerAddress = DOM.customerAddressInput.value;
+    saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict);
   });
 
   // === EVENT DELEGATION UTAMA (TANPA HANDLER UNTUK TOMBOL X) ===
@@ -1015,6 +1123,11 @@ function init() {
   state.cart = saved.cart || {};
   if (saved.name) state.customerName = saved.name;
   if (saved.district) state.selectedDistrict = saved.district;
+  const cust = loadCustomer();
+  if (cust) {
+    state.customerPhone = cust.phone || '';
+    state.customerAddress = cust.address || '';
+  }
   if (state.selectedDistrict) {
     state.userDistance = getDistance(state.selectedDistrict);
   }
@@ -1029,6 +1142,7 @@ function init() {
 
   bindEvents();
   initOnboarding();
+  initDrawerDistrictDropdown();
   initTestimonials();
   updateCartUI();
 
