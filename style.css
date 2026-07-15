@@ -24,8 +24,8 @@
 
   --z-header: 100;
   --z-nav: 600;
-  --z-product: 500;
-  --z-fab: 510;
+  --z-product: 650;   /* ← dinaikkan dari 500 agar overlay menutupi bottom nav */
+  --z-fab: 660;       /* ← dinaikkan dari 510 untuk tombol floating */
   --z-modal: 1000;
   --z-onboard: 1100;
 
@@ -219,7 +219,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .luxury-header.scrolled .user-loc { color: var(--gray-600); text-shadow: none; }
 
 /* =========================================
-   7. HERO — PARALLAX WIRING
+   7. HERO — PARALLAX WIRING (TANPA GARIS EMAS)
 ========================================= */
 .content-wrapper {
   padding-bottom: calc(120px + env(safe-area-inset-bottom));
@@ -241,20 +241,8 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   box-shadow: var(--shadow-floating);
 }
 
-.hero-gold-frame::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  padding: 1px;
-  border-radius: inherit;
-  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 40%, #A8833A 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  pointer-events: none;
-  z-index: 1;
-}
+/* Garis emas dihapus */
+/* .hero-gold-frame::before { ... } */
 
 .hero-img-wrap {
   width: 100%;
@@ -672,7 +660,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 /* =========================================
    15. FORMS, INPUTS & LOGISTICS
 ========================================= */
-/* Tambahan: reset button custom-select agar tampilan tidak berubah */
+/* reset button custom-select agar tampilan tidak berubah */
 button.custom-select {
   background: transparent;
   border: none;
@@ -713,7 +701,6 @@ button.custom-select {
 .qris-frame { background: #FFFFFF; padding: var(--space-3); border-radius: var(--radius-xl); box-shadow: var(--shadow-card); display: block; margin: 0 auto var(--space-4) auto; border: 1px solid rgba(197,160,89,0.15); width: 100%; }
 .qris-frame img { width: 100%; height: auto; display: block; border-radius: 10px; }
 
-/* QRIS & Total Connector (akan ditimpa sebagian di bawah) */
 .qris-payment-block {
   display: flex; flex-direction: column; align-items: center;
 }
@@ -726,7 +713,6 @@ button.custom-select {
   font-weight: 400; letter-spacing: -0.02em;
 }
 
-/* District note */
 .district-note {
   font-size: 0.7rem;
   color: var(--gold-text);
@@ -737,19 +723,69 @@ button.custom-select {
 }
 
 /* =========================================
-   16. (KOSONG)
-========================================= */
-
-/* =========================================
-   17. PEMBAYARAN
+   16. PEMBAYARAN (QRIS)
 ========================================= */
 #btnOpenPayment, #confirmPaymentBtn {
   margin-bottom: env(safe-area-inset-bottom);
   padding: 18px var(--space-4);
 }
 
+#paymentModal .drawer-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#paymentModal .qris-payment-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+#paymentModal .qris-connector {
+  display: none;
+}
+
+#paymentModal .qris-frame {
+  margin-bottom: 28px;
+}
+
+#paymentModal .qris-total {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  font-family: 'Fraunces', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--green);
+  margin: 0 0 28px 0;
+}
+
+#paymentModal .qris-total::before,
+#paymentModal .qris-total::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--gold);
+}
+
+#paymentModal .qris-total::before {
+  margin-right: 12px;
+}
+
+#paymentModal .qris-total::after {
+  margin-left: 12px;
+}
+
+#paymentModal #confirmPaymentBtn {
+  margin-top: 0;
+}
+
 /* =========================================
-   18. CHAT BUBBLES
+   17. CHAT BUBBLES
 ========================================= */
 .chat-body { display: flex; flex-direction: column; padding: 0; background: var(--bg-subtle); }
 .chat-messages { flex: 1; overflow-y: auto; padding: var(--space-4); font-size: 0.9375rem; line-height: 1.6; }
@@ -762,7 +798,7 @@ button.custom-select {
 .btn-gold-round:active { transform: scale(0.9); }
 
 /* =========================================
-   19. TOAST & SKELETON
+   18. TOAST & SKELETON
 ========================================= */
 #toast {
   position: fixed; top: 100px; left: 50%; transform: translateX(-50%) translateY(-16px);
@@ -782,7 +818,7 @@ button.custom-select {
 @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
 /* =========================================
-   20. FOKUS KEYBOARD & AKSESIBILITAS
+   19. FOKUS KEYBOARD & AKSESIBILITAS
 ========================================= */
 .boutique-item:focus-visible,
 .carousel-dot:focus-visible,
@@ -794,14 +830,14 @@ button.custom-select {
 }
 
 /* =========================================
-   21. CUSTOM SCROLLBAR (DESKTOP)
+   20. CUSTOM SCROLLBAR (DESKTOP)
 ========================================= */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--gold-soft); border-radius: 4px; }
 
 /* =========================================
-   22. REDUCED MOTION & UTILITIES
+   21. REDUCED MOTION & UTILITIES
 ========================================= */
 .icon-sm { width: 18px; height: 18px; }
 .icon-md { width: 20px; height: 20px; }
@@ -814,7 +850,7 @@ button.custom-select {
 .fade-up.visible { opacity: 1; transform: translateY(0); }
 
 /* =========================================
-   23. WA VIP SIDE TAB (DETAIL PRODUK)
+   22. WA VIP SIDE TAB
 ========================================= */
 .wa-vip-side-tab {
   position: fixed;
@@ -894,15 +930,16 @@ button.custom-select {
 }
 
 /* =========================================
-   24. TESTIMONI — MODULE, KELAS BERSIH
+   23. TESTIMONI — DENGAN PERBAIKAN TINGGI
 ========================================= */
 .testi-flip-container {
   position: relative;
-  overflow: hidden;
-  height: 140px;
+  overflow: visible;           /* biar teks panjang tidak terpotong */
+  min-height: 140px;          /* sebelumnya height: 140px */
+  height: auto;
   margin: 24px 20px 16px;
   border-radius: 14px;
-  padding: 20px;
+  padding: 20px 20px 32px;    /* tambah bawah untuk ruang dots */
   background: transparent !important;
   border: 1px solid var(--gold-soft) !important;
   color: #fff;
@@ -915,7 +952,8 @@ button.custom-select {
   cursor: pointer; padding: 0; color: var(--gold-bright);
 }
 .testi-card {
-  position: absolute; top: 0; left: 0; right: 0; padding: 20px;
+  position: absolute; top: 0; left: 0; right: 0;
+  padding: 20px 20px 30px;   /* beri ruang ekstra */
   transition: transform 0.6s cubic-bezier(0.4,0,0.2,1), opacity 0.6s;
   transform: translateY(100%); opacity: 0;
 }
@@ -936,7 +974,7 @@ button.custom-select {
 }
 
 /* =========================================
-   25. FAQ ACCORDION — BUTTON, AKSESIBEL
+   24. FAQ ACCORDION
 ========================================= */
 .faq-container {
   margin: 0 20px var(--space-3);
@@ -990,7 +1028,7 @@ button.custom-select {
 }
 
 /* =========================================
-   26. DIVIDER & SECTION HEADER
+   25. DIVIDER & SECTION HEADER
 ========================================= */
 .divider {
   width: calc(100% - 40px);
@@ -1017,7 +1055,7 @@ button.custom-select {
 }
 
 /* =========================================
-   27. ACCESSIBLE DROPDOWN HIGHLIGHT
+   26. ACCESSIBLE DROPDOWN HIGHLIGHT
 ========================================= */
 .minimal-dropdown div[aria-selected="true"] {
   background: var(--green-light);
@@ -1025,7 +1063,7 @@ button.custom-select {
 }
 
 /* =========================================
-   28. STRUK / RECEIPT — EDITORIAL PREMIUM
+   27. STRUK / RECEIPT
 ========================================= */
 .receipt-wrap {
   background: #FFFFFF;
@@ -1100,66 +1138,3 @@ button.custom-select {
   opacity: 0.65;
 }
 .receipt-code-text { font-size: 0.6rem; letter-spacing: 0.25em; color: var(--gray-400); font-family: 'DM Sans', monospace; }
-
-/* =========================================
-   29. PERBAIKAN TAMPILAN QRIS (DITAMBAHKAN)
-========================================= */
-/* Mengatur drawer-body pada modal pembayaran agar menjadi flex kolom */
-#paymentModal .drawer-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* Blok QRIS + total memenuhi ruang dan konten di tengah vertikal */
-#paymentModal .qris-payment-block {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-/* Sembunyikan konektor (garis dekoratif) */
-#paymentModal .qris-connector {
-  display: none;
-}
-
-/* Beri jarak bawah gambar QRIS */
-#paymentModal .qris-frame {
-  margin-bottom: 28px;
-}
-
-/* Total harga dengan garis emas di kiri dan kanan */
-#paymentModal .qris-total {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  font-family: 'Fraunces', serif;
-  font-size: 1.5rem;
-  font-weight: 400;
-  color: var(--green);
-  margin: 0 0 28px 0;
-}
-
-#paymentModal .qris-total::before,
-#paymentModal .qris-total::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--gold);
-}
-
-#paymentModal .qris-total::before {
-  margin-right: 12px;
-}
-
-#paymentModal .qris-total::after {
-  margin-left: 12px;
-}
-
-/* Tombol validasi */
-#paymentModal #confirmPaymentBtn {
-  margin-top: 0;
-}
