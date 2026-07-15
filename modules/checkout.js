@@ -1,4 +1,3 @@
-// modules/checkout.js — dengan fallback WhatsApp & validasi telepon ketat
 import { SYSTEM } from '../data/config.js';
 import { PRODUCTS } from '../data/products.js';
 import { fmt, showToast, getSupabase } from '../utils/helpers.js';
@@ -37,12 +36,11 @@ export function getCartSummary(cart) {
 // --- Validators ---
 export function validatePhone(phone) {
   const cleaned = String(phone || '').replace(/[\s\-\(\)\.]/g, '');
-  // Hanya terima format: 08xx, +628xx, 628xx dengan panjang sesuai nomor Indonesia
   return /^(08[1-9][0-9]{7,10}|\+628[1-9][0-9]{7,10}|628[1-9][0-9]{7,10})$/.test(cleaned);
 }
 
 export function validateAddress(address) {
-  return address.trim().length >= 20;
+  return address.trim().length >= 10;
 }
 
 // --- WhatsApp fallback ---
@@ -78,8 +76,8 @@ export function processPayment(cart, state, updateUI) {
     const address = document.getElementById('customerAddress')?.value.trim();
 
     if (!name) { showToast('Mohon isi nama penerima.'); return; }
-    if (!validatePhone(phone)) { showToast('Nomor HP tidak valid (min 10 digit, format 08xx).'); return; }
-    if (!validateAddress(address)) { showToast('Alamat terlalu pendek (min 20 karakter).'); return; }
+    if (!validatePhone(phone)) { showToast('Nomor HP tidak valid (format 08xx).'); return; }
+    if (!validateAddress(address)) { showToast('Alamat terlalu pendek (min 10 karakter).'); return; }
     if (!state.selectedDistrict && !state.userDistance) { showToast('Mohon pilih kecamatan.'); return; }
 
     state.customerPhone = phone;
