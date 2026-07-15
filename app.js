@@ -495,16 +495,19 @@ async function downloadReceiptPNG() {
 
     if (footer) footer.style.display = '';
 
-    canvas.toBlob((blob) => {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Struk_RujakCo_${Date.now()}.png`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      showToast('✅ Struk berhasil diunduh!');
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Struk_RujakCo_${Date.now()}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('✅ Struk berhasil diunduh!');
+        resolve();
+      });
     });
   } catch (err) {
     console.error('Gagal generate struk:', err);
@@ -531,7 +534,7 @@ function sendReceiptToWhatsApp() {
     msg += `- ${item.name}${item.spice ? ' (Lv' + item.spice + ')' : ''} x${item.qty} = ${fmt(item.price * item.qty)}\n`;
   });
   msg += `\n💰 *Total:* ${DOM.finalTotal?.textContent || '—'}\n`;
-  msg += `\n📎 *Struk gambar dapat diunduh di menu konfirmasi.*`;
+  msg += `\n📎 *Struk gambar telah otomatis terunduh. Silakan lampirkan bersama bukti transfer.*`;
 
   const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
   window.open(waUrl, '_blank');
@@ -594,29 +597,45 @@ function showOrderConfirmation() {
     return;
   }
 
+  const orderCode = `RJK-${new Date().toISOString().slice(2,10).replace(/-/g,'')}-${Math.floor(1000+Math.random()*9000)}`;
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
+  const timeStr = now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' }) + ' WIB';
+
   contentEl.innerHTML = `
-    <div style="text-align:center; margin-bottom:16px;">
-      <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp"
-           alt="RUJAK.Co" style="width:56px; height:56px; border-radius:50%; margin-bottom:8px;" />
-      <h3 style="font-family:'Fraunces',serif; color:var(--green); margin:0; font-size:1.25rem;">RUJAK.Co</h3>
-      <p style="font-size:0.7rem; color:var(--gray-600); margin:4px 0 0;">Indonesia dalam Satu Wadah</p>
-    </div>
-    <div class="confirm-section">
-      <h4>Data Penerima</h4>
-      <div class="confirm-row"><span>Nama</span><span>${name}</span></div>
-      <div class="confirm-row"><span>Telepon</span><span>${phone}</span></div>
-      <div class="confirm-row"><span>Alamat</span><span>${address}</span></div>
-      <div class="confirm-row"><span>Waktu Pengantaran</span><span>${deliveryTime}</span></div>
-    </div>
-    <div class="confirm-section">
-      <h4>Pesanan</h4>
-      ${itemsHtml}
-    </div>
-    <div class="confirm-section">
-      <h4>Rincian Biaya</h4>
-      <div class="confirm-row"><span>Subtotal</span><span>${fmt(summary.subtotal)}</span></div>
-      <div class="confirm-row"><span>Ongkir</span><span>${fmt(ship.cost || 0)}</span></div>
-      <div class="confirm-row total"><span>Total</span><span>${fmt(total)}</span></div>
+    <div class="receipt-wrap">
+      <div class="receipt-stamp">Menunggu Pembayaran</div>
+      <div class="receipt-header">
+        <img class="receipt-logo" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="RUJAK.Co" />
+        <div class="receipt-brand">RUJAK.Co</div>
+        <div class="receipt-tagline">Indonesia dalam Satu Wadah</div>
+      </div>
+      <div class="receipt-meta">
+        <span class="code">${orderCode}</span>
+        <span>${dateStr} · ${timeStr}</span>
+      </div>
+      <div class="receipt-section">
+        <div class="receipt-section-title">Data Penerima</div>
+        <div class="confirm-row"><span>Nama</span><span>${name}</span></div>
+        <div class="confirm-row"><span>Telepon</span><span>${phone}</span></div>
+        <div class="confirm-row"><span>Alamat</span><span>${address}</span></div>
+        <div class="confirm-row"><span>Pengantaran</span><span>${deliveryTime}</span></div>
+      </div>
+      <div class="receipt-section">
+        <div class="receipt-section-title">Pesanan</div>
+        ${itemsHtml}
+      </div>
+      <div class="receipt-section">
+        <div class="receipt-section-title">Rincian Biaya</div>
+        <div class="confirm-row"><span>Subtotal</span><span>${fmt(summary.subtotal)}</span></div>
+        <div class="confirm-row"><span>Ongkir</span><span>${fmt(ship.cost || 0)}</span></div>
+        <div class="confirm-row total"><span>Total</span><span>${fmt(total)}</span></div>
+      </div>
+      <div class="receipt-footer">
+        <p>"Asam, pedas, manis, segar — terima kasih telah memilih RUJAK.Co."</p>
+        <div class="receipt-barcode"></div>
+        <div class="receipt-code-text">${orderCode}</div>
+      </div>
     </div>
   `;
 
@@ -624,13 +643,16 @@ function showOrderConfirmation() {
   if (modal) {
     openModal(modal);
 
-    // Tombol aksi
     document.getElementById('orderConfirmDownload').onclick = () => downloadReceiptPNG();
     document.getElementById('orderConfirmShare').onclick = () => sendReceiptToWhatsApp();
-    document.getElementById('orderConfirmPay').onclick = () => {
+
+    // === PERUBAHAN: unduh otomatis sebelum pembayaran ===
+    document.getElementById('orderConfirmPay').onclick = async () => {
+      await downloadReceiptPNG();       // tunggu unduhan selesai
       closeModal(modal);
       processPayment(state.cart, state, updateCartUI)();
     };
+
     document.getElementById('orderConfirmBack')?.addEventListener('click', () => {
       closeModal(modal);
     });
