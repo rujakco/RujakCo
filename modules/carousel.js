@@ -3,9 +3,9 @@ import { PRODUCTS } from '../data/products.js';
 
 const LOOP_MULTIPLIER = 3;
 let currentInsightId = null;
-let typeQueue = [];               // antrian karakter yang akan diketik
-let typeTimer = null;
-let isTyping = false;
+let typingTimer = null;
+let typingIndex = 0;
+let typingText = '';
 
 let autoScrollInterval = null;
 let scrollTimeout = null;
@@ -15,6 +15,34 @@ const RESUME_DELAY = 5000;
 export function initCarousel(trackId = 'menuList', insightId = 'productInsightText') {
   const track = document.getElementById(trackId);
   if (!track) return;
+
+  const insightEl = document.getElementById(insightId);
+  if (!insightEl) return;
+
+  // Fungsi untuk menghentikan typing
+  function stopTyping() {
+    clearTimeout(typingTimer);
+    typingTimer = null;
+    typingIndex = 0;
+    typingText = '';
+  }
+
+  // Fungsi untuk memulai typing
+  function startTyping(text) {
+    stopTyping();
+    typingText = text;
+    typingIndex = 0;
+    insightEl.textContent = ''; // hapus teks sebelumnya
+    typeNextChar();
+  }
+
+  function typeNextChar() {
+    if (typingIndex < typingText.length) {
+      insightEl.textContent += typingText.charAt(typingIndex);
+      typingIndex++;
+      typingTimer = setTimeout(typeNextChar, 30);
+    }
+  }
 
   // --- Fungsi updateCenter ---
   const updateCenter = () => {
@@ -36,59 +64,26 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
     
     items.forEach(item => item.classList.toggle('active-center', item === closestItem));
     
-    // Animasi efek ketik (typing effect) — DIPERBAIKI TOTAL
+    // Animasi efek ketik (typing effect)
     if (closestItem) {
       const newId = closestItem.dataset.id;
       if (currentInsightId !== newId) {
         currentInsightId = newId;
         const prod = PRODUCTS.find(p => p.id === newId);
-        const insightEl = document.getElementById(insightId);
-        
-        if (insightEl && prod) {
-          // Batalkan animasi yang sedang berjalan
-          stopTyping();
-          
-          // Siapkan teks baru
+        if (prod) {
           const txt = prod.insight || prod.desc;
-          typeQueue = txt.split('');   // ubah string jadi array karakter
-          
+          // Hentikan animasi sebelumnya, lalu mulai baru
           insightEl.classList.add('fade-out');
-          
-          // Tunggu fade-out selesai, lalu mulai animasi
           setTimeout(() => {
-            insightEl.innerHTML = '';
             insightEl.classList.remove('fade-out');
-            startTyping(insightEl);
-          }, 300);
+            startTyping(txt);
+          }, 200);
         }
       }
     }
     
     return closestIndex;
   };
-
-  // --- Fungsi ketik yang aman dari race condition ---
-  function startTyping(el) {
-    isTyping = true;
-    typeNextChar(el);
-  }
-
-  function typeNextChar(el) {
-    if (!isTyping || typeQueue.length === 0) {
-      isTyping = false;
-      return;
-    }
-    
-    const char = typeQueue.shift();
-    el.innerHTML += char;
-    typeTimer = setTimeout(() => typeNextChar(el), 30);
-  }
-
-  function stopTyping() {
-    isTyping = false;
-    clearTimeout(typeTimer);
-    typeQueue = [];
-  }
 
   // --- Infinite loop logic (teleportasi) ---
   let isScrolling;
