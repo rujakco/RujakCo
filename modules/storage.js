@@ -1,4 +1,3 @@
-// modules/storage.js
 export function loadState() {
   try {
     const cart = JSON.parse(localStorage.getItem('rj_crt_v7')) || {};
@@ -24,4 +23,22 @@ export function clearUser() {
     localStorage.removeItem('rj_client_name');
     localStorage.removeItem('rj_client_district');
   } catch {}
+}
+
+// --- Data pelanggan tambahan ---
+export function saveCustomer(phone, address, district) {
+  try {
+    localStorage.setItem('rj_customer_phone', phone || '');
+    localStorage.setItem('rj_customer_address', address || '');
+    if (district) localStorage.setItem('rj_client_district', district);
+  } catch {}
+}
+
+export function loadCustomer() {
+  try {
+    const phone = localStorage.getItem('rj_customer_phone') || '';
+    const address = localStorage.getItem('rj_customer_address') || '';
+    const district = localStorage.getItem('rj_client_district') || '';
+    return { phone, address, district };
+  } catch { return { phone: '', address: '', district: '' }; }
 }
