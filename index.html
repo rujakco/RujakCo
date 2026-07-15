@@ -122,7 +122,7 @@
     </div>
 
     <!-- TESTIMONI AUTO-ROTATE -->
-    <div class="testi-flip-container" id="testiFlipContainer" role="region" aria-roledescription="carousel" aria-label="Testimoni pelanggan" style="position:relative;overflow:hidden;height:140px;margin:0 20px 16px;border-radius:14px;padding:20px;">
+    <div class="testi-flip-container" id="testiFlipContainer" role="region" aria-roledescription="carousel" aria-label="Testimoni pelanggan" style="position:relative;overflow:hidden;height:140px;margin:24px 20px 16px;border-radius:14px;padding:20px;">
       <button type="button" id="testiPauseBtn" aria-label="Jeda testimoni otomatis" aria-pressed="false" style="position:absolute;top:10px;right:10px;z-index:3;background:rgba(255,255,255,0.15);border:1px solid var(--gold-soft);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;color:var(--gold-bright);">
         <i data-lucide="pause" style="width:14px;height:14px;"></i>
       </button>
@@ -311,11 +311,19 @@
           <textarea id="customerAddress" placeholder="Alamat lengkap (jalan, RT/RW, patokan)" rows="2" class="input-minimal"></textarea>
           <div style="position:relative;"><input type="text" id="districtInput" placeholder="Kecamatan" class="input-minimal" readonly style="color:var(--green); font-weight:600;" /></div>
           <div style="font-size:12px; color:var(--gold); margin-top:-16px; margin-bottom:32px; font-weight:500;">*Kecamatan mengikuti alamat awal Anda. Ubah lewat "Ganti nama &amp; kecamatan" di layar masuk.</div>
-          <select id="deliveryTime" class="input-minimal" style="margin-top:8px;">
-            <option value="Pagi (09:00 - 11:00)">Pengantaran Pagi (09:00 - 11:00)</option>
-            <option value="Siang (11:00 - 13:00)">Pengantaran Siang (11:00 - 13:00)</option>
-            <option value="Sore (14:00 - 17:00)">Pengantaran Sore (14:00 - 17:00)</option>
-          </select>
+
+          <!-- Custom delivery time dropdown -->
+          <div id="deliveryTimeTrigger" class="custom-select" role="combobox" aria-haspopup="listbox" aria-expanded="false" style="margin-bottom:24px;">
+            <span id="deliveryTimeLabel">Pilih jam pengantaran...</span>
+            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+          </div>
+          <div id="deliveryTimeDropdown" class="minimal-dropdown" style="position:absolute; top:100%; left:0; right:0;" role="listbox">
+            <div role="option" data-value="Pagi (09:00 - 11:00)">Pagi (09:00 - 11:00 WIB)</div>
+            <div role="option" data-value="Siang (11:00 - 13:00)">Siang (11:00 - 13:00 WIB)</div>
+            <div role="option" data-value="Sore (14:00 - 17:00)">Sore (14:00 - 17:00 WIB)</div>
+          </div>
+          <input type="hidden" id="deliveryTime" value="" />
+
           <textarea id="orderNotes" placeholder="Catatan untuk kurir (opsional)" rows="1" class="input-minimal"></textarea>
         </div>
         <div id="shippingSection" class="checkout-forms" style="margin-top:40px;">
