@@ -1,5 +1,5 @@
 /* =========================================
-   1. DESIGN TOKENS (ROOT) â€” KONTRASTIF & AKSESIBEL
+   1. DESIGN TOKENS (ROOT) — KONTRASTIF & AKSESIBEL
 ========================================= */
 :root {
   --green: #082E21;
@@ -174,7 +174,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .btn-loading { opacity: 0.7; cursor: wait; pointer-events: none; }
 
 /* =========================================
-   6. HEADER â€” LEBIH RAMPING
+   6. HEADER — LEBIH RAMPING
 ========================================= */
 .luxury-header {
   position: fixed; top: 0; left: 0; right: 0; margin: 0 auto;
@@ -214,12 +214,12 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .header-right { display: flex; align-items: center; gap: 4px; }
 .user-name { font-size: 0.875rem; font-weight: 700; color: #FFFFFF; text-shadow: 0 1px 4px rgba(0,0,0,0.2); transition: color 0.4s ease, text-shadow 0.4s ease; }
 .user-loc { font-size: 0.75rem; font-weight: 500; color: rgba(255,255,255,0.9); text-shadow: 0 1px 4px rgba(0,0,0,0.2); transition: color 0.4s ease, text-shadow 0.4s ease; }
-.user-loc::before { content: 'â€¢'; margin-right: 4px; opacity: 0.7; }
+.user-loc::before { content: '•'; margin-right: 4px; opacity: 0.7; }
 .luxury-header.scrolled .user-name { color: var(--green); text-shadow: none; }
 .luxury-header.scrolled .user-loc { color: var(--gray-600); text-shadow: none; }
 
 /* =========================================
-   7. HERO â€” PARALLAX WIRING
+   7. HERO — PARALLAX WIRING
 ========================================= */
 .content-wrapper {
   padding-bottom: calc(120px + env(safe-area-inset-bottom));
@@ -435,7 +435,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .meta-dot { color: var(--gold-soft); }
 
 /* =========================================
-   11. BOTTOM NAV â€” IVORY, AKSEN GOLD HANYA AKTIF
+   11. BOTTOM NAV — IVORY, AKSEN GOLD HANYA AKTIF
 ========================================= */
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0; margin: 0 auto;
@@ -672,6 +672,15 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 /* =========================================
    15. FORMS, INPUTS & LOGISTICS
 ========================================= */
+/* Tambahan: reset button custom-select agar tampilan tidak berubah */
+button.custom-select {
+  background: transparent;
+  border: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
 .cart-item-row { display: flex; justify-content: space-between; align-items: center; padding: var(--space-3) 0; border-bottom: 1px solid var(--gray-200); }
 .cart-empty { text-align: center; padding: 40px var(--space-3); color: var(--gray-600); }
 .cart-item-info p { font-size: 0.875rem; color: var(--gold-text); margin: 0; font-weight: 600; }
@@ -885,7 +894,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   24. TESTIMONI â€” MODULE, KELAS BERSIH
+   24. TESTIMONI — MODULE, KELAS BERSIH
 ========================================= */
 .testi-flip-container {
   position: relative;
@@ -927,7 +936,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   25. FAQ ACCORDION â€” BUTTON, AKSESIBEL
+   25. FAQ ACCORDION — BUTTON, AKSESIBEL
 ========================================= */
 .faq-container {
   margin: 0 20px var(--space-3);
@@ -1016,7 +1025,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   28. STRUK / RECEIPT â€” EDITORIAL PREMIUM
+   28. STRUK / RECEIPT — EDITORIAL PREMIUM
 ========================================= */
 .receipt-wrap {
   background: #FFFFFF;
