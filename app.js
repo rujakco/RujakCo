@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (testimoni module, hero parallax, Fraunces italic, FAQ accessible)
+// app.js — Luxury Edition (final)
 import { PRODUCTS } from './data/products.js';
 import { DISTRICT_MAP } from './data/districts.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
@@ -9,7 +9,7 @@ import { renderMenu, renderProductSwiper, renderCart, renderMiniCart, getProduct
 import { initCarousel } from './modules/carousel.js';
 import { initAIChat } from './modules/chat.js';
 import { initAccessibility } from './modules/accessibility.js';
-import { initTestimonials } from './modules/testimonials.js';  // ← modul baru
+import { initTestimonials } from './modules/testimonials.js';
 import { validatePhone, validateAddress, processPayment, confirmOrder, getCartSummary } from './modules/checkout.js';
 
 // ---------------------------------------------------------------------------
@@ -621,6 +621,20 @@ function bindEvents() {
     }
   });
 
+  // === LISTENER LANGSUNG UNTUK SEMUA TOMBOL X (SATU KLIK) ===
+  document.getElementById('miniCartClose')?.addEventListener('click', () => {
+    closeModal(DOM.miniCartModal);
+  });
+
+  document.getElementById('paymentClose')?.addEventListener('click', () => {
+    closeModal(DOM.paymentModal);
+  });
+
+  document.getElementById('aiChatClose')?.addEventListener('click', () => {
+    closeModal(DOM.aiChatBox);
+  });
+
+  // === EVENT DELEGATION UTAMA (TANPA HANDLER UNTUK TOMBOL X) ===
   document.addEventListener('click', (e) => {
     // Carousel boutique item
     const boutique = e.target.closest('.boutique-item');
@@ -709,7 +723,6 @@ function bindEvents() {
         state.cart[id].qty++;
       } else if (type === 'decrease') {
         if (state.cart[id].qty === 1) {
-          // KONFIRMASI HAPUS ITEM
           showConfirmModal(
             'Hapus Sajian?',
             'Sajian ini akan dihapus dari reservasi Anda.',
@@ -762,20 +775,10 @@ function bindEvents() {
       return;
     }
 
-    // Close payment
-    if (e.target.id === 'paymentClose') {
-      closeModal(DOM.paymentModal);
-      return;
-    }
-
     // AI Chat
     if (e.target.closest('#aiChatToggle')) {
       e.preventDefault();
       openModal(DOM.aiChatBox);
-      return;
-    }
-    if (e.target.id === 'aiChatClose') {
-      closeModal(DOM.aiChatBox);
       return;
     }
 
@@ -791,11 +794,6 @@ function bindEvents() {
       openModal(DOM.miniCartModal);
       renderMiniCart(state.cart);
       updateShippingUI();
-      return;
-    }
-    // Mini cart close
-    if (e.target.closest('#miniCartClose')) {
-      closeModal(DOM.miniCartModal);
       return;
     }
 
@@ -840,7 +838,7 @@ function init() {
 
   bindEvents();
   initOnboarding();
-  initTestimonials();   // ← inisialisasi modul testimoni
+  initTestimonials();
   updateCartUI();
 
   // Hero parallax wiring
