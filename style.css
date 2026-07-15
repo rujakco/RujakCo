@@ -23,24 +23,21 @@
   --gray-900: #1A1816;
 
   --z-header: 100;
-  --z-nav: 600;        /* bottom nav di atas konten (termasuk detail produk) */
-  --z-product: 500;    /* overlay detail produk di bawah nav */
-  --z-fab: 510;        /* tombol floating close & share sedikit di atas overlay */
+  --z-nav: 600;
+  --z-product: 500;
+  --z-fab: 510;
   --z-modal: 1000;
   --z-onboard: 1100;
 
   --blur-soft: blur(8px);
   --blur-medium: blur(12px);
 
-  /* Content width & spacing tokens */
   --content-max: 440px;
 
-  /* Transition duration tokens */
   --dur-fast: 0.2s;
   --dur-normal: 0.4s;
   --dur-slow: 0.6s;
 
-  /* Spacing scale */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 16px;
@@ -132,7 +129,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .onb-subtitle, .onb-welcome-text { font-family: 'DM Sans', sans-serif; color: rgba(253, 251, 247, 0.85); margin-bottom: 48px; text-transform: uppercase; letter-spacing: 0.2em; font-weight: 500; }
 .onb-step { display: none; width: 100%; }
 .onb-step.active { display: block; }
-.onb-label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--gold); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.15em; }
+.onb-label { display: block; font-size: 0.75rem; font-weight: 600; color: #fff; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.15em; } /* <-- gold -> white */
 .onb-input {
   width: 100%; text-align: center; border: none; border-bottom: 1px solid rgba(197, 160, 89, 0.25); background: transparent;
   padding: 16px 0; font-size: 1.5rem; font-family: 'Fraunces', serif; font-weight: 300;
@@ -168,7 +165,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   display: flex; align-items: center; justify-content: center; width: 100%; border: none;
   transition: transform var(--dur-normal) var(--transition-spring), box-shadow var(--dur-normal) ease, opacity var(--dur-normal) ease;
 }
-.btn-gold { background: linear-gradient(135deg, var(--gold) 0%, #B89650 100%); color: var(--green); box-shadow: var(--shadow-card); }
+.btn-gold { background: linear-gradient(135deg, var(--gold) 0%, #B89650 100%); color: #fff; box-shadow: var(--shadow-card); } /* <-- text putih */
 .btn-dark { background: var(--green); color: var(--ivory); border: 1px solid var(--gold-soft); box-shadow: var(--shadow-card); }
 .btn-gold:active, .btn-dark:active { transform: scale(0.98); opacity: 0.9; }
 .btn-loading { opacity: 0.7; cursor: wait; pointer-events: none; }
@@ -219,7 +216,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .luxury-header.scrolled .user-loc { color: var(--gray-600); text-shadow: none; }
 
 /* =========================================
-   7. HERO — OVERLAY 10% (SANGAT TIPIS)
+   7. HERO — OVERLAY 20%
 ========================================= */
 .content-wrapper {
   padding-bottom: calc(120px + env(safe-area-inset-bottom));
@@ -265,8 +262,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 
 .hero-overlay-new {
   position: absolute; inset: auto 0 0 0;
-  /* Overlay hijau sangat tipis (10%) */
-  background: linear-gradient(to top, rgba(8,46,33,0.1) 10%, rgba(8,46,33,0.1) 60%, transparent 100%);
+  background: linear-gradient(to top, rgba(8,46,33,0.2) 10%, rgba(8,46,33,0.2) 60%, transparent 100%);
   display: flex; align-items: flex-end; justify-content: flex-start;
   padding: 60px 24px 28px; 
   border-radius: 0 0 var(--radius-xl) var(--radius-xl);
@@ -274,7 +270,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .hero-content { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
 
 .hero-title { line-height: 1.1; color: #FFFFFF; margin: 0; text-shadow: 0 2px 8px rgba(0,0,0,0.25); }
-.hero-title-em { display: inline; color: var(--gold); font-weight: 400; font-style: italic; }
+.hero-title-em { display: inline; color: #fff; font-weight: 400; font-style: italic; } /* <-- gold -> white */
 .hero-subtitle {
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
@@ -348,7 +344,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   transition: opacity var(--dur-normal) var(--transition-spring), transform var(--dur-normal) var(--transition-spring);
 }
 .boutique-item.active-center .btq-text-container { opacity: 1; transform: translateY(0); pointer-events: auto; }
-.btq-badge { order: 1; display: block; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--gold); font-weight: 600; margin-bottom: 8px; }
+.btq-badge { order: 1; display: block; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.15em; color: #fff; font-weight: 600; margin-bottom: 8px; } /* <-- gold -> white */
 .btq-name { order: 2; color: var(--green); margin: 0 0 12px 0; letter-spacing: 0.15em; font-weight: 400; text-transform: uppercase; }
 .btq-price-wrap { order: 3; display: flex; align-items: center; justify-content: center; width: 100%; gap: 12px; }
 .btq-price-wrap::before, .btq-price-wrap::after { content: ''; flex: 1; max-width: 40px; height: 1px; background: var(--gold-soft); }
@@ -375,7 +371,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   9. INSIGHT (Fraunces italic)
+   9. INSIGHT (Fraunces italic) — putih
 ========================================= */
 .product-insight-container { 
   text-align: center; 
@@ -395,7 +391,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   font-style: italic;
   font-weight: 400;
   font-size: 0.95rem;
-  color: var(--gold-bright);
+  color: #fff; /* <-- gold -> white */
   letter-spacing: 0.02em;
   margin: 0;
   line-height: 1.5;
@@ -551,7 +547,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .fruit-list-inline { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; line-height: 1.6; color: var(--gray-900); margin-bottom: var(--space-5); padding: 0 8px; }
 .fruit-bullet { color: var(--gold); margin: 0 6px; font-size: 10px; opacity: 0.7; }
 .detail-manifesto { background: transparent; padding: var(--space-4); border-radius: var(--radius-md); border: 1px solid rgba(197,160,89,0.25); text-align: center; margin-top: var(--space-3); }
-.detail-manifesto h4 { font-size: 0.75rem; color: var(--gold); margin-bottom: 12px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; }
+.detail-manifesto h4 { font-size: 0.75rem; color: #fff; margin-bottom: 12px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; } /* <-- gold -> white */
 .detail-manifesto p { color: var(--gray-900); font-family: 'Fraunces', serif; font-style: italic; margin: 0; }
 
 /* =========================================
@@ -621,7 +617,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .add-to-cart-btn {
   flex: 1;
   background: linear-gradient(135deg, var(--gold) 0%, #B89650 100%);
-  color: var(--green);
+  color: #fff; /* <-- text putih */
   border: none;
   border-radius: 100px;
   font-size: 0.875rem;
@@ -661,7 +657,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 /* =========================================
    15. FORMS, INPUTS & LOGISTICS
 ========================================= */
-/* Reset tombol custom-select agar tidak ada style bawaan browser */
 button.custom-select {
   background: transparent;
   border: none;
@@ -702,7 +697,6 @@ button.custom-select {
 .qris-frame { background: #FFFFFF; padding: var(--space-3); border-radius: var(--radius-xl); box-shadow: var(--shadow-card); display: block; margin: 0 auto var(--space-4) auto; border: 1px solid rgba(197,160,89,0.15); width: 100%; }
 .qris-frame img { width: 100%; height: auto; display: block; border-radius: 10px; }
 
-/* QRIS & Total Connector */
 .qris-payment-block {
   display: flex; flex-direction: column; align-items: center;
 }
@@ -715,7 +709,6 @@ button.custom-select {
   font-weight: 400; letter-spacing: -0.02em;
 }
 
-/* District note */
 .district-note {
   font-size: 0.7rem;
   color: var(--gold-text);
@@ -797,7 +790,7 @@ button.custom-select {
 .msg-user span { background: var(--green); color: white; padding: 14px 18px; border-radius: 18px; border-bottom-right-radius: 4px; display: inline-block; max-width: 85%; box-shadow: var(--shadow-card); }
 .chat-input-row { padding: var(--space-3) 20px; border-top: 1px solid var(--gray-200); display: flex; gap: 12px; background: white; }
 .chat-input-row input { margin: 0; padding: 14px 20px; background: var(--bg-subtle); border: none; border-radius: 100px; font-size: 1rem; }
-.btn-gold-round { background: linear-gradient(135deg, var(--gold) 0%, #B89650 100%); color: var(--green); border: none; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform var(--dur-fast) ease, box-shadow var(--dur-fast) ease; box-shadow: var(--shadow-card); }
+.btn-gold-round { background: linear-gradient(135deg, var(--gold) 0%, #B89650 100%); color: #fff; border: none; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform var(--dur-fast) ease, box-shadow var(--dur-fast) ease; box-shadow: var(--shadow-card); } /* <-- text putih */
 .btn-gold-round:active { transform: scale(0.9); }
 
 /* =========================================
@@ -933,7 +926,7 @@ button.custom-select {
 }
 
 /* =========================================
-   23. TESTIMONI — DENGAN PERBAIKAN TINGGI
+   23. TESTIMONI — SEPERTI FOOTER
 ========================================= */
 .testi-flip-container {
   position: relative;
@@ -963,8 +956,8 @@ button.custom-select {
 .testi-card.is-active { transform: translateY(0); opacity: 1; }
 .testi-card.is-prev { transform: translateY(-100%); opacity: 0; }
 .testi-stars { font-size: 18px; margin-bottom: 4px; letter-spacing: 2px; }
-.testi-card p { font-size: 16px; font-weight: 600; margin: 0 0 6px; line-height: 1.4; color: rgba(255,255,255,0.9); }
-.testi-card span { font-size: 13px; color: rgba(255,255,255,0.7); }
+.testi-card p { font-size: 16px; font-weight: 600; margin: 0 0 6px; line-height: 1.4; color: rgba(255,255,255,0.7); } /* <-- seperti footer */
+.testi-card span { font-size: 13px; color: rgba(255,255,255,0.5); } /* <-- seperti footer */
 .testi-dots {
   position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
   display: flex; gap: 6px; z-index: 2;
@@ -977,7 +970,7 @@ button.custom-select {
 }
 
 /* =========================================
-   24. FAQ ACCORDION
+   24. FAQ ACCORDION — SEPERTI FOOTER
 ========================================= */
 .faq-container {
   margin: 0 20px var(--space-3);
@@ -1001,7 +994,7 @@ button.custom-select {
   cursor: pointer;
   padding: var(--space-3) 0;
   text-align: left;
-  color: #fff;
+  color: rgba(255,255,255,0.7); /* <-- seperti footer */
   font-size: 0.9375rem;
   font-weight: 600;
   line-height: 1.5;
@@ -1018,7 +1011,7 @@ button.custom-select {
   transform: rotate(180deg);
 }
 .faq-answer {
-  color: rgba(255,255,255,0.8);
+  color: rgba(255,255,255,0.6); /* <-- seperti footer */
   font-size: 0.875rem;
   line-height: 1.6;
   max-height: 0;
