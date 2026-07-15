@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (navbar ivory, custom delivery dropdown keyboard-accessible, produk pertama fallback)
+// app.js — Luxury Edition (testimoni module, hero parallax, Fraunces italic, FAQ accessible)
 import { PRODUCTS } from './data/products.js';
 import { DISTRICT_MAP } from './data/districts.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
@@ -9,6 +9,7 @@ import { renderMenu, renderProductSwiper, renderCart, renderMiniCart, getProduct
 import { initCarousel } from './modules/carousel.js';
 import { initAIChat } from './modules/chat.js';
 import { initAccessibility } from './modules/accessibility.js';
+import { initTestimonials } from './modules/testimonials.js';  // ← modul baru
 import { validatePhone, validateAddress, processPayment, confirmOrder, getCartSummary } from './modules/checkout.js';
 
 // ---------------------------------------------------------------------------
@@ -710,13 +711,13 @@ function bindEvents() {
         if (state.cart[id].qty === 1) {
           // KONFIRMASI HAPUS ITEM
           showConfirmModal(
-            'Hapus Item?',
-            'Item akan dihapus dari keranjang.',
+            'Hapus Sajian?',
+            'Sajian ini akan dihapus dari reservasi Anda.',
             () => {
               delete state.cart[id];
               updateCartUI();
               if (DOM.miniCartModal.classList.contains('active')) renderMiniCart(state.cart);
-              showToast('Item dihapus');
+              showToast('Sajian dihapus dari reservasi.');
             }
           );
           return;
@@ -798,11 +799,12 @@ function bindEvents() {
       return;
     }
 
-    // FAQ toggle (accordion)
+    // FAQ toggle (accordion) — updated for button + aria-expanded
     const faqToggle = e.target.closest('[data-toggle="faq"]');
     if (faqToggle) {
       const item = faqToggle.closest('.faq-item');
-      if (item) item.classList.toggle('open');
+      const isOpen = item.classList.toggle('open');
+      faqToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
       return;
     }
   });
@@ -838,7 +840,18 @@ function init() {
 
   bindEvents();
   initOnboarding();
+  initTestimonials();   // ← inisialisasi modul testimoni
   updateCartUI();
+
+  // Hero parallax wiring
+  const heroImg = document.querySelector('.hero-img');
+  window.addEventListener('scroll', () => {
+    DOM.header?.classList.toggle('scrolled', window.scrollY > 50);
+    if (heroImg) {
+      const offset = Math.min(window.scrollY * 0.15, 40);
+      heroImg.style.transform = `translateY(${40 - offset}px) scale(${1.02 - offset * 0.0005})`;
+    }
+  }, { passive: true });
 
   // DEEP‑LINK PRODUK (?product=...)
   const urlParams = new URLSearchParams(window.location.search);
@@ -854,10 +867,6 @@ function init() {
       closeProductPage(false);
     }
   });
-
-  window.addEventListener('scroll', () => {
-    DOM.header?.classList.toggle('scrolled', window.scrollY > 50);
-  }, { passive: true });
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
