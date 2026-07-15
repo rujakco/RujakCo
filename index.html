@@ -49,10 +49,10 @@
   <link rel="canonical" href="https://rujakco.biz.id" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <!-- Font: Fraunces (termasuk italic) + DM Sans, tanpa Playfair Display -->
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 <div id="app">
@@ -123,7 +123,7 @@
       <p id="productInsightText" class="typing-text"></p>
     </div>
 
-    <!-- TESTIMONI AUTO-ROTATE (module, bersih) -->
+    <!-- TESTIMONI AUTO-ROTATE -->
     <div class="testi-flip-container" id="testiFlipContainer" role="region" aria-roledescription="carousel" aria-label="Testimoni pelanggan">
       <button type="button" id="testiPauseBtn" class="testi-pause-btn" aria-label="Jeda testimoni otomatis" aria-pressed="false">
         <i data-lucide="pause" style="width:14px;height:14px;"></i>
@@ -285,6 +285,24 @@
         </div>
         <div class="drawer-total"><span>Total Pesanan</span><span id="finalTotal">Rp0</span></div>
         <button type="button" class="btn-gold full-width" id="btnOpenPayment" style="margin-top:8px;">Selesaikan Reservasi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDER CONFIRMATION MODAL (STRUK) -->
+  <div class="modal-overlay" id="orderConfirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-hidden="true">
+    <div class="drawer-content" style="height:auto; max-height:85vh;">
+      <div class="drawer-header">
+        <h3 id="confirmTitle">Konfirmasi Pesanan</h3>
+        <button type="button" id="orderConfirmClose" class="glass-btn-dark" aria-label="Tutup"><i data-lucide="x" class="icon-sm"></i></button>
+      </div>
+      <div class="drawer-body" style="padding: var(--space-4); text-align:left;">
+        <div id="orderConfirmContent"></div>
+      </div>
+      <div class="drawer-footer" style="display: flex; gap: 8px; padding: var(--space-3) var(--space-4); border-top: 1px solid var(--gray-200); flex-wrap: wrap;">
+        <button type="button" class="btn-dark" id="orderConfirmDownload" style="flex:1;">📥 Download</button>
+        <button type="button" class="btn-gold" id="orderConfirmShare" style="flex:1;">📤 Kirim WA</button>
+        <button type="button" class="btn-gold" id="orderConfirmPay" style="flex:1;">💳 Bayar QRIS</button>
       </div>
     </div>
   </div>
