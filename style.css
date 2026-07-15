@@ -140,7 +140,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   transition: border-color 0.4s ease, box-shadow 0.4s ease; outline: none; border-radius: 0;
 }
 .onb-input:focus { border-bottom-color: var(--gold); box-shadow: var(--shadow-glow); }
-.onb-input::placeholder { color: rgba(253, 251, 247, 0.2); font-family: 'DM Sans', sans-serif; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; }
+.onb-input::placeholder { color: rgba(253, 251, 247, 0.4); font-family: 'DM Sans', sans-serif; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; }
 #onbDistrictDropdown { background: rgba(4,18,13,0.85); backdrop-filter: var(--blur-soft); border: 1px solid rgba(197,160,89,0.2); border-radius: var(--radius-lg); box-shadow: var(--shadow-luxury); }
 #onbDistrictDropdown div { padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--ivory); font-family: 'DM Sans', sans-serif; font-weight: 400; cursor: pointer; font-size: 1rem; transition: background-color 0.2s ease, color 0.2s ease; }
 #onbDistrictDropdown div:hover { background: rgba(197,160,89,0.1); color: var(--gold); }
@@ -272,9 +272,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   display: block;
   transform: translateY(40px) scale(1.02);
   transition: transform 0.8s var(--transition-spring);
-}
-.hero-editorial.scrolled-past .hero-img { 
-  transform: translateY(40px) scale(1); 
 }
 
 .hero-overlay-new {
@@ -476,7 +473,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   color: #fff; font-size: 0.65rem; font-weight: 700;
   width: 18px; height: 18px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  border: 2px solid var(--bg-surface);
+  border: 2px solid var(--gold-soft);
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
@@ -560,7 +557,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .spice-option.active { background: var(--green); color: white; border-color: var(--green); }
 .detail-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; margin: 0 0 var(--space-5) 0; padding: 0; font-size: 0.875rem; color: var(--gray-600); }
 .detail-specs strong { color: var(--green); font-weight: 600; display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
-.section-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--gray-600); margin-bottom: var(--space-3); font-weight: 600; display: block; text-align: center; padding-top: var(--space-5); margin-top: var(--space-2); }
+.section-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--gray-600); margin-bottom: var(--space-3); font-weight: 600; display: block; text-align: center; padding-top: calc(var(--space-5) + var(--space-2)); margin-top: 0; }
 .fruit-list-inline { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; line-height: 1.6; color: var(--gray-900); margin-bottom: var(--space-5); padding: 0 8px; }
 .fruit-bullet { color: var(--gold); margin: 0 6px; font-size: 10px; opacity: 0.7; }
 .detail-manifesto { background: transparent; padding: var(--space-4); border-radius: var(--radius-md); border: 1px solid rgba(197,160,89,0.25); text-align: center; margin-top: var(--space-3); }
@@ -718,17 +715,20 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   font-weight: 400; letter-spacing: -0.02em;
 }
 
-/* =========================================
-   16. KERANJANG
-========================================= */
-.checkout-forms > div[style*="color:var(--gold)"] {
-  font-size: 0.7rem !important; 
-  color: var(--gold-text) !important;
-  font-weight: 600 !important;
-  line-height: 1.4 !important;
-  margin-top: -12px !important; 
-  margin-bottom: var(--space-4) !important;
+/* District note */
+.district-note {
+  font-size: 0.7rem;
+  color: var(--gold-text);
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: -12px;
+  margin-bottom: var(--space-4);
 }
+
+/* =========================================
+   16. KERANJANG (dihapus)
+========================================= */
+/* Blok ini sengaja dikosongkan karena sebelumnya ada selector rapuh .checkout-forms > div[style*="color:var(--gold)"] */
 
 /* =========================================
    17. PEMBAYARAN
@@ -916,6 +916,12 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   font-weight: 600;
   line-height: 1.5;
 }
+.faq-question i {
+  transition: transform var(--dur-normal) ease;
+}
+.faq-item.open .faq-question i {
+  transform: rotate(180deg);
+}
 .faq-answer {
   color: rgba(255,255,255,0.8);
   font-size: 0.875rem;
@@ -923,4 +929,43 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   max-height: 0;
   overflow: hidden;
   transition: max-height var(--dur-normal) ease, padding var(--dur-normal) ease;
+}
+.faq-item.open .faq-answer {
+  max-height: 200px;
+  padding-bottom: var(--space-3);
+}
+
+/* =========================================
+   26. DIVIDER & SECTION HEADER
+========================================= */
+.divider {
+  width: calc(100% - 40px);
+  max-width: var(--content-max);
+  margin: var(--space-3) auto;
+  border-top: 1px solid rgba(197, 160, 89, 0.25);
+}
+
+.sec-header {
+  width: calc(100% - 40px);
+  max-width: var(--content-max);
+  margin: 0 auto var(--space-2);
+  padding: 0;
+  background: transparent;
+}
+
+.sec-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 400;
+  font-size: 1rem;
+  color: var(--gold-bright);
+  letter-spacing: 0.05em;
+  display: block;
+}
+
+/* =========================================
+   27. ACCESSIBLE DROPDOWN HIGHLIGHT
+========================================= */
+.minimal-dropdown div[aria-selected="true"] {
+  background: var(--green-light);
+  color: var(--green);
 }
