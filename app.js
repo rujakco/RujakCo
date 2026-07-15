@@ -1128,4 +1128,85 @@ function bindEvents() {
     }
   });
 
-  // Prevent modal overlay
+  // Prevent modal overlay click from closing if clicking inside drawer
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal(overlay);
+    });
+  });
+}
+
+// ---------------------------------------------------------------------------
+// App initialisation
+// ---------------------------------------------------------------------------
+function init() {
+  cacheDOM();
+  const saved = loadState();
+  state.cart = saved.cart || {};
+  if (saved.name) state.customerName = saved.name;
+  if (saved.district) state.selectedDistrict = saved.district;
+  const cust = loadCustomer();
+  if (cust) {
+    state.customerPhone = cust.phone || '';
+    state.customerAddress = cust.address || '';
+  }
+  if (state.selectedDistrict) {
+    state.userDistance = getDistance(state.selectedDistrict);
+  }
+
+  renderMenu();
+  renderProductSwiper();
+  initCarousel();
+  initDetailGestures();
+  initAccessibility();
+  const updateWelcome = initAIChat();
+  if (updateWelcome) updateWelcome(state.customerName || 'Ngoedi');
+
+  bindEvents();
+  initOnboarding();
+  initDrawerDistrictDropdown();
+  initTestimonials();
+  updateCartUI();
+
+  // Hero parallax wiring
+  const heroImg = document.querySelector('.hero-img');
+  window.addEventListener('scroll', () => {
+    DOM.header?.classList.toggle('scrolled', window.scrollY > 50);
+    if (heroImg) {
+      const offset = Math.min(window.scrollY * 0.15, 40);
+      heroImg.style.transform = `translateY(${40 - offset}px) scale(${1.02 - offset * 0.0005})`;
+    }
+  }, { passive: true });
+
+  // DEEP‑LINK PRODUK (?product=...)
+  const urlParams = new URLSearchParams(window.location.search);
+  const productId = urlParams.get('product');
+  if (productId) {
+    const idx = getProductGlobalIndex(productId);
+    if (idx !== -1) setTimeout(() => openProductPage(idx), 400);
+  }
+
+  // Listener untuk gesture back Android / tombol back browser
+  window.addEventListener('popstate', (event) => {
+    if (DOM.productPage.style.display === 'flex') {
+      closeProductPage(false);
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (DOM.productPage.style.display === 'flex') closeProductPage(true);
+      else if (DOM.miniCartModal.classList.contains('active')) closeModal(DOM.miniCartModal);
+      else if (DOM.paymentModal.classList.contains('active')) closeModal(DOM.paymentModal);
+      else if (DOM.aiChatBox.classList.contains('active')) closeModal(DOM.aiChatBox);
+      else if (DOM.aboutModal?.classList.contains('active')) closeModal(DOM.aboutModal);
+      else if (document.getElementById('orderConfirmModal')?.classList.contains('active')) closeModal(document.getElementById('orderConfirmModal'));
+    }
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
