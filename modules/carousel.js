@@ -1,21 +1,21 @@
-// modules/carousel.js – Luxury Edition (typing bebas glitch, aman scroll cepat)
+// modules/carousel.js – Final Stable (typing halus, aman scroll cepat)
 import { PRODUCTS } from '../data/products.js';
 
 const LOOP_MULTIPLIER = 3;
 let currentInsightId = null;
 
-/* === Typing state (global di modul, aman meski initCarousel dipanggil sekali) === */
-let typeTimer = null;            // timer setTimeout untuk karakter berikutnya
-let fadeTimer = null;           // timer setTimeout untuk fade-out → mulai baru
-let cancelled = false;          // flag pembatalan aktif
+// Typing state
+let typeTimer = null;
+let fadeTimer = null;
+let fullText = '';
+let charIndex = 0;
 
-/* === Auto‑play state === */
+// Auto‑play state
 let autoScrollInterval = null;
 let scrollTimeout = null;
 const SCROLL_DELAY = 3500;
 const RESUME_DELAY = 5000;
 
-/* ------------------------------------------------------------------ */
 export function initCarousel(trackId = 'menuList', insightId = 'productInsightText') {
   const track = document.getElementById(trackId);
   if (!track) return;
@@ -23,53 +23,39 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
   const insightEl = document.getElementById(insightId);
   if (!insightEl) return;
 
-  /* ================================================================
-     TYPING ENGINE – tanpa queue, pakai variabel string penuh
-     ================================================================ */
-  let fullText = '';             // kalimat yang sedang diketik
-  let charIndex = 0;            // posisi karakter berikutnya
-
-  /** Hentikan SEMUA proses yang sedang berjalan (typing + fade timer) */
+  // Batalkan semua timer yang sedang berjalan
   function abortAll() {
-    cancelled = true;                       // sinyal agar fungsi type() tidak lanjut
     clearTimeout(typeTimer);
     clearTimeout(fadeTimer);
     typeTimer = null;
     fadeTimer = null;
   }
 
-  /** Mulai mengetik kalimat `text` dari awal */
+  // Mulai mengetik teks baru (langsung, tanpa fade-in)
   function startTyping(text) {
-    abortAll();                             // pastikan tidak ada yang tertinggal
-    cancelled = false;
+    abortAll();
+    insightEl.classList.remove('fade-out'); // hapus kelas fade jika masih ada
     fullText = text;
     charIndex = 0;
-    insightEl.textContent = '';             // hapus teks lama sekaligus
-    insightEl.classList.remove('fade-out'); // kalau sebelumnya sedang fade
+    insightEl.textContent = '';
     typeNext();
   }
 
   function typeNext() {
-    if (cancelled) return;                 // dibatalkan oleh slide lain
     if (charIndex < fullText.length) {
       insightEl.textContent += fullText.charAt(charIndex);
       charIndex++;
       typeTimer = setTimeout(typeNext, 30);
     }
-    // kalau sudah habis, biarkan selesai tanpa melakukan apa‑apa
   }
 
-  /* ================================================================
-     UPDATE CENTER – cek slide aktif & ganti insight
-     ================================================================ */
+  // Update slide center & insight
   const updateCenter = () => {
     const items = track.querySelectorAll('.boutique-item');
     if (!items.length) return -1;
 
     const trackCenter = track.getBoundingClientRect().left + track.clientWidth / 2;
-    let closestItem = null;
-    let minDistance = Infinity;
-    let closestIndex = -1;
+    let closestItem = null, minDistance = Infinity, closestIndex = -1;
 
     items.forEach((item, index) => {
       const itemCenter = item.getBoundingClientRect().left + item.clientWidth / 2;
@@ -83,7 +69,6 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
 
     items.forEach(item => item.classList.toggle('active-center', item === closestItem));
 
-    // --- Ganti insight jika produk berubah ---
     if (closestItem) {
       const newId = closestItem.dataset.id;
       if (currentInsightId !== newId) {
@@ -92,17 +77,14 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
         if (prod) {
           const nextText = prod.insight || prod.desc;
 
-          // 1) Batalkan apa pun yang sedang berlangsung
+          // Batalkan semua proses sebelumnya
           abortAll();
 
-          // 2) Fade-out sebentar lalu mulai mengetik teks baru
+          // Mulai fade-out sebentar, lalu langsung ketik
           insightEl.classList.add('fade-out');
           fadeTimer = setTimeout(() => {
-            // hanya lanjutkan jika fade timer ini tidak ikut dibatalkan
-            if (!cancelled) {
-              startTyping(nextText);
-            }
-          }, 200);
+            startTyping(nextText);
+          }, 150); // fade-out 150ms sudah cukup
         }
       }
     }
@@ -110,9 +92,7 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
     return closestIndex;
   };
 
-  /* ================================================================
-     INFINITE LOOP (teleportasi)
-     ================================================================ */
+  // Infinite loop (teleportasi)
   let scrollStableTimer;
   track.addEventListener('scroll', () => {
     const currentIndex = updateCenter();
@@ -138,9 +118,7 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
     }, 250);
   }, { passive: true });
 
-  /* ================================================================
-     AUTO‑PLAY
-     ================================================================ */
+  // Auto‑play
   function startAutoScroll() {
     stopAutoScroll();
     autoScrollInterval = setInterval(() => {
@@ -166,9 +144,7 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
     scrollTimeout = setTimeout(startAutoScroll, RESUME_DELAY);
   }, { passive: true });
 
-  /* ================================================================
-     INISIALISASI
-     ================================================================ */
+  // Inisialisasi
   setTimeout(() => {
     track.style.scrollBehavior = 'auto';
     const midPoint = Math.floor(LOOP_MULTIPLIER / 2) * PRODUCTS.length;
