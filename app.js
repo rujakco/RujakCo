@@ -1,11 +1,11 @@
-// app.js — Luxury Edition (swipe horizontal + swipe‑to‑close + history back aman)
+// app.js — Luxury Edition (deep‑link, konfirmasi hapus, semua perbaikan)
 import { PRODUCTS } from './data/products.js';
 import { DISTRICT_MAP } from './data/districts.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce } from './utils/helpers.js';
 import { loadState, saveCart, saveUser, clearUser } from './modules/storage.js';
 import { getDistance, calculateShipping } from './modules/shipping.js';
-import { renderMenu, renderProductSwiper, renderCart, renderMiniCart } from './modules/render.js';
+import { renderMenu, renderProductSwiper, renderCart, renderMiniCart, getProductGlobalIndex } from './modules/render.js';
 import { initCarousel } from './modules/carousel.js';
 import { initAIChat } from './modules/chat.js';
 import { initAccessibility } from './modules/accessibility.js';
@@ -139,6 +139,34 @@ function closeModal(modalEl) {
 }
 
 // ---------------------------------------------------------------------------
+// KONFIRMASI HAPUS ITEM (modal lokal)
+// ---------------------------------------------------------------------------
+function showConfirmModal(title, message, onConfirm) {
+  const old = document.getElementById('confirmModal');
+  if (old) old.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'confirmModal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:100001;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;';
+  modal.innerHTML = `
+    <div style="background:white;border-radius:16px;padding:24px 20px;max-width:320px;width:90%;text-align:center;">
+      <h4 style="margin:0 0 8px;font-size:16px;">${title}</h4>
+      <p style="font-size:13px;color:#666;margin:0 0 20px;">${message}</p>
+      <div style="display:flex;gap:10px;">
+        <button id="confirmNo" style="flex:1;padding:12px;border-radius:8px;border:1px solid #ddd;background:white;font-size:13px;font-weight:600;">Batal</button>
+        <button id="confirmYes" style="flex:1;padding:12px;border-radius:8px;border:none;background:#D62828;color:white;font-size:13px;font-weight:600;">Hapus</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+
+  document.getElementById('confirmNo').onclick = () => modal.remove();
+  document.getElementById('confirmYes').onclick = () => {
+    modal.remove();
+    if (onConfirm) onConfirm();
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Product page & swiper (dengan History API)
 // ---------------------------------------------------------------------------
 function openProductPage(globalIndex) {
@@ -181,7 +209,6 @@ function closeProductPage(useHistoryBack = true) {
     DOM._productObserver = null;
   }
 
-  // Jika diminta, lakukan history.back() untuk sinkronisasi state
   if (useHistoryBack && history.state?.detailOpen) {
     history.back();
   }
@@ -249,7 +276,7 @@ function initDetailGestures() {
     const dy = e.changedTouches[0].clientY - startY;
     activeSlide.style.transition = 'all 0.3s ease';
     if (dy > 120) {
-      closeProductPage(true);   // memanggil history.back()
+      closeProductPage(true);
     } else {
       activeSlide.style.transform = 'translateY(0)';
     }
@@ -438,10 +465,24 @@ function bindEvents() {
     if (actionBtn && !actionBtn.classList.contains('add-to-cart-btn') && !actionBtn.classList.contains('step-1-btn')) {
       const id = actionBtn.dataset.id;
       const type = actionBtn.dataset.action;
-      if (type === 'increase') state.cart[id].qty++;
-      else if (type === 'decrease') {
+      if (type === 'increase') {
+        state.cart[id].qty++;
+      } else if (type === 'decrease') {
+        if (state.cart[id].qty === 1) {
+          // KONFIRMASI HAPUS ITEM
+          showConfirmModal(
+            'Hapus Item?',
+            'Item akan dihapus dari keranjang.',
+            () => {
+              delete state.cart[id];
+              updateCartUI();
+              if (DOM.miniCartModal.classList.contains('active')) renderMiniCart(state.cart);
+              showToast('Item dihapus');
+            }
+          );
+          return;
+        }
         state.cart[id].qty--;
-        if (state.cart[id].qty <= 0) delete state.cart[id];
       }
       updateCartUI();
       if (DOM.miniCartModal.classList.contains('active')) renderMiniCart(state.cart);
@@ -558,6 +599,14 @@ function init() {
   bindEvents();
   initOnboarding();
   updateCartUI();
+
+  // DEEP‑LINK PRODUK (?product=...)
+  const urlParams = new URLSearchParams(window.location.search);
+  const productId = urlParams.get('product');
+  if (productId) {
+    const idx = getProductGlobalIndex(productId);
+    if (idx !== -1) setTimeout(() => openProductPage(idx), 400);
+  }
 
   // Listener untuk gesture back Android / tombol back browser
   window.addEventListener('popstate', (event) => {
