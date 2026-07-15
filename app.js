@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (navbar ivory, custom delivery dropdown, produk pertama fallback)
+// app.js — Luxury Edition (navbar ivory, custom delivery dropdown keyboard-accessible, produk pertama fallback)
 import { PRODUCTS } from './data/products.js';
 import { DISTRICT_MAP } from './data/districts.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
@@ -541,31 +541,82 @@ function bindEvents() {
     }
   });
 
-  // Custom delivery time dropdown
+  // Custom delivery time dropdown (KEYBOARD-ACCESSIBLE)
   const deliveryTrigger = document.getElementById('deliveryTimeTrigger');
   const deliveryDropdown = document.getElementById('deliveryTimeDropdown');
   const deliveryHidden = document.getElementById('deliveryTime');
   const deliveryLabel = document.getElementById('deliveryTimeLabel');
+  let deliveryActiveIndex = 0;
 
+  // Sinkronkan label dengan opsi preselected
+  const preselected = deliveryDropdown?.querySelector('[aria-selected="true"]');
+  if (preselected) {
+    deliveryLabel.textContent = preselected.textContent;
+    deliveryHidden.value = preselected.dataset.value;
+  }
+
+  function setDeliveryOption(option) {
+    deliveryDropdown.querySelectorAll('[role="option"]').forEach(o => o.setAttribute('aria-selected', 'false'));
+    option.setAttribute('aria-selected', 'true');
+    deliveryLabel.textContent = option.textContent;
+    deliveryHidden.value = option.dataset.value;
+    closeDeliveryDropdown();
+  }
+
+  function closeDeliveryDropdown() {
+    deliveryDropdown.style.display = 'none';
+    deliveryTrigger.setAttribute('aria-expanded', 'false');
+  }
+
+  function openDeliveryDropdown() {
+    deliveryDropdown.style.display = 'block';
+    deliveryTrigger.setAttribute('aria-expanded', 'true');
+    const opts = deliveryDropdown.querySelectorAll('[role="option"]');
+    deliveryActiveIndex = [...opts].findIndex(o => o.getAttribute('aria-selected') === 'true');
+    if (deliveryActiveIndex === -1) deliveryActiveIndex = 0;
+    opts[deliveryActiveIndex]?.focus();
+  }
+
+  deliveryTrigger?.setAttribute('tabindex', '0');
   deliveryTrigger?.addEventListener('click', () => {
-    const isOpen = deliveryDropdown.style.display === 'block';
-    deliveryDropdown.style.display = isOpen ? 'none' : 'block';
-    deliveryTrigger.setAttribute('aria-expanded', !isOpen);
+    deliveryDropdown.style.display === 'block' ? closeDeliveryDropdown() : openDeliveryDropdown();
+  });
+  deliveryTrigger?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openDeliveryDropdown();
+    }
   });
 
   deliveryDropdown?.addEventListener('click', (e) => {
     const option = e.target.closest('[role="option"]');
-    if (!option) return;
-    deliveryLabel.textContent = option.textContent;
-    deliveryHidden.value = option.dataset.value;
-    deliveryDropdown.style.display = 'none';
-    deliveryTrigger.setAttribute('aria-expanded', 'false');
+    if (option) setDeliveryOption(option);
+  });
+
+  deliveryDropdown?.addEventListener('keydown', (e) => {
+    const opts = [...deliveryDropdown.querySelectorAll('[role="option"]')];
+    if (!opts.length) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      deliveryActiveIndex = Math.min(deliveryActiveIndex + 1, opts.length - 1);
+      opts[deliveryActiveIndex].focus();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      deliveryActiveIndex = Math.max(deliveryActiveIndex - 1, 0);
+      opts[deliveryActiveIndex].focus();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      setDeliveryOption(opts[deliveryActiveIndex]);
+    } else if (e.key === 'Escape') {
+      closeDeliveryDropdown();
+      deliveryTrigger.focus();
+    }
   });
 
   document.addEventListener('click', (e) => {
     if (!deliveryTrigger?.contains(e.target) && !deliveryDropdown?.contains(e.target)) {
-      deliveryDropdown.style.display = 'none';
-      deliveryTrigger?.setAttribute('aria-expanded', 'false');
+      closeDeliveryDropdown();
     }
   });
 
