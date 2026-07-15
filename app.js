@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (deep‑link, konfirmasi hapus, share, semua perbaikan)
+// app.js — Luxury Edition (perbaikan aksesibilitas penuh)
 import { PRODUCTS } from './data/products.js';
 import { DISTRICT_MAP } from './data/districts.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
@@ -93,14 +93,20 @@ function getCartSummaryLocal() {
 }
 
 function updateShippingUI() {
-  if (!DOM.shippingSection) return;
-  const dist = state.selectedDistrict ? getDistance(state.selectedDistrict) : state.userDistance;
-  if (dist) DOM.shippingSection.style.display = 'block';
-  const { subtotal, mainProductQty } = getCartSummaryLocal();
-  const ship = calculateShipping(dist ?? SYSTEM.DEFAULT_DISTANCE, mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority);
-  document.getElementById('shippingDistance').textContent = dist ? `${dist} km` : '';
-  DOM.finalShipping.textContent = ship.cost ? fmt(ship.cost) : '...';
-  DOM.finalTotal.textContent = ship.cost ? fmt(subtotal + ship.cost) : fmt(subtotal);
+  const dist = state.selectedDistrict ? getDistance(state.selectedDistrict) : null;
+  const section = DOM.shippingSection;
+  if (!section) return;
+  
+  if (dist) {
+    section.style.display = 'block';
+    const { subtotal, mainProductQty } = getCartSummaryLocal();
+    const ship = calculateShipping(dist, mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority);
+    document.getElementById('shippingDistance').textContent = `${dist} km`;
+    DOM.finalShipping.textContent = ship.cost ? fmt(ship.cost) : '...';
+    DOM.finalTotal.textContent = ship.cost ? fmt(subtotal + ship.cost) : fmt(subtotal);
+  } else {
+    section.style.display = 'none';
+  }
 }
 
 function updateCartUI() {
@@ -139,42 +145,80 @@ function closeModal(modalEl) {
 }
 
 // ---------------------------------------------------------------------------
-// KONFIRMASI HAPUS ITEM (modal lokal)
+// KONFIRMASI HAPUS ITEM (modal lokal, accessible)
 // ---------------------------------------------------------------------------
 function showConfirmModal(title, message, onConfirm) {
   const old = document.getElementById('confirmModal');
   if (old) old.remove();
 
+  const triggerEl = document.activeElement;
+
   const modal = document.createElement('div');
   modal.id = 'confirmModal';
-  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:100001;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;';
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-modal', 'true');
+  modal.setAttribute('aria-labelledby', 'confirmModalTitle');
+  modal.setAttribute('aria-describedby', 'confirmModalMsg');
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:var(--z-onboard);background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;';
   modal.innerHTML = `
     <div style="background:white;border-radius:16px;padding:24px 20px;max-width:320px;width:90%;text-align:center;">
-      <h4 style="margin:0 0 8px;font-size:16px;">${title}</h4>
-      <p style="font-size:13px;color:#666;margin:0 0 20px;">${message}</p>
+      <h4 id="confirmModalTitle" style="margin:0 0 8px;font-size:16px;">${title}</h4>
+      <p id="confirmModalMsg" style="font-size:13px;color:#666;margin:0 0 20px;">${message}</p>
       <div style="display:flex;gap:10px;">
         <button id="confirmNo" style="flex:1;padding:12px;border-radius:8px;border:1px solid #ddd;background:white;font-size:13px;font-weight:600;">Batal</button>
-        <button id="confirmYes" style="flex:1;padding:12px;border-radius:8px;border:none;background:#D62828;color:white;font-size:13px;font-weight:600;">Hapus</button>
+        <button id="confirmYes" style="flex:1;padding:12px;border-radius:8px;border:none;background:var(--danger);color:white;font-size:13px;font-weight:600;">Hapus</button>
       </div>
     </div>`;
   document.body.appendChild(modal);
 
-  document.getElementById('confirmNo').onclick = () => modal.remove();
-  document.getElementById('confirmYes').onclick = () => {
+  const btnNo = document.getElementById('confirmNo');
+  const btnYes = document.getElementById('confirmYes');
+  const focusables = [btnNo, btnYes];
+
+  function cleanup() {
+    document.removeEventListener('keydown', onKeydown);
     modal.remove();
+    if (triggerEl && typeof triggerEl.focus === 'function') triggerEl.focus();
+  }
+
+  function onKeydown(e) {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      cleanup();
+      return;
+    }
+    if (e.key === 'Tab') {
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  }
+
+  document.addEventListener('keydown', onKeydown);
+
+  btnNo.onclick = cleanup;
+  btnYes.onclick = () => {
+    cleanup();
     if (onConfirm) onConfirm();
   };
+
+  btnNo.focus();
 }
 
 // ---------------------------------------------------------------------------
-// Product page & swiper (dengan History API)
+// Product page & swiper (observer leak diperbaiki)
 // ---------------------------------------------------------------------------
 function openProductPage(globalIndex) {
   DOM.productPage.style.display = 'flex';
   DOM.productPage.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
 
-  // Dorong state baru agar gesture back Android bisa kembali ke halaman utama
   history.pushState({ detailOpen: true, productIndex: globalIndex }, '');
 
   const targetSlide = document.querySelector(`.product-slide[data-idx="${globalIndex}"]`);
@@ -184,6 +228,9 @@ function openProductPage(globalIndex) {
     DOM.productSwiperTrack.style.scrollBehavior = 'smooth';
   }
 
+  if (DOM._productObserver) {
+    DOM._productObserver.disconnect();
+  }
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -233,7 +280,6 @@ function initDetailGestures() {
     startX = touch.clientX;
     startY = touch.clientY;
 
-    // Abaikan sentuhan dari 30px kiri/kanan untuk gesture back Android
     if (startX < 30 || startX > window.innerWidth - 30) {
       isPulling = false;
       activeSlide = null;
@@ -292,7 +338,7 @@ function initDetailGestures() {
 }
 
 // ---------------------------------------------------------------------------
-// Onboarding
+// Onboarding (dropdown ARIA combobox)
 // ---------------------------------------------------------------------------
 function initOnboarding() {
   const saved = loadState();
@@ -319,21 +365,81 @@ function initOnboarding() {
     }, 100);
   });
 
+  // --- Dropdown kecamatan: ARIA combobox pattern ---
   const dropdown = DOM.onbDistrictDropdown;
+  let activeOptionIndex = -1;
+  let currentMatches = [];
+
+  function renderDropdown(matches) {
+    currentMatches = matches;
+    activeOptionIndex = -1;
+    dropdown.innerHTML = matches.map((k, i) =>
+      `<div role="option" id="onbDistrictOpt-${i}" data-val="${k}" aria-selected="false">${k.replace(/\b\w/g, l => l.toUpperCase())}</div>`
+    ).join('');
+    dropdown.style.display = matches.length ? 'block' : 'none';
+    DOM.onbDistrict.setAttribute('aria-expanded', matches.length ? 'true' : 'false');
+    DOM.onbDistrict.removeAttribute('aria-activedescendant');
+  }
+
+  function setActiveOption(index) {
+    const opts = dropdown.querySelectorAll('div[role="option"]');
+    opts.forEach(o => o.setAttribute('aria-selected', 'false'));
+    if (index >= 0 && index < opts.length) {
+      opts[index].setAttribute('aria-selected', 'true');
+      opts[index].scrollIntoView({ block: 'nearest' });
+      DOM.onbDistrict.setAttribute('aria-activedescendant', opts[index].id);
+      activeOptionIndex = index;
+    }
+  }
+
+  function selectDistrict(val, label) {
+    state.selectedDistrict = val;
+    dropdown.style.display = 'none';
+    DOM.onbDistrict.setAttribute('aria-expanded', 'false');
+    DOM.onbDistrict.removeAttribute('aria-activedescendant');
+    DOM.onbDistrict.value = label;
+  }
+
   const filterDistricts = debounce((val) => {
     const v = val.toLowerCase();
     const matches = Object.keys(DISTRICT_MAP).filter(k => k.includes(v));
-    dropdown.style.display = 'block';
-    dropdown.innerHTML = matches.map(k => `<div data-val="${k}">${k.replace(/\b\w/g, l => l.toUpperCase())}</div>`).join('');
+    renderDropdown(matches);
   }, 150);
   DOM.onbDistrict.addEventListener('input', (e) => filterDistricts(e.target.value));
 
+  DOM.onbDistrict.addEventListener('keydown', (e) => {
+    const opts = dropdown.querySelectorAll('div[role="option"]');
+    if (!opts.length || dropdown.style.display === 'none') return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveOption(Math.min(activeOptionIndex + 1, opts.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveOption(Math.max(activeOptionIndex - 1, 0));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (activeOptionIndex >= 0) {
+        const val = currentMatches[activeOptionIndex];
+        selectDistrict(val, opts[activeOptionIndex].textContent);
+      }
+    } else if (e.key === 'Escape') {
+      dropdown.style.display = 'none';
+      DOM.onbDistrict.setAttribute('aria-expanded', 'false');
+    }
+  });
+
   dropdown.addEventListener('click', (e) => {
-    const div = e.target.closest('div[data-val]');
+    const div = e.target.closest('div[role="option"]');
     if (!div) return;
-    state.selectedDistrict = div.dataset.val;
-    dropdown.style.display = 'none';
-    DOM.onbDistrict.value = div.textContent;
+    selectDistrict(div.dataset.val, div.textContent);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!DOM.onbDistrict?.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.style.display = 'none';
+      DOM.onbDistrict.setAttribute('aria-expanded', 'false');
+    }
   });
 
   document.getElementById('onbStartBtn').addEventListener('click', () => {
@@ -624,11 +730,14 @@ function init() {
   state.cart = saved.cart || {};
   if (saved.name) state.customerName = saved.name;
   if (saved.district) state.selectedDistrict = saved.district;
+  if (state.selectedDistrict) {
+    state.userDistance = getDistance(state.selectedDistrict);
+  }
 
   renderMenu();
   renderProductSwiper();
   initCarousel();
-  initDetailGestures();       // gesture swipe horizontal & tarik-turun yang aman
+  initDetailGestures();
   initAccessibility();
   const updateWelcome = initAIChat();
   if (updateWelcome) updateWelcome(state.customerName || 'Ngoedi');
@@ -648,7 +757,6 @@ function init() {
   // Listener untuk gesture back Android / tombol back browser
   window.addEventListener('popstate', (event) => {
     if (DOM.productPage.style.display === 'flex') {
-      // Tutup detail tanpa memanggil history.back() lagi (karena sudah dipicu oleh popstate)
       closeProductPage(false);
     }
   });
