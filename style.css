@@ -20,7 +20,7 @@
   --gray-900: #1A1816;
 
   --z-header: 100;
-  --z-nav: 400;
+  --z-nav: 600;            /* dinaikkan agar di atas product overlay */
   --z-product: 500;
   --z-fab: 510;
   --z-modal: 1000;
@@ -426,12 +426,13 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .meta-dot { color: var(--gold-soft); }
 
 /* =========================================
-   11. BOTTOM NAV — LEBIH RAMPING
+   11. BOTTOM NAV — IKON SAJA, TETAP MUNCUL SAAT DETAIL PRODUK
 ========================================= */
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0; margin: 0 auto;
   width: calc(100% - 40px); max-width: 440px;
-  z-index: var(--z-nav); background: var(--bg-surface);
+  z-index: var(--z-nav);    /* 600, di atas product overlay */
+  background: var(--bg-surface);
   display: flex; justify-content: space-around; align-items: center;
   padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
   border-top: 1px solid rgba(197,160,89,0.15);
@@ -450,11 +451,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .nav-icon { 
   width: 20px;
   height: 20px; 
-}
-.nav-label { 
-  display: block; line-height: 1.2; 
-  font-size: 0.65rem; 
-  margin-top: 2px; 
 }
 .nav-cart-wrapper { position: relative; display: inline-block; }
 .nav-badge {
