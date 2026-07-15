@@ -312,19 +312,19 @@
           <div style="position:relative;"><input type="text" id="districtInput" placeholder="Kecamatan" class="input-minimal" readonly style="color:var(--green); font-weight:600;" /></div>
           <div style="font-size:12px; color:var(--gold); margin-top:-16px; margin-bottom:32px; font-weight:500;">*Kecamatan mengikuti alamat awal Anda. Ubah lewat "Ganti nama &amp; kecamatan" di layar masuk.</div>
 
-          <!-- Custom delivery time dropdown (DIBUNGKUS) -->
+          <!-- Custom delivery time dropdown -->
           <div style="position:relative;">
-            <div id="deliveryTimeTrigger" class="custom-select" role="combobox" aria-haspopup="listbox" aria-expanded="false" style="margin-bottom:0;">
+            <div id="deliveryTimeTrigger" class="custom-select" role="combobox" aria-haspopup="listbox" aria-expanded="false" style="margin-bottom:0;" tabindex="0">
               <span id="deliveryTimeLabel">Pilih jam pengantaran...</span>
               <i data-lucide="chevron-down" class="w-4 h-4"></i>
             </div>
             <div id="deliveryTimeDropdown" class="minimal-dropdown" style="position:absolute; top:100%; left:0; right:0;" role="listbox">
-              <div role="option" data-value="Pagi (09:00 - 11:00)">Pagi (09:00 - 11:00 WIB)</div>
-              <div role="option" data-value="Siang (11:00 - 13:00)">Siang (11:00 - 13:00 WIB)</div>
-              <div role="option" data-value="Sore (14:00 - 17:00)">Sore (14:00 - 17:00 WIB)</div>
+              <div role="option" data-value="Pagi (09:00 - 11:00)" aria-selected="true">Pagi (09:00 - 11:00 WIB)</div>
+              <div role="option" data-value="Siang (11:00 - 13:00)" aria-selected="false">Siang (11:00 - 13:00 WIB)</div>
+              <div role="option" data-value="Sore (14:00 - 17:00)" aria-selected="false">Sore (14:00 - 17:00 WIB)</div>
             </div>
           </div>
-          <input type="hidden" id="deliveryTime" value="" />
+          <input type="hidden" id="deliveryTime" value="Pagi (09:00 - 11:00)" />
 
           <textarea id="orderNotes" placeholder="Catatan untuk kurir (opsional)" rows="1" class="input-minimal"></textarea>
         </div>
@@ -358,8 +358,11 @@
         <button type="button" id="paymentClose" class="glass-btn-dark" aria-label="Tutup Pembayaran"><i data-lucide="x" class="icon-sm"></i></button>
       </div>
       <div class="drawer-body" style="text-align:center; padding-bottom:48px;">
-        <div class="qris-frame"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS RUJAK.Co" /></div>
-        <div style="font-size:36px; font-family:'Fraunces',serif; margin:32px 0; color:var(--green);" id="paymentTotalDisplay">Rp0</div>
+        <div class="qris-payment-block">
+          <div class="qris-frame"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS RUJAK.Co" /></div>
+          <div class="qris-connector"></div>
+          <div id="paymentTotalDisplay" class="qris-total">Rp0</div>
+        </div>
         <button type="button" class="btn-dark full-width" id="confirmPaymentBtn" data-action="confirm-wa"><i data-lucide="check" class="icon-sm inline" style="margin-right:8px;"></i> Validasi Reservasi via WhatsApp</button>
       </div>
     </div>
