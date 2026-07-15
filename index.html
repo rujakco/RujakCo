@@ -335,13 +335,12 @@
 
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav" id="bottomNav">
-    <button type="button" class="nav-item active" data-tab="home"><i data-lucide="home" class="nav-icon"></i><span class="nav-label">Beranda</span></button>
-    <button type="button" class="nav-item" id="navCartBtn">
+    <button type="button" class="nav-item active" data-tab="home" aria-label="Beranda"><i data-lucide="home" class="nav-icon"></i></button>
+    <button type="button" class="nav-item" id="navCartBtn" aria-label="Reservasi">
       <span class="nav-cart-wrapper"><i data-lucide="shopping-bag" class="nav-icon"></i><span class="nav-badge" id="cartBadgeNav" style="display:none;">0</span></span>
-      <span class="nav-label">Reservasi</span>
     </button>
-    <button type="button" class="nav-item" data-tab="orders"><i data-lucide="package" class="nav-icon"></i><span class="nav-label">Pesanan</span></button>
-    <button type="button" class="nav-item" id="aiChatToggle"><i data-lucide="sparkles" class="nav-icon"></i><span class="nav-label">Concierge</span></button>
+    <button type="button" class="nav-item" data-tab="orders" aria-label="Pesanan"><i data-lucide="package" class="nav-icon"></i></button>
+    <button type="button" class="nav-item" id="aiChatToggle" aria-label="Concierge"><i data-lucide="sparkles" class="nav-icon"></i></button>
   </nav>
 
   <div id="toast" role="alert" aria-live="polite"></div>
