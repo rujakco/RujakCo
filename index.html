@@ -51,14 +51,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-
-  <!-- pinned version + integrity (ganti hash dengan yang sebenarnya dari CDN) -->
-  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js" defer
-          integrity="sha384-REPLACE_WITH_ACTUAL_HASH"
-          crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer
-          integrity="sha384-REPLACE_WITH_ACTUAL_HASH"
-          crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 <noscript>
@@ -69,7 +63,7 @@
 <div id="app">
 
   <!-- ONBOARDING -->
-  <div class="onboarding-overlay" id="onboardingOverlay" role="dialog" aria-modal="true" aria-labelledby="onbTitle" inert>
+  <div class="onboarding-overlay" id="onboardingOverlay" role="dialog" aria-modal="true" aria-labelledby="onbTitle">
     <div class="onb-content">
       <img class="onb-logo" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="RUJAK.Co" />
       <div id="onbNewUser" style="display:none; width:100%;">
@@ -225,7 +219,7 @@
   </main>
 
   <!-- PRODUCT DETAIL -->
-  <div class="product-swiper-overlay" id="productPage" style="display:none;" role="dialog" aria-modal="true" aria-hidden="true" inert>
+  <div class="product-swiper-overlay" id="productPage" style="display:none;" role="dialog" aria-modal="true" aria-hidden="true">
     <button type="button" id="backFromProduct" class="glass-btn floating-close" aria-label="Kembali"><i data-lucide="arrow-left" class="icon-sm"></i></button>
     <button type="button" id="shareProductBtn" class="glass-btn floating-share" aria-label="Bagikan Produk"><i data-lucide="share-2" class="icon-sm"></i></button>
     <div class="product-swiper-track" id="productSwiperTrack"></div>
@@ -244,7 +238,7 @@
   </div>
 
   <!-- CART DRAWER -->
-  <div class="modal-overlay" id="miniCartModal" role="dialog" aria-modal="true" aria-labelledby="miniCartTitle" aria-hidden="true" inert>
+  <div class="modal-overlay" id="miniCartModal" role="dialog" aria-modal="true" aria-labelledby="miniCartTitle" aria-hidden="true">
     <div class="drawer-content">
       <div class="drawer-header">
         <h3 id="miniCartTitle">Reservasi Sajian</h3>
@@ -258,6 +252,7 @@
           <input type="text" id="customerName" placeholder="Nama lengkap penerima" class="input-minimal" />
           <input type="tel" id="customerPhone" placeholder="Nomor HP aktif" inputmode="numeric" class="input-minimal" />
           <textarea id="customerAddress" placeholder="Alamat lengkap (jalan, RT/RW, patokan)" rows="2" class="input-minimal"></textarea>
+          <!-- Input kecamatan yang bisa diketik & dipilih -->
           <div style="position:relative;">
             <label for="districtInput" class="sr-only">Kecamatan tujuan</label>
             <input type="text" id="districtInput" class="input-minimal" placeholder="Ketik atau pilih kecamatan..." autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="drawerDistrictDropdown" aria-haspopup="listbox" />
@@ -272,9 +267,9 @@
               <i data-lucide="chevron-down" class="w-4 h-4" aria-hidden="true"></i>
             </button>
             <div id="deliveryTimeDropdown" class="minimal-dropdown" style="position:absolute; top:100%; left:0; right:0;" role="listbox">
-              <div role="option" tabindex="0" data-value="Pagi (09:00 - 11:00)" aria-selected="true">Pagi (09:00 - 11:00 WIB)</div>
-              <div role="option" tabindex="0" data-value="Siang (11:00 - 13:00)" aria-selected="false">Siang (11:00 - 13:00 WIB)</div>
-              <div role="option" tabindex="0" data-value="Sore (14:00 - 17:00)" aria-selected="false">Sore (14:00 - 17:00 WIB)</div>
+              <div role="option" data-value="Pagi (09:00 - 11:00)" aria-selected="true">Pagi (09:00 - 11:00 WIB)</div>
+              <div role="option" data-value="Siang (11:00 - 13:00)" aria-selected="false">Siang (11:00 - 13:00 WIB)</div>
+              <div role="option" data-value="Sore (14:00 - 17:00)" aria-selected="false">Sore (14:00 - 17:00 WIB)</div>
             </div>
           </div>
           <input type="hidden" id="deliveryTime" value="Pagi (09:00 - 11:00)" />
@@ -305,7 +300,7 @@
   </div>
 
   <!-- ORDER CONFIRMATION MODAL (STRUK) -->
-  <div class="modal-overlay" id="orderConfirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-hidden="true" inert>
+  <div class="modal-overlay" id="orderConfirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-hidden="true">
     <div class="drawer-content" style="height:auto; max-height:85vh;">
       <div class="drawer-header">
         <h3 id="confirmTitle">Konfirmasi Pesanan</h3>
@@ -322,7 +317,7 @@
   </div>
 
   <!-- PAYMENT MODAL -->
-  <div class="modal-overlay" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentTitle" aria-hidden="true" inert>
+  <div class="modal-overlay" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentTitle" aria-hidden="true">
     <div class="drawer-content" style="height:auto;">
       <div class="drawer-header">
         <h3 id="paymentTitle">Pembayaran QRIS</h3>
@@ -340,7 +335,7 @@
   </div>
 
   <!-- AI CHAT -->
-  <div class="modal-overlay" id="aiChatBox" role="dialog" aria-modal="true" aria-labelledby="aiChatTitle" aria-hidden="true" inert>
+  <div class="modal-overlay" id="aiChatBox" role="dialog" aria-modal="true" aria-labelledby="aiChatTitle" aria-hidden="true">
     <div class="drawer-content" style="height:70vh;">
       <div class="drawer-header">
         <h3 id="aiChatTitle">Concierge RUJAK.Co</h3>
@@ -357,7 +352,7 @@
   </div>
 
   <!-- ABOUT MODAL -->
-  <div class="modal-overlay" id="aboutModal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle" aria-hidden="true" inert>
+  <div class="modal-overlay" id="aboutModal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle" aria-hidden="true">
     <div class="drawer-content" style="height:auto; max-height:80vh;">
       <div class="drawer-header">
         <h3 id="aboutTitle">Tentang RUJAK.Co</h3>
