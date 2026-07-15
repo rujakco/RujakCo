@@ -429,58 +429,49 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .meta-dot { color: var(--gold-soft); }
 
 /* =========================================
-   11. BOTTOM NAV — IKON SAJA, TETAP MUNCUL SAAT DETAIL PRODUK
+   11. BOTTOM NAV — SELALU GOLD, TEKS PUTIH
 ========================================= */
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0; margin: 0 auto;
   width: calc(100% - 40px); max-width: 440px;
   z-index: var(--z-nav);
-  background: var(--bg-surface);
+  background: linear-gradient(135deg, var(--gold) 0%, #B89650 100%);
   display: flex; justify-content: space-around; align-items: center;
   padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
-  border-top: 1px solid rgba(197,160,89,0.15);
+  border-top: 1px solid rgba(255,255,255,0.25);
   border-radius: 16px 16px 0 0;
-  box-shadow: 0 -4px 24px rgba(0,0,0,0.02);
-  transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
+  transition: none;
 }
 .nav-item {
   flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
   padding: 4px 0;
-  background: none; border: none; font: inherit; color: var(--gray-600);
+  background: none; border: none; font: inherit;
+  color: rgba(255,255,255,0.75);
   font-size: 0.7rem; font-weight: 600;
   cursor: pointer; transition: color 0.3s ease, transform 0.2s ease; position: relative;
 }
-.nav-item.active { color: var(--green); transform: translateY(-4px); }
-.nav-item.active::after { content: ''; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); width: 20px; height: 2px; background: var(--gold); border-radius: 2px; }
-.nav-icon { 
-  width: 20px;
-  height: 20px; 
+.nav-item.active {
+  color: #FFFFFF;
+  transform: translateY(-4px);
 }
+.nav-item.active::after {
+  content: ''; position: absolute; bottom: -2px; left: 50%;
+  transform: translateX(-50%); width: 20px; height: 2px;
+  background: #FFFFFF;
+  border-radius: 2px;
+}
+.nav-icon { width: 20px; height: 20px; }
 .nav-cart-wrapper { position: relative; display: inline-block; }
 .nav-badge {
-  position: absolute;
-  top: -6px;
-  right: -8px;
-  background: var(--gold);
-  color: #fff;
-  font-size: 0.65rem;
-  font-weight: 700;
-  width: 18px; height: 18px;
-  border-radius: 50%;
+  position: absolute; top: -6px; right: -8px;
+  background: var(--green);
+  color: #fff; font-size: 0.65rem; font-weight: 700;
+  width: 18px; height: 18px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  border: 2px solid var(--bg-surface);
+  border: 2px solid var(--gold);
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-
-.bottom-nav.nav-gold {
-  background: linear-gradient(135deg, var(--gold) 0%, #B89650 100%);
-  border-top: 1px solid rgba(255,255,255,0.25);
-  box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
-}
-.bottom-nav.nav-gold .nav-item { color: rgba(255,255,255,0.75); }
-.bottom-nav.nav-gold .nav-item.active { color: #FFFFFF; }
-.bottom-nav.nav-gold .nav-item.active::after { background: #FFFFFF; }
-.bottom-nav.nav-gold .nav-badge { border-color: var(--gold); }
 
 /* =========================================
    12. MODALS & DRAWERS
