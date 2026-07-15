@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (final dengan struk, logo, download, share)
+// app.js — Luxury Edition (final dengan struk, logo, download, share, Telegram)
 import { PRODUCTS } from './data/products.js';
 import { DISTRICT_MAP } from './data/districts.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
@@ -541,7 +541,7 @@ function sendReceiptToWhatsApp() {
 
 async function sendReceiptToTelegram() {
   if (!SYSTEM.TELEGRAM_BOT_TOKEN || !SYSTEM.TELEGRAM_CHAT_ID) {
-    showToast('⚠️ Telegram belum dikonfigurasi');
+    // Telegram tidak dikonfigurasi, lewati
     return;
   }
 
@@ -565,15 +565,12 @@ async function sendReceiptToTelegram() {
         body: formData,
       });
 
-      if (res.ok) {
-        showToast('✅ Struk terkirim ke Telegram');
-      } else {
-        throw new Error('Gagal kirim');
+      if (!res.ok) {
+        console.error('Gagal kirim ke Telegram');
       }
     });
   } catch (err) {
     console.error('Gagal kirim ke Telegram:', err);
-    showToast('⚠️ Gagal mengirim ke Telegram');
   }
 }
 
@@ -622,7 +619,7 @@ function showOrderConfirmation() {
 
   openModal(DOM.orderConfirmModal);
 
-  // Pasang event listener tombol aksi
+  // Tombol aksi
   document.getElementById('orderConfirmDownload').onclick = () => downloadReceiptPNG();
   document.getElementById('orderConfirmShare').onclick = () => sendReceiptToWhatsApp();
   document.getElementById('orderConfirmPay').onclick = () => {
@@ -634,9 +631,7 @@ function showOrderConfirmation() {
   });
 
   // Kirim otomatis ke Telegram jika dikonfigurasi
-  if (SYSTEM.TELEGRAM_BOT_TOKEN) {
-    sendReceiptToTelegram();
-  }
+  sendReceiptToTelegram();
 }
 
 // ---------------------------------------------------------------------------
