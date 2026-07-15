@@ -869,3 +869,29 @@ select.input-minimal { -webkit-appearance: none; appearance: none; background-im
   max-height: 200px;
   padding-bottom: 16px;
 }
+
+/* =========================================
+   25. DIVIDER & SECTION HEADER
+========================================= */
+.divider {
+  width: calc(100% - 40px);
+  max-width: 440px;
+  margin: 16px auto;
+  border-top: 1px solid rgba(197, 160, 89, 0.25);
+}
+
+.sec-header {
+  width: calc(100% - 40px);
+  max-width: 440px;
+  margin: 0 auto 8px;
+  padding: 0;
+}
+
+.sec-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 400;
+  font-size: 1rem;
+  color: var(--gold-bright);
+  letter-spacing: 0.05em;
+  display: block;
+}
