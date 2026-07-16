@@ -573,7 +573,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .drawer-body {
   flex: 1;
   overflow-y: auto;
-  overscroll-behavior: contain; /* cegah scroll chaining */
+  overscroll-behavior-y: contain; /* ✅ FIX: Kunci sumbu Y saja */
   padding: var(--space-4) var(--space-4) calc(var(--space-6) + 80px);
 }
 
@@ -616,7 +616,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   height: 100%;
   scroll-snap-align: center;
   overflow-y: auto;
-  overscroll-behavior: contain; /* cegah scroll chaining */
+  overscroll-behavior-y: contain; /* ✅ FIX: Kunci sumbu Y saja agar bisa swipe X */
   overflow-x: hidden;
   background: var(--bg-surface);
   position: relative;
@@ -904,7 +904,7 @@ input:-webkit-autofill:active {
 .chat-body { display: flex; flex-direction: column; padding: 0; background: var(--bg-subtle); }
 .chat-messages {
   flex: 1; overflow-y: auto;
-  overscroll-behavior: contain; /* cegah scroll chaining */
+  overscroll-behavior-y: contain; /* ✅ FIX: Kunci sumbu Y saja */
   padding: var(--space-4); font-size: 0.9375rem; line-height: 1.6;
 }
 .msg-bot span { background: white; padding: 14px 18px; border-radius: 18px; border-bottom-left-radius: 4px; display: inline-block; max-width: 85%; box-shadow: var(--shadow-soft); color: var(--gray-900); border: 1px solid var(--gray-100); }
