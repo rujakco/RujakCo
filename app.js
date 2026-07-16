@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (Final + Safe Fallback)
+// app.js — Luxury Edition (Final + Order ID, WhatsApp lengkap, Overlay Stack)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { DISTRICT_MAP } from './data/districts.js';
@@ -43,12 +43,18 @@ const state = {
   vehicleType: 'motor',
   isPriority: false,
   userDistance: null,
-  lastViewedProductIndex: -1
+  lastViewedProductIndex: -1,
+  currentOrderCode: null   // ← Order ID disimpan di state
 };
 
 PRODUCTS.forEach(p => {
   state.drafts[p.id] = { spice: p.defaultSpice ?? 3, qty: 1 };
 });
+
+// ---------------------------------------------------------------------------
+// Overlay Stack (untuk Back Android & Escape)
+// ---------------------------------------------------------------------------
+const overlayStack = [];
 
 // ---------------------------------------------------------------------------
 // DOM references (cached)
@@ -184,7 +190,7 @@ function prefillCustomerData() {
 }
 
 // ---------------------------------------------------------------------------
-// Modal & focus management
+// Modal & focus management (dengan Overlay Stack & History API)
 // ---------------------------------------------------------------------------
 let previousFocusedElement = null;
 
@@ -195,19 +201,39 @@ function openModal(modalEl) {
   modalEl.setAttribute('aria-hidden', 'false');
   modalEl.removeAttribute('inert');
   document.body.style.overflow = 'hidden';
+
+  // Masukkan ke stack
+  overlayStack.push(modalEl);
+  // Suntik histori palsu untuk Back Android
+  history.pushState({ isOverlay: true, id: modalEl.id }, '');
+
   const firstInput = modalEl.querySelector('button, input, textarea, select');
   if (firstInput) firstInput.focus();
 }
 
-function closeModal(modalEl) {
+function closeModal(modalEl, fromPopState = false) {
   if (!modalEl) return;
   modalEl.classList.remove('active');
   modalEl.setAttribute('aria-hidden', 'true');
   modalEl.setAttribute('inert', '');
-  document.body.style.overflow = '';
+
+  // Hapus dari stack
+  const index = overlayStack.indexOf(modalEl);
+  if (index > -1) overlayStack.splice(index, 1);
+
+  // Kembalikan scroll body jika tidak ada overlay lain yang terbuka
+  if (overlayStack.length === 0 && DOM.productPage.style.display !== 'flex') {
+    document.body.style.overflow = '';
+  }
+
   if (previousFocusedElement) {
     previousFocusedElement.focus();
     previousFocusedElement = null;
+  }
+
+  // Jika ditutup lewat tombol (bukan gestur Back), buang histori palsu
+  if (!fromPopState) {
+    history.back();
   }
 }
 
@@ -280,7 +306,7 @@ function showConfirmModal(title, message, onConfirm) {
 }
 
 // ---------------------------------------------------------------------------
-// Product page & swiper
+// Product page & swiper (dengan Overlay Stack)
 // ---------------------------------------------------------------------------
 function openProductPage(globalIndex) {
   if (!DOM.productPage) return;
@@ -290,7 +316,9 @@ function openProductPage(globalIndex) {
   document.body.style.overflow = 'hidden';
   state.lastViewedProductIndex = globalIndex;
 
-  history.pushState({ detailOpen: true, productIndex: globalIndex }, '');
+  // Stack & History untuk layar produk
+  overlayStack.push(DOM.productPage);
+  history.pushState({ isOverlay: true, id: 'productPage' }, '');
 
   const targetSlide = document.querySelector(`.product-slide[data-idx="${globalIndex}"]`);
   if (targetSlide && DOM.productSwiperTrack) {
@@ -317,12 +345,16 @@ function openProductPage(globalIndex) {
   DOM._productObserver = observer;
 }
 
-function closeProductPage(useHistoryBack = true) {
+function closeProductPage(fromPopState = false) {
   if (!DOM.productPage) return;
   DOM.productPage.style.display = 'none';
   DOM.productPage.setAttribute('aria-hidden', 'true');
   DOM.productPage.setAttribute('inert', '');
-  document.body.style.overflow = '';
+
+  const index = overlayStack.indexOf(DOM.productPage);
+  if (index > -1) overlayStack.splice(index, 1);
+
+  if (overlayStack.length === 0) document.body.style.overflow = '';
   document.getElementById('waVipSideTab')?.classList.remove('open');
 
   if (DOM._productObserver) {
@@ -330,7 +362,7 @@ function closeProductPage(useHistoryBack = true) {
     DOM._productObserver = null;
   }
 
-  if (useHistoryBack && history.state?.detailOpen) {
+  if (!fromPopState) {
     history.back();
   }
 }
@@ -397,7 +429,7 @@ function initDetailGestures() {
     const dy = e.changedTouches[0].clientY - startY;
     activeSlide.style.transition = 'all 0.3s ease';
     if (dy > 120) {
-      closeProductPage(true);
+      closeProductPage(true);   // true → tidak memanggil history.back() lagi
     } else {
       activeSlide.style.transform = 'translateY(0)';
     }
@@ -682,29 +714,58 @@ async function downloadReceiptPNG() {
   }
 }
 
+// ---------------------------------------------------------------------------
+// WHATSAPP MESSAGE — lengkap dengan Order ID, logistik, dan catatan
+// ---------------------------------------------------------------------------
 function sendReceiptToWhatsApp() {
-  const summary = getCartSummary(state.cart);
-  const name = DOM.customerNameInput?.value || state.customerName || '—';
-  const phone = document.getElementById('customerPhone')?.value || state.customerPhone || '—';
-  const address = document.getElementById('customerAddress')?.value || state.customerAddress || '—';
-  const deliveryTime = document.getElementById('deliveryTimeLabel')?.textContent || '—';
+  const summary = getCartSummaryLocal();
+  const name = DOM.customerNameInput?.value || state.customerName || 'Ngoedi';
+  const phone = DOM.customerPhoneInput?.value || state.customerPhone || '—';
+  const address = DOM.customerAddressInput?.value || state.customerAddress || '—';
 
-  let msg = `🧾 *STRUK PESANAN RUJAK.CO*\n\n`;
-  msg += `👤 *Pelanggan:* ${name}\n`;
+  // Ambil dari HIDDEN INPUT, bukan textContent label
+  const deliveryTime = document.getElementById('deliveryTime')?.value || '—';
+  const notes = document.getElementById('orderNotes')?.value.trim() || 'Tidak ada catatan';
+
+  // Info logistik
+  let logisticInfo = state.shippingProvider === 'paxel' ? 'Paxel Ekspres' : 'Kurir RUJAK.Co';
+  if (state.shippingProvider === 'rujakco') {
+    logisticInfo += ` (${state.vehicleType === 'mobil' ? 'Mobil' : 'Motor'})`;
+    if (state.isPriority) logisticInfo += ' [PRIORITAS]';
+  }
+
+  const shipCost = DOM.finalShipping?.textContent || '—';
+  const totalCost = DOM.finalTotal?.textContent || '—';
+  const distance = state.userDistance ? `${state.userDistance} km` : '—';
+
+  let msg = `🧾 *STRUK PESANAN RUJAK.CO*\n`;
+  msg += `🆔 *Order ID:* ${state.currentOrderCode || '—'}\n\n`;
+
+  msg += `👤 *Penerima:* ${name}\n`;
   msg += `📞 *HP:* ${phone}\n`;
   msg += `📍 *Alamat:* ${address}\n`;
-  msg += `🕒 *Pengantaran:* ${deliveryTime}\n\n`;
+  msg += `🗺️ *Jarak:* ${distance}\n`;
+  msg += `🕒 *Pengantaran:* ${deliveryTime}\n`;
+  msg += `📝 *Catatan:* ${notes}\n`;
+  msg += `🚚 *Kurir:* ${logisticInfo}\n\n`;
+
   msg += `📦 *Pesanan:*\n`;
   summary.items.forEach(item => {
-    msg += `- ${item.name}${item.spice ? ' (Lv' + item.spice + ')' : ''} x${item.qty} = ${fmt(item.price * item.qty)}\n`;
+    const spiceText = item.spice ? ` (Lv ${item.spice})` : '';
+    msg += `• ${item.name}${spiceText} x${item.qty} = ${fmt(item.price * item.qty)}\n`;
   });
-  msg += `\n💰 *Total:* ${DOM.finalTotal?.textContent || '—'}\n`;
-  msg += `\n📎 *Struk gambar telah otomatis terunduh. Silakan lampirkan bersama bukti transfer.*`;
+
+  msg += `\n💵 *Subtotal:* ${fmt(summary.subtotal)}\n`;
+  msg += `🛵 *Ongkir:* ${shipCost}\n`;
+  msg += `💰 *TOTAL TRANSFER:* *${totalCost}*\n\n`;
+
+  msg += `📎 _Struk gambar telah terunduh. Mohon lampirkan struk & bukti transfer (QRIS) di sini._`;
 
   const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
   window.open(waUrl, '_blank');
 }
 
+// Endpoint Telegram — tetap ada, tapi aman
 async function sendReceiptToTelegram() {
   const element = document.getElementById('orderConfirmContent');
   if (!element) return;
@@ -718,15 +779,14 @@ async function sendReceiptToTelegram() {
       formData.append('caption', '🧾 Struk pesanan baru dari ' + (state.customerName || 'Pelanggan'));
       try {
         await fetch('/api/send-receipt', { method: 'POST', body: formData });
-      } catch {
-        // Abaikan error jika endpoint belum tersedia
-      }
+      } catch { /* endpoint belum ada */ }
     });
-  } catch {
-    // Abaikan error canvas
-  }
+  } catch { /* abaikan */ }
 }
 
+// ---------------------------------------------------------------------------
+// ORDER CONFIRMATION — menyimpan Order ID ke state
+// ---------------------------------------------------------------------------
 function showOrderConfirmation() {
   const currentPhone = DOM.customerPhoneInput?.value || state.customerPhone;
   const currentAddress = DOM.customerAddressInput?.value || state.customerAddress;
@@ -734,7 +794,9 @@ function showOrderConfirmation() {
 
   const summary = getCartSummaryLocal();
   const dist = state.userDistance;
-  const ship = dist != null ? calculateShipping(dist, summary.mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority) : { cost: 0 };
+  const ship = dist != null
+    ? calculateShipping(dist, summary.mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority)
+    : { cost: 0 };
   const total = summary.subtotal + (ship.cost || 0);
 
   const name = escapeHTML(DOM.customerNameInput?.value || state.customerName || '—');
@@ -754,10 +816,12 @@ function showOrderConfirmation() {
     return;
   }
 
-  const orderCode = `RJK-${new Date().toISOString().slice(2,10).replace(/-/g,'')}-${Math.floor(1000+Math.random()*9000)}`;
   const now = new Date();
   const dateStr = now.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
   const timeStr = now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' }) + ' WIB';
+
+  // SIMPAN ORDER ID KE STATE
+  state.currentOrderCode = `RJK-${now.toISOString().slice(2,10).replace(/-/g,'')}-${Math.floor(1000+Math.random()*9000)}`;
 
   contentEl.innerHTML = `
     <div class="receipt-wrap">
@@ -768,7 +832,7 @@ function showOrderConfirmation() {
         <div class="receipt-tagline">Indonesia dalam Satu Wadah</div>
       </div>
       <div class="receipt-meta">
-        <span class="code">${orderCode}</span>
+        <span class="code">${state.currentOrderCode}</span>
         <span>${dateStr} · ${timeStr}</span>
       </div>
       <div class="receipt-section">
@@ -791,7 +855,7 @@ function showOrderConfirmation() {
       <div class="receipt-footer">
         <p>"Asam, pedas, manis, segar — terima kasih telah memilih RUJAK.Co."</p>
         <div class="receipt-barcode"></div>
-        <div class="receipt-code-text">${orderCode}</div>
+        <div class="receipt-code-text">${state.currentOrderCode}</div>
       </div>
     </div>
   `;
@@ -805,10 +869,13 @@ function showOrderConfirmation() {
     const backBtn = document.getElementById('orderConfirmBack');
     if (backBtn) backBtn.onclick = () => closeModal(modal);
 
+    // Tombol Lanjutkan → unduh, tutup struk, buka QRIS
     document.getElementById('orderConfirmLanjut').onclick = async () => {
       await downloadReceiptPNG();
-      closeModal(modal);
-      processPayment(state.cart, state, updateCartUI)();
+      closeModal(document.getElementById('orderConfirmModal'));
+      setTimeout(() => {
+        openModal(DOM.paymentModal);
+      }, 50);
     };
 
     sendReceiptToTelegram();
@@ -994,9 +1061,7 @@ function bindEvents() {
     const boutique = e.target.closest('.boutique-item');
     if (boutique) {
       const idx = parseInt(boutique.dataset.idx);
-      if (!isNaN(idx)) {
-        openProductPage(idx);
-      }
+      if (!isNaN(idx)) openProductPage(idx);
       return;
     }
 
@@ -1066,9 +1131,7 @@ function bindEvents() {
       }
 
       addBtn.classList.add('success-flash');
-      setTimeout(() => {
-        addBtn.classList.remove('success-flash');
-      }, 400);
+      setTimeout(() => addBtn.classList.remove('success-flash'), 400);
 
       setTimeout(() => {
         const step1 = document.getElementById(`step1_${idx}_${pid}`);
@@ -1220,7 +1283,7 @@ function initHeroParallax() {
 }
 
 // ---------------------------------------------------------------------------
-// App initialisation (dengan fallback)
+// App initialisation
 // ---------------------------------------------------------------------------
 function init() {
   cacheDOM();
@@ -1260,18 +1323,29 @@ function init() {
       if (idx !== -1) setTimeout(() => openProductPage(idx), 400);
     }
 
-    window.addEventListener('popstate', (event) => {
-      if (DOM.productPage && DOM.productPage.style.display === 'flex') closeProductPage(false);
+    // Gestur Back Android / tombol Back browser
+    window.addEventListener('popstate', (e) => {
+      if (overlayStack.length > 0) {
+        const topOverlay = overlayStack[overlayStack.length - 1];
+        if (topOverlay.id === 'productPage') {
+          closeProductPage(true);
+        } else {
+          closeModal(topOverlay, true);
+        }
+      }
     });
 
+    // Tombol Escape (menggunakan stack)
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
-        if (DOM.productPage && DOM.productPage.style.display === 'flex') closeProductPage(true);
-        else if (document.getElementById('orderConfirmModal')?.classList.contains('active')) closeModal(document.getElementById('orderConfirmModal'));
-        else if (DOM.paymentModal.classList.contains('active')) closeModal(DOM.paymentModal);
-        else if (DOM.aiChatBox.classList.contains('active')) closeModal(DOM.aiChatBox);
-        else if (DOM.aboutModal?.classList.contains('active')) closeModal(DOM.aboutModal);
-        else if (DOM.miniCartModal.classList.contains('active')) closeModal(DOM.miniCartModal);
+        if (overlayStack.length > 0) {
+          const topOverlay = overlayStack[overlayStack.length - 1];
+          if (topOverlay.id === 'productPage') {
+            closeProductPage(false);
+          } else {
+            closeModal(topOverlay, false);
+          }
+        }
       }
     });
 
