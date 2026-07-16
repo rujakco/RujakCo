@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (final lengkap semua fitur + lucide refresh)
+// app.js — Luxury Edition (final lengkap semua fitur + perbaikan)
 import { PRODUCTS } from './data/products.js';
 import { DISTRICT_MAP } from './data/districts.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
@@ -114,9 +114,11 @@ function updateShippingUI() {
   const section = DOM.shippingSection;
   if (!section) return;
 
+  // Ambil subtotal di awal agar bisa dipakai di kedua cabang
+  const { subtotal, mainProductQty } = getCartSummaryLocal();
+
   if (dist) {
     section.style.display = 'block';
-    const { subtotal, mainProductQty } = getCartSummaryLocal();
     const ship = calculateShipping(dist, mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority);
     const shipCost = ship.cost;
     const hasValidCost = shipCost !== null && shipCost !== undefined;
@@ -126,6 +128,10 @@ function updateShippingUI() {
     DOM.finalTotal.textContent = hasValidCost ? fmt(subtotal + shipCost) : fmt(subtotal);
   } else {
     section.style.display = 'none';
+    // PERBAIKAN: Tetap tampilkan subtotal meskipun kecamatan belum dipilih
+    if (DOM.finalTotal) {
+      DOM.finalTotal.textContent = fmt(subtotal);
+    }
   }
 }
 
@@ -137,7 +143,6 @@ function updateCartUI() {
     renderMiniCart(state.cart);
     updateShippingUI();
   }
-  // Refresh ikon Lucide setelah DOM berubah
   if (window.lucide) lucide.createIcons();
 }
 
@@ -780,7 +785,6 @@ function showOrderConfirmation() {
     </div>
   `;
 
-  // Refresh ikon Lucide setelah struk dirender
   if (window.lucide) lucide.createIcons();
 
   const modal = document.getElementById('orderConfirmModal');
@@ -1195,7 +1199,6 @@ function init() {
   initTestimonials();
   updateCartUI();
 
-  // Refresh ikon Lucide setelah semua render awal
   if (window.lucide) lucide.createIcons();
 
   const heroImg = document.querySelector('.hero-img');
