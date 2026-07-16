@@ -114,7 +114,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 ========================================= */
 .onboarding-overlay {
   position: fixed; inset: 0;
-  /* Gradien hijau gelap dengan pendaran emas sangat halus di area tengah atas */
   background: radial-gradient(circle at 50% 30%, rgba(197, 160, 89, 0.08) 0%, transparent 60%), 
               linear-gradient(180deg, #082E21 0%, #030F0A 100%);
   z-index: var(--z-onboard); 
@@ -129,7 +128,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   display: flex; flex-direction: column; align-items: center; gap: 16px; 
 }
 
-/* Bingkai Logo seperti Emblem Premium */
 .onb-logo {
   width: 76px; height: 76px; border-radius: 50%; margin-bottom: 24px;
   border: 1px solid rgba(197, 160, 89, 0.3); 
@@ -148,7 +146,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   letter-spacing: 0.02em;
 }
 
-/* Jarak huruf (tracking) dilebarkan untuk kesan mahal */
 .onb-subtitle, .onb-welcome-text { 
   font-family: 'DM Sans', sans-serif; 
   font-size: 0.65rem; 
@@ -169,7 +166,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   text-transform: uppercase; letter-spacing: 0.2em; 
 }
 
-/* Input Teks: Garis tipis halus */
 .onb-input {
   width: 100%; text-align: center; border: none; 
   border-bottom: 1px solid rgba(197, 160, 89, 0.2); 
@@ -188,7 +184,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   letter-spacing: 0.15em; text-transform: uppercase; color: rgba(253, 251, 247, 0.2); 
 }
 
-/* Dropdown untuk Onboarding */
 #onbDistrictDropdown { 
   background: rgba(4,18,13,0.9); backdrop-filter: var(--blur-medium); 
   border: 1px solid rgba(197,160,89,0.2); border-radius: var(--radius-lg); 
@@ -217,44 +212,38 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 
 /* =========================================
-   5. BUTTONS (LUXURY REDESIGN)
+   5. BUTTONS (DESAIN UTAMA)
 ========================================= */
 .btn-gold, .btn-dark {
-  border-radius: 100px; /* Bentuk pill lebih elegan */
-  padding: 16px var(--space-4); 
-  font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.18em; font-family: 'DM Sans', sans-serif; cursor: pointer;
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-4); 
+  font-size: 0.875rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.15em; font-family: 'DM Sans', sans-serif; cursor: pointer;
   display: flex; align-items: center; justify-content: center; width: 100%; border: none;
   transition: transform var(--dur-normal) var(--transition-spring), box-shadow var(--dur-normal) ease, opacity var(--dur-normal) ease;
 }
 
-/* Tombol Emas: Teks gelap di atas latar emas = Mewah */
 .btn-gold { 
-  background: linear-gradient(135deg, var(--gold) 0%, #E8D5A8 50%, #B89650 100%); 
-  color: var(--green); /* Teks hijau/hitam pekat */
-  box-shadow: 0 8px 24px rgba(197, 160, 89, 0.2); 
+  background: linear-gradient(135deg, var(--gold) 0%, #B89650 100%); 
+  color: #fff; 
+  box-shadow: var(--shadow-card); 
 }
 .btn-dark { 
-  background: rgba(8, 46, 33, 0.8); color: var(--gold-bright); 
+  background: var(--green); color: var(--ivory); 
   border: 1px solid var(--gold-soft); box-shadow: var(--shadow-card); 
-  backdrop-filter: var(--blur-soft);
 }
-.btn-gold:active, .btn-dark:active { transform: scale(0.97); }
+.btn-gold:active, .btn-dark:active { transform: scale(0.98); opacity: 0.9; }
 
 .btn-text-gold { 
-  background: none; border: none; 
-  color: rgba(197, 160, 89, 0.65); 
-  font-size: 0.7rem; margin-top: 24px; cursor: pointer; 
+  background: none; border: none; color: var(--gold); 
+  font-size: 0.75rem; margin-top: 32px; cursor: pointer; 
   text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; 
-  transition: color 0.3s ease; 
+  transition: opacity 0.3s ease; 
 }
-.btn-text-gold:hover, .btn-text-gold:focus, .btn-text-gold:active { 
-  color: var(--gold); 
-}
+.btn-text-gold:active { opacity: 0.6; }
 
 .btn-loading { opacity: 0.7; cursor: wait; pointer-events: none; }
 
-/* Animasi fadeUp untuk step onboarding */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -570,7 +559,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .drawer-body {
   flex: 1;
   overflow-y: auto;
-  /* Padding bawah ekstra agar tidak mentok sticky footer */
   padding: var(--space-4) var(--space-4) calc(var(--space-6) + 10px); 
 }
 
