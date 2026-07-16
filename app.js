@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (final dengan semua perbaikan bug & aksesibilitas)
+// app.js — Luxury Edition (final lengkap semua fitur)
 import { PRODUCTS } from './data/products.js';
 import { DISTRICT_MAP } from './data/districts.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
@@ -140,7 +140,7 @@ function updateCartUI() {
 }
 
 // ---------------------------------------------------------------------------
-// Prefill data pelanggan dari localStorage (hanya fallback, tidak timpa)
+// Prefill data pelanggan dari localStorage
 // ---------------------------------------------------------------------------
 function prefillCustomerData() {
   const saved = loadCustomer();
@@ -157,7 +157,7 @@ function prefillCustomerData() {
 }
 
 // ---------------------------------------------------------------------------
-// Modal & focus management (dengan inert)
+// Modal & focus management
 // ---------------------------------------------------------------------------
 let previousFocusedElement = null;
 
@@ -185,7 +185,7 @@ function closeModal(modalEl) {
 }
 
 // ---------------------------------------------------------------------------
-// KONFIRMASI HAPUS ITEM (modal lokal, accessible)
+// KONFIRMASI HAPUS ITEM
 // ---------------------------------------------------------------------------
 function showConfirmModal(title, message, onConfirm) {
   const old = document.getElementById('confirmModal');
@@ -224,7 +224,7 @@ function showConfirmModal(title, message, onConfirm) {
   function onKeydown(e) {
     if (e.key === 'Escape') {
       e.preventDefault();
-      e.stopImmediatePropagation(); // agar tidak menutup drawer keranjang
+      e.stopImmediatePropagation();
       cleanup();
       return;
     }
@@ -383,7 +383,7 @@ function initDetailGestures() {
 }
 
 // ---------------------------------------------------------------------------
-// Onboarding (dengan listener fokus untuk dropdown)
+// Onboarding (dengan Tamu)
 // ---------------------------------------------------------------------------
 function initOnboarding() {
   const saved = loadState();
@@ -408,6 +408,18 @@ function initOnboarding() {
       DOM.onbStep2.classList.add('active');
       DOM.onbDistrict.focus();
     }, 100);
+  });
+
+  // TOMBOL MASUK SEBAGAI TAMU
+  document.getElementById('onbGuestBtn')?.addEventListener('click', () => {
+    state.customerName = 'Tamu';
+    state.selectedDistrict = '';
+    DOM.onboardingOverlay.classList.add('hidden');
+    setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, 600);
+    DOM.headerName.textContent = 'Tamu';
+    DOM.headerLoc.textContent = 'Pilih Lokasi';
+    if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Halo, Tamu! Ada yang bisa kami bantu hari ini?`;
+    initScrollReveal();
   });
 
   const dropdown = DOM.onbDistrictDropdown;
@@ -675,9 +687,7 @@ function sendReceiptToWhatsApp() {
   window.open(waUrl, '_blank');
 }
 
-// ---------------------------------------------------------------------------
 // Kirim struk ke backend (endpoint belum ada, error disembunyikan)
-// ---------------------------------------------------------------------------
 async function sendReceiptToTelegram() {
   const element = document.getElementById('orderConfirmContent');
   if (!element) return;
@@ -1025,6 +1035,15 @@ function bindEvents() {
       document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = 1);
       updateCartUI();
       showToast('Sajian ditambahkan ke reservasi.');
+
+      // Animasi keranjang melompat
+      const cartNav = document.querySelector('.nav-cart-wrapper');
+      if (cartNav) {
+        cartNav.classList.remove('bump');
+        void cartNav.offsetWidth;
+        cartNav.classList.add('bump');
+      }
+
       setTimeout(() => {
         const step1 = document.getElementById(`step1_${idx}_${pid}`);
         const step2 = document.getElementById(`step2_${idx}_${pid}`);
