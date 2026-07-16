@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (Final + Swiper Fix + Semua Fitur)
+// app.js — Luxury Edition (Final + QRIS Fix + Anti Spam)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { DISTRICT_MAP } from './data/districts.js';
@@ -306,7 +306,6 @@ function showConfirmModal(title, message, onConfirm) {
 function openProductPage(globalIndex) {
   if (!DOM.productPage) return;
 
-  // PENTING: render ulang swiper agar slide selalu tersedia
   renderProductSwiper();
 
   DOM.productPage.style.display = 'flex';
@@ -315,11 +314,9 @@ function openProductPage(globalIndex) {
   document.body.style.overflow = 'hidden';
   state.lastViewedProductIndex = globalIndex;
 
-  // Stack & History untuk layar produk
   overlayStack.push(DOM.productPage);
   history.pushState({ isOverlay: true, id: 'productPage' }, '');
 
-  // Scroll ke slide yang sesuai
   const targetSlide = document.querySelector(`.product-slide[data-idx="${globalIndex}"]`);
   if (targetSlide && DOM.productSwiperTrack) {
     DOM.productSwiperTrack.style.scrollBehavior = 'auto';
@@ -327,7 +324,6 @@ function openProductPage(globalIndex) {
     DOM.productSwiperTrack.style.scrollBehavior = 'smooth';
   }
 
-  // Observer lazy‑load
   if (DOM._productObserver) DOM._productObserver.disconnect();
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -777,6 +773,9 @@ async function sendReceiptToTelegram() {
   } catch { /* abaikan */ }
 }
 
+// ---------------------------------------------------------------------------
+// ORDER CONFIRMATION — menyimpan Order ID ke state & Anti-Spam
+// ---------------------------------------------------------------------------
 function showOrderConfirmation() {
   const currentPhone = DOM.customerPhoneInput?.value || state.customerPhone;
   const currentAddress = DOM.customerAddressInput?.value || state.customerAddress;
@@ -858,8 +857,29 @@ function showOrderConfirmation() {
     const backBtn = document.getElementById('orderConfirmBack');
     if (backBtn) backBtn.onclick = () => closeModal(modal);
 
+    // Tombol Lanjutkan dengan perlindungan Anti-Spam dan Injeksi Nilai QRIS
     document.getElementById('orderConfirmLanjut').onclick = async () => {
+      const btnLanjut = document.getElementById('orderConfirmLanjut');
+      
+      // 1. UPDATE NOMINAL QRIS
+      if (DOM.paymentTotal) {
+        DOM.paymentTotal.textContent = fmt(total); 
+      }
+
+      // 2. PENGAMANAN Anti-Spam (Cegah unduh berkali-kali)
+      const originalText = btnLanjut.textContent;
+      btnLanjut.innerHTML = '<i data-lucide="loader-2" class="icon-sm" style="animation: spin 1s linear infinite;"></i> Memproses...';
+      btnLanjut.style.pointerEvents = 'none';
+      if (window.lucide) lucide.createIcons();
+
+      // 3. Eksekusi unduh struk
       await downloadReceiptPNG();
+
+      // 4. Kembalikan kondisi tombol
+      btnLanjut.textContent = originalText;
+      btnLanjut.style.pointerEvents = 'auto';
+
+      // 5. Transisi Modal QRIS
       closeModal(document.getElementById('orderConfirmModal'));
       setTimeout(() => {
         openModal(DOM.paymentModal);
