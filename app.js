@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (Final Lengkap)
+// app.js — Luxury Edition (Final + Safe Fallback)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { DISTRICT_MAP } from './data/districts.js';
@@ -283,6 +283,7 @@ function showConfirmModal(title, message, onConfirm) {
 // Product page & swiper
 // ---------------------------------------------------------------------------
 function openProductPage(globalIndex) {
+  if (!DOM.productPage) return;
   DOM.productPage.style.display = 'flex';
   DOM.productPage.setAttribute('aria-hidden', 'false');
   DOM.productPage.removeAttribute('inert');
@@ -292,7 +293,7 @@ function openProductPage(globalIndex) {
   history.pushState({ detailOpen: true, productIndex: globalIndex }, '');
 
   const targetSlide = document.querySelector(`.product-slide[data-idx="${globalIndex}"]`);
-  if (targetSlide) {
+  if (targetSlide && DOM.productSwiperTrack) {
     DOM.productSwiperTrack.style.scrollBehavior = 'auto';
     DOM.productSwiperTrack.scrollLeft = targetSlide.offsetLeft;
     DOM.productSwiperTrack.style.scrollBehavior = 'smooth';
@@ -317,6 +318,7 @@ function openProductPage(globalIndex) {
 }
 
 function closeProductPage(useHistoryBack = true) {
+  if (!DOM.productPage) return;
   DOM.productPage.style.display = 'none';
   DOM.productPage.setAttribute('aria-hidden', 'true');
   DOM.productPage.setAttribute('inert', '');
@@ -381,7 +383,6 @@ function initDetailGestures() {
 
     if (gestureDetermined && dy > 0) {
       if (e.cancelable) e.preventDefault();
-      // Rubber-banding logaritmik
       const resistance = dy * (1 - (dy / (window.innerHeight * 1.5)));
       activeSlide.style.transform = `translateY(${Math.max(0, resistance)}px)`;
     }
@@ -439,7 +440,6 @@ function initOnboarding() {
     }, 100);
   });
 
-  // TOMBOL MASUK SEBAGAI TAMU
   document.getElementById('onbGuestBtn')?.addEventListener('click', () => {
     state.customerName = 'Tamu';
     state.selectedDistrict = '';
@@ -593,7 +593,6 @@ function initDrawerDistrictDropdown() {
     input.setAttribute('aria-expanded', 'true');
   }, 1000);
 
-  // Reset state setiap kali mengetik ulang
   input.addEventListener('input', (e) => {
     state.selectedDistrict = '';
     state.userDistance = null;
@@ -601,7 +600,6 @@ function initDrawerDistrictDropdown() {
     handleSearch(e.target.value.trim());
   });
 
-  // Pilih alamat
   dropdown.addEventListener('click', async (e) => {
     const option = e.target.closest('div[role="option"]');
     if (!option) return;
@@ -630,7 +628,6 @@ function initDrawerDistrictDropdown() {
     saveCustomer(state.customerPhone, state.customerAddress, placeName);
   });
 
-  // Tutup dropdown saat klik di luar
   document.addEventListener('click', (e) => {
     if (!input.contains(e.target) && !dropdown.contains(e.target)) {
       dropdown.style.display = 'none';
@@ -880,14 +877,14 @@ function bindEvents() {
 
   // Nav: Home
   document.getElementById('navHomeBtn')?.addEventListener('click', () => {
-    if (DOM.productPage.style.display === 'flex') closeProductPage(true);
+    if (DOM.productPage && DOM.productPage.style.display === 'flex') closeProductPage(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setActiveNav('navHomeBtn');
   });
 
   // Nav: Lihat Produk
   document.getElementById('navProductBtn')?.addEventListener('click', () => {
-    if (DOM.productPage.style.display === 'flex') return;
+    if (DOM.productPage && DOM.productPage.style.display === 'flex') return;
     openProductPage(state.lastViewedProductIndex >= 0 ? state.lastViewedProductIndex : 0);
     setActiveNav('navProductBtn');
   });
@@ -996,7 +993,10 @@ function bindEvents() {
   document.addEventListener('click', (e) => {
     const boutique = e.target.closest('.boutique-item');
     if (boutique) {
-      openProductPage(parseInt(boutique.dataset.idx));
+      const idx = parseInt(boutique.dataset.idx);
+      if (!isNaN(idx)) {
+        openProductPage(idx);
+      }
       return;
     }
 
@@ -1058,7 +1058,6 @@ function bindEvents() {
       updateCartUI();
       showToast('Sajian ditambahkan ke reservasi.');
 
-      // Animasi keranjang melompat
       const cartNav = document.querySelector('.nav-cart-wrapper');
       if (cartNav) {
         cartNav.classList.remove('bump');
@@ -1066,7 +1065,6 @@ function bindEvents() {
         cartNav.classList.add('bump');
       }
 
-      // Efek kilau sukses
       addBtn.classList.add('success-flash');
       setTimeout(() => {
         addBtn.classList.remove('success-flash');
@@ -1222,58 +1220,66 @@ function initHeroParallax() {
 }
 
 // ---------------------------------------------------------------------------
-// App initialisation
+// App initialisation (dengan fallback)
 // ---------------------------------------------------------------------------
 function init() {
   cacheDOM();
-  const saved = loadState();
-  state.cart = saved?.cart || {};
-  if (saved?.name) state.customerName = saved.name;
-  if (saved?.district) state.selectedDistrict = saved.district;
-  const cust = loadCustomer();
-  if (cust) {
-    state.customerPhone = cust.phone || '';
-    state.customerAddress = cust.address || '';
-  }
 
-  renderMenu();
-  renderProductSwiper();
-  initCarousel();
-  initDetailGestures();
-  initAccessibility();
-  const updateWelcome = initAIChat();
-  if (updateWelcome) updateWelcome(state.customerName || 'Ngoedi');
-
-  bindEvents();
-  initOnboarding();
-  initDrawerDistrictDropdown();
-  initTestimonials();
-  updateCartUI();
-
-  if (window.lucide) lucide.createIcons();
-  initHeroParallax();
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const productId = urlParams.get('product');
-  if (productId) {
-    const idx = getProductGlobalIndex(productId);
-    if (idx !== -1) setTimeout(() => openProductPage(idx), 400);
-  }
-
-  window.addEventListener('popstate', (event) => {
-    if (DOM.productPage.style.display === 'flex') closeProductPage(false);
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      if (DOM.productPage.style.display === 'flex') closeProductPage(true);
-      else if (document.getElementById('orderConfirmModal')?.classList.contains('active')) closeModal(document.getElementById('orderConfirmModal'));
-      else if (DOM.paymentModal.classList.contains('active')) closeModal(DOM.paymentModal);
-      else if (DOM.aiChatBox.classList.contains('active')) closeModal(DOM.aiChatBox);
-      else if (DOM.aboutModal?.classList.contains('active')) closeModal(DOM.aboutModal);
-      else if (DOM.miniCartModal.classList.contains('active')) closeModal(DOM.miniCartModal);
+  try {
+    const saved = loadState();
+    state.cart = saved?.cart || {};
+    if (saved?.name) state.customerName = saved.name;
+    if (saved?.district) state.selectedDistrict = saved.district;
+    const cust = loadCustomer();
+    if (cust) {
+      state.customerPhone = cust.phone || '';
+      state.customerAddress = cust.address || '';
     }
-  });
+
+    renderMenu();
+    renderProductSwiper();
+    initCarousel();
+    initDetailGestures();
+    initAccessibility();
+    const updateWelcome = initAIChat();
+    if (updateWelcome) updateWelcome(state.customerName || 'Ngoedi');
+
+    bindEvents();
+    initOnboarding();
+    initDrawerDistrictDropdown();
+    initTestimonials();
+    updateCartUI();
+
+    if (window.lucide) lucide.createIcons();
+    initHeroParallax();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('product');
+    if (productId) {
+      const idx = getProductGlobalIndex(productId);
+      if (idx !== -1) setTimeout(() => openProductPage(idx), 400);
+    }
+
+    window.addEventListener('popstate', (event) => {
+      if (DOM.productPage && DOM.productPage.style.display === 'flex') closeProductPage(false);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (DOM.productPage && DOM.productPage.style.display === 'flex') closeProductPage(true);
+        else if (document.getElementById('orderConfirmModal')?.classList.contains('active')) closeModal(document.getElementById('orderConfirmModal'));
+        else if (DOM.paymentModal.classList.contains('active')) closeModal(DOM.paymentModal);
+        else if (DOM.aiChatBox.classList.contains('active')) closeModal(DOM.aiChatBox);
+        else if (DOM.aboutModal?.classList.contains('active')) closeModal(DOM.aboutModal);
+        else if (DOM.miniCartModal.classList.contains('active')) closeModal(DOM.miniCartModal);
+      }
+    });
+
+    console.log('✅ RUJAK.Co siap.');
+  } catch (err) {
+    console.error('❌ Gagal inisialisasi:', err);
+    showToast('⚠️ Terjadi kesalahan. Muat ulang halaman.');
+  }
 }
 
 if (document.readyState === 'loading') {
