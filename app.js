@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (final lengkap semua fitur)
+// app.js — Luxury Edition (final lengkap semua fitur + lucide refresh)
 import { PRODUCTS } from './data/products.js';
 import { DISTRICT_MAP } from './data/districts.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
@@ -137,6 +137,8 @@ function updateCartUI() {
     renderMiniCart(state.cart);
     updateShippingUI();
   }
+  // Refresh ikon Lucide setelah DOM berubah
+  if (window.lucide) lucide.createIcons();
 }
 
 // ---------------------------------------------------------------------------
@@ -687,7 +689,6 @@ function sendReceiptToWhatsApp() {
   window.open(waUrl, '_blank');
 }
 
-// Kirim struk ke backend (endpoint belum ada, error disembunyikan)
 async function sendReceiptToTelegram() {
   const element = document.getElementById('orderConfirmContent');
   if (!element) return;
@@ -778,6 +779,9 @@ function showOrderConfirmation() {
       </div>
     </div>
   `;
+
+  // Refresh ikon Lucide setelah struk dirender
+  if (window.lucide) lucide.createIcons();
 
   const modal = document.getElementById('orderConfirmModal');
   if (modal) {
@@ -1190,6 +1194,9 @@ function init() {
   initDrawerDistrictDropdown();
   initTestimonials();
   updateCartUI();
+
+  // Refresh ikon Lucide setelah semua render awal
+  if (window.lucide) lucide.createIcons();
 
   const heroImg = document.querySelector('.hero-img');
   window.addEventListener('scroll', () => {
