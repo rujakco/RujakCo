@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (Final + QRIS Fix + Anti Spam)
+// app.js — Luxury Edition (Final + QRIS Fix + History Stack Guard)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { DISTRICT_MAP } from './data/districts.js';
@@ -55,6 +55,7 @@ PRODUCTS.forEach(p => {
 // Overlay Stack (untuk Back Android & Escape)
 // ---------------------------------------------------------------------------
 const overlayStack = [];
+let isProgrammaticBack = false; // ✅ FIX: Pengaman agar popstate tidak bocor (Double Close)
 
 // ---------------------------------------------------------------------------
 // DOM references (cached)
@@ -228,6 +229,7 @@ function closeModal(modalEl, fromPopState = false) {
   }
 
   if (!fromPopState) {
+    isProgrammaticBack = true; // ✅ FIX: Beri tahu popstate untuk abaikan ini
     history.back();
   }
 }
@@ -301,7 +303,7 @@ function showConfirmModal(title, message, onConfirm) {
 }
 
 // ---------------------------------------------------------------------------
-// Product page & swiper (dengan Overlay Stack dan renderProductSwiper)
+// Product page & swiper
 // ---------------------------------------------------------------------------
 function openProductPage(globalIndex) {
   if (!DOM.productPage) return;
@@ -358,12 +360,13 @@ function closeProductPage(fromPopState = false) {
   }
 
   if (!fromPopState) {
+    isProgrammaticBack = true; // ✅ FIX: Beri tahu popstate untuk abaikan ini
     history.back();
   }
 }
 
 // ---------------------------------------------------------------------------
-// Gesture: swipe produk & tutup detail (RUBBER-BANDING)
+// Gesture: swipe produk & tutup detail
 // ---------------------------------------------------------------------------
 function initDetailGestures() {
   const track = DOM.productSwiperTrack;
@@ -424,7 +427,7 @@ function initDetailGestures() {
     const dy = e.changedTouches[0].clientY - startY;
     activeSlide.style.transition = 'all 0.3s ease';
     if (dy > 120) {
-      closeProductPage(true);
+      closeProductPage(false); // ✅ FIX: Bersihkan histori saat swipe tutup
     } else {
       activeSlide.style.transform = 'translateY(0)';
     }
@@ -800,10 +803,7 @@ function showOrderConfirmation() {
   });
 
   const contentEl = document.getElementById('orderConfirmContent');
-  if (!contentEl) {
-    console.error('Elemen #orderConfirmContent tidak ditemukan');
-    return;
-  }
+  if (!contentEl) return;
 
   const now = new Date();
   const dateStr = now.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
@@ -857,29 +857,21 @@ function showOrderConfirmation() {
     const backBtn = document.getElementById('orderConfirmBack');
     if (backBtn) backBtn.onclick = () => closeModal(modal);
 
-    // Tombol Lanjutkan dengan perlindungan Anti-Spam dan Injeksi Nilai QRIS
     document.getElementById('orderConfirmLanjut').onclick = async () => {
       const btnLanjut = document.getElementById('orderConfirmLanjut');
       
-      // 1. UPDATE NOMINAL QRIS
-      if (DOM.paymentTotal) {
-        DOM.paymentTotal.textContent = fmt(total); 
-      }
+      if (DOM.paymentTotal) DOM.paymentTotal.textContent = fmt(total); 
 
-      // 2. PENGAMANAN Anti-Spam (Cegah unduh berkali-kali)
       const originalText = btnLanjut.textContent;
       btnLanjut.innerHTML = '<i data-lucide="loader-2" class="icon-sm" style="animation: spin 1s linear infinite;"></i> Memproses...';
       btnLanjut.style.pointerEvents = 'none';
       if (window.lucide) lucide.createIcons();
 
-      // 3. Eksekusi unduh struk
       await downloadReceiptPNG();
 
-      // 4. Kembalikan kondisi tombol
       btnLanjut.textContent = originalText;
       btnLanjut.style.pointerEvents = 'auto';
 
-      // 5. Transisi Modal QRIS
       closeModal(document.getElementById('orderConfirmModal'));
       setTimeout(() => {
         openModal(DOM.paymentModal);
@@ -887,8 +879,6 @@ function showOrderConfirmation() {
     };
 
     sendReceiptToTelegram();
-  } else {
-    console.error('Modal #orderConfirmModal tidak ditemukan');
   }
 }
 
@@ -905,7 +895,6 @@ function setActiveNav(activeId) {
 // Main delegation & event binding
 // ---------------------------------------------------------------------------
 function bindEvents() {
-  // About modal
   const aboutTrigger = document.getElementById('aboutTrigger');
   const aboutClose = document.getElementById('aboutClose');
   if (aboutTrigger && DOM.aboutModal) {
@@ -915,7 +904,6 @@ function bindEvents() {
     aboutClose.addEventListener('click', () => closeModal(DOM.aboutModal));
   }
 
-  // Share produk
   const shareBtn = document.getElementById('shareProductBtn');
   if (shareBtn) {
     shareBtn.addEventListener('click', () => {
@@ -944,27 +932,23 @@ function bindEvents() {
     });
   }
 
-  // VIP side tab
   document.getElementById('waVipHandle')?.addEventListener('click', (e) => {
     e.stopPropagation();
     document.getElementById('waVipSideTab')?.classList.toggle('open');
   });
 
-  // Nav: Home
   document.getElementById('navHomeBtn')?.addEventListener('click', () => {
-    if (DOM.productPage && DOM.productPage.style.display === 'flex') closeProductPage(true);
+    if (DOM.productPage && DOM.productPage.style.display === 'flex') closeProductPage(false); // ✅ FIX
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setActiveNav('navHomeBtn');
   });
 
-  // Nav: Lihat Produk
   document.getElementById('navProductBtn')?.addEventListener('click', () => {
     if (DOM.productPage && DOM.productPage.style.display === 'flex') return;
     openProductPage(state.lastViewedProductIndex >= 0 ? state.lastViewedProductIndex : 0);
     setActiveNav('navProductBtn');
   });
 
-  // Delivery time dropdown
   const deliveryTrigger = document.getElementById('deliveryTimeTrigger');
   const deliveryDropdown = document.getElementById('deliveryTimeDropdown');
   const deliveryHidden = document.getElementById('deliveryTime');
@@ -1041,13 +1025,11 @@ function bindEvents() {
     }
   });
 
-  // Tombol X
   document.getElementById('miniCartClose')?.addEventListener('click', () => closeModal(DOM.miniCartModal));
   document.getElementById('paymentClose')?.addEventListener('click', () => closeModal(DOM.paymentModal));
   document.getElementById('aiChatClose')?.addEventListener('click', () => closeModal(DOM.aiChatBox));
   document.getElementById('orderConfirmClose')?.addEventListener('click', () => closeModal(document.getElementById('orderConfirmModal')));
 
-  // Simpan data pelanggan
   DOM.customerNameInput?.addEventListener('input', () => {
     state.customerName = DOM.customerNameInput.value;
     saveUser(state.customerName, state.selectedDistrict);
@@ -1064,7 +1046,6 @@ function bindEvents() {
     saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict);
   });
 
-  // Event delegation
   document.addEventListener('click', (e) => {
     const boutique = e.target.closest('.boutique-item');
     if (boutique) {
@@ -1333,6 +1314,12 @@ function init() {
 
     // Gestur Back Android / tombol Back browser
     window.addEventListener('popstate', (e) => {
+      // ✅ FIX: Abaikan popstate jika kita yang memanggil history.back() via tombol X
+      if (isProgrammaticBack) {
+        isProgrammaticBack = false;
+        return; 
+      }
+
       if (overlayStack.length > 0) {
         const topOverlay = overlayStack[overlayStack.length - 1];
         if (topOverlay.id === 'productPage') {
