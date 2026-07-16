@@ -556,10 +556,12 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .drawer-header h3 { color: var(--green); }
 .glass-btn-dark { background: var(--bg-subtle); border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gray-900); cursor: pointer; transition: background-color var(--dur-fast) ease; }
 .glass-btn-dark:active { background: var(--gray-200); }
+
+/* PENTING: Padding bawah ditambah agar konten tidak tertutup sticky footer */
 .drawer-body {
   flex: 1;
   overflow-y: auto;
-  padding: var(--space-4) var(--space-4) calc(var(--space-6) + 10px); 
+  padding: var(--space-4) var(--space-4) calc(var(--space-6) + 80px);
 }
 
 /* Sticky footer untuk keranjang */
@@ -813,6 +815,7 @@ input:-webkit-autofill:active {
   font-weight: 400; letter-spacing: -0.02em;
 }
 
+/* Catatan baru: jarak aktual */
 .district-note {
   font-size: 0.7rem;
   color: var(--gold-text);
