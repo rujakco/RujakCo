@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (Final + Order ID, WhatsApp lengkap, Overlay Stack)
+// app.js — Luxury Edition (Final + Swiper Fix + Semua Fitur)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { DISTRICT_MAP } from './data/districts.js';
@@ -44,7 +44,7 @@ const state = {
   isPriority: false,
   userDistance: null,
   lastViewedProductIndex: -1,
-  currentOrderCode: null   // ← Order ID disimpan di state
+  currentOrderCode: null
 };
 
 PRODUCTS.forEach(p => {
@@ -202,9 +202,7 @@ function openModal(modalEl) {
   modalEl.removeAttribute('inert');
   document.body.style.overflow = 'hidden';
 
-  // Masukkan ke stack
   overlayStack.push(modalEl);
-  // Suntik histori palsu untuk Back Android
   history.pushState({ isOverlay: true, id: modalEl.id }, '');
 
   const firstInput = modalEl.querySelector('button, input, textarea, select');
@@ -217,11 +215,9 @@ function closeModal(modalEl, fromPopState = false) {
   modalEl.setAttribute('aria-hidden', 'true');
   modalEl.setAttribute('inert', '');
 
-  // Hapus dari stack
   const index = overlayStack.indexOf(modalEl);
   if (index > -1) overlayStack.splice(index, 1);
 
-  // Kembalikan scroll body jika tidak ada overlay lain yang terbuka
   if (overlayStack.length === 0 && DOM.productPage.style.display !== 'flex') {
     document.body.style.overflow = '';
   }
@@ -231,7 +227,6 @@ function closeModal(modalEl, fromPopState = false) {
     previousFocusedElement = null;
   }
 
-  // Jika ditutup lewat tombol (bukan gestur Back), buang histori palsu
   if (!fromPopState) {
     history.back();
   }
@@ -306,10 +301,14 @@ function showConfirmModal(title, message, onConfirm) {
 }
 
 // ---------------------------------------------------------------------------
-// Product page & swiper (dengan Overlay Stack)
+// Product page & swiper (dengan Overlay Stack dan renderProductSwiper)
 // ---------------------------------------------------------------------------
 function openProductPage(globalIndex) {
   if (!DOM.productPage) return;
+
+  // PENTING: render ulang swiper agar slide selalu tersedia
+  renderProductSwiper();
+
   DOM.productPage.style.display = 'flex';
   DOM.productPage.setAttribute('aria-hidden', 'false');
   DOM.productPage.removeAttribute('inert');
@@ -320,6 +319,7 @@ function openProductPage(globalIndex) {
   overlayStack.push(DOM.productPage);
   history.pushState({ isOverlay: true, id: 'productPage' }, '');
 
+  // Scroll ke slide yang sesuai
   const targetSlide = document.querySelector(`.product-slide[data-idx="${globalIndex}"]`);
   if (targetSlide && DOM.productSwiperTrack) {
     DOM.productSwiperTrack.style.scrollBehavior = 'auto';
@@ -327,9 +327,8 @@ function openProductPage(globalIndex) {
     DOM.productSwiperTrack.style.scrollBehavior = 'smooth';
   }
 
-  if (DOM._productObserver) {
-    DOM._productObserver.disconnect();
-  }
+  // Observer lazy‑load
+  if (DOM._productObserver) DOM._productObserver.disconnect();
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -429,7 +428,7 @@ function initDetailGestures() {
     const dy = e.changedTouches[0].clientY - startY;
     activeSlide.style.transition = 'all 0.3s ease';
     if (dy > 120) {
-      closeProductPage(true);   // true → tidak memanggil history.back() lagi
+      closeProductPage(true);
     } else {
       activeSlide.style.transform = 'translateY(0)';
     }
@@ -714,20 +713,15 @@ async function downloadReceiptPNG() {
   }
 }
 
-// ---------------------------------------------------------------------------
-// WHATSAPP MESSAGE — lengkap dengan Order ID, logistik, dan catatan
-// ---------------------------------------------------------------------------
 function sendReceiptToWhatsApp() {
   const summary = getCartSummaryLocal();
   const name = DOM.customerNameInput?.value || state.customerName || 'Ngoedi';
   const phone = DOM.customerPhoneInput?.value || state.customerPhone || '—';
   const address = DOM.customerAddressInput?.value || state.customerAddress || '—';
 
-  // Ambil dari HIDDEN INPUT, bukan textContent label
   const deliveryTime = document.getElementById('deliveryTime')?.value || '—';
   const notes = document.getElementById('orderNotes')?.value.trim() || 'Tidak ada catatan';
 
-  // Info logistik
   let logisticInfo = state.shippingProvider === 'paxel' ? 'Paxel Ekspres' : 'Kurir RUJAK.Co';
   if (state.shippingProvider === 'rujakco') {
     logisticInfo += ` (${state.vehicleType === 'mobil' ? 'Mobil' : 'Motor'})`;
@@ -765,7 +759,6 @@ function sendReceiptToWhatsApp() {
   window.open(waUrl, '_blank');
 }
 
-// Endpoint Telegram — tetap ada, tapi aman
 async function sendReceiptToTelegram() {
   const element = document.getElementById('orderConfirmContent');
   if (!element) return;
@@ -784,9 +777,6 @@ async function sendReceiptToTelegram() {
   } catch { /* abaikan */ }
 }
 
-// ---------------------------------------------------------------------------
-// ORDER CONFIRMATION — menyimpan Order ID ke state
-// ---------------------------------------------------------------------------
 function showOrderConfirmation() {
   const currentPhone = DOM.customerPhoneInput?.value || state.customerPhone;
   const currentAddress = DOM.customerAddressInput?.value || state.customerAddress;
@@ -820,7 +810,6 @@ function showOrderConfirmation() {
   const dateStr = now.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
   const timeStr = now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' }) + ' WIB';
 
-  // SIMPAN ORDER ID KE STATE
   state.currentOrderCode = `RJK-${now.toISOString().slice(2,10).replace(/-/g,'')}-${Math.floor(1000+Math.random()*9000)}`;
 
   contentEl.innerHTML = `
@@ -869,7 +858,6 @@ function showOrderConfirmation() {
     const backBtn = document.getElementById('orderConfirmBack');
     if (backBtn) backBtn.onclick = () => closeModal(modal);
 
-    // Tombol Lanjutkan → unduh, tutup struk, buka QRIS
     document.getElementById('orderConfirmLanjut').onclick = async () => {
       await downloadReceiptPNG();
       closeModal(document.getElementById('orderConfirmModal'));
