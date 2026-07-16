@@ -238,7 +238,7 @@
     </div>
   </div>
 
-  <!-- CART DRAWER (dengan sticky footer) -->
+  <!-- CART DRAWER (dengan sticky footer dan label statis) -->
   <div class="modal-overlay" id="miniCartModal" role="dialog" aria-modal="true" aria-labelledby="miniCartTitle" aria-hidden="true">
     <div class="drawer-content">
       <div class="drawer-header">
@@ -250,9 +250,16 @@
         <div class="drawer-subtotal"><span>Subtotal Sajian</span><span id="cartSubtotalDisplay" class="font-fraunces">Rp0</span></div>
         <div class="checkout-forms">
           <h4>Data Penerima</h4>
-          <input type="text" id="customerName" placeholder="Nama lengkap penerima" class="input-minimal" />
-          <input type="tel" id="customerPhone" placeholder="Nomor HP aktif" inputmode="numeric" class="input-minimal" />
+          
+          <label class="tiny-text" style="display:block; color:var(--gray-500); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Nama Lengkap</label>
+          <input type="text" id="customerName" class="input-minimal" placeholder="Nama lengkap penerima" />
+          
+          <label class="tiny-text" style="display:block; color:var(--gray-500); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Nomor HP (WhatsApp)</label>
+          <input type="tel" id="customerPhone" inputmode="numeric" class="input-minimal" placeholder="Nomor HP aktif" />
+          
+          <label class="tiny-text" style="display:block; color:var(--gray-500); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Alamat Lengkap</label>
           <textarea id="customerAddress" placeholder="Alamat lengkap (jalan, RT/RW, patokan)" rows="2" class="input-minimal"></textarea>
+          
           <div style="position:relative;">
             <label for="districtInput" class="sr-only">Kecamatan tujuan</label>
             <input type="text" id="districtInput" class="input-minimal" placeholder="Ketik atau pilih kecamatan..." autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="drawerDistrictDropdown" aria-haspopup="listbox" />
