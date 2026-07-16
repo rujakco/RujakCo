@@ -812,7 +812,20 @@ input:-webkit-autofill:active {
 .drawer-breakdown { font-size: 0.875rem; color: var(--gray-600); display: flex; justify-content: space-between; margin-top: var(--space-5); padding-top: var(--space-4); border-top: 1px solid var(--gray-200); }
 .drawer-total { display: flex; justify-content: space-between; align-items: flex-end; font-weight: 500; color: var(--gray-600); }
 .drawer-total #finalTotal { font-size: 2rem; color: var(--green); font-family: 'Fraunces', serif; line-height: 1; }
-.qris-frame { background: #FFFFFF; padding: var(--space-3); border-radius: var(--radius-xl); box-shadow: var(--shadow-card); display: block; margin: 0 auto var(--space-4) auto; border: 1px solid rgba(197,160,89,0.15); width: 100%; }
+
+/* ✅ FIX: Pembatasan QRIS Frame agar proporsional */
+.qris-frame { 
+  background: #FFFFFF; 
+  padding: var(--space-3); 
+  border-radius: var(--radius-xl); 
+  box-shadow: var(--shadow-card); 
+  display: block; 
+  margin: 0 auto var(--space-4) auto; 
+  border: 1px solid rgba(197,160,89,0.15); 
+  width: 100%; 
+  max-width: 260px; 
+  aspect-ratio: auto;
+}
 .qris-frame img { width: 100%; height: auto; display: block; border-radius: 10px; }
 
 .qris-payment-block {
@@ -941,7 +954,7 @@ input:-webkit-autofill:active {
 .boutique-item:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 4px;
-  border-radius: var(--radius-xl); /* disesuaikan dengan radius kartu */
+  border-radius: var(--radius-xl); 
 }
 .carousel-dot:focus-visible,
 .nav-item:focus-visible,
@@ -1110,7 +1123,7 @@ input:-webkit-autofill:active {
 }
 
 /* =========================================
-   29. MICRO-INTERACTION: ADD TO CART FLASH
+   29. MICRO-INTERACTION: ADD TO CART FLASH & SPINNER
 ========================================= */
 @keyframes buttonFlash {
   0% { background: #FFFFFF; color: var(--green); transform: scale(0.97); }
@@ -1118,4 +1131,9 @@ input:-webkit-autofill:active {
 }
 .add-to-cart-btn.success-flash {
   animation: buttonFlash 0.4s var(--transition-spring) forwards;
+}
+
+/* Animasi Spinner untuk Tombol Lanjutkan */
+@keyframes spin { 
+  100% { transform: rotate(360deg); } 
 }
