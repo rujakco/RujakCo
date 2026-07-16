@@ -1008,4 +1008,238 @@ function bindEvents() {
           step2.style.display = 'block';
           const firstOption = step2.querySelector('.spice-option');
           if (firstOption) firstOption.focus();
-        }, 
+        }, 300);
+      }
+      return;
+    }
+
+    const spiceOption = e.target.closest('.spice-option');
+    if (spiceOption) {
+      const pid = spiceOption.dataset.pid;
+      const val = parseInt(spiceOption.dataset.spice);
+      state.drafts[pid].spice = val;
+      document.querySelectorAll(`.spice-option[data-pid="${pid}"]`).forEach(b => {
+        b.classList.toggle('active', parseInt(b.dataset.spice) === val);
+      });
+      document.querySelectorAll(`[id^="spiceLabel_"][id$="_${pid}"]`).forEach(el => {
+        el.textContent = SPICE_LABELS[val];
+      });
+      return;
+    }
+
+    const qtyPlus = e.target.closest('.qty-plus');
+    const qtyMinus = e.target.closest('.qty-minus');
+    if (qtyPlus || qtyMinus) {
+      const pid = (qtyPlus || qtyMinus).dataset.pid;
+      if (qtyPlus) state.drafts[pid].qty++;
+      else if (state.drafts[pid].qty > 1) state.drafts[pid].qty--;
+      document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = state.drafts[pid].qty);
+      return;
+    }
+
+    const addBtn = e.target.closest('.add-to-cart-btn');
+    if (addBtn) {
+      if (window.navigator.vibrate) window.navigator.vibrate(10);
+      const pid = addBtn.dataset.pid;
+      const idx = addBtn.dataset.idx;
+      const draft = state.drafts[pid];
+      const cartKey = pid + '_spice' + draft.spice;
+      if (!state.cart[cartKey]) state.cart[cartKey] = { qty: 0, spice: draft.spice };
+      state.cart[cartKey].qty += draft.qty;
+      state.drafts[pid].qty = 1;
+      document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = 1);
+      updateCartUI();
+      showToast('Sajian ditambahkan ke reservasi.');
+
+      // Animasi keranjang melompat
+      const cartNav = document.querySelector('.nav-cart-wrapper');
+      if (cartNav) {
+        cartNav.classList.remove('bump');
+        void cartNav.offsetWidth;
+        cartNav.classList.add('bump');
+      }
+
+      setTimeout(() => {
+        const step1 = document.getElementById(`step1_${idx}_${pid}`);
+        const step2 = document.getElementById(`step2_${idx}_${pid}`);
+        if (step1 && step2) { step1.style.display = 'block'; step2.style.display = 'none'; step1.style.opacity = '1'; }
+      }, 500);
+      return;
+    }
+
+    if (e.target.closest('[data-action="confirm-wa"]')) {
+      confirmOrder(state.cart, state, updateCartUI)(e);
+      saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict);
+      return;
+    }
+
+    const actionBtn = e.target.closest('[data-action]');
+    if (actionBtn && !actionBtn.classList.contains('add-to-cart-btn') && !actionBtn.classList.contains('step-1-btn')) {
+      const id = actionBtn.dataset.id;
+      const type = actionBtn.dataset.action;
+      if (type === 'increase') {
+        state.cart[id].qty++;
+      } else if (type === 'decrease') {
+        if (state.cart[id].qty === 1) {
+          showConfirmModal(
+            'Hapus Sajian?',
+            'Sajian ini akan dihapus dari reservasi Anda.',
+            () => {
+              delete state.cart[id];
+              updateCartUI();
+              if (DOM.miniCartModal.classList.contains('active')) renderMiniCart(state.cart);
+              showToast('Sajian dihapus dari reservasi.');
+            }
+          );
+          return;
+        }
+        state.cart[id].qty--;
+      }
+      updateCartUI();
+      if (DOM.miniCartModal.classList.contains('active')) renderMiniCart(state.cart);
+      return;
+    }
+
+    const logBtn = e.target.closest('.log-btn');
+    if (logBtn) {
+      document.querySelectorAll('.log-btn').forEach(b => b.classList.remove('active'));
+      logBtn.classList.add('active');
+      state.shippingProvider = logBtn.dataset.provider;
+      DOM.rujakcoOptions.style.display = state.shippingProvider === 'paxel' ? 'none' : 'block';
+      DOM.paxelOptions.style.display = state.shippingProvider === 'paxel' ? 'block' : 'none';
+      updateShippingUI();
+      return;
+    }
+
+    const vehBtn = e.target.closest('.veh-btn');
+    if (vehBtn) {
+      document.querySelectorAll('.veh-btn').forEach(b => b.classList.remove('active'));
+      vehBtn.classList.add('active');
+      state.vehicleType = vehBtn.dataset.vehicle;
+      updateShippingUI();
+      return;
+    }
+
+    if (e.target.id === 'priorityToggleMini') {
+      state.isPriority = e.target.checked;
+      updateShippingUI();
+      return;
+    }
+
+    if (e.target.id === 'btnOpenPayment') {
+      if (!Object.keys(state.cart).length) return showToast('Keranjang masih kosong.');
+      const phone = DOM.customerPhoneInput?.value.trim() || '';
+      const address = DOM.customerAddressInput?.value.trim() || '';
+      if (!validatePhone(phone)) return showToast('Nomor HP tidak valid.');
+      if (!validateAddress(address)) return showToast('Mohon lengkapi alamat pengantaran.');
+      if (!state.selectedDistrict) return showToast('Mohon pilih alamat tujuan terlebih dahulu.');
+      if (state.userDistance == null) return showToast('Mohon pilih alamat dari hasil pencarian.');
+      showOrderConfirmation();
+      return;
+    }
+
+    if (e.target.closest('#aiChatToggle')) {
+      e.preventDefault();
+      openModal(DOM.aiChatBox);
+      setActiveNav('aiChatToggle');
+      return;
+    }
+
+    if (e.target.closest('#backFromProduct')) {
+      closeProductPage(true);
+      return;
+    }
+
+    if (e.target.closest('#navCartBtn')) {
+      e.preventDefault();
+      openModal(DOM.miniCartModal);
+      renderMiniCart(state.cart);
+      updateShippingUI();
+      setActiveNav('navCartBtn');
+      return;
+    }
+
+    const faqToggle = e.target.closest('[data-toggle="faq"]');
+    if (faqToggle) {
+      const item = faqToggle.closest('.faq-item');
+      const isOpen = item.classList.toggle('open');
+      faqToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      return;
+    }
+  });
+
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal(overlay);
+    });
+  });
+}
+
+// ---------------------------------------------------------------------------
+// App initialisation
+// ---------------------------------------------------------------------------
+function init() {
+  cacheDOM();
+  const saved = loadState();
+  state.cart = saved?.cart || {};
+  if (saved?.name) state.customerName = saved.name;
+  if (saved?.district) state.selectedDistrict = saved.district;
+  const cust = loadCustomer();
+  if (cust) {
+    state.customerPhone = cust.phone || '';
+    state.customerAddress = cust.address || '';
+  }
+
+  renderMenu();
+  renderProductSwiper();
+  initCarousel();
+  initDetailGestures();
+  initAccessibility();
+  const updateWelcome = initAIChat();
+  if (updateWelcome) updateWelcome(state.customerName || 'Ngoedi');
+
+  bindEvents();
+  initOnboarding();
+  initDrawerDistrictDropdown();
+  initTestimonials();
+  updateCartUI();
+
+  if (window.lucide) lucide.createIcons();
+
+  const heroImg = document.querySelector('.hero-img');
+  window.addEventListener('scroll', () => {
+    DOM.header?.classList.toggle('scrolled', window.scrollY > 50);
+    if (heroImg) {
+      const offset = Math.min(window.scrollY * 0.15, 40);
+      heroImg.style.transform = `translateY(${40 - offset}px) scale(${1.02 - offset * 0.0005})`;
+    }
+  }, { passive: true });
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const productId = urlParams.get('product');
+  if (productId) {
+    const idx = getProductGlobalIndex(productId);
+    if (idx !== -1) setTimeout(() => openProductPage(idx), 400);
+  }
+
+  window.addEventListener('popstate', (event) => {
+    if (DOM.productPage.style.display === 'flex') closeProductPage(false);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (DOM.productPage.style.display === 'flex') closeProductPage(true);
+      else if (document.getElementById('orderConfirmModal')?.classList.contains('active')) closeModal(document.getElementById('orderConfirmModal'));
+      else if (DOM.paymentModal.classList.contains('active')) closeModal(DOM.paymentModal);
+      else if (DOM.aiChatBox.classList.contains('active')) closeModal(DOM.aiChatBox);
+      else if (DOM.aboutModal?.classList.contains('active')) closeModal(DOM.aboutModal);
+      else if (DOM.miniCartModal.classList.contains('active')) closeModal(DOM.miniCartModal);
+    }
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
