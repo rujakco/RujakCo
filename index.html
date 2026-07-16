@@ -238,7 +238,7 @@
     </div>
   </div>
 
-  <!-- CART DRAWER (dengan sticky footer dan label statis) -->
+  <!-- CART DRAWER (dengan sticky footer, label baru, dan catatan baru) -->
   <div class="modal-overlay" id="miniCartModal" role="dialog" aria-modal="true" aria-labelledby="miniCartTitle" aria-hidden="true">
     <div class="drawer-content">
       <div class="drawer-header">
@@ -257,17 +257,18 @@
           <label class="tiny-text" style="display:block; color:var(--gray-500); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Nomor HP (WhatsApp)</label>
           <input type="tel" id="customerPhone" inputmode="numeric" class="input-minimal" placeholder="Nomor HP aktif" />
           
-          <label class="tiny-text" style="display:block; color:var(--gray-500); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Alamat Lengkap</label>
-          <textarea id="customerAddress" placeholder="Alamat lengkap (jalan, RT/RW, patokan)" rows="2" class="input-minimal"></textarea>
+          <label class="tiny-text" style="display:block; color:var(--gray-500); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Detail Alamat (Blok, No. Rumah, Patokan)</label>
+          <textarea id="customerAddress" placeholder="Blok, No. Rumah, atau patokan khusus" rows="2" class="input-minimal"></textarea>
           
+          <label class="tiny-text" style="display:block; color:var(--gray-500); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Titik Lokasi (Cari Kelurahan/Jalan)</label>
           <div style="position:relative;">
-            <label for="districtInput" class="sr-only">Kecamatan tujuan</label>
-            <input type="text" id="districtInput" class="input-minimal" placeholder="Ketik atau pilih kecamatan..." autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="drawerDistrictDropdown" aria-haspopup="listbox" />
-            <div id="drawerDistrictDropdown" class="minimal-dropdown" style="top:100%; left:0; right:0;" role="listbox" aria-label="Daftar kecamatan"></div>
+            <input type="text" id="districtInput" class="input-minimal" placeholder="Ketik nama jalan atau kelurahan..." autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="drawerDistrictDropdown" aria-haspopup="listbox" />
+            <div id="drawerDistrictDropdown" class="minimal-dropdown" style="top:100%; left:0; right:0;" role="listbox" aria-label="Hasil pencarian alamat"></div>
           </div>
-          <div class="district-note">*Biaya pengiriman dihitung berdasarkan kecamatan tujuan.</div>
+          <div class="district-note">*Biaya pengiriman dihitung berdasarkan jarak tempuh aktual (km).</div>
 
           <!-- Custom delivery time dropdown -->
+          <label class="tiny-text" style="display:block; color:var(--gray-500); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Jam Pengantaran</label>
           <div style="position:relative;">
             <button type="button" id="deliveryTimeTrigger" class="custom-select" role="combobox" aria-haspopup="listbox" aria-controls="deliveryTimeDropdown" aria-expanded="false" style="margin-bottom:0; width:100%;">
               <span id="deliveryTimeLabel">Pilih jam pengantaran...</span>
@@ -281,7 +282,8 @@
           </div>
           <input type="hidden" id="deliveryTime" value="Pagi (09:00 - 11:00)" />
 
-          <textarea id="orderNotes" placeholder="Catatan untuk kurir (opsional)" rows="1" class="input-minimal"></textarea>
+          <label class="tiny-text" style="display:block; color:var(--gray-500); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Catatan untuk Kurir (Opsional)</label>
+          <textarea id="orderNotes" placeholder="Misal: warna pagar, lantai berapa" rows="1" class="input-minimal"></textarea>
         </div>
         <div id="shippingSection" class="checkout-forms" style="margin-top:40px;">
           <h4>Pilih Kurir</h4>
@@ -341,7 +343,6 @@
           <div class="qris-frame"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS RUJAK.Co" /></div>
           <div id="paymentTotalDisplay" class="qris-total">Rp0</div>
         </div>
-        <!-- INSTRUKSI CHECKOUT -->
         <div class="checkout-instructions" style="background: var(--gray-100); padding: 16px; border-radius: var(--radius-md); margin-bottom: 24px; text-align: left;">
           <h4 style="font-size: 0.85rem; color: var(--green); margin-bottom: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Cara Menyelesaikan Pesanan:</h4>
           <ol style="margin: 0; padding-left: 16px; font-size: 0.85rem; color: var(--gray-600); line-height: 1.6;">
