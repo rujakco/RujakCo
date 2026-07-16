@@ -52,7 +52,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 </head>
 <body>
 <noscript>
@@ -73,6 +73,7 @@
           <label class="onb-label" for="onbName">Bolehkah kami mengenal nama Anda?</label>
           <input type="text" id="onbName" class="onb-input" placeholder="Nama lengkap" autocomplete="off" />
           <button type="button" class="btn-gold full-width" id="onbNextBtn">Lanjutkan</button>
+          <button type="button" class="btn-text-gold" id="onbGuestBtn" style="margin-top: 24px;">Lewati, Masuk sebagai Tamu</button>
         </div>
         <div id="onbStep2" class="onb-step">
           <label class="onb-label" for="onbDistrict">Kecamatan tujuan pengantaran</label>
@@ -237,7 +238,7 @@
     </div>
   </div>
 
-  <!-- CART DRAWER -->
+  <!-- CART DRAWER (dengan sticky footer) -->
   <div class="modal-overlay" id="miniCartModal" role="dialog" aria-modal="true" aria-labelledby="miniCartTitle" aria-hidden="true">
     <div class="drawer-content">
       <div class="drawer-header">
@@ -266,9 +267,9 @@
               <i data-lucide="chevron-down" class="w-4 h-4" aria-hidden="true"></i>
             </button>
             <div id="deliveryTimeDropdown" class="minimal-dropdown" style="position:absolute; top:100%; left:0; right:0;" role="listbox">
-              <div role="option" data-value="Pagi (09:00 - 11:00)" aria-selected="true">Pagi (09:00 - 11:00 WIB)</div>
-              <div role="option" data-value="Siang (11:00 - 13:00)" aria-selected="false">Siang (11:00 - 13:00 WIB)</div>
-              <div role="option" data-value="Sore (14:00 - 17:00)" aria-selected="false">Sore (14:00 - 17:00 WIB)</div>
+              <div role="option" tabindex="0" data-value="Pagi (09:00 - 11:00)" aria-selected="true">Pagi (09:00 - 11:00 WIB)</div>
+              <div role="option" tabindex="0" data-value="Siang (11:00 - 13:00)" aria-selected="false">Siang (11:00 - 13:00 WIB)</div>
+              <div role="option" tabindex="0" data-value="Sore (14:00 - 17:00)" aria-selected="false">Sore (14:00 - 17:00 WIB)</div>
             </div>
           </div>
           <input type="hidden" id="deliveryTime" value="Pagi (09:00 - 11:00)" />
@@ -292,7 +293,13 @@
           <div id="paxelOptions" style="display:none; margin-top:24px; font-size:13px; color:var(--gold); font-style:italic; line-height:1.6;">* Estimasi tiba dalam 1 hari kerja.</div>
           <div class="drawer-breakdown"><span id="shippingDistance"></span><span id="finalShipping" class="font-fraunces">Rp0</span></div>
         </div>
-        <div class="drawer-total"><span>Total Pesanan</span><span id="finalTotal">Rp0</span></div>
+      </div>
+      <!-- STICKY FOOTER -->
+      <div class="drawer-footer-sticky">
+        <div class="drawer-total">
+          <span>Total Pesanan</span>
+          <span id="finalTotal">Rp0</span>
+        </div>
         <button type="button" class="btn-gold full-width" id="btnOpenPayment" style="margin-top:8px;">Selesaikan Reservasi</button>
       </div>
     </div>
@@ -315,7 +322,7 @@
     </div>
   </div>
 
-  <!-- PAYMENT MODAL -->
+  <!-- PAYMENT MODAL (dengan instruksi checkout) -->
   <div class="modal-overlay" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentTitle" aria-hidden="true">
     <div class="drawer-content" style="height:auto;">
       <div class="drawer-header">
@@ -325,8 +332,16 @@
       <div class="drawer-body" style="text-align:center; padding-bottom:48px;">
         <div class="qris-payment-block">
           <div class="qris-frame"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS RUJAK.Co" /></div>
-          <div class="qris-connector"></div>
           <div id="paymentTotalDisplay" class="qris-total">Rp0</div>
+        </div>
+        <!-- INSTRUKSI CHECKOUT -->
+        <div class="checkout-instructions" style="background: var(--gray-100); padding: 16px; border-radius: var(--radius-md); margin-bottom: 24px; text-align: left;">
+          <h4 style="font-size: 0.85rem; color: var(--green); margin-bottom: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Cara Menyelesaikan Pesanan:</h4>
+          <ol style="margin: 0; padding-left: 16px; font-size: 0.85rem; color: var(--gray-600); line-height: 1.6;">
+            <li style="margin-bottom: 4px;">Simpan/Unduh struk pesanan ini.</li>
+            <li style="margin-bottom: 4px;">Lakukan pembayaran via QRIS di atas.</li>
+            <li>Kirim bukti transfer beserta struk ke WhatsApp kami.</li>
+          </ol>
         </div>
         <button type="button" class="btn-dark full-width" id="confirmPaymentBtn" data-action="confirm-wa"><i data-lucide="check" class="icon-sm inline" style="margin-right:8px;"></i> Validasi Reservasi via WhatsApp</button>
       </div>
