@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (Final + History Guard + Smart Sync Nav)
+// app.js — Luxury Edition (Final Core Engine)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { DISTRICT_MAP } from './data/districts.js';
