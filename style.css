@@ -337,19 +337,72 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
 .district-note { font-size: 0.7rem; color: var(--gold-text); font-weight: 600; line-height: 1.4; margin-top: -12px; margin-bottom: var(--space-4); }
 
 /* =========================================
-   16. PEMBAYARAN (QRIS)
+   16. PEMBAYARAN (QRIS) - FIT TO SCREEN
 ========================================= */
-#btnOpenPayment, #confirmPaymentBtn { margin-bottom: env(safe-area-inset-bottom); padding: 18px var(--space-4); }
+#btnOpenPayment { margin-bottom: env(safe-area-inset-bottom); padding: 18px var(--space-4); }
 
-#paymentModal .drawer-body { display: block; text-align: center; }
-#paymentModal .qris-payment-block { display: block; width: 100%; margin: 0 auto; }
+#paymentModal .drawer-body { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  padding: 16px 20px calc(24px + env(safe-area-inset-bottom)); 
+  overflow-y: auto; 
+}
+
+#paymentModal .qris-payment-block { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  width: 100%; 
+}
+
 #paymentModal .qris-connector { display: none; }
-#paymentModal .qris-frame { margin-bottom: 28px; }
-#paymentModal .qris-total { display: flex; align-items: center; justify-content: center; width: 100%; font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 400; color: var(--green); margin: 0 0 28px 0; }
+
+/* KUNCI: Perkecil frame QRIS agar tinggi layar hemat dan muat */
+#paymentModal .qris-frame { 
+  max-width: 220px; 
+  padding: 12px; 
+  margin-bottom: 16px; 
+  width: 100%; 
+  background: #FFFFFF; 
+  border-radius: var(--radius-xl); 
+  box-shadow: var(--shadow-card); 
+  border: 1px solid rgba(197,160,89,0.15); 
+  display: block; 
+  margin-left: auto; 
+  margin-right: auto;
+}
+
+#paymentModal .qris-frame img { 
+  width: 100%; 
+  height: auto; 
+  display: block; 
+  border-radius: 10px; 
+}
+
+#paymentModal .qris-total { 
+  display: flex; align-items: center; justify-content: center; width: 100%; 
+  font-family: 'Fraunces', serif; font-size: 1.25rem; font-weight: 600; 
+  color: var(--green); margin: 0 0 16px 0; 
+}
 #paymentModal .qris-total::before, #paymentModal .qris-total::after { content: ''; flex: 1; height: 1px; background: var(--gold); }
 #paymentModal .qris-total::before { margin-right: 12px; }
 #paymentModal .qris-total::after { margin-left: 12px; }
-#paymentModal #confirmPaymentBtn { margin-top: 32px; }
+
+/* Memadatkan ruang 3 ikon instruksi */
+#paymentModal .qris-payment-block + div {
+  margin-bottom: 16px !important;
+}
+#paymentModal .qris-payment-block + div > div > div:first-child {
+  width: 38px !important; height: 38px !important; margin: 0 auto 6px !important;
+}
+
+#paymentModal #confirmPaymentBtn { 
+  margin-top: auto; /* Mendorong tombol selalu ke posisi paling bawah */
+  width: 100%;
+  padding: 14px var(--space-4); /* Tombol sedikit ditipiskan */
+  margin-bottom: 0;
+}
 
 /* =========================================
    17. CHAT BUBBLES
@@ -462,11 +515,16 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
 .receipt-footer { text-align: center; padding: 22px 20px 26px; }
 .receipt-footer p { font-family: 'Fraunces', serif; font-style: italic; color: var(--gray-600); font-size: 0.875rem; margin: 0 0 10px; }
 
+/* ✅ FIX FINAL ABSOLUT: Barcode Base64 (Anti-CORS & Anti-Gagal) */
 .receipt-barcode { 
-  height: 32px; max-width: 180px; margin: 0 auto 8px; 
-  background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/UPC-A-036000291452.svg/320px-UPC-A-036000291452.svg.png');
-  background-size: 100% 100%; background-position: center; background-repeat: no-repeat;
-  filter: grayscale(100%); opacity: 0.6; 
+  height: 32px; 
+  max-width: 180px; 
+  margin: 0 auto 8px; 
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAAAcCAYAAADE+wVBAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAC0SURBVHhe7dRBDoMwDARRwvn/Z2dgwEADtpI1VfIezBtxb2Zmsv1+/5/X+/19M7PZ/vP5/N+f9/v9Zma2/Xw+//fn/X6/mZltP5/P//15v99vZmbbz+fzf3/e7/ebmdn28/n835/3+/1mZrb9fD7/9+f9fr+ZmW0/n8///Xm/329mZtvP5/N/f97v95uZ2fbz+fzf//fn/X6/mZltP5/P//15v99vZmbbz+fzf3/e7/ebmdn2A32fA0c2Q1+4AAAAAElFTkSuQmCC');
+  background-size: 100% 100%; 
+  background-position: center; 
+  background-repeat: no-repeat;
+  opacity: 0.65; 
 }
 .receipt-code-text { font-size: 0.7rem; letter-spacing: 0.25em; color: var(--gray-600); font-weight: 600; font-family: 'DM Sans', monospace; }
 
