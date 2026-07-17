@@ -332,9 +332,10 @@
     </div>
   </div>
 
-  <!-- PAYMENT MODAL -->
+  <!-- PAYMENT MODAL (FIT TO SCREEN) -->
   <div class="modal-overlay" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentTitle" aria-hidden="true">
-    <div class="drawer-content" style="height:auto;">
+    <!-- ✅ KUNCI: Tambahan max-height: 95vh agar tidak menabrak atap layar -->
+    <div class="drawer-content" style="height:auto; max-height:95vh;">
       <div class="drawer-header">
         <h3 id="paymentTitle">Pembayaran QRIS</h3>
         <button type="button" id="paymentClose" class="glass-btn-dark" aria-label="Tutup Pembayaran"><i data-lucide="x" class="icon-sm"></i></button>
