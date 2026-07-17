@@ -82,7 +82,7 @@ html, body {
   background: var(--green);
   font-family: 'DM Sans', sans-serif;
   font-size: var(--font-base);
-  color: var(--ivory); /* Teks global terang */
+  color: var(--ivory);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -272,11 +272,8 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .detail-specs strong { color: var(--green); font-weight: 600; display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
 .section-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--gray-600); margin-bottom: var(--space-3); font-weight: 600; display: block; text-align: center; padding-top: calc(var(--space-5) + var(--space-2)); margin-top: 0; }
 
-/* FIX: Komposisi Buah (Anti Hanging Bullet) */
-.fruit-list-inline { display: flex; flex-wrap: wrap; justify-content: center; row-gap: 6px; column-gap: 16px; line-height: 1.6; color: var(--gray-900); margin-bottom: var(--space-5); padding: 0 8px; }
-.fruit-bullet { display: none !important; }
-.fruit-list-inline span { position: relative; white-space: nowrap; }
-.fruit-list-inline span:not(:last-child)::after { content: '•'; position: absolute; right: -10px; color: var(--gold); font-size: 10px; top: 50%; transform: translateY(-50%); opacity: 0.7; }
+.fruit-list-inline { display: block; text-align: center; line-height: 1.8; color: var(--gray-900); margin-bottom: var(--space-5); padding: 0 16px; }
+.fruit-bullet { display: inline-block !important; color: var(--gold); margin: 0 8px; font-size: 12px; opacity: 0.75; vertical-align: middle; }
 
 .detail-manifesto { background: transparent; padding: var(--space-4); border-radius: var(--radius-md); border: 1px solid rgba(197,160,89,0.25); text-align: center; margin-top: var(--space-3); }
 .detail-manifesto h4 { font-size: 0.75rem; color: var(--gold); margin-bottom: 12px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; }
@@ -310,10 +307,10 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .cart-item-info p { font-size: 0.875rem; color: var(--gold-text); margin: 0; font-weight: 600; }
 
 .drawer-subtotal { display: flex; justify-content: space-between; font-weight: 600; padding: var(--space-4) 0; border-bottom: 1px solid var(--gray-200); margin-bottom: var(--space-5); color: var(--gray-600); }
-.drawer-subtotal span:last-child { color: var(--gray-900); font-weight: 700; } /* FIX: Subtotal Tegas */
+.drawer-subtotal span:last-child { color: var(--gray-900); font-weight: 700; }
 
 .input-minimal { width: 100%; border: none; border-bottom: 1px solid var(--gray-300); background: transparent; padding: var(--space-3) 0; font-family: inherit; font-size: 1rem; margin-bottom: var(--space-4); border-radius: 0; transition: border-color var(--dur-fast) ease, box-shadow var(--dur-fast) ease; outline: none; color: var(--gray-900); }
-textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; } /* FIX: Bebas Garis Glitch */
+textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
 
 .input-minimal:focus { border-bottom-color: var(--gold); box-shadow: var(--shadow-glow); }
 .input-minimal::placeholder { color: var(--gray-500); font-weight: 400; }
@@ -343,15 +340,16 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; } /* 
    16. PEMBAYARAN (QRIS)
 ========================================= */
 #btnOpenPayment, #confirmPaymentBtn { margin-bottom: env(safe-area-inset-bottom); padding: 18px var(--space-4); }
-#paymentModal .drawer-body { display: flex; flex-direction: column; align-items: center; }
-#paymentModal .qris-payment-block { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; }
+
+#paymentModal .drawer-body { display: block; text-align: center; }
+#paymentModal .qris-payment-block { display: block; width: 100%; margin: 0 auto; }
 #paymentModal .qris-connector { display: none; }
 #paymentModal .qris-frame { margin-bottom: 28px; }
-#paymentModal .qris-total { display: flex; align-items: center; width: 100%; font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 400; color: var(--green); margin: 0 0 28px 0; }
+#paymentModal .qris-total { display: flex; align-items: center; justify-content: center; width: 100%; font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 400; color: var(--green); margin: 0 0 28px 0; }
 #paymentModal .qris-total::before, #paymentModal .qris-total::after { content: ''; flex: 1; height: 1px; background: var(--gold); }
 #paymentModal .qris-total::before { margin-right: 12px; }
 #paymentModal .qris-total::after { margin-left: 12px; }
-#paymentModal #confirmPaymentBtn { margin-top: 32px; } /* FIX: Tombol turun */
+#paymentModal #confirmPaymentBtn { margin-top: 32px; }
 
 /* =========================================
    17. CHAT BUBBLES
@@ -427,7 +425,7 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; } /* 
 
 .faq-container { margin: 0 20px var(--space-3); background: transparent; border: 1px solid var(--gold-soft); border-radius: var(--radius-lg); padding: 12px var(--space-3); box-shadow: none; }
 .faq-item { border-bottom: 1px solid var(--gold-soft); }
-.faq-item:last-child { border-bottom: none; } /* FIX: Garis ganda hilang */
+.faq-item:last-child { border-bottom: none; }
 .faq-question { width: 100%; display: flex; justify-content: space-between; align-items: center; background: none; border: none; font-family: inherit; cursor: pointer; padding: var(--space-3) 0; text-align: left; color: rgba(255,255,255,0.7); font-size: 0.9375rem; font-weight: 600; line-height: 1.5; }
 .faq-question:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
 .faq-question i { transition: transform var(--dur-normal) ease; }
@@ -439,7 +437,7 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; } /* 
    25. DIVIDER, SECTION, STRUK, & ANIMASI
 ========================================= */
 .divider { width: calc(100% - 40px); max-width: var(--content-max); margin: var(--space-3) auto; border-top: 1px solid rgba(197, 160, 89, 0.25); }
-.sec-header { width: calc(100% - 40px); max-width: var(--content-max); margin: 0 auto var(--space-4); padding: 0; background: transparent; } /* FIX: Spasi longgar */
+.sec-header { width: calc(100% - 40px); max-width: var(--content-max); margin: 0 auto var(--space-4); padding: 0; background: transparent; }
 .sec-title { font-family: 'Fraunces', serif; font-weight: 400; font-size: 1rem; color: var(--gold-bright); letter-spacing: 0.05em; display: block; }
 .minimal-dropdown div[aria-selected="true"] { background: var(--green-light); color: var(--green); }
 
@@ -464,13 +462,13 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; } /* 
 .receipt-footer { text-align: center; padding: 22px 20px 26px; }
 .receipt-footer p { font-family: 'Fraunces', serif; font-style: italic; color: var(--gray-600); font-size: 0.875rem; margin: 0 0 10px; }
 
-/* ✅ FIX: Barcode Vektor Anti-Gagal (SVG) */
 .receipt-barcode { 
-  height: 28px; max-width: 180px; margin: 0 auto 6px; 
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none' viewBox='0 0 100 28'%3E%3Cpath fill='%231A1816' d='M0 0h2v28H0zm5 0h1v28H5zm4 0h3v28H9zm5 0h2v28h-2zm4 0h2v28h-2zm4 0h1v28h-1zm3 0h3v28h-3zm5 0h2v28h-2zm4 0h1v28h-1zm3 0h3v28h-3zm5 0h2v28h-2zm4 0h1v28h-1zm3 0h1v28h-1zm3 0h3v28h-3zm5 0h2v28h-2zm4 0h1v28h-1zm3 0h3v28h-3zm5 0h2v28h-2z'/%3E%3C/svg%3E");
-  background-size: 100% 100%; opacity: 0.65; 
+  height: 32px; max-width: 180px; margin: 0 auto 8px; 
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/UPC-A-036000291452.svg/320px-UPC-A-036000291452.svg.png');
+  background-size: 100% 100%; background-position: center; background-repeat: no-repeat;
+  filter: grayscale(100%); opacity: 0.6; 
 }
-.receipt-code-text { font-size: 0.6rem; letter-spacing: 0.25em; color: var(--gray-400); font-family: 'DM Sans', monospace; }
+.receipt-code-text { font-size: 0.7rem; letter-spacing: 0.25em; color: var(--gray-600); font-weight: 600; font-family: 'DM Sans', monospace; }
 
 @keyframes cartBump { 0% { transform: scale(1); } 50% { transform: scale(1.3) translateY(-4px); color: var(--gold); } 100% { transform: scale(1); } }
 .nav-cart-wrapper.bump .nav-badge, .nav-cart-wrapper.bump .nav-icon { animation: cartBump 0.4s var(--transition-spring); }
