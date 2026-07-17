@@ -89,7 +89,7 @@
       <div id="onbReturningUser" style="display:none; width:100%;">
         <p class="onb-welcome-text">Selamat datang kembali,</p>
         <h2 class="onb-title" id="onbWelcomeName">Ngoedi</h2>
-        <p class="onb-subtitle" style="margin-bottom:56px;">Diantar ke <span id="onbWelcomeDistrict" style="color:var(--gold);">Bekasi</span></p>
+        <p class="onb-subtitle" style="margin-bottom:56px;">Diantar ke <span id="onbWelcomeDistrict" style="color:var(--gold-bright);">Bekasi</span></p>
         <button type="button" class="btn-gold full-width" id="onbEnterBtn">Masuk Sekarang</button>
         <button type="button" class="btn-text-gold" id="onbResetBtn">Ganti nama &amp; kecamatan</button>
       </div>
@@ -164,8 +164,7 @@
     <div class="sec-header"><span class="sec-title">Pertanyaan Umum</span></div>
     <div class="faq-container" id="faqContainer">
       <div class="faq-item open">
-        <button type="button" class="faq-question" data-toggle="faq"
-                aria-expanded="true" aria-controls="faq-answer-1" id="faq-q-1">
+        <button type="button" class="faq-question" data-toggle="faq" aria-expanded="true" aria-controls="faq-answer-1" id="faq-q-1">
           <span>Mengapa sambal dikemas terpisah?</span>
           <i data-lucide="chevron-down" class="w-4 h-4" aria-hidden="true"></i>
         </button>
@@ -174,8 +173,7 @@
         </div>
       </div>
       <div class="faq-item">
-        <button type="button" class="faq-question" data-toggle="faq"
-                aria-expanded="false" aria-controls="faq-answer-2" id="faq-q-2">
+        <button type="button" class="faq-question" data-toggle="faq" aria-expanded="false" aria-controls="faq-answer-2" id="faq-q-2">
           <span>Mengapa pesanan dikirim keesokan harinya?</span>
           <i data-lucide="chevron-down" class="w-4 h-4" aria-hidden="true"></i>
         </button>
@@ -184,8 +182,7 @@
         </div>
       </div>
       <div class="faq-item">
-        <button type="button" class="faq-question" data-toggle="faq"
-                aria-expanded="false" aria-controls="faq-answer-3" id="faq-q-3">
+        <button type="button" class="faq-question" data-toggle="faq" aria-expanded="false" aria-controls="faq-answer-3" id="faq-q-3">
           <span>Berapa biaya pengantarannya?</span>
           <i data-lucide="chevron-down" class="w-4 h-4" aria-hidden="true"></i>
         </button>
@@ -194,8 +191,7 @@
         </div>
       </div>
       <div class="faq-item">
-        <button type="button" class="faq-question" data-toggle="faq"
-                aria-expanded="false" aria-controls="faq-answer-4" id="faq-q-4">
+        <button type="button" class="faq-question" data-toggle="faq" aria-expanded="false" aria-controls="faq-answer-4" id="faq-q-4">
           <span>Bagaimana jika rujak tiba dalam kondisi tidak sempurna?</span>
           <i data-lucide="chevron-down" class="w-4 h-4" aria-hidden="true"></i>
         </button>
@@ -214,8 +210,12 @@
           Sen–Jum: 10.00–20.00 | Sab–Min: 09.00–18.00
         </div>
         <div style="margin-top: 8px; display: flex; gap: 16px; justify-content: center;">
-          <a href="https://www.tiktok.com/@rujakco" target="_blank" rel="noopener" aria-label="TikTok RUJAK.Co" style="color: var(--gray-400);"><i data-lucide="disc-3" class="w-4 h-4" aria-hidden="true"></i></a>
-          <a href="javascript:void(0)" target="_blank" rel="noopener" aria-label="Instagram RUJAK.Co" style="color: var(--gray-400);"><i data-lucide="external-link" class="w-4 h-4" aria-hidden="true"></i></a>
+          <a href="https://www.tiktok.com/@rujakco" target="_blank" rel="noopener" aria-label="TikTok RUJAK.Co" style="color: var(--gold-bright);">
+            <i data-lucide="disc-3" class="icon-md" aria-hidden="true"></i>
+          </a>
+          <a href="javascript:void(0)" target="_blank" rel="noopener" aria-label="Instagram RUJAK.Co" style="color: var(--gold-bright);">
+            <i data-lucide="external-link" class="icon-md" aria-hidden="true"></i>
+          </a>
         </div>
       </div>
     </footer>
@@ -253,23 +253,23 @@
         <div class="checkout-forms">
           <h4>Data Penerima</h4>
           
-          <label class="tiny-text" style="display:block; color:var(--gray-500); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Nama Lengkap</label>
+          <label class="tiny-text" style="display:block; color:var(--gray-600); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Nama Lengkap</label>
           <input type="text" id="customerName" class="input-minimal" placeholder="Nama lengkap penerima" />
           
-          <label class="tiny-text" style="display:block; color:var(--gray-500); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Nomor HP (WhatsApp)</label>
+          <label class="tiny-text" style="display:block; color:var(--gray-600); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Nomor HP (WhatsApp)</label>
           <input type="tel" id="customerPhone" inputmode="numeric" autocomplete="tel" class="input-minimal" placeholder="Nomor HP aktif" />
           
-          <label class="tiny-text" style="display:block; color:var(--gray-500); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Detail Alamat (Blok, No. Rumah, Patokan)</label>
+          <label class="tiny-text" style="display:block; color:var(--gray-600); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Detail Alamat (Blok, No. Rumah, Patokan)</label>
           <textarea id="customerAddress" placeholder="Blok, No. Rumah, atau patokan khusus" rows="2" class="input-minimal"></textarea>
           
-          <label class="tiny-text" style="display:block; color:var(--gray-500); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Titik Lokasi (Cari Kelurahan/Jalan)</label>
+          <label class="tiny-text" style="display:block; color:var(--gray-600); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Titik Lokasi (Cari Kelurahan/Jalan)</label>
           <div style="position:relative;">
             <input type="text" id="districtInput" class="input-minimal" placeholder="Ketik nama jalan atau kelurahan..." autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="drawerDistrictDropdown" aria-haspopup="listbox" />
             <div id="drawerDistrictDropdown" class="minimal-dropdown" style="top:100%; left:0; right:0;" role="listbox" aria-label="Hasil pencarian alamat"></div>
           </div>
           <div class="district-note">*Biaya pengiriman dihitung berdasarkan jarak tempuh aktual (km).</div>
 
-          <label class="tiny-text" style="display:block; color:var(--gray-500); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Jam Pengantaran</label>
+          <label class="tiny-text" style="display:block; color:var(--gray-600); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Jam Pengantaran</label>
           <div style="position:relative;">
             <button type="button" id="deliveryTimeTrigger" class="custom-select" role="combobox" aria-haspopup="listbox" aria-controls="deliveryTimeDropdown" aria-expanded="false" style="margin-bottom:0; width:100%;">
               <span id="deliveryTimeLabel">Pilih jam pengantaran...</span>
@@ -283,7 +283,7 @@
           </div>
           <input type="hidden" id="deliveryTime" value="Pagi (09:00 - 11:00)" />
 
-          <label class="tiny-text" style="display:block; color:var(--gray-500); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Catatan untuk Kurir (Opsional)</label>
+          <label class="tiny-text" style="display:block; color:var(--gray-600); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Catatan untuk Kurir (Opsional)</label>
           <textarea id="orderNotes" placeholder="Misal: warna pagar, lantai berapa" rows="1" class="input-minimal"></textarea>
         </div>
         <div id="shippingSection" class="checkout-forms" style="margin-top:40px;">
@@ -293,7 +293,7 @@
             <button type="button" class="log-btn" data-provider="paxel">Paxel Ekspres</button>
           </div>
           <div id="rujakcoOptions" style="margin-top:24px;">
-            <label class="tiny-text" style="display:block; color:var(--gray-500); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Jenis Kendaraan</label>
+            <label class="tiny-text" style="display:block; color:var(--gray-600); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Jenis Kendaraan</label>
             <div class="logistic-options">
               <button type="button" class="veh-btn active" data-vehicle="motor">Motor</button>
               <button type="button" class="veh-btn" data-vehicle="mobil">Mobil</button>
@@ -345,7 +345,6 @@
           <div id="paymentTotalDisplay" class="qris-total">Rp0</div>
         </div>
         
-        <!-- Petunjuk Checkout Ringkas -->
         <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 32px; width: 100%; max-width: 320px; margin-left: auto; margin-right: auto;">
           <div style="flex:1; text-align:center;">
             <div style="width:44px; height:44px; background:var(--bg-subtle); border:1px solid var(--gray-200); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; color:var(--gray-600);">
