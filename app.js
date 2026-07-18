@@ -1,4 +1,4 @@
-// app.js — Final Production (Supabase, Telegram, Struk, Timeout, Drafts, A11y)
+// app.js — Final Production (Supabase, Telegram, Struk, Timeout, Drafts, A11y, Auto-Distance)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase } from './utils/helpers.js';
@@ -984,7 +984,7 @@ function bindEvents() {
   });
 
   // --- Klik Global (Delegasi) ---
-  document.addEventListener('click', (e) => {
+  document.addEventListener('click', async (e) => {
     const boutique = e.target.closest('.boutique-item');
     if (boutique) { const idx = parseInt(boutique.dataset.idx); if (!isNaN(idx)) openProductPage(idx); return; }
 
@@ -1098,6 +1098,7 @@ function bindEvents() {
 
     if (e.target.id === 'priorityToggleMini') { state.isPriority = e.target.checked; updateShippingUI(); return; }
 
+    // === TOMBOL SELESAIKAN RESERVASI (DENGAN AUTO-HITUNG JARAK) ===
     if (e.target.id === 'btnOpenPayment') {
       if (e.target.disabled) return;
       if (!Object.keys(state.cart).length) return showToast('Keranjang masih kosong.');
@@ -1106,7 +1107,33 @@ function bindEvents() {
       if (!validatePhone(phone)) return showToast('Nomor HP tidak valid.');
       if (!validateAddress(address)) return showToast('Mohon lengkapi alamat pengantaran.');
       if (!state.selectedDistrict) return showToast('Mohon pilih alamat tujuan terlebih dahulu.');
-      if (state.userDistance == null) return showToast('Mohon pilih alamat dari hasil pencarian.');
+
+      // ✅ Jika jarak belum terhitung tapi alamat lengkap sudah ada, hitung otomatis
+      if (state.userDistance == null && state.selectedDistrictFull) {
+        e.target.disabled = true; // cegah double click saat proses
+        try {
+          const results = await searchAddressOSM(state.selectedDistrictFull);
+          if (results.length > 0) {
+            const place = results[0];
+            const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, parseFloat(place.lat), parseFloat(place.lon));
+            state.userDistance = result.distance;
+            state.haversineUsed = result.isHaversine;
+            updateShippingUI();
+          } else {
+            e.target.disabled = false;
+            return showToast('Mohon pilih alamat dari hasil pencarian.');
+          }
+        } catch (err) {
+          e.target.disabled = false;
+          return showToast('Gagal menghitung jarak. Mohon pilih alamat lagi.');
+        }
+      }
+
+      if (state.userDistance == null) {
+        e.target.disabled = false;
+        return showToast('Mohon pilih alamat dari hasil pencarian.');
+      }
+
       e.target.disabled = true;
       showOrderConfirmation();
       setTimeout(() => { e.target.disabled = false; }, 1000);
