@@ -14,7 +14,7 @@ export const SPICE_LABELS = {
 };
 
 export const FAQ_DATA = [
-  { keywords: ['jam', 'buka', 'operasional'], answer: 'Rujak.Co buka setiap hari mulai pukul 09.00 - 21.00 WIB.' },
+  { keywords: ['jam', 'buka', 'operasional'], answer: 'Rujak.Co buka Senin-Jumat pukul 10.00-20.00 WIB, dan Sabtu-Minggu pukul 09.00-18.00 WIB.' },
   { keywords: ['delivery', 'antar', 'kurir', 'ongkir', 'biaya'], answer: 'Kami melayani pengantaran ke seluruh area Jabodetabek. Biaya dihitung otomatis setelah Anda mengetik alamat lengkap di keranjang.' },
   { keywords: ['pedas', 'level', 'spice'], answer: 'Tingkat pedas bisa disesuaikan dari level 1 (Ringan) hingga 5 (Neraka).' },
   { keywords: ['buah', 'komposisi'], answer: 'Setiap produk mencantumkan komposisi buahnya. Kami selalu menggunakan buah segar yang dipotong 15 menit sebelum antar.' },
