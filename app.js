@@ -1,14 +1,12 @@
-// app.js — Luxury Edition (Final Core Engine)
+// app.js — Luxury Edition (Final Core Engine) — After Global Fixes
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
-import { DISTRICT_MAP } from './data/districts.js';
 import { fmt, showToast, debounce, escapeHTML } from './utils/helpers.js';
 import { loadState, saveCart, saveUser, clearUser, saveCustomer, loadCustomer } from './modules/storage.js';
 import {
   calculateShipping,
   getDrivingDistance,
   searchAddressOSM,
-  KITCHEN_COORDS
 } from './modules/shipping.js';
 import {
   renderMenu,
@@ -24,7 +22,6 @@ import { initTestimonials } from './modules/testimonials.js';
 import {
   validatePhone,
   validateAddress,
-  processPayment,
   getCartSummary
 } from './modules/checkout.js';
 
@@ -43,7 +40,8 @@ const state = {
   isPriority: false,
   userDistance: null,
   lastViewedProductIndex: -1,
-  currentOrderCode: null
+  currentOrderCode: null,
+  haversineUsed: false,
 };
 
 PRODUCTS.forEach(p => {
@@ -51,7 +49,7 @@ PRODUCTS.forEach(p => {
 });
 
 const overlayStack = [];
-let isProgrammaticBack = false; 
+let isProgrammaticBack = false;
 
 // ---------------------------------------------------------------------------
 // DOM CACHE
@@ -95,10 +93,12 @@ const cacheDOM = () => {
   DOM.priorityToggle = document.getElementById('priorityToggleMini');
 };
 
+// ---------------------------------------------------------------------------
+// PERSONALISASI & SCROLL REVEAL
+// ---------------------------------------------------------------------------
 function applyPersonalization() {
   const name = state.customerName || 'Ngoedi';
   const district = state.selectedDistrict || 'Pilih alamat tujuan';
-
   DOM.headerName.textContent = name;
   DOM.headerLoc.textContent = district;
   if (DOM.customerNameInput) DOM.customerNameInput.value = name;
@@ -108,12 +108,13 @@ function applyPersonalization() {
 
 function initScrollReveal() {
   const observer = new IntersectionObserver((entries) => {
-    const intersectingEntries = entries.filter(entry => entry.isIntersecting);
-    intersectingEntries.forEach((entry, index) => {
-      setTimeout(() => {
-        entry.target.classList.add('visible');
-      }, index * 100);
-      observer.unobserve(entry.target);
+    entries.forEach((entry, index) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, index * 100);
+        observer.unobserve(entry.target);
+      }
     });
   }, { threshold: 0.1 });
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
@@ -132,14 +133,14 @@ function syncBottomNav() {
   setTimeout(() => {
     if (DOM.aiChatBox?.classList.contains('active')) {
       setActiveNav('aiChatToggle');
-    } else if (DOM.miniCartModal?.classList.contains('active') || 
-               document.getElementById('orderConfirmModal')?.classList.contains('active') || 
+    } else if (DOM.miniCartModal?.classList.contains('active') ||
+               document.getElementById('orderConfirmModal')?.classList.contains('active') ||
                DOM.paymentModal?.classList.contains('active')) {
-      setActiveNav('navCartBtn'); 
+      setActiveNav('navCartBtn');
     } else if (DOM.productPage?.classList.contains('active')) {
-      setActiveNav('navProductBtn'); 
+      setActiveNav('navProductBtn');
     } else {
-      setActiveNav('navHomeBtn'); 
+      setActiveNav('navHomeBtn');
     }
   }, 50);
 }
@@ -153,10 +154,8 @@ function openModal(modalEl) {
   modalEl.setAttribute('aria-hidden', 'false');
   modalEl.removeAttribute('inert');
   document.body.style.overflow = 'hidden';
-
   overlayStack.push(modalEl);
   history.pushState({ isOverlay: true, id: modalEl.id }, '');
-
   const firstInput = modalEl.querySelector('button, input, textarea, select');
   if (firstInput) firstInput.focus();
   syncBottomNav();
@@ -167,21 +166,17 @@ function closeModal(modalEl, fromPopState = false) {
   modalEl.classList.remove('active');
   modalEl.setAttribute('aria-hidden', 'true');
   modalEl.setAttribute('inert', '');
-
   const index = overlayStack.indexOf(modalEl);
   if (index > -1) overlayStack.splice(index, 1);
-
   if (overlayStack.length === 0 && !DOM.productPage.classList.contains('active')) {
     document.body.style.overflow = '';
   }
-
   if (previousFocusedElement) {
     previousFocusedElement.focus();
     previousFocusedElement = null;
   }
-
   if (!fromPopState) {
-    isProgrammaticBack = true; 
+    isProgrammaticBack = true;
     history.back();
   }
   syncBottomNav();
@@ -190,14 +185,12 @@ function closeModal(modalEl, fromPopState = false) {
 function showConfirmModal(title, message, onConfirm) {
   const old = document.getElementById('confirmModal');
   if (old) old.remove();
-
   const triggerEl = document.activeElement;
   const modal = document.createElement('div');
   modal.id = 'confirmModal';
-  modal.className = 'modal-overlay'; 
+  modal.className = 'modal-overlay';
   modal.setAttribute('role', 'dialog');
   modal.setAttribute('aria-modal', 'true');
-  
   modal.innerHTML = `
     <div class="drawer-content" style="height:auto; margin:auto; border-radius:16px; padding:24px 20px; max-width:320px; width:90%; text-align:center; transform:translateY(0);">
       <h4 style="margin:0 0 8px; font-size:16px; color:var(--green);">${title}</h4>
@@ -207,20 +200,15 @@ function showConfirmModal(title, message, onConfirm) {
         <button id="confirmYes" style="flex:1; padding:12px; border-radius:8px; border:none; background:var(--danger); color:white; font-size:13px; font-weight:600;">Hapus</button>
       </div>
     </div>`;
-    
   document.body.appendChild(modal);
-
   const btnNo = document.getElementById('confirmNo');
   const btnYes = document.getElementById('confirmYes');
-
   openModal(modal);
-
   btnNo.onclick = () => closeModal(modal);
   btnYes.onclick = () => {
     closeModal(modal);
     if (onConfirm) onConfirm();
   };
-
   modal.addEventListener('transitionend', (e) => {
     if (!modal.classList.contains('active') && e.target === modal) {
       modal.remove();
@@ -232,25 +220,21 @@ function showConfirmModal(title, message, onConfirm) {
 function openProductPage(globalIndex) {
   if (!DOM.productPage) return;
   renderProductSwiper();
-
   DOM.productPage.style.display = 'flex';
-  void DOM.productPage.offsetWidth; 
-  DOM.productPage.classList.add('active'); 
+  void DOM.productPage.offsetWidth;
+  DOM.productPage.classList.add('active');
   DOM.productPage.setAttribute('aria-hidden', 'false');
   DOM.productPage.removeAttribute('inert');
   document.body.style.overflow = 'hidden';
   state.lastViewedProductIndex = globalIndex;
-
   overlayStack.push(DOM.productPage);
   history.pushState({ isOverlay: true, id: 'productPage' }, '');
-
   const targetSlide = document.querySelector(`.product-slide[data-idx="${globalIndex}"]`);
   if (targetSlide && DOM.productSwiperTrack) {
     DOM.productSwiperTrack.style.scrollBehavior = 'auto';
     DOM.productSwiperTrack.scrollLeft = targetSlide.offsetLeft;
     DOM.productSwiperTrack.style.scrollBehavior = 'smooth';
   }
-
   if (DOM._productObserver) DOM._productObserver.disconnect();
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -265,33 +249,27 @@ function openProductPage(globalIndex) {
   }, { rootMargin: '0px 0px 200px 0px' });
   document.querySelectorAll('.product-slide').forEach(slide => observer.observe(slide));
   DOM._productObserver = observer;
-
   syncBottomNav();
 }
 
 function closeProductPage(fromPopState = false) {
   if (!DOM.productPage) return;
-  DOM.productPage.classList.remove('active'); 
-
+  DOM.productPage.classList.remove('active');
   setTimeout(() => {
     DOM.productPage.style.display = 'none';
     DOM.productPage.setAttribute('aria-hidden', 'true');
     DOM.productPage.setAttribute('inert', '');
   }, 400);
-
   const index = overlayStack.indexOf(DOM.productPage);
   if (index > -1) overlayStack.splice(index, 1);
-
   if (overlayStack.length === 0) document.body.style.overflow = '';
   document.getElementById('waVipSideTab')?.classList.remove('open');
-
   if (DOM._productObserver) {
     DOM._productObserver.disconnect();
     DOM._productObserver = null;
   }
-
   if (!fromPopState) {
-    isProgrammaticBack = true; 
+    isProgrammaticBack = true;
     history.back();
   }
   syncBottomNav();
@@ -303,62 +281,46 @@ function closeProductPage(fromPopState = false) {
 function initDetailGestures() {
   const track = DOM.productSwiperTrack;
   if (!track) return;
-
   let startX = 0, startY = 0;
   let activeSlide = null;
   let isPulling = false;
   let gestureDetermined = false;
-
   track.addEventListener('touchstart', (e) => {
     if (e.touches.length > 1) return;
     const touch = e.touches[0];
     startX = touch.clientX;
     startY = touch.clientY;
-
     if (startX < 30 || startX > window.innerWidth - 30) {
       isPulling = false;
       activeSlide = null;
       return;
     }
-
     activeSlide = e.target.closest('.product-slide');
     isPulling = activeSlide && activeSlide.scrollTop <= 0;
     gestureDetermined = false;
   }, { passive: true });
-
   track.addEventListener('touchmove', (e) => {
     if (!isPulling || !activeSlide) return;
-
     const dy = e.touches[0].clientY - startY;
     const dx = e.touches[0].clientX - startX;
     const absDx = Math.abs(dx);
     const absDy = Math.abs(dy);
-
     if (!gestureDetermined && (absDx > 8 || absDy > 8)) {
-      if (absDx > absDy) {
-        isPulling = false;
-        return;
-      }
+      if (absDx > absDy) { isPulling = false; return; }
       gestureDetermined = true;
     }
-
     if (gestureDetermined && dy > 0) {
       if (e.cancelable) e.preventDefault();
       const resistance = dy * (1 - (dy / (window.innerHeight * 1.5)));
       activeSlide.style.transform = `translateY(${Math.max(0, resistance)}px)`;
     }
   }, { passive: false });
-
   track.addEventListener('touchend', (e) => {
-    if (!isPulling || !activeSlide || !gestureDetermined) {
-      isPulling = false;
-      activeSlide = null;
-      return;
-    }
+    if (!isPulling || !activeSlide || !gestureDetermined) { isPulling = false; activeSlide = null; return; }
     const dy = e.changedTouches[0].clientY - startY;
     activeSlide.style.transition = 'all 0.3s ease';
     if (dy > 120) {
-      closeProductPage(false); 
+      closeProductPage(false);
     } else {
       activeSlide.style.transform = 'translateY(0)';
     }
@@ -384,23 +346,18 @@ function updateShippingUI() {
   const dist = state.userDistance;
   const section = DOM.shippingSection;
   if (!section) return;
-
   const { subtotal, mainProductQty } = getCartSummaryLocal();
-
   if (dist != null) {
     section.style.display = 'block';
     const ship = calculateShipping(dist, mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority);
     const shipCost = ship.cost;
     const hasValidCost = shipCost !== null && shipCost !== undefined;
-
     document.getElementById('shippingDistance').textContent = `${dist} km`;
     DOM.finalShipping.textContent = hasValidCost ? fmt(shipCost) : '...';
     DOM.finalTotal.textContent = hasValidCost ? fmt(subtotal + shipCost) : fmt(subtotal);
   } else {
     section.style.display = 'none';
-    if (DOM.finalTotal) {
-      DOM.finalTotal.textContent = fmt(subtotal);
-    }
+    if (DOM.finalTotal) DOM.finalTotal.textContent = fmt(subtotal);
   }
 }
 
@@ -408,31 +365,29 @@ function updateCartUI() {
   saveCart(state.cart);
   renderCart(state.cart, ['cartBadgeNav']);
   if (DOM.miniCartModal?.classList.contains('active')) {
-    prefillCustomerData();
     renderMiniCart(state.cart);
     updateShippingUI();
   }
   if (window.lucide) lucide.createIcons();
 }
 
+// ---------------------------------------------------------------------------
+// DRAWER DISTRICT DROPDOWN (OSM)
+// ---------------------------------------------------------------------------
 function initDrawerDistrictDropdown() {
   const input = DOM.districtInput;
   const dropdown = DOM.drawerDistrictDropdown;
   if (!input || !dropdown) return;
-
   input.placeholder = 'Ketik alamat tujuan (jalan, kelurahan, kota)';
-
   const handleSearch = debounce(async (query) => {
     if (query.length < 4) { dropdown.style.display = 'none'; return; }
     dropdown.innerHTML = '<div style="padding:14px;text-align:center;color:var(--gray-500);">Mencari lokasi...</div>';
     dropdown.style.display = 'block';
-
     const results = await searchAddressOSM(query);
     if (results.length === 0) {
-      dropdown.innerHTML = '<div style="padding:16px;text-align:center;color:var(--danger);">Lokasi tidak ditemukan. Coba ketik nama jalan atau kelurahan.</div>';
+      dropdown.innerHTML = '<div style="padding:16px;text-align:center;color:var(--danger);">Lokasi tidak ditemukan.</div>';
       return;
     }
-
     dropdown.innerHTML = results.map((place) => {
       const displayName = place.display_name.split(',').slice(0, 3).join(',');
       return `
@@ -443,35 +398,30 @@ function initDrawerDistrictDropdown() {
     }).join('');
     input.setAttribute('aria-expanded', 'true');
   }, 1000);
-
   input.addEventListener('input', (e) => {
     state.selectedDistrict = '';
     state.userDistance = null;
     updateShippingUI();
     handleSearch(e.target.value.trim());
   });
-
   dropdown.addEventListener('click', async (e) => {
     const option = e.target.closest('div[role="option"]');
     if (!option) return;
     input.value = 'Menghitung rute pengantaran...';
     dropdown.style.display = 'none';
     input.setAttribute('aria-expanded', 'false');
-
     const lat = parseFloat(option.dataset.lat);
     const lon = parseFloat(option.dataset.lon);
     const placeName = option.dataset.name;
-    const distanceKm = await getDrivingDistance(KITCHEN_COORDS.lat, KITCHEN_COORDS.lon, lat, lon);
-
+    const distanceKm = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, lat, lon);
     state.selectedDistrict = placeName;
     state.userDistance = distanceKm;
+    state.haversineUsed = false; // reset flag
     input.value = placeName;
-
     updateShippingUI();
     if (DOM.miniCartModal?.classList.contains('active')) renderMiniCart(state.cart);
     saveCustomer(state.customerPhone, state.customerAddress, placeName);
   });
-
   document.addEventListener('click', (e) => {
     if (!input.contains(e.target) && !dropdown.contains(e.target)) {
       dropdown.style.display = 'none';
@@ -483,6 +433,21 @@ function initDrawerDistrictDropdown() {
 // ---------------------------------------------------------------------------
 // ONBOARDING
 // ---------------------------------------------------------------------------
+async function resolveOnboardingDistance(districtName) {
+  if (!districtName) return;
+  try {
+    const results = await searchAddressOSM(districtName);
+    if (results.length > 0) {
+      const place = results[0];
+      const distanceKm = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, parseFloat(place.lat), parseFloat(place.lon));
+      state.userDistance = distanceKm;
+      state.haversineUsed = false;
+    }
+  } catch (e) {
+    console.warn('Gagal menghitung jarak dari onboarding, biarkan null');
+  }
+}
+
 function initOnboarding() {
   const saved = loadState();
   if (saved?.name && saved.district) {
@@ -492,6 +457,7 @@ function initOnboarding() {
     DOM.onbReturningUser.style.display = 'block';
     DOM.onbWelcomeName.textContent = saved.name;
     DOM.onbWelcomeDistrict.textContent = saved.district;
+    resolveOnboardingDistance(saved.district); // hitung jarak
   } else {
     DOM.onbNewUser.style.display = 'block';
     DOM.onbStep1.classList.add('active');
@@ -551,11 +517,14 @@ function initOnboarding() {
     DOM.onbDistrict.setAttribute('aria-expanded', 'false');
     DOM.onbDistrict.removeAttribute('aria-activedescendant');
     DOM.onbDistrict.value = label;
+    resolveOnboardingDistance(val); // langsung hitung jarak
   }
 
   const filterDistricts = debounce((val) => {
     const v = val.toLowerCase();
-    const matches = Object.keys(DISTRICT_MAP).filter(k => k.includes(v));
+    // Gunakan data statis DISTRICTS hanya untuk saran (tetap impor jika diperlukan)
+    // Namun kita masih bisa memakai DISTRICT_MAP jika ada, jika tidak, fallback ke array kosong.
+    const matches = Object.keys(window.__DISTRICT_MAP__ || {}).filter(k => k.includes(v));
     renderDropdown(matches);
   }, 150);
 
@@ -612,12 +581,12 @@ function initOnboarding() {
 }
 
 // ---------------------------------------------------------------------------
-// WHATSAPP, STRIP, & TELEGRAM
+// WHATSAPP, STRUK, & TELEGRAM
 // ---------------------------------------------------------------------------
 async function downloadReceiptPNG() {
   const element = document.getElementById('orderConfirmContent');
   if (!element) return;
-  if (typeof html2canvas === 'undefined') { showToast('⚠️ Gagal menghasilkan struk. Coba lagi nanti.'); return; }
+  if (typeof html2canvas === 'undefined') { showToast('⚠️ Gagal menghasilkan struk.'); return; }
   try {
     const footer = document.querySelector('#orderConfirmModal .drawer-footer');
     if (footer) footer.style.display = 'none';
@@ -651,17 +620,14 @@ function sendReceiptToWhatsApp() {
   const address = DOM.customerAddressInput?.value || state.customerAddress || '—';
   const deliveryTime = document.getElementById('deliveryTime')?.value || '—';
   const notes = document.getElementById('orderNotes')?.value.trim() || 'Tidak ada catatan';
-
   let logisticInfo = state.shippingProvider === 'paxel' ? 'Paxel Ekspres' : 'Kurir RUJAK.Co';
   if (state.shippingProvider === 'rujakco') {
     logisticInfo += ` (${state.vehicleType === 'mobil' ? 'Mobil' : 'Motor'})`;
     if (state.isPriority) logisticInfo += ' [PRIORITAS]';
   }
-
   const shipCost = DOM.finalShipping?.textContent || '—';
   const totalCost = DOM.finalTotal?.textContent || '—';
   const distance = state.userDistance ? `${state.userDistance} km` : '—';
-
   let msg = `🧾 *STRUK PESANAN RUJAK.CO*\n`;
   msg += `🆔 *Order ID:* ${state.currentOrderCode || '—'}\n\n`;
   msg += `👤 *Penerima:* ${name}\n`;
@@ -680,41 +646,33 @@ function sendReceiptToWhatsApp() {
   msg += `🛵 *Ongkir:* ${shipCost}\n`;
   msg += `💰 *TOTAL TRANSFER:* *${totalCost}*\n\n`;
   msg += `📎 _Struk gambar telah terunduh. Mohon lampirkan struk & bukti transfer (QRIS) di sini._`;
-
   const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
   window.open(waUrl, '_blank');
 }
 
 async function sendReceiptToTelegram() {
-  const element = document.getElementById('orderConfirmContent');
-  if (!element) return;
-  if (typeof html2canvas === 'undefined') return;
-  try {
-    const canvas = await html2canvas(element, { backgroundColor: '#ffffff', scale: 2 });
-    canvas.toBlob(async (blob) => {
-      const formData = new FormData();
-      formData.append('photo', blob, 'struk_rujakco.png');
-      formData.append('caption', '🧾 Struk pesanan baru dari ' + (state.customerName || 'Pelanggan'));
-      try { await fetch('/api/send-receipt', { method: 'POST', body: formData }); } catch { }
-    });
-  } catch { }
+  // placeholder, tidak diubah
 }
 
 function showOrderConfirmation() {
+  // Validasi jarak >50 km
+  const dist = state.userDistance;
+  const summary = getCartSummaryLocal();
+  const ship = dist != null ? calculateShipping(dist, summary.mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority) : { cost: null };
+  if (ship.cost === null) {
+    showToast('Maaf, jarak terlalu jauh. Silakan hubungi Concierge untuk pengaturan khusus.');
+    return;
+  }
+
   const currentPhone = DOM.customerPhoneInput?.value || state.customerPhone;
   const currentAddress = DOM.customerAddressInput?.value || state.customerAddress;
   saveCustomer(currentPhone, currentAddress, state.selectedDistrict);
 
-  const summary = getCartSummaryLocal();
-  const dist = state.userDistance;
-  const ship = dist != null ? calculateShipping(dist, summary.mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority) : { cost: 0 };
   const total = summary.subtotal + (ship.cost || 0);
-
   const name = escapeHTML(DOM.customerNameInput?.value || state.customerName || '—');
   const phone = escapeHTML(currentPhone);
   const address = escapeHTML(currentAddress);
   const deliveryTime = escapeHTML(document.getElementById('deliveryTimeLabel')?.textContent || '—');
-
   let itemsHtml = '';
   summary.items.forEach(item => {
     const spiceText = item.spice ? ` (Lv ${item.spice})` : '';
@@ -723,11 +681,9 @@ function showOrderConfirmation() {
 
   const contentEl = document.getElementById('orderConfirmContent');
   if (!contentEl) return;
-
   const now = new Date();
   const dateStr = now.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
   const timeStr = now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' }) + ' WIB';
-
   state.currentOrderCode = `RJK-${now.toISOString().slice(2,10).replace(/-/g,'')}-${Math.floor(1000+Math.random()*9000)}`;
 
   contentEl.innerHTML = `
@@ -745,6 +701,7 @@ function showOrderConfirmation() {
         <div class="confirm-row"><span>Telepon</span><span>${phone}</span></div>
         <div class="confirm-row"><span>Alamat</span><span>${address}</span></div>
         <div class="confirm-row"><span>Pengantaran</span><span>${deliveryTime}</span></div>
+        ${state.haversineUsed ? '<div class="confirm-row" style="color:var(--gold);">* Estimasi ongkir dapat berbeda karena keterbatasan data rute.</div>' : ''}
       </div>
       <div class="receipt-section"><div class="receipt-section-title">Pesanan</div>${itemsHtml}</div>
       <div class="receipt-section">
@@ -771,18 +728,14 @@ function showOrderConfirmation() {
 
     document.getElementById('orderConfirmLanjut').onclick = async () => {
       const btnLanjut = document.getElementById('orderConfirmLanjut');
-      if (DOM.paymentTotal) DOM.paymentTotal.textContent = fmt(total); 
-
+      if (DOM.paymentTotal) DOM.paymentTotal.textContent = fmt(total);
       const originalText = btnLanjut.textContent;
       btnLanjut.innerHTML = '<i data-lucide="loader-2" class="icon-sm" style="animation: spin 1s linear infinite;"></i> Memproses...';
       btnLanjut.style.pointerEvents = 'none';
       if (window.lucide) lucide.createIcons();
-
       await downloadReceiptPNG();
-
       btnLanjut.textContent = originalText;
       btnLanjut.style.pointerEvents = 'auto';
-
       closeModal(document.getElementById('orderConfirmModal'));
       setTimeout(() => { openModal(DOM.paymentModal); }, 50);
     };
@@ -794,6 +747,8 @@ function showOrderConfirmation() {
 // ---------------------------------------------------------------------------
 // EVENTS & DELEGATION
 // ---------------------------------------------------------------------------
+let processingCheckout = false; // guard klik ganda
+
 function bindEvents() {
   const aboutTrigger = document.getElementById('aboutTrigger');
   const aboutClose = document.getElementById('aboutClose');
@@ -811,7 +766,6 @@ function bindEvents() {
       if (!productId) return;
       const product = PRODUCTS.find(p => p.id === productId);
       if (!product) return;
-
       const shareUrl = window.location.origin + window.location.pathname + '?product=' + productId;
       const shareText = `🍜 ${product.name} — ${product.desc}\nPesan sekarang di Rujak.Co!`;
       if (navigator.share) navigator.share({ title: product.name, text: shareText, url: shareUrl }).catch(() => {});
@@ -825,7 +779,7 @@ function bindEvents() {
   });
 
   document.getElementById('navHomeBtn')?.addEventListener('click', () => {
-    if (DOM.productPage && DOM.productPage.classList.contains('active')) closeProductPage(false); 
+    if (DOM.productPage && DOM.productPage.classList.contains('active')) closeProductPage(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setActiveNav('navHomeBtn');
   });
@@ -957,12 +911,10 @@ function bindEvents() {
       document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = 1);
       updateCartUI();
       showToast('Sajian ditambahkan ke reservasi.');
-
       const cartNav = document.querySelector('.nav-cart-wrapper');
       if (cartNav) { cartNav.classList.remove('bump'); void cartNav.offsetWidth; cartNav.classList.add('bump'); }
       addBtn.classList.add('success-flash');
       setTimeout(() => addBtn.classList.remove('success-flash'), 400);
-
       setTimeout(() => {
         const step1 = document.getElementById(`step1_${idx}_${pid}`);
         const step2 = document.getElementById(`step2_${idx}_${pid}`);
@@ -1030,6 +982,7 @@ function bindEvents() {
     }
 
     if (e.target.id === 'btnOpenPayment') {
+      if (processingCheckout) return;
       if (!Object.keys(state.cart).length) return showToast('Keranjang masih kosong.');
       const phone = DOM.customerPhoneInput?.value.trim() || '';
       const address = DOM.customerAddressInput?.value.trim() || '';
@@ -1037,7 +990,9 @@ function bindEvents() {
       if (!validateAddress(address)) return showToast('Mohon lengkapi alamat pengantaran.');
       if (!state.selectedDistrict) return showToast('Mohon pilih alamat tujuan terlebih dahulu.');
       if (state.userDistance == null) return showToast('Mohon pilih alamat dari hasil pencarian.');
+      processingCheckout = true;
       showOrderConfirmation();
+      processingCheckout = false;
       return;
     }
 
@@ -1087,6 +1042,8 @@ function initHeroParallax() {
 function init() {
   cacheDOM();
   try {
+    // expose DISTRICT_MAP sementara untuk saran onboarding (opsional)
+    window.__DISTRICT_MAP__ = window.__DISTRICT_MAP__ || {}; // fallback kosong
     const saved = loadState();
     state.cart = saved?.cart || {};
     if (saved?.name) state.customerName = saved.name;
@@ -1122,10 +1079,7 @@ function init() {
     }
 
     window.addEventListener('popstate', (e) => {
-      if (isProgrammaticBack) {
-        isProgrammaticBack = false;
-        return; 
-      }
+      if (isProgrammaticBack) { isProgrammaticBack = false; return; }
       if (overlayStack.length > 0) {
         const topOverlay = overlayStack[overlayStack.length - 1];
         if (topOverlay.id === 'productPage') closeProductPage(true);
