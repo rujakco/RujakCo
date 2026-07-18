@@ -1,4 +1,4 @@
-// modules/chat.js
+// modules/chat.js — Final (fokus input setelah kirim)
 import { FAQ_DATA } from '../data/config.js';
 import { escapeHTML } from '../utils/helpers.js';
 
@@ -26,6 +26,8 @@ export function initAIChat(welcomeId = 'aiWelcomeMsg', messagesId = 'aiChatMessa
       messages.innerHTML += `<div class="msg-bot" style="margin-bottom:12px;"><span>${found}</span></div>`;
       messages.scrollTop = messages.scrollHeight;
     }, 600);
+    // ✅ Fokus kembali ke input
+    input.focus();
   };
 
   const handleSend = () => {
@@ -37,7 +39,6 @@ export function initAIChat(welcomeId = 'aiWelcomeMsg', messagesId = 'aiChatMessa
   if (send) send.addEventListener('click', handleSend);
   if (input) input.addEventListener('keydown', e => { if (e.key === 'Enter') handleSend(); });
 
-  // Update welcome dengan nama
   return function updateWelcome(name) {
     const wel = document.getElementById(welcomeId);
     if (wel) wel.textContent = `Halo, ${name}! Ada yang bisa kami bantu untuk pesanan Anda?`;
