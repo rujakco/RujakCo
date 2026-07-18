@@ -105,6 +105,7 @@ const cacheDOM = () => {
 function extractShortLocation(fullAddress) {
   if (!fullAddress) return '';
   const parts = fullAddress.split(',').map(p => p.trim());
+  // Cari bagian yang mengandung kata kecamatan/kota/kabupaten
   for (const p of parts) {
     const lower = p.toLowerCase();
     if (lower.includes('kecamatan') || lower.includes('kota') || lower.includes('kabupaten')) {
@@ -113,6 +114,7 @@ function extractShortLocation(fullAddress) {
       return p.replace(/^(kecamatan|kota|kabupaten)\s*/i, '').trim();
     }
   }
+  // Fallback: ambil bagian kedua dari koma
   if (parts.length >= 2) return parts[1] || parts[0];
   return parts[0] || '';
 }
@@ -713,7 +715,7 @@ function initOnboarding() {
 // ---------------------------------------------------------------------------
 
 // 1. downloadReceiptPNG — mengembalikan URL publik setelah upload
-export async function downloadReceiptPNG() {
+async function downloadReceiptPNG() {
   const element = document.getElementById('orderConfirmContent');
   if (!element) return null;
   if (typeof html2canvas === 'undefined') {
@@ -724,8 +726,8 @@ export async function downloadReceiptPNG() {
       return null;
     }
   }
-  const footer = document.querySelector('#orderConfirmModal .drawer-footer');
   try {
+    const footer = document.querySelector('#orderConfirmModal .drawer-footer');
     if (footer) footer.style.display = 'none';
     const canvas = await html2canvas(element, {
       backgroundColor: '#ffffff',
@@ -762,21 +764,40 @@ export async function downloadReceiptPNG() {
 
     const { data: publicUrl } = sb.storage.from('receipts').getPublicUrl(fileName);
     state.receiptUrl = publicUrl.publicUrl;
-    return publicUrl.publicUrl;
+    return publicUrl.publicUrl; // ✅ URL dikembalikan
   } catch (err) {
     console.error('Gagal download/upload:', err);
     return null;
-  } finally {
-    if (footer) footer.style.display = '';
   }
 }
 
-// 2. sendReceiptToTelegram — DINONAKTIFKAN (token tidak aman di client)
-// Fungsi ini tidak digunakan lagi, dipindahkan ke Edge Function.
-// Untuk sementara, kita kosongkan.
+// 2. sendReceiptToTelegram — tetap dengan token hardcoded (sebaiknya pindahkan ke Edge Function)
 async function sendReceiptToTelegram() {
-  console.warn('Fungsi Telegram dinonaktifkan di client. Gunakan Edge Function.');
-  // Tidak melakukan apa-apa.
+  if (!state.receiptUrl || !state.currentOrderCode) {
+    console.warn('Receipt URL atau order code kosong, Telegram tidak dikirim');
+    return;
+  }
+
+  const TELEGRAM_BOT_TOKEN = '8862351367:AAF63f3lrCk5Wl_0tkAdnLiso2__dyzkvHM';
+  const TELEGRAM_CHAT_ID = '792789032';
+
+  const caption = `🧾 *Order Baru:* ${state.currentOrderCode}\n👤 ${state.customerName}\n📞 ${state.customerPhone}\n💰 Total: ${DOM.finalTotal?.textContent}`;
+
+  try {
+    await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHAT_ID,
+        photo: state.receiptUrl,
+        caption,
+        parse_mode: 'Markdown'
+      })
+    });
+    console.log('✅ Telegram terkirim');
+  } catch (err) {
+    console.error('Gagal kirim ke Telegram:', err);
+  }
 }
 
 // 3. sendReceiptToWhatsApp — redirect aman, tidak panggil Telegram
@@ -830,15 +851,12 @@ async function sendReceiptToWhatsApp() {
     }
   }
 
-  // Buka WhatsApp di tab baru (tidak redirect)
-  const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
-  window.open(waUrl, '_blank');
+  state.cart = {};
+  updateCartUI();
 
-  // Kosongkan cart setelah delay agar tidak hilang jika redirect gagal
-  setTimeout(() => {
-    state.cart = {};
-    updateCartUI();
-  }, 2000);
+  // 🔁 Redirect WhatsApp — aman di mobile
+  const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+  window.location.href = waUrl;
 }
 
 // ---------------------------------------------------------------------------
@@ -908,7 +926,7 @@ function showOrderConfirmation() {
     openModal(modal);
     document.getElementById('orderConfirmBack').onclick = () => closeModal(modal);
 
-    // orderConfirmLanjut
+    // ==================== FIX: orderConfirmLanjut ====================
     document.getElementById('orderConfirmLanjut').onclick = async () => {
       const btnLanjut = document.getElementById('orderConfirmLanjut');
       const originalText = btnLanjut.textContent;
@@ -920,7 +938,7 @@ function showOrderConfirmation() {
       const imageUrl = await downloadReceiptPNG();
 
       if (imageUrl) {
-        // Kirim Telegram jika berhasil (tapi fungsi sudah dinonaktifkan)
+        // Kirim Telegram setelah URL valid
         await sendReceiptToTelegram();
       } else {
         showToast('⚠️ Gagal memproses struk, namun pesanan tetap tercatat.');
@@ -1177,7 +1195,7 @@ function bindEvents() {
 
     if (e.target.id === 'priorityToggleMini') { state.isPriority = e.target.checked; updateShippingUI(); return; }
 
-    // Tombol Selesaikan Reservasi (Auto-recover jarak)
+    // ==================== TOMBOL SELESAIKAN RESERVASI (AUTO-RECOVER) ====================
     if (e.target.id === 'btnOpenPayment') {
       if (e.target.disabled) return;
       if (!Object.keys(state.cart).length) return showToast('Keranjang masih kosong.');
@@ -1212,6 +1230,7 @@ function bindEvents() {
             console.warn('Auto-recover gagal:', err);
           }
         }
+        // PASTIKAN TOMBOL SELALU DIAKTIFKAN
         e.target.disabled = false;
         if (!recovered) {
           return showToast('Gagal menghitung jarak. Silakan pilih alamat dari pencarian di atas.');
