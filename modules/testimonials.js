@@ -1,10 +1,11 @@
 export function initTestimonials() {
-  const cards = document.querySelectorAll('.testi-card');
-  const dots = document.querySelectorAll('.testi-dot');
   const container = document.getElementById('testiFlipContainer');
+  if (!container) return;
+  const cards = container.querySelectorAll('.testi-card');
+  const dots = container.querySelectorAll('.testi-dot');
   const pauseBtn = document.getElementById('testiPauseBtn');
   const liveRegion = document.getElementById('testiLiveRegion');
-  if (!container || !cards.length) return;
+  if (!cards.length) return;
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const PAUSE_DURATION = 6000;
@@ -12,13 +13,20 @@ export function initTestimonials() {
   let interval = null, userPaused = prefersReducedMotion, tempPaused = false;
   let resumeTimer = null;
 
-  const getAuthor = (card) => card.querySelector('span')?.textContent || '';
+  const getAuthor = (card) => card.querySelector('span')?.textContent || 'Pelanggan';
 
   function showCard(index, announce) {
+    if (index === currentIndex) return;
     cards.forEach((card, i) => {
-      if (i === index) { card.classList.add('is-active'); card.classList.remove('is-prev'); }
-      else if (i === prevIndex && i !== index) { card.classList.remove('is-active'); card.classList.add('is-prev'); }
-      else { card.classList.remove('is-active', 'is-prev'); }
+      if (i === index) {
+        card.classList.add('is-active');
+        card.classList.remove('is-prev');
+      } else if (i === prevIndex && i !== index) {
+        card.classList.remove('is-active');
+        card.classList.add('is-prev');
+      } else {
+        card.classList.remove('is-active', 'is-prev');
+      }
     });
     dots.forEach((dot, i) => dot.setAttribute('aria-current', i === index ? 'true' : 'false'));
     prevIndex = currentIndex;
@@ -38,7 +46,7 @@ export function initTestimonials() {
   pauseBtn?.addEventListener('click', () => { userPaused = !userPaused; setPauseUI(userPaused); userPaused ? clearInterval(interval) : startFlip(); });
 
   const stopTemp = () => { tempPaused = true; clearTimeout(resumeTimer); };
-  const resumeTemp = () => { tempPaused = false; startFlip(); };
+  const resumeTemp = () => { tempPaused = false; if (!userPaused) startFlip(); };
   container.addEventListener('touchstart', stopTemp);
   container.addEventListener('touchend', () => { clearTimeout(resumeTimer); resumeTimer = setTimeout(resumeTemp, 2000); });
   container.addEventListener('mouseenter', stopTemp);
@@ -54,7 +62,8 @@ export function initTestimonials() {
     });
   });
 
-  showCard(0, false);
+  // Inisialisasi
+  showCard(0, true);
   setPauseUI(userPaused);
   startFlip();
 }
