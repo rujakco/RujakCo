@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (Final Core Engine with Security & A11y Fixes)
+// app.js — Luxury Edition (Final Fixed: header pendek, kurir muncul, data tersimpan)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML } from './utils/helpers.js';
@@ -104,7 +104,6 @@ const cacheDOM = () => {
 function extractShortLocation(fullAddress) {
   if (!fullAddress) return '';
   const parts = fullAddress.split(',').map(p => p.trim());
-  // format umum: jalan, kecamatan, kota, provinsi
   if (parts.length >= 2) {
     return parts[1] || parts[0];
   }
@@ -118,8 +117,10 @@ function applyPersonalization() {
   const name = state.customerName || 'Ngoedi';
   const district = state.selectedDistrict || 'Pilih alamat tujuan';
   DOM.headerName.textContent = name;
-  DOM.headerLoc.textContent = district; // tampil pendek di header
+  DOM.headerLoc.textContent = district;
   if (DOM.customerNameInput) DOM.customerNameInput.value = name;
+  if (DOM.customerPhoneInput) DOM.customerPhoneInput.value = state.customerPhone;
+  if (DOM.customerAddressInput) DOM.customerAddressInput.value = state.customerAddress;
   if (DOM.districtInput) DOM.districtInput.value = state.selectedDistrictFull || district;
   if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Halo, ${name}! Ada yang bisa kami bantu untuk pesanan Anda?`;
 }
@@ -128,9 +129,7 @@ function initScrollReveal() {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry, index) => {
       if (entry.isIntersecting) {
-        setTimeout(() => {
-          entry.target.classList.add('visible');
-        }, index * 100);
+        setTimeout(() => { entry.target.classList.add('visible'); }, index * 100);
         observer.unobserve(entry.target);
       }
     });
@@ -174,11 +173,8 @@ function openModal(modalEl) {
   document.body.style.overflow = 'hidden';
   overlayStack.push(modalEl);
   history.pushState({ isOverlay: true, id: modalEl.id }, '');
-
-  // Inert background content
   DOM.mainContent?.setAttribute('inert', '');
   DOM.bottomNav?.setAttribute('inert', '');
-
   const firstInput = modalEl.querySelector('button, input, textarea, select');
   if (firstInput) firstInput.focus();
   syncBottomNav();
@@ -191,13 +187,11 @@ function closeModal(modalEl, fromPopState = false) {
   modalEl.setAttribute('inert', '');
   const index = overlayStack.indexOf(modalEl);
   if (index > -1) overlayStack.splice(index, 1);
-
   if (overlayStack.length === 0 && !DOM.productPage.classList.contains('active')) {
     document.body.style.overflow = '';
     DOM.mainContent?.removeAttribute('inert');
     DOM.bottomNav?.removeAttribute('inert');
   }
-
   if (previousFocusedElement) {
     previousFocusedElement.focus();
     previousFocusedElement = null;
@@ -450,18 +444,16 @@ function initDrawerDistrictDropdown() {
       state.haversineUsed = result.isHaversine;
     } catch (err) {
       showToast('Gagal menghitung jarak, coba lagi.');
-      console.error(err);
       return;
     }
 
-    // Simpan alamat lengkap dan pendek
     state.selectedDistrictFull = placeName;
     state.selectedDistrict = extractShortLocation(placeName);
-    input.value = placeName; // drawer tetap lengkap
+    input.value = placeName;
     applyPersonalization();
     updateShippingUI();
     if (DOM.miniCartModal?.classList.contains('active')) renderMiniCart(state.cart);
-    saveCustomer(state.customerPhone, state.customerAddress, placeName);
+    saveCustomer(state.customerPhone, state.customerAddress, placeName, state.userDistance);
   });
 
   document.addEventListener('click', (e) => {
@@ -484,11 +476,12 @@ async function resolveOnboardingDistance(districtName) {
       const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, parseFloat(place.lat), parseFloat(place.lon));
       state.userDistance = result.distance;
       state.haversineUsed = result.isHaversine;
-      state.selectedDistrict = districtName; // pendek dari input onboarding
+      state.selectedDistrict = districtName;
       state.selectedDistrictFull = place.display_name;
+      saveCustomer(state.customerPhone, state.customerAddress, districtName, state.userDistance);
     }
   } catch (e) {
-    console.warn('Gagal menghitung jarak dari onboarding, biarkan null');
+    console.warn('Gagal menghitung jarak dari onboarding');
   }
 }
 
@@ -496,12 +489,13 @@ function initOnboarding() {
   const saved = loadState();
   if (saved?.name && saved.district) {
     state.customerName = saved.name;
-    state.selectedDistrict = saved.district;
+    state.selectedDistrictFull = saved.district;
+    state.selectedDistrict = extractShortLocation(saved.district) || saved.district;
     DOM.onbNewUser.style.display = 'none';
     DOM.onbReturningUser.style.display = 'block';
     DOM.onbWelcomeName.textContent = saved.name;
-    DOM.onbWelcomeDistrict.textContent = saved.district;
-    resolveOnboardingDistance(saved.district);
+    DOM.onbWelcomeDistrict.textContent = state.selectedDistrict;
+    resolveOnboardingDistance(state.selectedDistrict);
   } else {
     DOM.onbNewUser.style.display = 'block';
     DOM.onbStep1.classList.add('active');
@@ -512,10 +506,7 @@ function initOnboarding() {
     if (!name) return showToast('Mohon isi nama Anda.');
     state.customerName = name;
     DOM.onbStep1.classList.remove('active');
-    setTimeout(() => {
-      DOM.onbStep2.classList.add('active');
-      DOM.onbDistrict.focus();
-    }, 100);
+    setTimeout(() => { DOM.onbStep2.classList.add('active'); DOM.onbDistrict.focus(); }, 100);
   });
 
   document.getElementById('onbGuestBtn')?.addEventListener('click', () => {
@@ -525,7 +516,7 @@ function initOnboarding() {
     setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, 600);
     DOM.headerName.textContent = 'Tamu';
     DOM.headerLoc.textContent = 'Pilih Lokasi';
-    if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Halo, Tamu! Ada yang bisa kami bantu hari ini?`;
+    if (DOM.aiWelcome) DOM.aiWelcome.textContent = 'Halo, Tamu! Ada yang bisa kami bantu hari ini?';
     initScrollReveal();
   });
 
@@ -571,10 +562,7 @@ function initOnboarding() {
   }, 150);
 
   DOM.onbDistrict.addEventListener('input', (e) => filterDistricts(e.target.value));
-  DOM.onbDistrict.addEventListener('focus', () => {
-    if (!DOM.onbDistrict.value) filterDistricts('');
-  });
-
+  DOM.onbDistrict.addEventListener('focus', () => { if (!DOM.onbDistrict.value) filterDistricts(''); });
   DOM.onbDistrict.addEventListener('keydown', (e) => {
     const opts = dropdown.querySelectorAll('div[role="option"]');
     if (!opts.length || dropdown.style.display === 'none') return;
@@ -652,8 +640,6 @@ async function downloadReceiptPNG() {
     });
   } catch (err) {
     showToast('⚠️ Gagal mengunduh struk');
-    const footer = document.querySelector('#orderConfirmModal .drawer-footer');
-    if (footer) footer.style.display = '';
   }
 }
 
@@ -672,26 +658,16 @@ function sendReceiptToWhatsApp() {
   const shipCost = DOM.finalShipping?.textContent || '—';
   const totalCost = DOM.finalTotal?.textContent || '—';
   const distance = state.userDistance ? `${state.userDistance} km` : '—';
-  let msg = `🧾 *STRUK PESANAN RUJAK.CO*\n`;
-  msg += `🆔 *Order ID:* ${state.currentOrderCode || '—'}\n\n`;
-  msg += `👤 *Penerima:* ${name}\n`;
-  msg += `📞 *HP:* ${phone}\n`;
-  msg += `📍 *Alamat:* ${address}\n`;
-  msg += `🗺️ *Jarak:* ${distance}\n`;
-  msg += `🕒 *Pengantaran:* ${deliveryTime}\n`;
-  msg += `📝 *Catatan:* ${notes}\n`;
-  msg += `🚚 *Kurir:* ${logisticInfo}\n\n`;
-  msg += `📦 *Pesanan:*\n`;
+  let msg = `🧾 *STRUK PESANAN RUJAK.CO*\n🆔 *Order ID:* ${state.currentOrderCode || '—'}\n\n`;
+  msg += `👤 *Penerima:* ${name}\n📞 *HP:* ${phone}\n📍 *Alamat:* ${address}\n`;
+  msg += `🗺️ *Jarak:* ${distance}\n🕒 *Pengantaran:* ${deliveryTime}\n📝 *Catatan:* ${notes}\n🚚 *Kurir:* ${logisticInfo}\n\n📦 *Pesanan:*\n`;
   summary.items.forEach(item => {
     const spiceText = item.spice ? ` (Lv ${item.spice})` : '';
     msg += `• ${item.name}${spiceText} x${item.qty} = ${fmt(item.price * item.qty)}\n`;
   });
-  msg += `\n💵 *Subtotal:* ${fmt(summary.subtotal)}\n`;
-  msg += `🛵 *Ongkir:* ${shipCost}\n`;
-  msg += `💰 *TOTAL TRANSFER:* *${totalCost}*\n\n`;
+  msg += `\n💵 *Subtotal:* ${fmt(summary.subtotal)}\n🛵 *Ongkir:* ${shipCost}\n💰 *TOTAL TRANSFER:* *${totalCost}*\n\n`;
   msg += `📎 _Struk gambar telah terunduh. Mohon lampirkan struk & bukti transfer (QRIS) di sini._`;
-  const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
-  window.open(waUrl, '_blank');
+  window.open(`https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
 function showOrderConfirmation() {
@@ -699,13 +675,13 @@ function showOrderConfirmation() {
   const summary = getCartSummaryLocal();
   const ship = dist != null ? calculateShipping(dist, summary.mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority) : { cost: null };
   if (ship.cost === null) {
-    showToast('Maaf, jarak terlalu jauh. Silakan hubungi Concierge untuk pengaturan khusus.');
+    showToast('Maaf, jarak terlalu jauh. Silakan hubungi Concierge.');
     return;
   }
 
   const currentPhone = DOM.customerPhoneInput?.value || state.customerPhone;
   const currentAddress = DOM.customerAddressInput?.value || state.customerAddress;
-  saveCustomer(currentPhone, currentAddress, state.selectedDistrict);
+  saveCustomer(currentPhone, currentAddress, state.selectedDistrict, state.userDistance);
 
   const total = summary.subtotal + (ship.cost || 0);
   const name = escapeHTML(DOM.customerNameInput?.value || state.customerName || '—');
@@ -728,48 +704,34 @@ function showOrderConfirmation() {
   contentEl.innerHTML = `
     <div class="receipt-wrap">
       <div class="receipt-stamp">Menunggu Pembayaran</div>
-      <div class="receipt-header">
-        <img class="receipt-logo" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="RUJAK.Co" />
-        <div class="receipt-brand">RUJAK.Co</div>
-        <div class="receipt-tagline">Indonesia dalam Satu Wadah</div>
-      </div>
+      <div class="receipt-header"><img class="receipt-logo" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="RUJAK.Co" /><div class="receipt-brand">RUJAK.Co</div><div class="receipt-tagline">Indonesia dalam Satu Wadah</div></div>
       <div class="receipt-meta"><span class="code">${state.currentOrderCode}</span><span>${dateStr} · ${timeStr}</span></div>
-      <div class="receipt-section">
-        <div class="receipt-section-title">Data Penerima</div>
+      <div class="receipt-section"><div class="receipt-section-title">Data Penerima</div>
         <div class="confirm-row"><span>Nama</span><span>${name}</span></div>
         <div class="confirm-row"><span>Telepon</span><span>${phone}</span></div>
         <div class="confirm-row"><span>Alamat</span><span>${address}</span></div>
         <div class="confirm-row"><span>Pengantaran</span><span>${deliveryTime}</span></div>
-        ${state.haversineUsed ? '<div class="confirm-row" style="color:var(--gold);">* Estimasi ongkir dapat berbeda karena keterbatasan data rute.</div>' : ''}
+        ${state.haversineUsed ? '<div class="confirm-row" style="color:var(--gold);">* Estimasi ongkir dapat berbeda.</div>' : ''}
       </div>
       <div class="receipt-section"><div class="receipt-section-title">Pesanan</div>${itemsHtml}</div>
-      <div class="receipt-section">
-        <div class="receipt-section-title">Rincian Biaya</div>
+      <div class="receipt-section"><div class="receipt-section-title">Rincian Biaya</div>
         <div class="confirm-row"><span>Subtotal</span><span>${fmt(summary.subtotal)}</span></div>
         <div class="confirm-row"><span>Ongkir</span><span>${fmt(ship.cost || 0)}</span></div>
         <div class="confirm-row total"><span>Total</span><span>${fmt(total)}</span></div>
       </div>
-      <div class="receipt-footer">
-        <p>"Asam, pedas, manis, segar — terima kasih telah memilih RUJAK.Co."</p>
-        <div class="receipt-barcode"></div>
-        <div class="receipt-code-text">${state.currentOrderCode}</div>
-      </div>
-    </div>
-  `;
-
+      <div class="receipt-footer"><p>"Asam, pedas, manis, segar — terima kasih telah memilih RUJAK.Co."</p><div class="receipt-barcode"></div><div class="receipt-code-text">${state.currentOrderCode}</div></div>
+    </div>`;
   if (window.lucide) lucide.createIcons();
 
   const modal = document.getElementById('orderConfirmModal');
   if (modal) {
     openModal(modal);
-    const backBtn = document.getElementById('orderConfirmBack');
-    if (backBtn) backBtn.onclick = () => closeModal(modal);
-
+    document.getElementById('orderConfirmBack').onclick = () => closeModal(modal);
     document.getElementById('orderConfirmLanjut').onclick = async () => {
       const btnLanjut = document.getElementById('orderConfirmLanjut');
       if (DOM.paymentTotal) DOM.paymentTotal.textContent = fmt(total);
       const originalText = btnLanjut.textContent;
-      btnLanjut.innerHTML = '<i data-lucide="loader-2" class="icon-sm" style="animation: spin 1s linear infinite;"></i> Memproses...';
+      btnLanjut.innerHTML = '<i data-lucide="loader-2" class="icon-sm" style="animation:spin 1s linear infinite;"></i> Memproses...';
       btnLanjut.style.pointerEvents = 'none';
       if (window.lucide) lucide.createIcons();
       await downloadReceiptPNG();
@@ -782,31 +744,26 @@ function showOrderConfirmation() {
 }
 
 // ---------------------------------------------------------------------------
-// EVENTS & DELEGATION
+// EVENT BINDINGS
 // ---------------------------------------------------------------------------
 function bindEvents() {
-  const aboutTrigger = document.getElementById('aboutTrigger');
-  const aboutClose = document.getElementById('aboutClose');
-  if (aboutTrigger && DOM.aboutModal) aboutTrigger.addEventListener('click', () => openModal(DOM.aboutModal));
-  if (aboutClose && DOM.aboutModal) aboutClose.addEventListener('click', () => closeModal(DOM.aboutModal));
+  document.getElementById('aboutTrigger')?.addEventListener('click', () => openModal(DOM.aboutModal));
+  document.getElementById('aboutClose')?.addEventListener('click', () => closeModal(DOM.aboutModal));
 
-  const shareBtn = document.getElementById('shareProductBtn');
-  if (shareBtn) {
-    shareBtn.addEventListener('click', () => {
-      const track = DOM.productSwiperTrack;
-      if (!track) return;
-      const slideWidth = track.querySelector('.product-slide')?.offsetWidth || track.clientWidth;
-      const currentIndex = Math.round(track.scrollLeft / slideWidth);
-      const productId = PRODUCTS[currentIndex % PRODUCTS.length]?.id;
-      if (!productId) return;
-      const product = PRODUCTS.find(p => p.id === productId);
-      if (!product) return;
-      const shareUrl = window.location.origin + window.location.pathname + '?product=' + productId;
-      const shareText = `🍜 ${product.name} — ${product.desc}\nPesan sekarang di Rujak.Co!`;
-      if (navigator.share) navigator.share({ title: product.name, text: shareText, url: shareUrl }).catch(() => {});
-      else navigator.clipboard.writeText(shareUrl + '\n' + shareText).then(() => showToast('📋 Link produk disalin!')).catch(() => showToast('📋 Gagal menyalin link'));
-    });
-  }
+  document.getElementById('shareProductBtn')?.addEventListener('click', () => {
+    const track = DOM.productSwiperTrack;
+    if (!track) return;
+    const slideWidth = track.querySelector('.product-slide')?.offsetWidth || track.clientWidth;
+    const currentIndex = Math.round(track.scrollLeft / slideWidth);
+    const productId = PRODUCTS[currentIndex % PRODUCTS.length]?.id;
+    if (!productId) return;
+    const product = PRODUCTS.find(p => p.id === productId);
+    if (!product) return;
+    const shareUrl = window.location.origin + window.location.pathname + '?product=' + productId;
+    const shareText = `🍜 ${product.name} — ${product.desc}\nPesan sekarang di Rujak.Co!`;
+    if (navigator.share) navigator.share({ title: product.name, text: shareText, url: shareUrl }).catch(() => {});
+    else navigator.clipboard.writeText(shareUrl + '\n' + shareText).then(() => showToast('📋 Link produk disalin!')).catch(() => showToast('📋 Gagal menyalin link'));
+  });
 
   document.getElementById('waVipHandle')?.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -814,13 +771,13 @@ function bindEvents() {
   });
 
   document.getElementById('navHomeBtn')?.addEventListener('click', () => {
-    if (DOM.productPage && DOM.productPage.classList.contains('active')) closeProductPage(false);
+    if (DOM.productPage?.classList.contains('active')) closeProductPage(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setActiveNav('navHomeBtn');
   });
 
   document.getElementById('navProductBtn')?.addEventListener('click', () => {
-    if (DOM.productPage && DOM.productPage.classList.contains('active')) return;
+    if (DOM.productPage?.classList.contains('active')) return;
     openProductPage(state.lastViewedProductIndex >= 0 ? state.lastViewedProductIndex : 0);
   });
 
@@ -829,7 +786,6 @@ function bindEvents() {
   const deliveryHidden = document.getElementById('deliveryTime');
   const deliveryLabel = document.getElementById('deliveryTimeLabel');
   let deliveryActiveIndex = 0;
-
   const preselected = deliveryDropdown?.querySelector('[aria-selected="true"]');
   if (preselected) { deliveryLabel.textContent = preselected.textContent; deliveryHidden.value = preselected.dataset.value; }
 
@@ -840,12 +796,10 @@ function bindEvents() {
     deliveryHidden.value = option.dataset.value;
     closeDeliveryDropdown();
   }
-
   function closeDeliveryDropdown() {
     deliveryDropdown.style.display = 'none';
     deliveryTrigger.setAttribute('aria-expanded', 'false');
   }
-
   function openDeliveryDropdown() {
     deliveryDropdown.style.display = 'block';
     deliveryTrigger.setAttribute('aria-expanded', 'true');
@@ -854,8 +808,7 @@ function bindEvents() {
     if (deliveryActiveIndex === -1) deliveryActiveIndex = 0;
     opts[deliveryActiveIndex]?.focus();
   }
-
-  deliveryTrigger?.addEventListener('click', () => { deliveryDropdown.style.display === 'block' ? closeDeliveryDropdown() : openDeliveryDropdown(); });
+  deliveryTrigger?.addEventListener('click', () => deliveryDropdown.style.display === 'block' ? closeDeliveryDropdown() : openDeliveryDropdown());
   deliveryTrigger?.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDeliveryDropdown(); } });
   deliveryDropdown?.addEventListener('click', (e) => { const option = e.target.closest('[role="option"]'); if (option) setDeliveryOption(option); });
   deliveryDropdown?.addEventListener('keydown', (e) => {
@@ -866,7 +819,6 @@ function bindEvents() {
     else if (e.key === 'Enter') { e.preventDefault(); setDeliveryOption(opts[deliveryActiveIndex]); }
     else if (e.key === 'Escape') { closeDeliveryDropdown(); deliveryTrigger.focus(); }
   });
-
   document.addEventListener('click', (e) => { if (!deliveryTrigger?.contains(e.target) && !deliveryDropdown?.contains(e.target)) closeDeliveryDropdown(); });
 
   document.getElementById('miniCartClose')?.addEventListener('click', () => closeModal(DOM.miniCartModal));
@@ -878,25 +830,20 @@ function bindEvents() {
     state.customerName = DOM.customerNameInput.value;
     saveUser(state.customerName, state.selectedDistrict);
     DOM.headerName.textContent = state.customerName || 'Ngoedi';
-    if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Halo, ${state.customerName || 'Ngoedi'}! Ada yang bisa kami bantu untuk pesanan Anda?`;
+    if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Halo, ${state.customerName || 'Ngoedi'}! Ada yang bisa kami bantu?`;
   });
-
   DOM.customerPhoneInput?.addEventListener('input', () => {
     state.customerPhone = DOM.customerPhoneInput.value;
-    saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict);
+    saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict, state.userDistance);
   });
   DOM.customerAddressInput?.addEventListener('input', () => {
     state.customerAddress = DOM.customerAddressInput.value;
-    saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict);
+    saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict, state.userDistance);
   });
 
   document.addEventListener('click', (e) => {
     const boutique = e.target.closest('.boutique-item');
-    if (boutique) {
-      const idx = parseInt(boutique.dataset.idx);
-      if (!isNaN(idx)) openProductPage(idx);
-      return;
-    }
+    if (boutique) { const idx = parseInt(boutique.dataset.idx); if (!isNaN(idx)) openProductPage(idx); return; }
 
     const step1Btn = e.target.closest('.step-1-btn');
     if (step1Btn) {
@@ -960,7 +907,7 @@ function bindEvents() {
 
     if (e.target.closest('[data-action="confirm-wa"]')) {
       sendReceiptToWhatsApp();
-      saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict);
+      saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict, state.userDistance);
       state.cart = {};
       updateCartUI();
       closeModal(DOM.paymentModal);
@@ -1036,12 +983,7 @@ function bindEvents() {
     if (e.target.closest('#navCartBtn')) { e.preventDefault(); openModal(DOM.miniCartModal); renderMiniCart(state.cart); updateShippingUI(); return; }
 
     const faqToggle = e.target.closest('[data-toggle="faq"]');
-    if (faqToggle) {
-      const item = faqToggle.closest('.faq-item');
-      const isOpen = item.classList.toggle('open');
-      faqToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-      return;
-    }
+    if (faqToggle) { const item = faqToggle.closest('.faq-item'); const isOpen = item.classList.toggle('open'); faqToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false'); return; }
   });
 
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
@@ -1082,13 +1024,20 @@ function init() {
     state.cart = saved?.cart || {};
     if (saved?.name) state.customerName = saved.name;
     if (saved?.district) {
-      state.selectedDistrict = saved.district;
-      state.selectedDistrictFull = saved.district; // untuk pertama kali
+      state.selectedDistrictFull = saved.district;
+      state.selectedDistrict = extractShortLocation(saved.district) || saved.district;
     }
     const cust = loadCustomer();
     if (cust) {
       state.customerPhone = cust.phone || '';
       state.customerAddress = cust.address || '';
+      if (!state.selectedDistrict && cust.district) {
+        state.selectedDistrictFull = cust.district;
+        state.selectedDistrict = extractShortLocation(cust.district) || cust.district;
+      }
+      if (cust.distance !== null && cust.distance !== undefined && !isNaN(cust.distance)) {
+        state.userDistance = cust.distance;
+      }
     }
 
     renderMenu();
@@ -1104,6 +1053,7 @@ function init() {
     initDrawerDistrictDropdown();
     initTestimonials();
     updateCartUI();
+    applyPersonalization();
 
     if (window.lucide) lucide.createIcons();
     initHeroParallax();
