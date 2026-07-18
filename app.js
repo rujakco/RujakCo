@@ -764,7 +764,7 @@ async function downloadReceiptPNG() {
 
     const { data: publicUrl } = sb.storage.from('receipts').getPublicUrl(fileName);
     state.receiptUrl = publicUrl.publicUrl;
-    return publicUrl.publicUrl; // ✅ URL dikembalikan
+    return publicUrl.publicUrl;
   } catch (err) {
     console.error('Gagal download/upload:', err);
     return null;
@@ -803,6 +803,13 @@ async function sendReceiptToTelegram() {
 // 3. sendReceiptToWhatsApp — redirect aman, tidak panggil Telegram
 async function sendReceiptToWhatsApp() {
   const summary = getCartSummaryLocal();
+  
+  // --- CEK KERANJANG KOSONG ---
+  if (summary.items.length === 0) {
+    showToast('❌ Keranjang kosong, tidak bisa konfirmasi.');
+    return;
+  }
+
   const name = DOM.customerNameInput?.value || state.customerName || 'Ngoedi';
   const phone = DOM.customerPhoneInput?.value || state.customerPhone || '—';
   const address = DOM.customerAddressInput?.value || state.customerAddress || '—';
@@ -815,12 +822,16 @@ async function sendReceiptToWhatsApp() {
   }
   const shipCost = DOM.finalShipping?.textContent || '—';
   
-  // --- PERBAIKAN: hitung total dari state, bukan dari DOM ---
-  const dist = state.userDistance;
-  const ship = dist != null ? calculateShipping(dist, summary.mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority) : { cost: 0 };
-  const total = summary.subtotal + (ship.cost || 0);
-  const totalCost = fmt(total);
-  // ---------------------------------------------------------
+  // --- AMBIL TOTAL DARI DOM (SAMA SEPERTI TELEGRAM) ---
+  let totalCost = DOM.finalTotal?.textContent || '—';
+  // Jika totalCost masih '—' atau tidak valid, fallback ke perhitungan ulang
+  if (totalCost === '—' || totalCost === 'Rp0' || totalCost === 'Rp 0' || totalCost === 'Rp0,00') {
+    const dist = state.userDistance;
+    const ship = dist != null ? calculateShipping(dist, summary.mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority) : { cost: 0 };
+    const total = summary.subtotal + (ship.cost || 0);
+    totalCost = fmt(total);
+  }
+  // -------------------------------------------------
 
   const distance = state.userDistance ? `${state.userDistance} km` : '—';
   let msg = `🧾 *STRUK PESANAN RUJAK.CO*\n🆔 *Order ID:* ${state.currentOrderCode || '—'}\n\n`;
@@ -858,10 +869,11 @@ async function sendReceiptToWhatsApp() {
     }
   }
 
+  // Kosongkan cart setelah pesan dibuat
   state.cart = {};
   updateCartUI();
 
-  // 🔁 Redirect WhatsApp — aman di mobile
+  // Redirect ke WhatsApp
   const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
   window.location.href = waUrl;
 }
@@ -956,6 +968,8 @@ function showOrderConfirmation() {
 
       closeModal(document.getElementById('orderConfirmModal'));
       setTimeout(() => {
+        // 🔥 ISI TOTAL QRIS SEBELUM BUKA MODAL
+        DOM.paymentTotal.textContent = fmt(total);
         openModal(DOM.paymentModal);
       }, 50);
     };
