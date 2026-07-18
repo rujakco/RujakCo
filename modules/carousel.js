@@ -1,16 +1,14 @@
-// modules/carousel.js – Final Stable (typing halus, aman scroll cepat)
+// modules/carousel.js — Final (auto‑scroll presisi, typing halus)
 import { PRODUCTS } from '../data/products.js';
 
 const LOOP_MULTIPLIER = 3;
 let currentInsightId = null;
 
-// Typing state
 let typeTimer = null;
 let fadeTimer = null;
 let fullText = '';
 let charIndex = 0;
 
-// Auto‑play state
 let autoScrollInterval = null;
 let scrollTimeout = null;
 const SCROLL_DELAY = 3500;
@@ -23,7 +21,6 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
   const insightEl = document.getElementById(insightId);
   if (!insightEl) return;
 
-  // Batalkan semua timer yang sedang berjalan
   function abortAll() {
     clearTimeout(typeTimer);
     clearTimeout(fadeTimer);
@@ -31,10 +28,9 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
     fadeTimer = null;
   }
 
-  // Mulai mengetik teks baru (langsung, tanpa fade-in)
   function startTyping(text) {
     abortAll();
-    insightEl.classList.remove('fade-out'); // hapus kelas fade jika masih ada
+    insightEl.classList.remove('fade-out');
     fullText = text;
     charIndex = 0;
     insightEl.textContent = '';
@@ -49,7 +45,6 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
     }
   }
 
-  // Update slide center & insight
   const updateCenter = () => {
     const items = track.querySelectorAll('.boutique-item');
     if (!items.length) return -1;
@@ -76,15 +71,11 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
         const prod = PRODUCTS.find(p => p.id === newId);
         if (prod) {
           const nextText = prod.insight || prod.desc;
-
-          // Batalkan semua proses sebelumnya
           abortAll();
-
-          // Mulai fade-out sebentar, lalu langsung ketik
           insightEl.classList.add('fade-out');
           fadeTimer = setTimeout(() => {
             startTyping(nextText);
-          }, 150); // fade-out 150ms sudah cukup
+          }, 150);
         }
       }
     }
@@ -118,17 +109,17 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
     }, 250);
   }, { passive: true });
 
-  // Auto‑play
+  // ✅ Auto‑play presisi dengan elemen aktif
   function startAutoScroll() {
     stopAutoScroll();
     autoScrollInterval = setInterval(() => {
-      const firstItem = track.querySelector('.boutique-item');
-      if (!firstItem) return;
-      const itemWidth = firstItem.offsetWidth + 16;
-      const maxScroll = track.scrollWidth - track.clientWidth;
-      let nextScroll = track.scrollLeft + itemWidth;
-      if (nextScroll >= maxScroll - 10) nextScroll = 0;
-      track.scrollTo({ left: nextScroll, behavior: 'smooth' });
+      const active = track.querySelector('.boutique-item.active-center');
+      if (!active) return;
+      let next = active.nextElementSibling;
+      if (!next) next = track.firstElementChild;
+      if (!next) return;
+      const targetLeft = next.offsetLeft - track.clientWidth / 2 + next.clientWidth / 2;
+      track.scrollTo({ left: Math.max(0, targetLeft), behavior: 'smooth' });
     }, SCROLL_DELAY);
   }
 
