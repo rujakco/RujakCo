@@ -1,4 +1,4 @@
-// modules/testimonials.js
+// modules/testimonials.js — Final (animasi prev akurat)
 export function initTestimonials() {
   const cards = document.querySelectorAll('.testi-card');
   const dots = document.querySelectorAll('.testi-dot');
@@ -14,15 +14,17 @@ export function initTestimonials() {
   let interval = null;
   let userPaused = prefersReducedMotion;
   let tempPaused = false;
+  let prevIndex = totalCards - 1; // ✅ lacak slide sebelumnya
 
   const getAuthor = (card) => card.querySelector('span')?.textContent || '';
 
   function showCard(index, announce) {
+    // ✅ Tentukan prev sebagai slide yang sedang aktif sebelumnya
     cards.forEach((card, i) => {
       if (i === index) {
         card.classList.add('is-active');
         card.classList.remove('is-prev');
-      } else if (i < index || (index === 0 && i === totalCards - 1)) {
+      } else if (i === prevIndex && i !== index) {
         card.classList.remove('is-active');
         card.classList.add('is-prev');
       } else {
@@ -30,6 +32,7 @@ export function initTestimonials() {
       }
     });
     dots.forEach((dot, i) => dot.setAttribute('aria-current', i === index ? 'true' : 'false'));
+    prevIndex = currentIndex;
     currentIndex = index;
     if (announce && liveRegion) {
       liveRegion.textContent = `Testimoni dari ${getAuthor(cards[index])}`;
@@ -38,7 +41,8 @@ export function initTestimonials() {
 
   function nextCard() {
     if (userPaused || tempPaused) return;
-    showCard((currentIndex + 1) % totalCards, true);
+    const nextIndex = (currentIndex + 1) % totalCards;
+    showCard(nextIndex, true);
   }
 
   function startFlip() {
@@ -59,19 +63,30 @@ export function initTestimonials() {
     userPaused ? clearInterval(interval) : startFlip();
   });
 
-  const stopTemp = () => { tempPaused = true; };
+  let resumeTimer = null;
+  const stopTemp = () => { tempPaused = true; clearTimeout(resumeTimer); };
   const resumeTemp = () => { tempPaused = false; startFlip(); };
   container.addEventListener('touchstart', stopTemp);
-  container.addEventListener('touchend', () => setTimeout(resumeTemp, 2000));
+  container.addEventListener('touchend', () => {
+    clearTimeout(resumeTimer);
+    resumeTimer = setTimeout(resumeTemp, 2000);
+  });
   container.addEventListener('mouseenter', stopTemp);
-  container.addEventListener('mouseleave', () => tempPaused && resumeTemp());
+  container.addEventListener('mouseleave', () => {
+    if (tempPaused) {
+      clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(resumeTemp, 1000);
+    }
+  });
 
   dots.forEach((dot) => {
     dot.addEventListener('click', (e) => {
       e.stopPropagation();
-      showCard(parseInt(dot.dataset.dot), true);
+      const targetIndex = parseInt(dot.dataset.dot);
+      showCard(targetIndex, true);
       stopTemp();
-      setTimeout(resumeTemp, 3000);
+      clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(resumeTemp, 3000);
     });
   });
 
