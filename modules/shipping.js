@@ -1,11 +1,15 @@
 import { SYSTEM } from '../data/config.js';
 
 export function calculateShipping(distance, mainQty, provider = 'rujakco', vehicle = 'motor', priority = false) {
-  const dist = distance || SYSTEM.DEFAULT_DISTANCE;
+  const dist = distance || SYSTEM?.DEFAULT_DISTANCE || 5;
+  if (dist < 0) return { cost: null, label: 'Jarak tidak valid' };
   if (dist > 50) return { cost: null, label: 'Konfirmasi via Concierge' };
+  
+  const qty = Math.max(1, mainQty || 1);
+
   if (provider === 'paxel') {
-    const large = Math.floor(mainQty / 2);
-    const med = mainQty % 2;
+    const large = Math.floor(qty / 2);
+    const med = qty % 2;
     return { cost: (large * 25000) + (med * 20000) + ((large + med) * 3000), label: 'Paxel Ekspres' };
   } else {
     let cost = dist <= 3 ? 8000 : 
@@ -35,6 +39,10 @@ function calculateHaversine(lat1, lon1, lat2, lon2) {
 }
 
 export async function getDrivingDistance(lat1, lon1, lat2, lon2) {
+  // Validasi koordinat
+  if (isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) {
+    throw new Error('Koordinat tidak valid');
+  }
   const url = `https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=false`;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 8000);
@@ -55,7 +63,7 @@ export async function getDrivingDistance(lat1, lon1, lat2, lon2) {
 }
 
 export async function searchAddressOSM(query) {
-  const viewbox = '106.4,-6.6,107.2,-6.0'; // Jabodetabek penuh
+  const viewbox = '106.4,-6.6,107.2,-6.0';
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&countrycodes=id&viewbox=${viewbox}&bounded=1&limit=5`;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 6000);
