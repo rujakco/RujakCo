@@ -2,9 +2,7 @@ import { SYSTEM } from '../data/config.js';
 
 export function calculateShipping(distance, mainQty, provider = 'rujakco', vehicle = 'motor', priority = false) {
   const dist = distance || SYSTEM.DEFAULT_DISTANCE;
-  
   if (dist > 50) return { cost: null, label: 'Konfirmasi via Concierge' };
-  
   if (provider === 'paxel') {
     const large = Math.floor(mainQty / 2);
     const med = mainQty % 2;
@@ -22,7 +20,6 @@ export function calculateShipping(distance, mainQty, provider = 'rujakco', vehic
              dist <= 20 ? 55500 + (dist - 10) * 4000 : 
              95500 + (dist - 20) * 3500;
     }
-    
     if (priority) cost += 8000;
     return { cost, label: vehicle === 'motor' ? 'Motor' : 'Mobil' };
   }
@@ -32,45 +29,46 @@ function calculateHaversine(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a = Math.sin(dLat / 2) ** 2 + 
-            Math.cos((lat1 * Math.PI) / 180) * 
-            Math.cos((lat2 * Math.PI) / 180) * 
-            Math.sin(dLon / 2) ** 2;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const straightLineDistance = R * c;
-  
-  return parseFloat((straightLineDistance * 1.35).toFixed(1)); 
+  return parseFloat((R * c * 1.35).toFixed(1));
 }
 
 export async function getDrivingDistance(lat1, lon1, lat2, lon2) {
   const url = `https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=false`;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000);
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeout);
     if (!response.ok) throw new Error('OSRM gagal');
-    
     const data = await response.json();
     if (data.routes && data.routes.length > 0) {
       return { distance: parseFloat((data.routes[0].distance / 1000).toFixed(1)), isHaversine: false };
     }
     throw new Error('Rute jalan raya tidak ditemukan');
   } catch (error) {
-    console.warn('OSRM gagal, fallback ke Haversine:', error);
+    clearTimeout(timeout);
+    console.warn('OSRM gagal/timeout, fallback ke Haversine:', error);
     return { distance: calculateHaversine(lat1, lon1, lat2, lon2), isHaversine: true };
   }
 }
 
 export async function searchAddressOSM(query) {
-  const viewbox = '106.6,-6.4,107.1,-6.1';
+  const viewbox = '106.4,-6.6,107.2,-6.0'; // Jabodetabek penuh
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&countrycodes=id&viewbox=${viewbox}&bounded=1&limit=5`;
-  
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 6000);
   try {
     const response = await fetch(url, { 
-      headers: { 'User-Agent': 'RujakCo-DeliveryApp/1.0 (halo@rujakco.biz.id)' } 
+      headers: { 'User-Agent': 'RujakCo-DeliveryApp/1.0 (halo@rujakco.biz.id)' },
+      signal: controller.signal 
     });
-    
+    clearTimeout(timeout);
     if (!response.ok) return [];
     return await response.json();
   } catch (error) {
+    clearTimeout(timeout);
     console.error('Gagal mengambil data lokasi dari OSM:', error);
     return [];
   }
