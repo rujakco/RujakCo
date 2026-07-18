@@ -1,4 +1,4 @@
-// app.js — FINAL: Pemulihan data agresif + Auto‑recover jarak
+// app.js — FINAL: Pemulihan data agresif + Auto‑recover jarak + Fix Popup WA & OSM Onboarding
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase } from './utils/helpers.js';
@@ -568,11 +568,33 @@ function initOnboarding() {
     resolveOnboardingDistance(val);
   }
 
-  const filterDistricts = debounce((val) => {
-    const v = val.toLowerCase();
-    const matches = Object.keys(window.__DISTRICT_MAP__ || {}).filter(k => k.includes(v));
-    renderDropdown(matches);
-  }, 150);
+  const filterDistricts = debounce(async (val) => {
+    const v = val.trim();
+    if (v.length < 4) {
+      renderDropdown([]);
+      return;
+    }
+    
+    // Tampilkan indikator loading kecil
+    dropdown.innerHTML = '<div style="padding:14px;text-align:center;color:var(--gray-500);">Mencari area...</div>';
+    dropdown.style.display = 'block';
+    
+    try {
+      const results = await searchAddressOSM(v);
+      
+      if (results.length === 0) {
+        dropdown.innerHTML = '<div style="padding:14px;text-align:center;color:var(--gray-500);">Area tidak ditemukan</div>';
+        return;
+      }
+
+      const matches = results.map(place => extractShortLocation(place.display_name) || place.name);
+      const uniqueMatches = [...new Set(matches)].slice(0, 5); 
+      
+      renderDropdown(uniqueMatches);
+    } catch (err) {
+      dropdown.style.display = 'none';
+    }
+  }, 800);
 
   DOM.onbDistrict.addEventListener('input', (e) => filterDistricts(e.target.value));
   DOM.onbDistrict.addEventListener('focus', () => { if (!DOM.onbDistrict.value) filterDistricts(''); });
@@ -599,7 +621,7 @@ function initOnboarding() {
   });
 
   document.getElementById('onbStartBtn').addEventListener('click', () => {
-    if (!state.selectedDistrict) return showToast('Mohon pilih kecamatan tujuan.');
+    if (!state.selectedDistrict) return showToast('Mohon pilih area tujuan.');
     saveUser(state.customerName, state.selectedDistrict);
     DOM.onboardingOverlay.classList.add('hidden');
     setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, 600);
@@ -764,19 +786,15 @@ async function sendReceiptToWhatsApp() {
     }
   }
 
-  // Buka WhatsApp
-  const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
-  const opened = window.open(waUrl, '_blank');
-  if (!opened || opened.closed) {
-    showWhatsAppFallback(SYSTEM.WA_NUMBER, msg);
-    return;
-  }
-
-  // Kirim juga ke Telegram
+  // Kirim juga ke Telegram (Dipanggil sebelum redirect agar tidak terpotong browser)
   sendReceiptToTelegram();
 
   state.cart = {};
   updateCartUI();
+
+  // Buka WhatsApp menggunakan window.location.href (Aman dari pemblokiran popup browser Mobile)
+  const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+  window.location.href = waUrl;
 }
 
 function showOrderConfirmation() {
@@ -1203,11 +1221,9 @@ function init() {
         state.selectedDistrictFull = cust.district;
         state.selectedDistrict = extractShortLocation(cust.district) || cust.district;
       }
-      // Perbaikan: pastikan jarak terambil meskipun 0
       if (cust.distance !== null && cust.distance !== undefined && !isNaN(cust.distance)) {
         state.userDistance = cust.distance;
       } else {
-        // Coba baca langsung dari localStorage sebagai fallback ekstra
         const raw = localStorage.getItem('rj_user_distance');
         if (raw !== null) {
           const parsed = parseFloat(raw);
