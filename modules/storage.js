@@ -12,11 +12,16 @@ export function saveCart(cart) {
 }
 
 export function saveUser(name, district) {
-  try { localStorage.setItem('rj_client_name', name); localStorage.setItem('rj_client_district', district); } catch {}
+  try {
+    localStorage.setItem('rj_client_name', name);
+    localStorage.setItem('rj_client_district', district);
+  } catch {}
 }
 
 export function clearUser() {
-  try { ['rj_client_name','rj_client_district','rj_selected_address','rj_user_distance'].forEach(k => localStorage.removeItem(k)); } catch {}
+  try {
+    ['rj_client_name','rj_client_district','rj_selected_address','rj_user_distance'].forEach(k => localStorage.removeItem(k));
+  } catch {}
 }
 
 export function saveCustomer(phone, address, district, distance = null) {
