@@ -1,3 +1,4 @@
+// modules/render.js — Final (fallback gambar tanpa inline onerror)
 import { PRODUCTS } from '../data/products.js';
 import { SPICE_LABELS } from '../data/config.js';
 import { fmt } from '../utils/helpers.js';
@@ -16,8 +17,7 @@ export function renderMenu(containerId = 'menuList') {
     .map(
       (p, index) => `
     <div class="boutique-item" data-id="${p.id}" data-idx="${index}">
-      <img class="btq-img" src="${p.thumbnail}" loading="lazy" alt="${p.name}" 
-        onerror="this.style.display='none';var fb=document.createElement('div');fb.style.cssText='width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e8efeb;color:#6B7280;font-size:12px;font-weight:600;text-align:center;padding:8px;';fb.textContent=this.alt.substring(0,30);this.parentElement.appendChild(fb);" />
+      <img class="btq-img" src="${p.thumbnail}" loading="lazy" alt="${p.name}" />
       <div class="btq-text-container">
         <h3 class="btq-name">${p.name}</h3>
         ${p.badge ? `<span class="btq-badge">${p.badge}</span>` : ''}
@@ -28,6 +28,17 @@ export function renderMenu(containerId = 'menuList') {
     </div>`
     )
     .join('');
+
+  // ✅ Fallback gambar dengan event listener
+  container.querySelectorAll('img').forEach(img => {
+    img.addEventListener('error', () => {
+      img.style.display = 'none';
+      const fb = document.createElement('div');
+      fb.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e8efeb;color:#6B7280;font-size:12px;font-weight:600;text-align:center;padding:8px;';
+      fb.textContent = img.alt.substring(0, 30);
+      img.parentElement.appendChild(fb);
+    });
+  });
 }
 
 export function renderProductSwiper(trackId = 'productSwiperTrack') {
@@ -38,8 +49,7 @@ export function renderProductSwiper(trackId = 'productSwiperTrack') {
       (p, index) => `
     <div class="product-slide" data-id="${p.id}" data-idx="${index}">
       <div class="detail-image-wrap">
-        <img class="lazy-detail" data-src="${p.image}" alt="${p.name}" loading="lazy"
-          onerror="this.style.display='none';var fb=document.createElement('div');fb.style.cssText='width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e8efeb;color:#6B7280;font-size:12px;font-weight:600;text-align:center;padding:8px;';fb.textContent=this.alt.substring(0,30);this.parentElement.appendChild(fb);" />
+        <img class="lazy-detail" data-src="${p.image}" alt="${p.name}" loading="lazy" />
       </div>
       <div class="detail-content">
         <h2>${p.name}</h2>
@@ -97,6 +107,18 @@ export function renderProductSwiper(trackId = 'productSwiperTrack') {
     </div>`
     )
     .join('');
+
+  // ✅ Fallback gambar detail dengan event listener
+  track.querySelectorAll('.lazy-detail').forEach(img => {
+    img.addEventListener('error', () => {
+      img.style.display = 'none';
+      const fb = document.createElement('div');
+      fb.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e8efeb;color:#6B7280;font-size:12px;font-weight:600;text-align:center;padding:8px;';
+      fb.textContent = img.alt.substring(0, 30);
+      img.parentElement.appendChild(fb);
+    });
+  });
+
   if (window.lucide) window.lucide.createIcons();
 }
 
@@ -142,7 +164,6 @@ export function renderMiniCart(cart, listId = 'miniCartList', subtotalId = 'cart
   return sum;
 }
 
-// DEEP‑LINK: mengembalikan index global produk di loopedProducts (tengah)
 export function getProductGlobalIndex(productId) {
   const baseIndex = PRODUCTS.findIndex(p => p.id === productId);
   if (baseIndex === -1) return -1;
