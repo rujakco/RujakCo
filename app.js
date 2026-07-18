@@ -1,4 +1,4 @@
-// app.js — FINAL, NO BUGS. Hanya perbaikan duplikat listener keranjang.
+// app.js — Final Stable (no duplicate cart listener + QRIS cropping)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML } from './utils/helpers.js';
@@ -104,7 +104,7 @@ const cacheDOM = () => {
 function extractShortLocation(fullAddress) {
   if (!fullAddress) return '';
   const parts = fullAddress.split(',').map(p => p.trim());
-  if (parts.length >= 2) return parts[1] || parts[0]; // kecamatan/kota
+  if (parts.length >= 2) return parts[1] || parts[0];
   return parts[0];
 }
 
@@ -115,7 +115,7 @@ function applyPersonalization() {
   const name = state.customerName || 'Ngoedi';
   const district = state.selectedDistrict || 'Pilih alamat tujuan';
   DOM.headerName.textContent = name;
-  DOM.headerLoc.textContent = district;            // pendek
+  DOM.headerLoc.textContent = district;
   if (DOM.customerNameInput) DOM.customerNameInput.value = name;
   if (DOM.customerPhoneInput) DOM.customerPhoneInput.value = state.customerPhone;
   if (DOM.customerAddressInput) DOM.customerAddressInput.value = state.customerAddress;
@@ -699,6 +699,7 @@ function showOrderConfirmation() {
   const timeStr = now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' }) + ' WIB';
   state.currentOrderCode = `RJK-${now.toISOString().slice(2,10).replace(/-/g,'')}-${Math.floor(1000+Math.random()*9000)}`;
 
+  // ========== STRUK DENGAN QRIS BARU ==========
   contentEl.innerHTML = `
     <div class="receipt-wrap">
       <div class="receipt-stamp">Menunggu Pembayaran</div>
@@ -717,8 +718,21 @@ function showOrderConfirmation() {
         <div class="confirm-row"><span>Ongkir</span><span>${fmt(ship.cost || 0)}</span></div>
         <div class="confirm-row total"><span>Total</span><span>${fmt(total)}</span></div>
       </div>
-      <div class="receipt-footer"><p>"Asam, pedas, manis, segar — terima kasih telah memilih RUJAK.Co."</p><div class="receipt-barcode"></div><div class="receipt-code-text">${state.currentOrderCode}</div></div>
+      <div class="receipt-footer">
+        <p>"Asam, pedas, manis, segar — terima kasih telah memilih RUJAK.Co."</p>
+        <div class="receipt-qris-wrap">
+          <img 
+            src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" 
+            alt="Scan QRIS" 
+            class="receipt-qris-cropped" 
+            crossorigin="anonymous" 
+          />
+        </div>
+        <div class="receipt-code-text">${state.currentOrderCode}</div>
+      </div>
     </div>`;
+  // ========== AKHIR STRUK ==========
+
   if (window.lucide) lucide.createIcons();
 
   const modal = document.getElementById('orderConfirmModal');
@@ -788,7 +802,7 @@ function bindEvents() {
   // --- Keranjang (hanya satu listener, tidak ada duplikat) ---
   document.getElementById('navCartBtn')?.addEventListener('click', (e) => {
     e.preventDefault();
-    e.stopPropagation(); // cegah event delegation
+    e.stopPropagation();
     if (DOM.productPage?.classList.contains('active')) {
       closeProductPage(false);
       setTimeout(() => {
@@ -803,7 +817,6 @@ function bindEvents() {
     }
   });
 
-  // ... (sisa listener lainnya TIDAK BERUBAH) ...
   const deliveryTrigger = document.getElementById('deliveryTimeTrigger');
   const deliveryDropdown = document.getElementById('deliveryTimeDropdown');
   const deliveryHidden = document.getElementById('deliveryTime');
@@ -1002,8 +1015,6 @@ function bindEvents() {
 
     if (e.target.closest('#aiChatToggle')) { e.preventDefault(); openModal(DOM.aiChatBox); return; }
     if (e.target.closest('#backFromProduct')) { closeProductPage(false); return; }
-    // ❌ HAPUS handler keranjang dari sini (sudah ditangani listener khusus)
-    // if (e.target.closest('#navCartBtn')) { ... }  <-- DIHAPUS
 
     const faqToggle = e.target.closest('[data-toggle="faq"]');
     if (faqToggle) { const item = faqToggle.closest('.faq-item'); const isOpen = item.classList.toggle('open'); faqToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false'); return; }
