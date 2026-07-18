@@ -12,6 +12,8 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
   const insightEl = document.getElementById(insightId);
   if (!insightEl) return;
 
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   function abortAll() { clearTimeout(typeTimer); clearTimeout(fadeTimer); typeTimer = null; fadeTimer = null; }
   function startTyping(text) {
     abortAll();
@@ -54,27 +56,41 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
     return closestIndex;
   };
 
+  let scrollTicking = false;
   let scrollStableTimer;
-  track.addEventListener('scroll', () => {
-    const currentIndex = updateCenter();
-    clearTimeout(scrollStableTimer);
-    scrollStableTimer = setTimeout(() => {
-      if (currentIndex === -1) return;
-      const baseCount = PRODUCTS.length;
-      if (currentIndex < baseCount || currentIndex >= baseCount * (LOOP_MULTIPLIER - 1)) {
-        const modulo = currentIndex % baseCount;
-        const middleTarget = Math.floor(LOOP_MULTIPLIER / 2) * baseCount + modulo;
-        const targetItem = track.children[middleTarget];
-        if (targetItem) {
-          track.style.scrollBehavior = 'auto';
-          track.scrollTo({ left: targetItem.offsetLeft - track.clientWidth / 2 + targetItem.clientWidth / 2, behavior: 'instant' });
-          requestAnimationFrame(() => { track.style.scrollBehavior = 'smooth'; });
-        }
-      }
-    }, 250);
-  }, { passive: true });
+
+  function handleScroll() {
+    if (!scrollTicking) {
+      requestAnimationFrame(() => {
+        const currentIndex = updateCenter();
+        clearTimeout(scrollStableTimer);
+        scrollStableTimer = setTimeout(() => {
+          if (currentIndex === -1) return;
+          const baseCount = PRODUCTS.length;
+          if (currentIndex < baseCount || currentIndex >= baseCount * (LOOP_MULTIPLIER - 1)) {
+            const modulo = currentIndex % baseCount;
+            const middleTarget = Math.floor(LOOP_MULTIPLIER / 2) * baseCount + modulo;
+            const targetItem = track.children[middleTarget];
+            if (targetItem) {
+              track.style.scrollBehavior = 'auto';
+              track.scrollTo({ left: targetItem.offsetLeft - track.clientWidth / 2 + targetItem.clientWidth / 2, behavior: 'instant' });
+              requestAnimationFrame(() => { track.style.scrollBehavior = 'smooth'; });
+            }
+          }
+        }, 250);
+        scrollTicking = false;
+      });
+      scrollTicking = true;
+    }
+    stopAutoScroll();
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(startAutoScroll, RESUME_DELAY);
+  }
+
+  track.addEventListener('scroll', handleScroll, { passive: true });
 
   function startAutoScroll() {
+    if (prefersReducedMotion) return;
     stopAutoScroll();
     autoScrollInterval = setInterval(() => {
       const active = track.querySelector('.boutique-item.active-center');
@@ -90,11 +106,6 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
 
   track.addEventListener('touchstart', stopAutoScroll, { passive: true });
   track.addEventListener('mousedown', stopAutoScroll);
-  track.addEventListener('scroll', () => {
-    stopAutoScroll();
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(startAutoScroll, RESUME_DELAY);
-  }, { passive: true });
 
   setTimeout(() => {
     track.style.scrollBehavior = 'auto';
