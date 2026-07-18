@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (Final Fixed: header pendek, kurir muncul, data tersimpan)
+// app.js — Final Stable (no broken nav, full fixes)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML } from './utils/helpers.js';
@@ -32,7 +32,7 @@ const state = {
   cart: {},
   drafts: {},
   customerName: '',
-  selectedDistrict: '',      // nama pendek (kecamatan/kota) untuk header
+  selectedDistrict: '',      // pendek (kecamatan/kota)
   selectedDistrictFull: '',  // alamat lengkap untuk drawer
   customerPhone: '',
   customerAddress: '',
@@ -99,25 +99,23 @@ const cacheDOM = () => {
 };
 
 // ---------------------------------------------------------------------------
-// UTILITY: Ekstrak nama pendek dari alamat lengkap (kecamatan/kota)
+// UTILITY: Ekstrak nama pendek (kecamatan/kota)
 // ---------------------------------------------------------------------------
 function extractShortLocation(fullAddress) {
   if (!fullAddress) return '';
   const parts = fullAddress.split(',').map(p => p.trim());
-  if (parts.length >= 2) {
-    return parts[1] || parts[0];
-  }
+  if (parts.length >= 2) return parts[1] || parts[0]; // kecamatan
   return parts[0];
 }
 
 // ---------------------------------------------------------------------------
-// PERSONALISASI & SCROLL REVEAL
+// PERSONALISASI (isi form otomatis)
 // ---------------------------------------------------------------------------
 function applyPersonalization() {
   const name = state.customerName || 'Ngoedi';
   const district = state.selectedDistrict || 'Pilih alamat tujuan';
   DOM.headerName.textContent = name;
-  DOM.headerLoc.textContent = district;
+  DOM.headerLoc.textContent = district;            // pendek
   if (DOM.customerNameInput) DOM.customerNameInput.value = name;
   if (DOM.customerPhoneInput) DOM.customerPhoneInput.value = state.customerPhone;
   if (DOM.customerAddressInput) DOM.customerAddressInput.value = state.customerAddress;
@@ -280,24 +278,24 @@ function closeProductPage(fromPopState = false) {
     DOM.productPage.style.display = 'none';
     DOM.productPage.setAttribute('aria-hidden', 'true');
     DOM.productPage.setAttribute('inert', '');
+    const index = overlayStack.indexOf(DOM.productPage);
+    if (index > -1) overlayStack.splice(index, 1);
+    if (overlayStack.length === 0) document.body.style.overflow = '';
+    document.getElementById('waVipSideTab')?.classList.remove('open');
+    if (DOM._productObserver) {
+      DOM._productObserver.disconnect();
+      DOM._productObserver = null;
+    }
+    if (!fromPopState) {
+      isProgrammaticBack = true;
+      history.back();
+    }
+    syncBottomNav();
   }, 400);
-  const index = overlayStack.indexOf(DOM.productPage);
-  if (index > -1) overlayStack.splice(index, 1);
-  if (overlayStack.length === 0) document.body.style.overflow = '';
-  document.getElementById('waVipSideTab')?.classList.remove('open');
-  if (DOM._productObserver) {
-    DOM._productObserver.disconnect();
-    DOM._productObserver = null;
-  }
-  if (!fromPopState) {
-    isProgrammaticBack = true;
-    history.back();
-  }
-  syncBottomNav();
 }
 
 // ---------------------------------------------------------------------------
-// GESTURES
+// GESTURES (tidak diubah)
 // ---------------------------------------------------------------------------
 function initDetailGestures() {
   const track = DOM.productSwiperTrack;
@@ -476,7 +474,7 @@ async function resolveOnboardingDistance(districtName) {
       const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, parseFloat(place.lat), parseFloat(place.lon));
       state.userDistance = result.distance;
       state.haversineUsed = result.isHaversine;
-      state.selectedDistrict = districtName;
+      state.selectedDistrict = districtName; // pendek
       state.selectedDistrictFull = place.display_name;
       saveCustomer(state.customerPhone, state.customerAddress, districtName, state.userDistance);
     }
@@ -494,7 +492,7 @@ function initOnboarding() {
     DOM.onbNewUser.style.display = 'none';
     DOM.onbReturningUser.style.display = 'block';
     DOM.onbWelcomeName.textContent = saved.name;
-    DOM.onbWelcomeDistrict.textContent = state.selectedDistrict;
+    DOM.onbWelcomeDistrict.textContent = state.selectedDistrict; // pendek
     resolveOnboardingDistance(state.selectedDistrict);
   } else {
     DOM.onbNewUser.style.display = 'block';
@@ -744,7 +742,7 @@ function showOrderConfirmation() {
 }
 
 // ---------------------------------------------------------------------------
-// EVENT BINDINGS
+// EVENT BINDINGS (NAV ASLI + PERBAIKAN HALUS)
 // ---------------------------------------------------------------------------
 function bindEvents() {
   document.getElementById('aboutTrigger')?.addEventListener('click', () => openModal(DOM.aboutModal));
@@ -770,17 +768,45 @@ function bindEvents() {
     document.getElementById('waVipSideTab')?.classList.toggle('open');
   });
 
+  // --- Beranda ---
   document.getElementById('navHomeBtn')?.addEventListener('click', () => {
-    if (DOM.productPage?.classList.contains('active')) closeProductPage(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (DOM.productPage?.classList.contains('active')) {
+      closeProductPage(false);
+      // setelah closeProductPage (400ms animasi), scroll
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 200);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
     setActiveNav('navHomeBtn');
   });
 
+  // --- Produk (tidak toggle, hanya buka jika belum terbuka) ---
   document.getElementById('navProductBtn')?.addEventListener('click', () => {
     if (DOM.productPage?.classList.contains('active')) return;
     openProductPage(state.lastViewedProductIndex >= 0 ? state.lastViewedProductIndex : 0);
   });
 
+  // --- Keranjang (tutup produk dulu jika terbuka, lalu buka keranjang) ---
+  document.getElementById('navCartBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (DOM.productPage?.classList.contains('active')) {
+      closeProductPage(false);
+      // tunggu animasi close selesai (400ms) baru buka keranjang
+      setTimeout(() => {
+        openModal(DOM.miniCartModal);
+        renderMiniCart(state.cart);
+        updateShippingUI();
+      }, 400);
+    } else {
+      openModal(DOM.miniCartModal);
+      renderMiniCart(state.cart);
+      updateShippingUI();
+    }
+  });
+
+  // ... sisa listener (deliveryTime, modal close, input, dll.) tidak diubah ...
   const deliveryTrigger = document.getElementById('deliveryTimeTrigger');
   const deliveryDropdown = document.getElementById('deliveryTimeDropdown');
   const deliveryHidden = document.getElementById('deliveryTime');
@@ -919,9 +945,8 @@ function bindEvents() {
     if (actionBtn && !actionBtn.classList.contains('add-to-cart-btn') && !actionBtn.classList.contains('step-1-btn')) {
       const id = actionBtn.dataset.id;
       const type = actionBtn.dataset.action;
-      if (type === 'increase') {
-        state.cart[id].qty++;
-      } else if (type === 'decrease') {
+      if (type === 'increase') { state.cart[id].qty++; }
+      else if (type === 'decrease') {
         if (state.cart[id].qty === 1) {
           showConfirmModal('Hapus Sajian?', 'Sajian ini akan dihapus dari reservasi Anda.', () => {
             delete state.cart[id]; updateCartUI();
