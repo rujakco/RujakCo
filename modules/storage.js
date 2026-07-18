@@ -1,4 +1,3 @@
-// modules/storage.js — Final (kunci terpisah untuk alamat OSM)
 export function loadState() {
   try {
     const cart = JSON.parse(localStorage.getItem('rj_crt_v7')) || {};
@@ -13,29 +12,19 @@ export function saveCart(cart) {
 }
 
 export function saveUser(name, district) {
-  try {
-    localStorage.setItem('rj_client_name', name);
-    // Simpan alamat awal di kunci lama, akan ditimpa oleh saveCustomer jika ada alamat OSM
-    localStorage.setItem('rj_client_district', district);
-  } catch {}
+  try { localStorage.setItem('rj_client_name', name); localStorage.setItem('rj_client_district', district); } catch {}
 }
 
 export function clearUser() {
-  try {
-    localStorage.removeItem('rj_client_name');
-    localStorage.removeItem('rj_client_district');
-    localStorage.removeItem('rj_selected_address');
-  } catch {}
+  try { ['rj_client_name','rj_client_district','rj_selected_address','rj_user_distance'].forEach(k => localStorage.removeItem(k)); } catch {}
 }
 
-export function saveCustomer(phone, address, district) {
+export function saveCustomer(phone, address, district, distance = null) {
   try {
     localStorage.setItem('rj_customer_phone', phone || '');
     localStorage.setItem('rj_customer_address', address || '');
-    if (district) {
-      // ✅ Simpan alamat lengkap dari OSM ke kunci terpisah
-      localStorage.setItem('rj_selected_address', district);
-    }
+    if (district) localStorage.setItem('rj_selected_address', district);
+    if (distance !== null && distance !== undefined) localStorage.setItem('rj_user_distance', distance);
   } catch {}
 }
 
@@ -44,6 +33,7 @@ export function loadCustomer() {
     const phone = localStorage.getItem('rj_customer_phone') || '';
     const address = localStorage.getItem('rj_customer_address') || '';
     const district = localStorage.getItem('rj_selected_address') || localStorage.getItem('rj_client_district') || '';
-    return { phone, address, district };
-  } catch { return { phone: '', address: '', district: '' }; }
+    const distance = parseFloat(localStorage.getItem('rj_user_distance')) || null;
+    return { phone, address, district, distance };
+  } catch { return { phone: '', address: '', district: '', distance: null }; }
 }
