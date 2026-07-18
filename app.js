@@ -1,4 +1,4 @@
-// app.js — Final Production (Supabase, Telegram, Struk, Timeout, Drafts, A11y, Auto-Distance)
+// app.js — FINAL: Auto-recover jarak & alamat, tanpa error palsu
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase } from './utils/helpers.js';
@@ -44,7 +44,7 @@ const state = {
   lastViewedProductIndex: -1,
   currentOrderCode: null,
   haversineUsed: false,
-  receiptUrl: null,          // URL struk di Supabase Storage
+  receiptUrl: null,
 };
 
 PRODUCTS.forEach(p => {
@@ -1098,7 +1098,7 @@ function bindEvents() {
 
     if (e.target.id === 'priorityToggleMini') { state.isPriority = e.target.checked; updateShippingUI(); return; }
 
-    // === TOMBOL SELESAIKAN RESERVASI (DENGAN AUTO-HITUNG JARAK) ===
+    // ==================== TOMBOL SELESAIKAN RESERVASI (AUTO-RECOVER) ====================
     if (e.target.id === 'btnOpenPayment') {
       if (e.target.disabled) return;
       if (!Object.keys(state.cart).length) return showToast('Keranjang masih kosong.');
@@ -1106,32 +1106,35 @@ function bindEvents() {
       const address = DOM.customerAddressInput?.value.trim() || '';
       if (!validatePhone(phone)) return showToast('Nomor HP tidak valid.');
       if (!validateAddress(address)) return showToast('Mohon lengkapi alamat pengantaran.');
-      if (!state.selectedDistrict) return showToast('Mohon pilih alamat tujuan terlebih dahulu.');
+      if (!state.selectedDistrict && !state.selectedDistrictFull) return showToast('Mohon pilih alamat tujuan terlebih dahulu.');
 
-      // ✅ Jika jarak belum terhitung tapi alamat lengkap sudah ada, hitung otomatis
-      if (state.userDistance == null && state.selectedDistrictFull) {
-        e.target.disabled = true; // cegah double click saat proses
-        try {
-          const results = await searchAddressOSM(state.selectedDistrictFull);
-          if (results.length > 0) {
-            const place = results[0];
-            const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, parseFloat(place.lat), parseFloat(place.lon));
-            state.userDistance = result.distance;
-            state.haversineUsed = result.isHaversine;
-            updateShippingUI();
-          } else {
-            e.target.disabled = false;
-            return showToast('Mohon pilih alamat dari hasil pencarian.');
-          }
-        } catch (err) {
-          e.target.disabled = false;
-          return showToast('Gagal menghitung jarak. Mohon pilih alamat lagi.');
-        }
-      }
-
+      // Auto-recover jarak jika belum ada
       if (state.userDistance == null) {
-        e.target.disabled = false;
-        return showToast('Mohon pilih alamat dari hasil pencarian.');
+        e.target.disabled = true;
+        let recovered = false;
+        const addressToSearch = state.selectedDistrictFull || DOM.districtInput?.value?.trim() || 
+                                (state.selectedDistrict ? `${state.selectedDistrict}, ${state.customerAddress}` : '');
+        if (addressToSearch) {
+          try {
+            const results = await searchAddressOSM(addressToSearch);
+            if (results.length > 0) {
+              const place = results[0];
+              const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, parseFloat(place.lat), parseFloat(place.lon));
+              state.userDistance = result.distance;
+              state.haversineUsed = result.isHaversine;
+              state.selectedDistrictFull = place.display_name;
+              state.selectedDistrict = extractShortLocation(place.display_name);
+              DOM.districtInput && (DOM.districtInput.value = place.display_name);
+              saveCustomer(phone, address, place.display_name, result.distance);
+              updateShippingUI();
+              recovered = true;
+            }
+          } catch (err) { /* gagal, lanjut ke pesan error */ }
+        }
+        if (!recovered) {
+          e.target.disabled = false;
+          return showToast('Gagal menghitung jarak. Silakan pilih alamat dari pencarian di atas.');
+        }
       }
 
       e.target.disabled = true;
@@ -1180,7 +1183,6 @@ function initHeroParallax() {
 function init() {
   cacheDOM();
   try {
-    // Cek ketersediaan localStorage
     if (!isStorageAvailable()) {
       showToast('⚠️ Penyimpanan browser tidak tersedia. Data tidak akan disimpan.');
     }
