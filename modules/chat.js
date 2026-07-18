@@ -7,10 +7,13 @@ export function initAIChat(welcomeId = 'aiWelcomeMsg', messagesId = 'aiChatMessa
   const messages = document.getElementById(messagesId);
   if (!messages) return;
 
+  const faq = FAQ_DATA || [];
+  const waNumber = SYSTEM?.WA_NUMBER || '6289677161680';
+
   const processMsg = async (txt) => {
     const lower = txt.toLowerCase();
     let matched = null;
-    for (let q of FAQ_DATA) {
+    for (let q of faq) {
       if (q.keywords.some(k => lower.includes(k))) { matched = q.answer; break; }
     }
     messages.insertAdjacentHTML('beforeend', `<div class="msg-user"><span>${escapeHTML(txt)}</span></div>`);
@@ -27,7 +30,7 @@ export function initAIChat(welcomeId = 'aiWelcomeMsg', messagesId = 'aiChatMessa
         const waMsg = `Halo RUJAK.Co, saya punya pertanyaan: "${txt}"`;
         messages.insertAdjacentHTML('beforeend', `
           <div class="msg-bot" style="margin-bottom:12px;">
-            <span>Pertanyaan ini perlu dijawab tim kami langsung. <a href="https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(waMsg)}" target="_blank" rel="noopener" style="color:var(--gold-text);font-weight:700;">Klik di sini untuk chat WhatsApp →</a></span>
+            <span>Pertanyaan ini perlu dijawab tim kami langsung. <a href="https://wa.me/${waNumber}?text=${encodeURIComponent(waMsg)}" target="_blank" rel="noopener" style="color:var(--gold-text);font-weight:700;">Klik di sini untuk chat WhatsApp →</a></span>
           </div>`);
         messages.scrollTop = messages.scrollHeight;
       }, 600);
@@ -35,7 +38,12 @@ export function initAIChat(welcomeId = 'aiWelcomeMsg', messagesId = 'aiChatMessa
     input.focus();
   };
 
-  const handleSend = () => { const txt = input.value.trim(); if (!txt) return; processMsg(txt); };
+  const handleSend = () => {
+    if (!input) return;
+    const txt = input.value.trim();
+    if (!txt) return;
+    processMsg(txt);
+  };
   if (send) send.addEventListener('click', handleSend);
   if (input) input.addEventListener('keydown', e => { if (e.key === 'Enter') handleSend(); });
 
