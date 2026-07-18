@@ -10,6 +10,7 @@ try {
 
 function safeSet(key, value) {
   if (!storageAvailable) return;
+  if (value === undefined) value = '';
   try { localStorage.setItem(key, value); } catch (e) { console.error(`Gagal menyimpan ${key}:`, e); }
 }
 
