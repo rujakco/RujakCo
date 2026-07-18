@@ -26,7 +26,11 @@ export function validatePhone(phone) {
 }
 
 export function validateAddress(address) {
-  return address.trim().length >= 10;
+  const trimmed = String(address || '').trim();
+  if (trimmed.length < 10) return false;
+  const hasMultipleWords = trimmed.split(/\s+/).length >= 3;
+  const hasDigit = /\d/.test(trimmed);
+  return hasMultipleWords && (hasDigit || trimmed.length >= 20);
 }
 
 export function showWhatsAppFallback(phone, message) {
@@ -44,9 +48,6 @@ export function showWhatsAppFallback(phone, message) {
       <button id="closeWaFallback" style="background:none;border:1px solid #ddd;color:#666;padding:10px;border-radius:8px;margin-top:8px;width:100%;">Tutup</button>
     </div>`;
   document.body.appendChild(modal);
-  document.getElementById('openWaManual').addEventListener('click', () => {
-    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
-    modal.remove();
-  });
+  document.getElementById('openWaManual').addEventListener('click', () => { window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank'); modal.remove(); });
   document.getElementById('closeWaFallback').addEventListener('click', () => modal.remove());
 }
