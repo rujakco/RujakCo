@@ -1,19 +1,23 @@
+// modules/accessibility.js — Final (selektor stabil)
 export function initAccessibility() {
   document.addEventListener('keydown', (e) => {
-    // Focus Trap untuk modal yang aktif
-    const activeModal = document.querySelector('.modal-overlay.active, .product-swiper-overlay[style*="display: flex"]');
-    if (activeModal && e.key === 'Tab') {
+    // ✅ Gunakan kelas .active, bukan inline style
+    const activeModal = document.querySelector('.modal-overlay.active, .product-swiper-overlay.active');
+    if (!activeModal) return;
+
+    if (e.key === 'Tab') {
       const focusable = activeModal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-      if (focusable.length) {
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
-          last.focus();
-          e.preventDefault();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          first.focus();
-          e.preventDefault();
-        }
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
       }
     }
   });
