@@ -12,6 +12,18 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
   const insightEl = document.getElementById(insightId);
   if (!insightEl) return;
 
+  // Duplikasi item untuk infinite scroll
+  const originalItems = [...track.children];
+  if (originalItems.length === 0) return;
+  const totalItems = originalItems.length;
+  track.innerHTML = '';
+  for (let i = 0; i < LOOP_MULTIPLIER; i++) {
+    originalItems.forEach(el => {
+      const clone = el.cloneNode(true);
+      track.appendChild(clone);
+    });
+  }
+
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function abortAll() { clearTimeout(typeTimer); clearTimeout(fadeTimer); typeTimer = null; fadeTimer = null; }
@@ -66,14 +78,15 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
         clearTimeout(scrollStableTimer);
         scrollStableTimer = setTimeout(() => {
           if (currentIndex === -1) return;
-          const baseCount = PRODUCTS.length;
-          if (currentIndex < baseCount || currentIndex >= baseCount * (LOOP_MULTIPLIER - 1)) {
+          const baseCount = totalItems;
+          const total = track.children.length;
+          if (currentIndex < baseCount * 0.1 || currentIndex > total - baseCount * 0.1) {
             const modulo = currentIndex % baseCount;
             const middleTarget = Math.floor(LOOP_MULTIPLIER / 2) * baseCount + modulo;
             const targetItem = track.children[middleTarget];
             if (targetItem) {
               track.style.scrollBehavior = 'auto';
-              track.scrollTo({ left: targetItem.offsetLeft - track.clientWidth / 2 + targetItem.clientWidth / 2, behavior: 'instant' });
+              track.scrollTo({ left: targetItem.offsetLeft - track.clientWidth / 2 + targetItem.clientWidth / 2, behavior: 'auto' });
               requestAnimationFrame(() => { track.style.scrollBehavior = 'smooth'; });
             }
           }
@@ -106,10 +119,16 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
 
   track.addEventListener('touchstart', stopAutoScroll, { passive: true });
   track.addEventListener('mousedown', stopAutoScroll);
+  const restartAuto = () => {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(startAutoScroll, RESUME_DELAY);
+  };
+  track.addEventListener('touchend', restartAuto, { passive: true });
+  track.addEventListener('mouseup', restartAuto);
 
   setTimeout(() => {
     track.style.scrollBehavior = 'auto';
-    const midPoint = Math.floor(LOOP_MULTIPLIER / 2) * PRODUCTS.length;
+    const midPoint = Math.floor(LOOP_MULTIPLIER / 2) * totalItems;
     const targetItem = track.children[midPoint];
     if (targetItem) track.scrollLeft = targetItem.offsetLeft - track.clientWidth / 2 + targetItem.clientWidth / 2;
     requestAnimationFrame(() => { track.style.scrollBehavior = 'smooth'; updateCenter(); });
