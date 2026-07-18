@@ -32,7 +32,8 @@ const state = {
   cart: {},
   drafts: {},
   customerName: '',
-  selectedDistrict: '',
+  selectedDistrict: '',      // nama pendek (kecamatan/kota) untuk header
+  selectedDistrictFull: '',  // alamat lengkap untuk drawer
   customerPhone: '',
   customerAddress: '',
   shippingProvider: 'rujakco',
@@ -49,7 +50,7 @@ PRODUCTS.forEach(p => {
 });
 
 const overlayStack = [];
-window.__overlayStack__ = overlayStack; // ekspos untuk accessibility.js
+window.__overlayStack__ = overlayStack;
 let isProgrammaticBack = false;
 let processingCheckout = false;
 
@@ -98,15 +99,28 @@ const cacheDOM = () => {
 };
 
 // ---------------------------------------------------------------------------
+// UTILITY: Ekstrak nama pendek dari alamat lengkap (kecamatan/kota)
+// ---------------------------------------------------------------------------
+function extractShortLocation(fullAddress) {
+  if (!fullAddress) return '';
+  const parts = fullAddress.split(',').map(p => p.trim());
+  // format umum: jalan, kecamatan, kota, provinsi
+  if (parts.length >= 2) {
+    return parts[1] || parts[0];
+  }
+  return parts[0];
+}
+
+// ---------------------------------------------------------------------------
 // PERSONALISASI & SCROLL REVEAL
 // ---------------------------------------------------------------------------
 function applyPersonalization() {
   const name = state.customerName || 'Ngoedi';
   const district = state.selectedDistrict || 'Pilih alamat tujuan';
   DOM.headerName.textContent = name;
-  DOM.headerLoc.textContent = district;
+  DOM.headerLoc.textContent = district; // tampil pendek di header
   if (DOM.customerNameInput) DOM.customerNameInput.value = name;
-  if (DOM.districtInput) DOM.districtInput.value = district;
+  if (DOM.districtInput) DOM.districtInput.value = state.selectedDistrictFull || district;
   if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Halo, ${name}! Ada yang bisa kami bantu untuk pesanan Anda?`;
 }
 
@@ -411,12 +425,15 @@ function initDrawerDistrictDropdown() {
     }).join('');
     input.setAttribute('aria-expanded', 'true');
   }, 1000);
+
   input.addEventListener('input', (e) => {
     state.selectedDistrict = '';
+    state.selectedDistrictFull = '';
     state.userDistance = null;
     updateShippingUI();
     handleSearch(e.target.value.trim());
   });
+
   dropdown.addEventListener('click', async (e) => {
     const option = e.target.closest('div[role="option"]');
     if (!option) return;
@@ -426,15 +443,27 @@ function initDrawerDistrictDropdown() {
     const lat = parseFloat(option.dataset.lat);
     const lon = parseFloat(option.dataset.lon);
     const placeName = option.dataset.name;
-    const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, lat, lon);
-    state.selectedDistrict = placeName;
-    state.userDistance = result.distance;
-    state.haversineUsed = result.isHaversine;
-    input.value = placeName;
+
+    try {
+      const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, lat, lon);
+      state.userDistance = result.distance;
+      state.haversineUsed = result.isHaversine;
+    } catch (err) {
+      showToast('Gagal menghitung jarak, coba lagi.');
+      console.error(err);
+      return;
+    }
+
+    // Simpan alamat lengkap dan pendek
+    state.selectedDistrictFull = placeName;
+    state.selectedDistrict = extractShortLocation(placeName);
+    input.value = placeName; // drawer tetap lengkap
+    applyPersonalization();
     updateShippingUI();
     if (DOM.miniCartModal?.classList.contains('active')) renderMiniCart(state.cart);
     saveCustomer(state.customerPhone, state.customerAddress, placeName);
   });
+
   document.addEventListener('click', (e) => {
     if (!input.contains(e.target) && !dropdown.contains(e.target)) {
       dropdown.style.display = 'none';
@@ -455,6 +484,8 @@ async function resolveOnboardingDistance(districtName) {
       const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, parseFloat(place.lat), parseFloat(place.lon));
       state.userDistance = result.distance;
       state.haversineUsed = result.isHaversine;
+      state.selectedDistrict = districtName; // pendek dari input onboarding
+      state.selectedDistrictFull = place.display_name;
     }
   } catch (e) {
     console.warn('Gagal menghitung jarak dari onboarding, biarkan null');
@@ -597,7 +628,6 @@ function initOnboarding() {
 async function downloadReceiptPNG() {
   const element = document.getElementById('orderConfirmContent');
   if (!element) return;
-  // Lazy-load html2canvas
   if (typeof html2canvas === 'undefined') {
     await import('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
   }
@@ -1051,7 +1081,10 @@ function init() {
     const saved = loadState();
     state.cart = saved?.cart || {};
     if (saved?.name) state.customerName = saved.name;
-    if (saved?.district) state.selectedDistrict = saved.district;
+    if (saved?.district) {
+      state.selectedDistrict = saved.district;
+      state.selectedDistrictFull = saved.district; // untuk pertama kali
+    }
     const cust = loadCustomer();
     if (cust) {
       state.customerPhone = cust.phone || '';
