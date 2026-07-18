@@ -1,4 +1,4 @@
-// app.js — Luxury Edition (Final Core Engine) — After Global Fixes
+// app.js — Luxury Edition (Final Core Engine with Security & A11y Fixes)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML } from './utils/helpers.js';
@@ -49,7 +49,9 @@ PRODUCTS.forEach(p => {
 });
 
 const overlayStack = [];
+window.__overlayStack__ = overlayStack; // ekspos untuk accessibility.js
 let isProgrammaticBack = false;
+let processingCheckout = false;
 
 // ---------------------------------------------------------------------------
 // DOM CACHE
@@ -91,6 +93,8 @@ const cacheDOM = () => {
   DOM.rujakcoOptions = document.getElementById('rujakcoOptions');
   DOM.paxelOptions = document.getElementById('paxelOptions');
   DOM.priorityToggle = document.getElementById('priorityToggleMini');
+  DOM.mainContent = document.getElementById('mainContent');
+  DOM.bottomNav = document.getElementById('bottomNav');
 };
 
 // ---------------------------------------------------------------------------
@@ -156,6 +160,11 @@ function openModal(modalEl) {
   document.body.style.overflow = 'hidden';
   overlayStack.push(modalEl);
   history.pushState({ isOverlay: true, id: modalEl.id }, '');
+
+  // Inert background content
+  DOM.mainContent?.setAttribute('inert', '');
+  DOM.bottomNav?.setAttribute('inert', '');
+
   const firstInput = modalEl.querySelector('button, input, textarea, select');
   if (firstInput) firstInput.focus();
   syncBottomNav();
@@ -168,9 +177,13 @@ function closeModal(modalEl, fromPopState = false) {
   modalEl.setAttribute('inert', '');
   const index = overlayStack.indexOf(modalEl);
   if (index > -1) overlayStack.splice(index, 1);
+
   if (overlayStack.length === 0 && !DOM.productPage.classList.contains('active')) {
     document.body.style.overflow = '';
+    DOM.mainContent?.removeAttribute('inert');
+    DOM.bottomNav?.removeAttribute('inert');
   }
+
   if (previousFocusedElement) {
     previousFocusedElement.focus();
     previousFocusedElement = null;
@@ -188,16 +201,16 @@ function showConfirmModal(title, message, onConfirm) {
   const triggerEl = document.activeElement;
   const modal = document.createElement('div');
   modal.id = 'confirmModal';
-  modal.className = 'modal-overlay';
+  modal.className = 'modal-overlay confirm-modal';
   modal.setAttribute('role', 'dialog');
   modal.setAttribute('aria-modal', 'true');
   modal.innerHTML = `
-    <div class="drawer-content" style="height:auto; margin:auto; border-radius:16px; padding:24px 20px; max-width:320px; width:90%; text-align:center; transform:translateY(0);">
-      <h4 style="margin:0 0 8px; font-size:16px; color:var(--green);">${title}</h4>
-      <p style="font-size:13px; color:var(--gray-600); margin:0 0 20px;">${message}</p>
-      <div style="display:flex; gap:10px;">
-        <button id="confirmNo" style="flex:1; padding:12px; border-radius:8px; border:1px solid var(--gray-300); background:white; font-size:13px; font-weight:600;">Batal</button>
-        <button id="confirmYes" style="flex:1; padding:12px; border-radius:8px; border:none; background:var(--danger); color:white; font-size:13px; font-weight:600;">Hapus</button>
+    <div class="drawer-content confirm-modal-content">
+      <h4>${title}</h4>
+      <p>${message}</p>
+      <div class="confirm-buttons">
+        <button id="confirmNo" class="btn-outline">Batal</button>
+        <button id="confirmYes" class="btn-danger">Hapus</button>
       </div>
     </div>`;
   document.body.appendChild(modal);
@@ -413,10 +426,10 @@ function initDrawerDistrictDropdown() {
     const lat = parseFloat(option.dataset.lat);
     const lon = parseFloat(option.dataset.lon);
     const placeName = option.dataset.name;
-    const distanceKm = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, lat, lon);
+    const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, lat, lon);
     state.selectedDistrict = placeName;
-    state.userDistance = distanceKm;
-    state.haversineUsed = false; // reset flag
+    state.userDistance = result.distance;
+    state.haversineUsed = result.isHaversine;
     input.value = placeName;
     updateShippingUI();
     if (DOM.miniCartModal?.classList.contains('active')) renderMiniCart(state.cart);
@@ -439,9 +452,9 @@ async function resolveOnboardingDistance(districtName) {
     const results = await searchAddressOSM(districtName);
     if (results.length > 0) {
       const place = results[0];
-      const distanceKm = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, parseFloat(place.lat), parseFloat(place.lon));
-      state.userDistance = distanceKm;
-      state.haversineUsed = false;
+      const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, parseFloat(place.lat), parseFloat(place.lon));
+      state.userDistance = result.distance;
+      state.haversineUsed = result.isHaversine;
     }
   } catch (e) {
     console.warn('Gagal menghitung jarak dari onboarding, biarkan null');
@@ -457,7 +470,7 @@ function initOnboarding() {
     DOM.onbReturningUser.style.display = 'block';
     DOM.onbWelcomeName.textContent = saved.name;
     DOM.onbWelcomeDistrict.textContent = saved.district;
-    resolveOnboardingDistance(saved.district); // hitung jarak
+    resolveOnboardingDistance(saved.district);
   } else {
     DOM.onbNewUser.style.display = 'block';
     DOM.onbStep1.classList.add('active');
@@ -517,13 +530,11 @@ function initOnboarding() {
     DOM.onbDistrict.setAttribute('aria-expanded', 'false');
     DOM.onbDistrict.removeAttribute('aria-activedescendant');
     DOM.onbDistrict.value = label;
-    resolveOnboardingDistance(val); // langsung hitung jarak
+    resolveOnboardingDistance(val);
   }
 
   const filterDistricts = debounce((val) => {
     const v = val.toLowerCase();
-    // Gunakan data statis DISTRICTS hanya untuk saran (tetap impor jika diperlukan)
-    // Namun kita masih bisa memakai DISTRICT_MAP jika ada, jika tidak, fallback ke array kosong.
     const matches = Object.keys(window.__DISTRICT_MAP__ || {}).filter(k => k.includes(v));
     renderDropdown(matches);
   }, 150);
@@ -581,12 +592,15 @@ function initOnboarding() {
 }
 
 // ---------------------------------------------------------------------------
-// WHATSAPP, STRUK, & TELEGRAM
+// WHATSAPP & DOWNLOAD STRUK
 // ---------------------------------------------------------------------------
 async function downloadReceiptPNG() {
   const element = document.getElementById('orderConfirmContent');
   if (!element) return;
-  if (typeof html2canvas === 'undefined') { showToast('⚠️ Gagal menghasilkan struk.'); return; }
+  // Lazy-load html2canvas
+  if (typeof html2canvas === 'undefined') {
+    await import('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+  }
   try {
     const footer = document.querySelector('#orderConfirmModal .drawer-footer');
     if (footer) footer.style.display = 'none';
@@ -650,12 +664,7 @@ function sendReceiptToWhatsApp() {
   window.open(waUrl, '_blank');
 }
 
-async function sendReceiptToTelegram() {
-  // placeholder, tidak diubah
-}
-
 function showOrderConfirmation() {
-  // Validasi jarak >50 km
   const dist = state.userDistance;
   const summary = getCartSummaryLocal();
   const ship = dist != null ? calculateShipping(dist, summary.mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority) : { cost: null };
@@ -739,16 +748,12 @@ function showOrderConfirmation() {
       closeModal(document.getElementById('orderConfirmModal'));
       setTimeout(() => { openModal(DOM.paymentModal); }, 50);
     };
-
-    sendReceiptToTelegram();
   }
 }
 
 // ---------------------------------------------------------------------------
 // EVENTS & DELEGATION
 // ---------------------------------------------------------------------------
-let processingCheckout = false; // guard klik ganda
-
 function bindEvents() {
   const aboutTrigger = document.getElementById('aboutTrigger');
   const aboutClose = document.getElementById('aboutClose');
@@ -1042,8 +1047,7 @@ function initHeroParallax() {
 function init() {
   cacheDOM();
   try {
-    // expose DISTRICT_MAP sementara untuk saran onboarding (opsional)
-    window.__DISTRICT_MAP__ = window.__DISTRICT_MAP__ || {}; // fallback kosong
+    window.__DISTRICT_MAP__ = {};
     const saved = loadState();
     state.cart = saved?.cart || {};
     if (saved?.name) state.customerName = saved.name;
