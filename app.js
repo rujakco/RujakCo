@@ -1,8 +1,8 @@
-// app.js — Final Stable (no duplicate cart listener + QRIS cropping)
+// app.js — Final Production (Supabase, Telegram, Struk, Timeout, Drafts, A11y)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
-import { fmt, showToast, debounce, escapeHTML } from './utils/helpers.js';
-import { loadState, saveCart, saveUser, clearUser, saveCustomer, loadCustomer } from './modules/storage.js';
+import { fmt, showToast, debounce, escapeHTML, getSupabase } from './utils/helpers.js';
+import { loadState, saveCart, saveUser, clearUser, saveCustomer, loadCustomer, isStorageAvailable } from './modules/storage.js';
 import {
   calculateShipping,
   getDrivingDistance,
@@ -22,7 +22,8 @@ import { initTestimonials } from './modules/testimonials.js';
 import {
   validatePhone,
   validateAddress,
-  getCartSummary
+  getCartSummary,
+  showWhatsAppFallback
 } from './modules/checkout.js';
 
 // ---------------------------------------------------------------------------
@@ -43,6 +44,7 @@ const state = {
   lastViewedProductIndex: -1,
   currentOrderCode: null,
   haversineUsed: false,
+  receiptUrl: null,          // URL struk di Supabase Storage
 };
 
 PRODUCTS.forEach(p => {
@@ -52,7 +54,6 @@ PRODUCTS.forEach(p => {
 const overlayStack = [];
 window.__overlayStack__ = overlayStack;
 let isProgrammaticBack = false;
-let processingCheckout = false;
 
 // ---------------------------------------------------------------------------
 // DOM CACHE
@@ -106,6 +107,20 @@ function extractShortLocation(fullAddress) {
   const parts = fullAddress.split(',').map(p => p.trim());
   if (parts.length >= 2) return parts[1] || parts[0];
   return parts[0];
+}
+
+// ---------------------------------------------------------------------------
+// SCRIPT LOADER (untuk html2canvas UMD)
+// ---------------------------------------------------------------------------
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)) return resolve();
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error(`Gagal memuat script: ${src}`));
+    document.head.appendChild(script);
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -238,7 +253,7 @@ function showConfirmModal(title, message, onConfirm) {
 
 function openProductPage(globalIndex) {
   if (!DOM.productPage) return;
-  renderProductSwiper();
+  renderProductSwiper(state.drafts);
   DOM.productPage.style.display = 'flex';
   void DOM.productPage.offsetWidth;
   DOM.productPage.classList.add('active');
@@ -404,7 +419,7 @@ function initDrawerDistrictDropdown() {
     dropdown.style.display = 'block';
     const results = await searchAddressOSM(query);
     if (results.length === 0) {
-      dropdown.innerHTML = '<div style="padding:16px;text-align:center;color:var(--danger);">Lokasi tidak ditemukan.</div>';
+      dropdown.innerHTML = '<div style="padding:16px;text-align:center;color:var(--danger);">Lokasi tidak ditemukan. Coba lagi.</div>';
       return;
     }
     dropdown.innerHTML = results.map((place) => {
@@ -601,6 +616,8 @@ function initOnboarding() {
 
   document.getElementById('onbResetBtn').addEventListener('click', () => {
     clearUser();
+    state.cart = {};
+    updateCartUI();
     DOM.onbReturningUser.style.display = 'none';
     DOM.onbNewUser.style.display = 'block';
     DOM.onbStep2.classList.remove('active');
@@ -609,19 +626,51 @@ function initOnboarding() {
 }
 
 // ---------------------------------------------------------------------------
-// WHATSAPP & DOWNLOAD STRUK
+// WHATSAPP, TELEGRAM & DOWNLOAD STRUK
 // ---------------------------------------------------------------------------
 async function downloadReceiptPNG() {
   const element = document.getElementById('orderConfirmContent');
   if (!element) return;
   if (typeof html2canvas === 'undefined') {
-    await import('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+    try {
+      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+    } catch (err) {
+      showToast('⚠️ Gagal memuat komponen struk. Cek koneksi internet.');
+      return;
+    }
   }
   try {
     const footer = document.querySelector('#orderConfirmModal .drawer-footer');
     if (footer) footer.style.display = 'none';
     const canvas = await html2canvas(element, { backgroundColor: '#ffffff', scale: 2, useCORS: true });
     if (footer) footer.style.display = '';
+
+    // Upload ke Supabase Storage
+    const sb = getSupabase();
+    if (sb) {
+      try {
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        const fileName = `receipt-${state.currentOrderCode}.png`;
+        const { data, error } = await sb.storage
+          .from('receipts')
+          .upload(fileName, blob, {
+            contentType: 'image/png',
+            upsert: true
+          });
+        if (!error) {
+          const { data: publicUrl } = sb.storage
+            .from('receipts')
+            .getPublicUrl(fileName);
+          state.receiptUrl = publicUrl.publicUrl;
+        } else {
+          console.error('Gagal upload struk:', error);
+        }
+      } catch (err) {
+        console.error('Upload struk gagal:', err);
+      }
+    }
+
+    // Download untuk user
     return new Promise((resolve) => {
       canvas.toBlob((blob) => {
         const url = URL.createObjectURL(blob);
@@ -641,7 +690,31 @@ async function downloadReceiptPNG() {
   }
 }
 
-function sendReceiptToWhatsApp() {
+async function sendReceiptToTelegram() {
+  if (!state.receiptUrl || !state.currentOrderCode) return;
+
+  const TELEGRAM_BOT_TOKEN = '8862351367:AAF63f3lrCk5Wl_0tkAdnLiso2__dyzkvHM';
+  const TELEGRAM_CHAT_ID = '792789032';
+
+  const caption = `🧾 *Order Baru:* ${state.currentOrderCode}\n👤 ${state.customerName}\n📞 ${state.customerPhone}\n💰 Total: ${DOM.finalTotal?.textContent}`;
+
+  try {
+    await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHAT_ID,
+        photo: state.receiptUrl,
+        caption,
+        parse_mode: 'Markdown'
+      })
+    });
+  } catch (err) {
+    console.error('Gagal kirim ke Telegram:', err);
+  }
+}
+
+async function sendReceiptToWhatsApp() {
   const summary = getCartSummaryLocal();
   const name = DOM.customerNameInput?.value || state.customerName || 'Ngoedi';
   const phone = DOM.customerPhoneInput?.value || state.customerPhone || '—';
@@ -665,7 +738,45 @@ function sendReceiptToWhatsApp() {
   });
   msg += `\n💵 *Subtotal:* ${fmt(summary.subtotal)}\n🛵 *Ongkir:* ${shipCost}\n💰 *TOTAL TRANSFER:* *${totalCost}*\n\n`;
   msg += `📎 _Struk gambar telah terunduh. Mohon lampirkan struk & bukti transfer (QRIS) di sini._`;
-  window.open(`https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+
+  // Catat order ke Supabase
+  const sb = getSupabase();
+  if (sb) {
+    try {
+      await sb.from('orders').insert({
+        order_code: state.currentOrderCode,
+        customer_name: name,
+        customer_phone: phone,
+        customer_address: address,
+        district: state.selectedDistrict,
+        distance_km: state.userDistance,
+        items: summary.items,
+        subtotal: summary.subtotal,
+        shipping_cost: parseInt(shipCost.replace(/\D/g, '')) || null,
+        total: parseInt(totalCost.replace(/\D/g, '')) || null,
+        shipping_provider: logisticInfo,
+        delivery_time: deliveryTime,
+        notes,
+        status: 'pending_payment'
+      });
+    } catch (err) {
+      console.error('Gagal simpan order:', err);
+    }
+  }
+
+  // Buka WhatsApp
+  const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+  const opened = window.open(waUrl, '_blank');
+  if (!opened || opened.closed) {
+    showWhatsAppFallback(SYSTEM.WA_NUMBER, msg);
+    return; // jangan kosongkan cart kalau WA gagal
+  }
+
+  // Kirim juga ke Telegram (async, tidak perlu ditunggu)
+  sendReceiptToTelegram();
+
+  state.cart = {};
+  updateCartUI();
 }
 
 function showOrderConfirmation() {
@@ -699,11 +810,10 @@ function showOrderConfirmation() {
   const timeStr = now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' }) + ' WIB';
   state.currentOrderCode = `RJK-${now.toISOString().slice(2,10).replace(/-/g,'')}-${Math.floor(1000+Math.random()*9000)}`;
 
-  // ========== STRUK DENGAN QRIS BARU ==========
   contentEl.innerHTML = `
     <div class="receipt-wrap">
       <div class="receipt-stamp">Menunggu Pembayaran</div>
-      <div class="receipt-header"><img class="receipt-logo" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="RUJAK.Co" /><div class="receipt-brand">RUJAK.Co</div><div class="receipt-tagline">Indonesia dalam Satu Wadah</div></div>
+      <div class="receipt-header"><img class="receipt-logo" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="RUJAK.Co" crossorigin="anonymous" /><div class="receipt-brand">RUJAK.Co</div><div class="receipt-tagline">Indonesia dalam Satu Wadah</div></div>
       <div class="receipt-meta"><span class="code">${state.currentOrderCode}</span><span>${dateStr} · ${timeStr}</span></div>
       <div class="receipt-section"><div class="receipt-section-title">Data Penerima</div>
         <div class="confirm-row"><span>Nama</span><span>${name}</span></div>
@@ -721,18 +831,11 @@ function showOrderConfirmation() {
       <div class="receipt-footer">
         <p>"Asam, pedas, manis, segar — terima kasih telah memilih RUJAK.Co."</p>
         <div class="receipt-qris-wrap">
-          <img 
-            src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" 
-            alt="Scan QRIS" 
-            class="receipt-qris-cropped" 
-            crossorigin="anonymous" 
-          />
+          <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="Scan QRIS" class="receipt-qris-cropped" crossorigin="anonymous" />
         </div>
         <div class="receipt-code-text">${state.currentOrderCode}</div>
       </div>
     </div>`;
-  // ========== AKHIR STRUK ==========
-
   if (window.lucide) lucide.createIcons();
 
   const modal = document.getElementById('orderConfirmModal');
@@ -756,7 +859,7 @@ function showOrderConfirmation() {
 }
 
 // ---------------------------------------------------------------------------
-// EVENT BINDINGS (FINAL FIX: tidak ada duplikat listener keranjang)
+// EVENT BINDINGS
 // ---------------------------------------------------------------------------
 function bindEvents() {
   document.getElementById('aboutTrigger')?.addEventListener('click', () => openModal(DOM.aboutModal));
@@ -799,7 +902,7 @@ function bindEvents() {
     openProductPage(state.lastViewedProductIndex >= 0 ? state.lastViewedProductIndex : 0);
   });
 
-  // --- Keranjang (hanya satu listener, tidak ada duplikat) ---
+  // --- Keranjang ---
   document.getElementById('navCartBtn')?.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -817,6 +920,7 @@ function bindEvents() {
     }
   });
 
+  // --- Dropdown Waktu ---
   const deliveryTrigger = document.getElementById('deliveryTimeTrigger');
   const deliveryDropdown = document.getElementById('deliveryTimeDropdown');
   const deliveryHidden = document.getElementById('deliveryTime');
@@ -857,11 +961,13 @@ function bindEvents() {
   });
   document.addEventListener('click', (e) => { if (!deliveryTrigger?.contains(e.target) && !deliveryDropdown?.contains(e.target)) closeDeliveryDropdown(); });
 
+  // --- Tombol Tutup Modal ---
   document.getElementById('miniCartClose')?.addEventListener('click', () => closeModal(DOM.miniCartModal));
   document.getElementById('paymentClose')?.addEventListener('click', () => closeModal(DOM.paymentModal));
   document.getElementById('aiChatClose')?.addEventListener('click', () => closeModal(DOM.aiChatBox));
   document.getElementById('orderConfirmClose')?.addEventListener('click', () => closeModal(document.getElementById('orderConfirmModal')));
 
+  // --- Input Data Diri ---
   DOM.customerNameInput?.addEventListener('input', () => {
     state.customerName = DOM.customerNameInput.value;
     saveUser(state.customerName, state.selectedDistrict);
@@ -877,6 +983,7 @@ function bindEvents() {
     saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict, state.userDistance);
   });
 
+  // --- Klik Global (Delegasi) ---
   document.addEventListener('click', (e) => {
     const boutique = e.target.closest('.boutique-item');
     if (boutique) { const idx = parseInt(boutique.dataset.idx); if (!isNaN(idx)) openProductPage(idx); return; }
@@ -943,9 +1050,6 @@ function bindEvents() {
 
     if (e.target.closest('[data-action="confirm-wa"]')) {
       sendReceiptToWhatsApp();
-      saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict, state.userDistance);
-      state.cart = {};
-      updateCartUI();
       closeModal(DOM.paymentModal);
       showToast('Terima kasih! Menyambungkan ke WhatsApp...');
       return;
@@ -992,14 +1096,10 @@ function bindEvents() {
       return;
     }
 
-    if (e.target.id === 'priorityToggleMini') {
-      state.isPriority = e.target.checked;
-      updateShippingUI();
-      return;
-    }
+    if (e.target.id === 'priorityToggleMini') { state.isPriority = e.target.checked; updateShippingUI(); return; }
 
     if (e.target.id === 'btnOpenPayment') {
-      if (processingCheckout) return;
+      if (e.target.disabled) return;
       if (!Object.keys(state.cart).length) return showToast('Keranjang masih kosong.');
       const phone = DOM.customerPhoneInput?.value.trim() || '';
       const address = DOM.customerAddressInput?.value.trim() || '';
@@ -1007,9 +1107,9 @@ function bindEvents() {
       if (!validateAddress(address)) return showToast('Mohon lengkapi alamat pengantaran.');
       if (!state.selectedDistrict) return showToast('Mohon pilih alamat tujuan terlebih dahulu.');
       if (state.userDistance == null) return showToast('Mohon pilih alamat dari hasil pencarian.');
-      processingCheckout = true;
+      e.target.disabled = true;
       showOrderConfirmation();
-      processingCheckout = false;
+      setTimeout(() => { e.target.disabled = false; }, 1000);
       return;
     }
 
@@ -1053,6 +1153,11 @@ function initHeroParallax() {
 function init() {
   cacheDOM();
   try {
+    // Cek ketersediaan localStorage
+    if (!isStorageAvailable()) {
+      showToast('⚠️ Penyimpanan browser tidak tersedia. Data tidak akan disimpan.');
+    }
+
     window.__DISTRICT_MAP__ = {};
     const saved = loadState();
     state.cart = saved?.cart || {};
@@ -1075,7 +1180,7 @@ function init() {
     }
 
     renderMenu();
-    renderProductSwiper();
+    renderProductSwiper(state.drafts);
     initCarousel();
     initDetailGestures();
     initAccessibility();
