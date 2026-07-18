@@ -1,4 +1,3 @@
-// data/config.js — Final (FAQ diperbarui)
 export const SYSTEM = {
   WA_NUMBER: '6289677161680',
   STORE_LAT: -6.2165414,
@@ -14,7 +13,6 @@ export const SPICE_LABELS = {
   5: 'Neraka'
 };
 
-// ✅ FAQ diperbarui, tidak lagi menyebut dropdown kecamatan
 export const FAQ_DATA = [
   { keywords: ['jam', 'buka', 'operasional'], answer: 'Rujak.Co buka setiap hari mulai pukul 09.00 - 21.00 WIB.' },
   { keywords: ['delivery', 'antar', 'kurir', 'ongkir', 'biaya'], answer: 'Kami melayani pengantaran ke seluruh area Jabodetabek. Biaya dihitung otomatis setelah Anda mengetik alamat lengkap di keranjang.' },
