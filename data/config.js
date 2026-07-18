@@ -4,15 +4,7 @@ export const SYSTEM = {
   STORE_LNG: 107.0177395,
   DEFAULT_DISTANCE: 2
 };
-
-export const SPICE_LABELS = {
-  1: 'Ringan',
-  2: 'Sedang',
-  3: 'Pedas',
-  4: 'Sangat Pedas',
-  5: 'Neraka'
-};
-
+export const SPICE_LABELS = { 1: 'Ringan', 2: 'Sedang', 3: 'Pedas', 4: 'Sangat Pedas', 5: 'Neraka' };
 export const FAQ_DATA = [
   { keywords: ['jam', 'buka', 'operasional'], answer: 'Rujak.Co buka setiap hari mulai pukul 09.00 - 21.00 WIB.' },
   { keywords: ['delivery', 'antar', 'kurir', 'ongkir', 'biaya'], answer: 'Kami melayani pengantaran ke seluruh area Jabodetabek. Biaya dihitung otomatis setelah Anda mengetik alamat lengkap di keranjang.' },
