@@ -1,4 +1,4 @@
-// app.js — FINAL: Auto-recover jarak & alamat, tanpa error palsu
+// app.js — FINAL: Pemulihan data agresif + Auto‑recover jarak
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase } from './utils/helpers.js';
@@ -769,10 +769,10 @@ async function sendReceiptToWhatsApp() {
   const opened = window.open(waUrl, '_blank');
   if (!opened || opened.closed) {
     showWhatsAppFallback(SYSTEM.WA_NUMBER, msg);
-    return; // jangan kosongkan cart kalau WA gagal
+    return;
   }
 
-  // Kirim juga ke Telegram (async, tidak perlu ditunggu)
+  // Kirim juga ke Telegram
   sendReceiptToTelegram();
 
   state.cart = {};
@@ -1108,7 +1108,7 @@ function bindEvents() {
       if (!validateAddress(address)) return showToast('Mohon lengkapi alamat pengantaran.');
       if (!state.selectedDistrict && !state.selectedDistrictFull) return showToast('Mohon pilih alamat tujuan terlebih dahulu.');
 
-      // Auto-recover jarak jika belum ada
+      // Auto‑recover jarak jika belum ada
       if (state.userDistance == null) {
         e.target.disabled = true;
         let recovered = false;
@@ -1203,8 +1203,16 @@ function init() {
         state.selectedDistrictFull = cust.district;
         state.selectedDistrict = extractShortLocation(cust.district) || cust.district;
       }
+      // Perbaikan: pastikan jarak terambil meskipun 0
       if (cust.distance !== null && cust.distance !== undefined && !isNaN(cust.distance)) {
         state.userDistance = cust.distance;
+      } else {
+        // Coba baca langsung dari localStorage sebagai fallback ekstra
+        const raw = localStorage.getItem('rj_user_distance');
+        if (raw !== null) {
+          const parsed = parseFloat(raw);
+          if (!isNaN(parsed)) state.userDistance = parsed;
+        }
       }
     }
 
