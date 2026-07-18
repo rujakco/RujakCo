@@ -6,6 +6,7 @@ export function escapeHTML(str) {
 }
 let toastTimer = null;
 export function showToast(msg) {
+  if (!msg) return;
   const el = document.getElementById('toast');
   if (!el) return;
   el.textContent = msg;
