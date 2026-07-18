@@ -814,7 +814,14 @@ async function sendReceiptToWhatsApp() {
     if (state.isPriority) logisticInfo += ' [PRIORITAS]';
   }
   const shipCost = DOM.finalShipping?.textContent || '—';
-  const totalCost = DOM.finalTotal?.textContent || '—';
+  
+  // --- PERBAIKAN: hitung total dari state, bukan dari DOM ---
+  const dist = state.userDistance;
+  const ship = dist != null ? calculateShipping(dist, summary.mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority) : { cost: 0 };
+  const total = summary.subtotal + (ship.cost || 0);
+  const totalCost = fmt(total);
+  // ---------------------------------------------------------
+
   const distance = state.userDistance ? `${state.userDistance} km` : '—';
   let msg = `🧾 *STRUK PESANAN RUJAK.CO*\n🆔 *Order ID:* ${state.currentOrderCode || '—'}\n\n`;
   msg += `👤 *Penerima:* ${name}\n📞 *HP:* ${phone}\n📍 *Alamat:* ${address}\n`;
