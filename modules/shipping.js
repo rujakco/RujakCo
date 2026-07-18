@@ -1,8 +1,4 @@
-// modules/shipping.js — Final (sinkron koordinat, hapus dead code)
 import { SYSTEM } from '../data/config.js';
-
-// ✅ FIX: Gunakan koordinat dari config.js, hapus KITCHEN_COORDS
-export { SYSTEM }; // ekspor ulang jika perlu
 
 export function calculateShipping(distance, mainQty, provider = 'rujakco', vehicle = 'motor', priority = false) {
   const dist = distance || SYSTEM.DEFAULT_DISTANCE;
@@ -19,18 +15,11 @@ export function calculateShipping(distance, mainQty, provider = 'rujakco', vehic
   }
 }
 
-// ✅ Hapus getDistance() – tidak digunakan lagi
-
-// Rumus Haversine sebagai fallback
 function calculateHaversine(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) ** 2;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return parseFloat((R * c).toFixed(1));
 }
@@ -42,12 +31,12 @@ export async function getDrivingDistance(lat1, lon1, lat2, lon2) {
     if (!response.ok) throw new Error('OSRM gagal');
     const data = await response.json();
     if (data.routes && data.routes.length > 0) {
-      return parseFloat((data.routes[0].distance / 1000).toFixed(1));
+      return { distance: parseFloat((data.routes[0].distance / 1000).toFixed(1)), isHaversine: false };
     }
     throw new Error('Rute tidak ditemukan');
   } catch (error) {
     console.warn('OSRM gagal, fallback ke Haversine:', error);
-    return calculateHaversine(lat1, lon1, lat2, lon2);
+    return { distance: calculateHaversine(lat1, lon1, lat2, lon2), isHaversine: true };
   }
 }
 
@@ -55,9 +44,7 @@ export async function searchAddressOSM(query) {
   const viewbox = '106.6,-6.4,107.1,-6.1';
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&countrycodes=id&viewbox=${viewbox}&limit=5`;
   try {
-    const response = await fetch(url, {
-      headers: { 'User-Agent': 'RujakCo-DeliveryApp/1.0' }
-    });
+    const response = await fetch(url, { headers: { 'User-Agent': 'RujakCo-DeliveryApp/1.0' } });
     if (!response.ok) return [];
     return await response.json();
   } catch (error) {
