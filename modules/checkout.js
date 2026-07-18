@@ -1,4 +1,3 @@
-// modules/checkout.js — Final (hanya fungsi yang digunakan)
 import { SYSTEM } from '../data/config.js';
 import { PRODUCTS } from '../data/products.js';
 import { fmt, showToast, getSupabase } from '../utils/helpers.js';
@@ -7,7 +6,6 @@ export function getCartSummary(cart) {
   const items = [];
   let subtotal = 0;
   let mainProductQty = 0;
-
   Object.keys(cart).forEach(key => {
     const entry = cart[key];
     if (!entry || entry.qty <= 0) return;
@@ -17,16 +15,8 @@ export function getCartSummary(cart) {
     const qty = entry.qty;
     subtotal += product.price * qty;
     mainProductQty += qty;
-    items.push({
-      cartId: key,
-      id: pid,
-      name: product.name,
-      price: product.price,
-      qty,
-      spice: entry.spice
-    });
+    items.push({ cartId: key, id: pid, name: product.name, price: product.price, qty, spice: entry.spice });
   });
-
   return { items, subtotal, mainProductQty };
 }
 
@@ -39,11 +29,9 @@ export function validateAddress(address) {
   return address.trim().length >= 10;
 }
 
-// ✅ Fallback WhatsApp (tetap dipertahankan untuk berjaga-jaga)
 export function showWhatsAppFallback(phone, message) {
   const old = document.getElementById('waFallbackModal');
   if (old) old.remove();
-
   const modal = document.createElement('div');
   modal.id = 'waFallbackModal';
   modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:100000;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;';
@@ -56,12 +44,9 @@ export function showWhatsAppFallback(phone, message) {
       <button id="closeWaFallback" style="background:none;border:1px solid #ddd;color:#666;padding:10px;border-radius:8px;margin-top:8px;width:100%;">Tutup</button>
     </div>`;
   document.body.appendChild(modal);
-
   document.getElementById('openWaManual').addEventListener('click', () => {
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
     modal.remove();
   });
   document.getElementById('closeWaFallback').addEventListener('click', () => modal.remove());
 }
-
-// ✅ processPayment & confirmOrder dihapus – tidak digunakan di alur utama
