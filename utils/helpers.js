@@ -2,7 +2,7 @@ export function fmt(num) {
   return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(num || 0);
 }
 export function escapeHTML(str) {
-  return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 }
 let toastTimer = null;
 export function showToast(msg) {
@@ -15,20 +15,13 @@ export function showToast(msg) {
   if (toastTimer) clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
 }
-export function debounce(fn, delay = 150) {
-  let timer;
-  return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
-}
+export function debounce(fn, delay = 150) { let timer; return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); }; }
 let supabaseClient = null;
 export function getSupabase() {
   if (supabaseClient) return supabaseClient;
-  if (window.supabase?.createClient) {
-    const url = window.__SUPABASE_URL__ || '';
-    const key = window.__SUPABASE_KEY__ || '';
-    if (!url || !key) { console.warn('Supabase URL/Key tidak ditemukan.'); return null; }
-    supabaseClient = window.supabase.createClient(url, key);
+  if (window.supabase?.createClient && window.__SUPABASE_URL__ && window.__SUPABASE_KEY__) {
+    supabaseClient = window.supabase.createClient(window.__SUPABASE_URL__, window.__SUPABASE_KEY__);
     return supabaseClient;
   }
-  console.warn('Supabase tidak tersedia.');
   return null;
 }
