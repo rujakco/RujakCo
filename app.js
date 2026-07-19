@@ -184,6 +184,16 @@ function syncBottomNav() {
 
 let previousFocusedElement = null;
 
+function releaseInert() {
+  const anyModalOpen = document.querySelector('.modal-overlay.active');
+  const productPageOpen = DOM.productPage?.classList.contains('active');
+  if (!anyModalOpen && !productPageOpen) {
+    document.body.style.overflow = '';
+    DOM.mainContent?.removeAttribute('inert');
+    DOM.bottomNav?.removeAttribute('inert');
+  }
+}
+
 function openModal(modalEl) {
   if (!modalEl) return;
   previousFocusedElement = document.activeElement;
@@ -212,6 +222,7 @@ function closeModal(modalEl, fromPopState = false) {
     DOM.mainContent?.removeAttribute('inert');
     DOM.bottomNav?.removeAttribute('inert');
   }
+  releaseInert(); // pastikan inert lepas
   if (previousFocusedElement) {
     previousFocusedElement.focus();
     previousFocusedElement = null;
@@ -308,6 +319,7 @@ function closeProductPage(fromPopState = false) {
       DOM._productObserver.disconnect();
       DOM._productObserver = null;
     }
+    releaseInert(); // pastikan inert lepas setelah tutup produk
     if (!fromPopState) {
       isProgrammaticBack = true;
       history.back();
@@ -438,7 +450,7 @@ function initDrawerDistrictDropdown() {
         </div>`;
     }).join('');
     input.setAttribute('aria-expanded', 'true');
-  }, 1000);
+  }, 500); // Perbaikan: debounce 500ms lebih responsif
 
   input.addEventListener('input', (e) => {
     state.selectedDistrict = '';
@@ -979,6 +991,7 @@ function bindEvents() {
   document.getElementById('navHomeBtn')?.addEventListener('click', () => {
     if (DOM.productPage?.classList.contains('active')) {
       closeProductPage(false);
+      setTimeout(releaseInert, 500);
       setTimeout(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 200);
     } else {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1059,10 +1072,14 @@ function bindEvents() {
     DOM.headerName.textContent = state.customerName || 'Ngoedi';
     if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Halo, ${state.customerName || 'Ngoedi'}! Ada yang bisa kami bantu?`;
   });
+
+  // Perbaikan: sanitasi nomor telepon (hanya angka)
   DOM.customerPhoneInput?.addEventListener('input', () => {
+    DOM.customerPhoneInput.value = DOM.customerPhoneInput.value.replace(/\D/g, '');
     state.customerPhone = DOM.customerPhoneInput.value;
     saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict, state.userDistance);
   });
+
   DOM.customerAddressInput?.addEventListener('input', () => {
     state.customerAddress = DOM.customerAddressInput.value;
     saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict, state.userDistance);
@@ -1114,7 +1131,8 @@ function bindEvents() {
       const idx = addBtn.dataset.idx;
       const draft = state.drafts[pid];
       const cartKey = pid + '_spice' + draft.spice;
-      if (!state.cart[cartKey]) state.cart[cartKey] = { qty: 0, spice: draft.spice };
+      // Perbaikan: menyertakan id produk di objek cart
+      if (!state.cart[cartKey]) state.cart[cartKey] = { id: pid, qty: 0, spice: draft.spice };
       state.cart[cartKey].qty += draft.qty;
       state.drafts[pid].qty = 1;
       document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = 1);
@@ -1235,7 +1253,7 @@ function bindEvents() {
         if (!recovered) {
           showToast('Gagal menghitung jarak. Silakan pilih alamat dari pencarian di atas.');
           e.target.dataset.processing = 'false';
-          return;
+          return; // Hentikan proses jika jarak gagal didapat
         }
       }
 
