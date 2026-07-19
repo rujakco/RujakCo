@@ -1,164 +1,141 @@
-// modules/render.js
 import { PRODUCTS } from '../data/products.js';
 import { SPICE_LABELS } from '../data/config.js';
 import { fmt, escapeHTML } from '../utils/helpers.js';
+import { getCartSummary } from './checkout.js';
 
-export function getProductGlobalIndex(productId) {
-  return PRODUCTS.findIndex(p => p.id === productId);
+const LOOP_MULTIPLIER = 3;
+const products = PRODUCTS || [];
+let loopedProducts = [];
+for (let i = 0; i < LOOP_MULTIPLIER; i++) {
+  loopedProducts = loopedProducts.concat(products);
 }
 
-export function renderMenu() {
-  const track = document.getElementById('menuList');
-  const dotsContainer = document.getElementById('carouselDots');
-  if (!track) return;
-
-  track.innerHTML = PRODUCTS.map((p, i) => `
-    <div class="boutique-item" data-idx="${i}" tabindex="0" role="button" aria-label="Lihat detail ${escapeHTML(p.name)}">
-      <img class="btq-img" src="${escapeHTML(p.image)}" alt="${escapeHTML(p.name)}" loading="lazy" />
-      <div class="btq-text-container">
-        <span class="btq-badge">${escapeHTML(p.category)}</span>
-        <h3 class="btq-name">${escapeHTML(p.name)}</h3>
-        <div class="btq-price-wrap">
-          <span class="btq-price">${escapeHTML(p.priceLabel)}</span>
-        </div>
-      </div>
-    </div>
-  `).join('');
-
-  if (dotsContainer) {
-    dotsContainer.innerHTML = PRODUCTS.map((_, i) => `
-      <button class="carousel-dot" data-index="${i}" aria-label="Produk ${i + 1}"></button>
-    `).join('');
+export function renderMenu(containerId = 'menuList') {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  if (!loopedProducts.length) {
+    container.innerHTML = '<p style="text-align:center;padding:40px 20px;color:var(--gray-500);">Belum ada produk tersedia.</p>';
+    return;
   }
-}
-
-export function renderProductSwiper(drafts) {
-  const track = document.getElementById('productSwiperTrack');
-  if (!track) return;
-
-  track.innerHTML = PRODUCTS.map((p, idx) => {
-    const d = drafts[p.id] || { spice: p.defaultSpice ?? 3, qty: 1 };
-    const spiceLabel = SPICE_LABELS[d.spice];
-
-    // === PERBAIKAN BULLET WRAP: spasi sebelum bullet diganti &nbsp; ===
-    const buahList = (p.buah || []).map(b => escapeHTML(b)).join('&nbsp;<span class="fruit-bullet">•</span> ');
-    const specs = `${escapeHTML(p.container)}&nbsp;<span class="fruit-bullet">•</span> ${escapeHTML(p.size)}&nbsp;<span class="fruit-bullet">•</span> ${escapeHTML(p.sambal)}`;
-
-    return `
-      <div class="product-slide" data-idx="${idx}">
-        <div class="detail-image-wrap">
-          <img class="lazy-detail" data-src="${escapeHTML(p.detailImage || p.image)}" alt="${escapeHTML(p.name)}" />
-        </div>
-        <div class="detail-content">
-          <span class="section-label">${escapeHTML(p.category)}</span>
-          <h2>${escapeHTML(p.name)}</h2>
-          <div class="detail-price-row">
-            <span class="detail-price">${escapeHTML(p.priceLabel)}</span>
-            <span class="price-line"></span>
-          </div>
-          <p class="detail-desc">${escapeHTML(p.desc)}</p>
-
-          <div class="action-area">
-            <div id="step1_${idx}_${p.id}" class="step-1-content">
-              <div class="detail-actions">
-                <div class="qty-minimal">
-                  <button class="qty-minus" data-pid="${p.id}" aria-label="Kurangi jumlah">−</button>
-                  <span class="qty-num" data-valpid="${p.id}">${d.qty}</span>
-                  <button class="qty-plus" data-pid="${p.id}" aria-label="Tambah jumlah">+</button>
-                </div>
-                <button class="add-to-cart-btn step-1-btn" data-pid="${p.id}" data-idx="${idx}">
-                  Pesan — ${escapeHTML(p.priceLabel)}
-                </button>
-              </div>
-            </div>
-
-            <div id="step2_${idx}_${p.id}" class="step-2-content" style="display:none;">
-              <div class="spice-selector">
-                <label>Tingkat Pedas <span class="spice-current" id="spiceLabel_${idx}_${p.id}">${spiceLabel}</span></label>
-                <div class="spice-options">
-                  ${[1,2,3,4,5].map(level => `
-                    <button class="spice-option ${level === d.spice ? 'active' : ''}" data-pid="${p.id}" data-spice="${level}" aria-label="Level ${level}" aria-pressed="${level === d.spice ? 'true' : 'false'}">${level}</button>
-                  `).join('')}
-                </div>
-              </div>
-              <button class="add-to-cart-btn" data-pid="${p.id}" data-idx="${idx}">
-                Tambahkan ke Pesanan
-              </button>
-            </div>
-          </div>
-
-          <div class="detail-specs">
-            <div><strong>Buah</strong> ${buahList}</div>
-            <div><strong>Saus</strong> ${escapeHTML(p.saus || '—')}</div>
-          </div>
-
-          <p class="fruit-list-inline" style="margin-bottom:40px;">${specs}</p>
-
-          <p class="cerita-teks" style="margin-top:0; padding: 0 16px; text-align:center;">
-            ${escapeHTML(p.cerita || '')}
-          </p>
-
-          <div class="detail-manifesto">
-            <h4>Fresh-Prep</h4>
-            <p>Buah dipotong 15 menit sebelum pengantaran.</p>
-          </div>
-        </div>
+  container.innerHTML = loopedProducts.map((p, index) => `
+    <div class="boutique-item" data-id="${p.id}" data-idx="${index}">
+      <img class="btq-img" src="${p.thumbnail}" loading="lazy" alt="${escapeHTML(p.name)}" />
+      <div class="btq-text-container">
+        <h3 class="btq-name">${escapeHTML(p.name)}</h3>
+        ${p.badge ? `<span class="btq-badge">${escapeHTML(p.badge)}</span>` : ''}
+        <div class="btq-price-wrap"><span class="btq-price">${fmt(p.price)}</span></div>
       </div>
-    `;
-  }).join('');
-}
-
-export function renderCart(cart, badgeIds = []) {
-  const totalItems = Object.values(cart).reduce((sum, item) => sum + item.qty, 0);
-  badgeIds.forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    if (totalItems === 0) {
-      el.style.display = 'none';
-    } else {
-      el.style.display = 'flex';
-      el.textContent = totalItems;
-    }
+    </div>`).join('');
+  container.querySelectorAll('img').forEach(img => {
+    img.addEventListener('error', () => {
+      img.style.display = 'none';
+      const fb = document.createElement('div');
+      fb.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e8efeb;color:#6B7280;font-size:12px;font-weight:600;text-align:center;padding:8px;';
+      fb.textContent = img.alt.substring(0, 30);
+      img.parentElement.appendChild(fb);
+    });
   });
 }
 
-export function renderMiniCart(cart) {
-  const list = document.getElementById('miniCartList');
-  if (!list) return;
-
-  const cartItems = Object.entries(cart);
-  if (cartItems.length === 0) {
-    list.innerHTML = `<div class="cart-empty">Keranjang masih kosong. Pilih sajian favorit Anda.</div>`;
+export function renderProductSwiper(drafts, trackId = 'productSwiperTrack') {
+  const track = document.getElementById(trackId);
+  if (!track) return;
+  if (!loopedProducts.length) {
+    track.innerHTML = '<p style="text-align:center;padding:40px 20px;color:var(--gray-500);">Belum ada produk tersedia.</p>';
     return;
   }
-
-  list.innerHTML = cartItems.map(([key, item]) => {
-    const productId = key.split('_spice')[0];
-    const product = PRODUCTS.find(p => p.id === productId);
-    const name = product ? product.name : key;
-    const price = product ? product.price : 0;
-    const spiceLabel = SPICE_LABELS[item.spice] || '';
+  track.innerHTML = loopedProducts.map((p, index) => {
+    const draft = drafts?.[p.id] || { spice: p.defaultSpice || 3, qty: 1 };
+    const spiceLabel = SPICE_LABELS?.[draft.spice] ?? 'Sedang';
     return `
+    <div class="product-slide" data-id="${p.id}" data-idx="${index}">
+      <div class="detail-image-wrap">
+        <img class="lazy-detail" data-src="${p.image}" alt="${escapeHTML(p.name)}" loading="lazy" />
+      </div>
+      <div class="detail-content">
+        <h2>${escapeHTML(p.name)}</h2>
+        ${p.badge ? `<span class="btq-badge" style="display:inline-block;margin-bottom:4px;">${escapeHTML(p.badge)}</span>` : ''}
+        <div class="detail-price-row"><span class="detail-price">${fmt(p.price)}</span><span class="price-line"></span></div>
+        <p class="detail-desc">${escapeHTML(p.desc)}</p>
+        <div class="action-area">
+          <div id="step1_${index}_${p.id}" class="action-step-1">
+            <button class="step-1-btn btn-gold" data-idx="${index}" data-pid="${p.id}">Sesuaikan &amp; Pesan</button>
+          </div>
+          <div id="step2_${index}_${p.id}" class="step-2-content">
+            <div class="spice-selector">
+              <label><span>Tingkat Pedas</span><span class="spice-current" id="spiceLabel_${index}_${p.id}">${spiceLabel}</span></label>
+              <div class="spice-options" id="spice_${index}_${p.id}">
+                ${[1,2,3,4,5].map(i => `<button class="spice-option ${i === draft.spice ? 'active' : ''}" data-spice="${i}" data-pid="${p.id}">${i}</button>`).join('')}
+              </div>
+            </div>
+            <div class="detail-actions" style="margin-bottom:0;">
+              <div class="qty-minimal">
+                <button class="qty-minus" data-pid="${p.id}" aria-label="Kurangi jumlah">−</button>
+                <span class="qty-num" data-valpid="${p.id}">${draft.qty}</span>
+                <button class="qty-plus" data-pid="${p.id}" aria-label="Tambah jumlah">+</button>
+              </div>
+              <button class="add-to-cart-btn" data-pid="${p.id}" data-idx="${index}">Tambahkan ke Reservasi</button>
+            </div>
+          </div>
+        </div>
+        <label class="section-label">Komposisi ${(p.buah || []).length} Buah</label>
+        <p class="fruit-list-inline">${(p.buah || []).map(b => escapeHTML(b)).join(' <span class="fruit-bullet">•</span> ')}</p>
+        <label class="section-label">Spesifikasi Sajian</label>
+        <p class="fruit-list-inline" style="margin-bottom:40px;">${escapeHTML(p.container)} <span class="fruit-bullet">•</span> ${escapeHTML(p.size)} <span class="fruit-bullet">•</span> ${escapeHTML(p.sambal)}</p>
+        ${p.story ? `<label class="section-label">Cerita di Baliknya</label><p style="font-family:'Fraunces',serif;font-style:italic;text-align:center;color:var(--gray-500);padding:0 16px;margin-bottom:40px;line-height:1.8;">${escapeHTML(p.story)}</p>` : ''}
+        <div class="detail-manifesto">
+          <h4><i data-lucide="shield-check" class="icon-sm inline" style="margin-bottom:-2px;"></i> Komitmen Kesegaran</h4>
+          <p>Kerenyahan adalah prioritas kami. Buah dipotong tepat 15 menit sebelum diantar, dan sambal selalu dikemas terpisah agar teksturnya terjaga.</p>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  track.querySelectorAll('.lazy-detail').forEach(img => {
+    img.addEventListener('error', () => {
+      img.style.display = 'none';
+      const fb = document.createElement('div');
+      fb.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e8efeb;color:#6B7280;font-size:12px;font-weight:600;text-align:center;padding:8px;';
+      fb.textContent = img.alt.substring(0, 30);
+      img.parentElement.appendChild(fb);
+    });
+  });
+  if (window.lucide) window.lucide.createIcons();
+}
+
+export function renderCart(cart, badgeIds = ['cartBadgeNav']) {
+  const totalQty = Object.values(cart).reduce((sum, entry) => sum + (entry.qty || 0), 0);
+  badgeIds.forEach(id => {
+    const badge = document.getElementById(id);
+    if (badge) { badge.textContent = totalQty; badge.style.display = totalQty > 0 ? 'flex' : 'none'; }
+  });
+}
+
+export function renderMiniCart(cart, listId = 'miniCartList', subtotalId = 'cartSubtotalDisplay') {
+  const sum = getCartSummary(cart);
+  const list = document.getElementById(listId);
+  if (!list) return sum;
+  list.innerHTML = sum.items.length === 0
+    ? '<p class="cart-empty">Reservasi Anda masih kosong.<br>Silakan pilih mahakarya sajian kami.</p>'
+    : sum.items.map(i => `
       <div class="cart-item-row">
         <div class="cart-item-info">
-          <p>${escapeHTML(name)} ${spiceLabel ? 'Lv ' + item.spice : ''}</p>
-          <span style="font-size:0.75rem;color:var(--gray-500);">${fmt(price)} / porsi</span>
+          <h4>${escapeHTML(i.name)}${i.spice ? ' (Lv ' + i.spice + ')' : ''}</h4>
+          <p>${fmt(i.price)}</p>
         </div>
-        <div class="qty-minimal" style="height:40px;">
-          <button data-action="decrease" data-id="${key}" aria-label="Kurangi">−</button>
-          <span>${item.qty}</span>
-          <button data-action="increase" data-id="${key}" aria-label="Tambah">+</button>
+        <div class="qty-minimal">
+          <button data-action="decrease" data-id="${i.cartId}" aria-label="Kurangi jumlah">−</button>
+          <span>${i.qty}</span>
+          <button data-action="increase" data-id="${i.cartId}" aria-label="Tambah jumlah">+</button>
         </div>
-        <span style="font-weight:600;min-width:60px;text-align:right;">${fmt(price * item.qty)}</span>
-      </div>
-    `;
-  }).join('');
+      </div>`).join('');
+  const subtotalEl = document.getElementById(subtotalId);
+  if (subtotalEl) subtotalEl.textContent = fmt(sum.subtotal);
+  return sum;
+}
 
-  const subtotal = Object.values(cart).reduce((sum, item) => {
-    const product = PRODUCTS.find(p => p.id === item.id?.split('_spice')[0]);
-    return sum + ((product?.price || 0) * item.qty);
-  }, 0);
-
-  const subtotalEl = document.getElementById('cartSubtotalDisplay');
-  if (subtotalEl) subtotalEl.textContent = fmt(subtotal);
+export function getProductGlobalIndex(productId) {
+  if (!PRODUCTS || !PRODUCTS.length) return -1;
+  const baseIndex = PRODUCTS.findIndex(p => p.id === productId);
+  if (baseIndex === -1) return -1;
+  return Math.floor(LOOP_MULTIPLIER / 2) * PRODUCTS.length + baseIndex;
 }
