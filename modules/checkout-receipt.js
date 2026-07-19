@@ -1,10 +1,11 @@
-import { SYSTEM } from './data/config.js';
-import { fmt, showToast, escapeHTML, getSupabase } from './utils/helpers.js';
-import { saveCustomer } from './modules/storage.js';
-import { calculateShipping, getDrivingDistance } from './modules/shipping.js';
-import { renderMiniCart } from './modules/render.js';
+// FIX PATH ABSOLUT: Menggunakan '/' di awal agar browser mencari dari root folder, bukan terjebak di dalam folder modules
+import { SYSTEM } from '/data/config.js';
+import { fmt, showToast, escapeHTML, getSupabase } from '/utils/helpers.js';
+import { saveCustomer } from '/modules/storage.js';
+import { calculateShipping, getDrivingDistance } from '/modules/shipping.js';
+import { renderMiniCart } from '/modules/render.js';
 
-export async function showOrderConfirmation(state, DOM, overlayStack, openModal, closeModal, getCartSummaryLocal, downloadReceiptPNG, sendReceiptToTelegram, fmt, total) {
+export async function showOrderConfirmation(state, DOM, overlayStack, openModal, closeModal, getCartSummaryLocal, downloadReceiptPNG, sendReceiptToTelegram) {
   const dist = state.userDistance;
   const summary = getCartSummaryLocal();
   const ship = dist != null ? calculateShipping(dist, summary.mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority) : { cost: null };
@@ -134,7 +135,7 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
 
       closeModal(document.getElementById('orderConfirmModal'));
       setTimeout(() => {
-        DOM.paymentTotal.textContent = fmt(calculatedTotal);
+        if (DOM.paymentTotal) DOM.paymentTotal.textContent = fmt(calculatedTotal);
         openModal(DOM.paymentModal);
       }, 50);
     };
