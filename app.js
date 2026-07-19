@@ -1,4 +1,4 @@
-// app.js — FINAL REMASTERED: Sinkronisasi Modular & Aman
+// app.js — FINAL REMASTERED: Sinkronisasi Modular & Aman (Folder Modules)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch } from './utils/helpers.js';
@@ -25,8 +25,8 @@ import {
   getCartSummary,
 } from './modules/checkout.js';
 
-// AMAN & PRO: Impor fungsi cetak struk dari file modular baru agar app.js tetap ramping
-import { showOrderConfirmation as launchProReceipt } from './checkout-receipt.js';
+// FIX PATH AMAN: Mengubah jalur impor karena berkas checkout-receipt.js Anda berada di dalam folder modules/
+import { showOrderConfirmation as launchProReceipt } from './modules/checkout-receipt.js';
 
 // ---------------------------------------------------------------------------
 // STATE & STACK
@@ -453,7 +453,7 @@ function initDrawerDistrictDropdown() {
         </div>`;
     }).join('');
     input.setAttribute('aria-expanded', 'true');
-  }, 500); // FIX AMAN: Mengubah interval dari 1000 ke 500ms agar pencarian lokasi responsif
+  }, 500);
 
   input.addEventListener('input', (e) => {
     state.selectedDistrict = '';
@@ -631,8 +631,8 @@ function initOnboarding() {
     if (query.length < 3) { dropdown.style.display = 'none'; input.setAttribute('aria-expanded', 'false'); return; }
     dropdown.innerHTML = '<div style="padding:14px;text-align:center;color:var(--gray-500);">Mencari lokasi...</div>';
     dropdown.style.display = 'block';
-    const results = await queuedSearch(query);
-    renderOnbDropdown(results);
+    const fontResults = await queuedSearch(query);
+    renderOnbDropdown(fontResults);
   }, 700);
 
   input.addEventListener('input', (e) => {
@@ -800,7 +800,7 @@ async function sendReceiptToWhatsApp() {
   const distance = state.userDistance ? `${state.userDistance} km` : '—';
   let msg = `🧾 *STRUK PESANAN RUJAK.CO*\n🆔 *Order ID:* ${state.currentOrderCode || '—'}\n\n`;
   msg += `👤 *Penerima:* ${name}\n📞 *HP:* ${phone}\n📍 *Alamat:* ${address}\n`;
-  msg += `🗺️ *Jarak:* ${distance}\n🕒 *Pengantaran:* ${deliveryTime}\n📝 *Catatan:* ${notes}\n🚚 *Kurir:* ${logisticInfo}\n\n📦 *Pesanan:*\n`;
+  msg += `\n🗺️ *Jarak:* ${distance}\n🕒 *Pengantaran:* ${deliveryTime}\n📝 *Catatan:* ${notes}\n🚚 *Kurir:* ${logisticInfo}\n\n📦 *Pesanan:*\n`;
   summary.items.forEach(item => {
     const spiceText = item.spice ? ` (Lv ${item.spice})` : '';
     msg += `• ${item.name}${spiceText} x${item.qty} = ${fmt(item.price * item.qty)}\n`;
@@ -839,8 +839,8 @@ async function sendReceiptToWhatsApp() {
 // SHOW ORDER CONFIRMATION
 // ---------------------------------------------------------------------------
 async function showOrderConfirmation() {
-  // AMAN & BERSIH: Fungsi penuh nota dialihkan ke file modular eksternal 'checkout-receipt.js'
-  await launchProReceipt(state, DOM, overlayStack, openModal, closeModal, getCartSummaryLocal, downloadReceiptPNG, sendReceiptToTelegram, fmt, DOM.finalTotal);
+  // FIX SINKRONISASI: Menghapus argument 'fmt' ganda yang memicu SyntaxError karena modul checkout-receipt.js sudah menangani global utilitasnya mandiri
+  await launchProReceipt(state, DOM, overlayStack, openModal, closeModal, getCartSummaryLocal, downloadReceiptPNG, sendReceiptToTelegram, DOM.finalTotal);
 }
 
 // ---------------------------------------------------------------------------
@@ -955,7 +955,6 @@ function bindEvents() {
     if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Halo, ${state.customerName || 'Ngoedi'}! Ada yang bisa kami bantu?`;
   });
 
-  // FIX AMAN: Sanitasi ketat input telepon (menghilangkan huruf/karakter aneh selain angka secara real-time)
   DOM.customerPhoneInput?.addEventListener('input', () => {
     DOM.customerPhoneInput.value = DOM.customerPhoneInput.value.replace(/\D/g, '');
     state.customerPhone = DOM.customerPhoneInput.value;
@@ -1013,10 +1012,7 @@ function bindEvents() {
       const idx = addBtn.dataset.idx;
       const draft = state.drafts[pid];
       const cartKey = pid + '_spice' + draft.spice;
-      
-      // FIX AMAN: Menyertakan ID produk asli secara eksplisit ke dalam objek cartKey
       if (!state.cart[cartKey]) state.cart[cartKey] = { id: pid, qty: 0, spice: draft.spice };
-      
       state.cart[cartKey].qty += draft.qty;
       state.drafts[pid].qty = 1;
       document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = 1);
@@ -1137,7 +1133,7 @@ function bindEvents() {
         if (!recovered) {
           showToast('Gagal menghitung jarak. Silakan pilih alamat dari pencarian di atas.');
           e.target.dataset.processing = 'false';
-          return; // FIX AMAN: Menginterupsi total alur eksekusi jika penarikan jarak bernilai null
+          return;
         }
       }
 
