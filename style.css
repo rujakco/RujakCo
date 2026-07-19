@@ -87,7 +87,21 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .brand-logo img { width: 28px; height: 28px; border-radius: 50%; box-shadow: var(--shadow-soft); }
 .brand-name { font-size: 1rem; color: #FFFFFF; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.2); transition: color 0.4s ease, text-shadow 0.4s ease; }
 .luxury-header.scrolled .brand-name { color: var(--green); text-shadow: none; }
-.header-right { display: flex; align-items: center; gap: 4px; }
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: rgba(8,46,33,0.35);
+  border-radius: 100px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.luxury-header.scrolled .header-right {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
 .user-name { font-size: 0.875rem; font-weight: 700; color: #FFFFFF; text-shadow: 0 2px 6px rgba(0,0,0,0.5); transition: color 0.4s ease, text-shadow 0.4s ease; }
 .user-loc { font-size: 0.75rem; font-weight: 500; color: rgba(255,255,255,0.9); text-shadow: 0 2px 6px rgba(0,0,0,0.5); transition: color 0.4s ease, text-shadow 0.4s ease; }
 .user-loc::before { content: '•'; margin-right: 4px; opacity: 0.7; }
@@ -123,8 +137,31 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .btq-badge { order: 1; display: block; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--gold-text); font-weight: 600; margin-bottom: 8px; }
 .btq-name { order: 2; color: var(--green); margin: 0 0 12px 0; letter-spacing: 0.15em; font-weight: 400; text-transform: uppercase; }
 .btq-price-wrap { order: 3; display: flex; align-items: center; justify-content: center; width: 100%; gap: 12px; }
-.btq-price-wrap::before, .btq-price-wrap::after { content: ''; flex: 1; max-width: 40px; height: 1px; background: var(--gold-soft); }
+.btq-price-wrap::before, .btq-price-wrap::after { content: ''; flex: 1; max-width: 40px; height: 1.5px; background: var(--gold); opacity: 0.5; }
+.boutique-item.active-center .btq-price-wrap::after {
+  content: '→';
+  flex: 0;
+  color: var(--gold-text);
+  font-weight: 600;
+  font-size: 1rem;
+  margin-left: 6px;
+}
 .btq-price { font-size: 0.875rem; color: var(--gray-600); font-weight: 500; letter-spacing: 0.02em; white-space: nowrap; }
+/* Label "Ketuk untuk lihat detail" */
+.btq-text-container::after {
+  content: 'Ketuk untuk lihat detail';
+  display: block;
+  font-size: 0.65rem;
+  color: var(--gray-500);
+  margin-top: 6px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.boutique-item.active-center .btq-text-container::after {
+  opacity: 0.8;
+}
 .carousel-dots { display: flex; justify-content: center; align-items: center; gap: 8px; padding: 0; margin: -12px auto 0; position: relative; z-index: 50; }
 .carousel-dot { width: 8px; height: 8px; padding: 0; border: none; border-radius: 50%; background: var(--gold-soft); cursor: pointer; transition: background 0.3s ease, transform 0.3s ease; }
 .carousel-dot.active { background: var(--gold-bright); transform: scale(1.3); }
@@ -339,7 +376,7 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
 /* =========================================
    24. TESTIMONI & FAQ (kontras ditingkatkan)
 ========================================= */
-.testi-flip-container { position: relative; overflow: visible; min-height: 140px; height: auto; margin: 24px 20px 16px; border-radius: 14px; padding: 20px 20px 32px; background: transparent; border: 1px solid var(--gold-soft); color: #fff; }
+.testi-flip-container { position: relative; overflow: visible; min-height: 140px; height: auto; margin: 24px 20px 16px; border-radius: 14px; padding: 20px 20px 32px; background: transparent; border: 1px solid rgba(197, 160, 89, 0.5); color: #fff; }
 .testi-pause-btn { position: absolute; top: 10px; right: 10px; z-index: 3; background: rgba(255,255,255,0.15); border: 1px solid var(--gold-soft); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; color: var(--gold-bright); }
 .testi-card { position: absolute; top: 0; left: 0; right: 0; padding: 20px 20px 30px; transition: transform 0.6s cubic-bezier(0.4,0,0.2,1), opacity 0.6s; transform: translateY(100%); opacity: 0; }
 .testi-card.is-active { transform: translateY(0); opacity: 1; }
@@ -351,7 +388,7 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
 .testi-dot { width: 6px; height: 6px; border-radius: 50%; border: none; padding: 0; cursor: pointer; background: rgba(255,255,255,0.4); }
 .testi-dot[aria-current="true"] { background: var(--gold-bright); width: 16px; border-radius: 10px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
-.faq-container { margin: 0 20px var(--space-3); background: transparent; border: 1px solid var(--gold-soft); border-radius: var(--radius-lg); padding: 12px var(--space-3); box-shadow: none; }
+.faq-container { margin: 0 20px var(--space-3); background: transparent; border: 1px solid rgba(197, 160, 89, 0.5); border-radius: var(--radius-lg); padding: 12px var(--space-3); box-shadow: none; }
 .faq-item { border-bottom: 1px solid var(--gold-soft); }
 .faq-item:last-child { border-bottom: none; }
 .faq-question { width: 100%; display: flex; justify-content: space-between; align-items: center; background: none; border: none; font-family: inherit; cursor: pointer; padding: var(--space-3) 0; text-align: left; color: rgba(255,255,255,0.7); font-size: 0.9375rem; font-weight: 600; line-height: 1.5; }
@@ -368,7 +405,7 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
 .sec-header { width: calc(100% - 40px); max-width: var(--content-max); margin: 0 auto var(--space-4); padding: 0; background: transparent; }
 .sec-title { font-family: 'Fraunces', serif; font-weight: 400; font-size: 1rem; color: var(--gold-bright); letter-spacing: 0.05em; display: block; }
 .minimal-dropdown div[aria-selected="true"] { background: var(--green-light); color: var(--green); }
-.receipt-wrap { background: #FFFFFF; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); position: relative; overflow: hidden; }
+.receipt-wrap { background: #FFFFFF; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); position: relative; overflow: hidden; margin-top: -5px; }
 .receipt-stamp { position: absolute; top: 22px; right: -34px; width: 140px; transform: rotate(35deg); text-align: center; padding: 5px 0; border-top: 1.5px solid var(--gold); border-bottom: 1.5px solid var(--gold); color: var(--gold-text); font-family: 'DM Sans', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.85; pointer-events: none; }
 .receipt-header { text-align: center; padding: 28px 20px 18px; }
 .receipt-logo { width: 48px; height: 48px; border-radius: 50%; margin-bottom: 10px; border: 1px solid var(--gold-soft); padding: 3px; }
@@ -461,4 +498,11 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
 [inert] {
   pointer-events: none !important;
   user-select: none !important;
+}
+
+/* =========================================
+   30. KONSISTENSI GRADING FOTO (HERO, CAROUSEL, DETAIL)
+========================================= */
+.hero-img, .btq-img, .detail-image-wrap img {
+  filter: saturate(1.08) contrast(1.03);
 }
