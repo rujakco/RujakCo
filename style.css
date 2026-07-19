@@ -184,7 +184,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .glass-btn:active { transform: scale(0.92); }
 .product-swiper-track { display: flex; width: 100%; height: 100%; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
 .product-swiper-track::-webkit-scrollbar { display: none; }
-.product-slide { flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: center; overflow-y: auto; overscroll-behavior-y: contain; overflow-x: hidden; background: var(--bg-surface); color: var(--gray-900); position: relative; }
+.product-slide { flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: center; overflow-y: auto; overscroll-behavior-y: contain; overflow-x: hidden; background: var(--bg-surface); color: var(--gray-900); position: relative; touch-action: pan-y; }
 .detail-image-wrap { width: 100%; aspect-ratio: 1 / 1; position: relative; background: var(--bg-subtle); }
 .detail-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .detail-image-wrap img.lazy-detail { opacity: 0; transition: opacity var(--dur-normal) ease; }
@@ -275,8 +275,9 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
 #paymentModal .qris-total::before, #paymentModal .qris-total::after { content: ''; flex: 1; height: 1px; background: var(--gold); }
 #paymentModal .qris-total::before { margin-right: 12px; }
 #paymentModal .qris-total::after { margin-left: 12px; }
+.payment-step-icon { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; }
 #paymentModal .qris-payment-block + div { margin-bottom: 16px; }
-#paymentModal .qris-payment-block + div > div > div:first-child { width: 38px; height: 38px; margin: 0 auto 6px; }
+#paymentModal .qris-payment-block + div > div > div:first-child { width: 38px; height: 38px; margin: 0 auto 6px; } /* fallback */
 #paymentModal #confirmPaymentBtn { margin-top: auto; width: 100%; padding: 14px var(--space-4); margin-bottom: 0; }
 
 /* =========================================
@@ -310,7 +311,7 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
 /* =========================================
    21. CUSTOM SCROLLBAR (DESKTOP)
 ========================================= */
-::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--gold-soft); border-radius: 4px; }
 
@@ -357,7 +358,7 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
 .faq-question:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
 .faq-question i { transition: transform var(--dur-normal) ease; }
 .faq-item.open .faq-question i { transform: rotate(180deg); }
-.faq-answer { color: rgba(255,255,255,0.6); font-size: 0.875rem; line-height: 1.6; max-height: 0; overflow: hidden; transition: max-height var(--dur-normal) ease, padding var(--dur-normal) ease; }
+.faq-answer { color: rgba(255,255,255,0.8); font-size: 0.875rem; line-height: 1.6; max-height: 0; overflow: hidden; transition: max-height var(--dur-normal) ease, padding var(--dur-normal) ease; }
 .faq-item.open .faq-answer { max-height: 300px; padding-bottom: var(--space-3); }
 
 /* =========================================
@@ -390,7 +391,7 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
 .receipt-code-text { font-size: 0.7rem; letter-spacing: 0.25em; color: var(--gray-600); font-weight: 600; font-family: 'DM Sans', monospace; }
 
 /* =========================================
-   26. QRIS CROPPING UNTUK STRUK (TAMBAHAN)
+   26. QRIS CROPPING UNTUK STRUK (ORIGINAL)
 ========================================= */
 .receipt-qris-wrap {
   width: 160px;
@@ -409,7 +410,6 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
   left: 50%;
   transform: translate(-50%, -50%);
 }
-/* Sembunyikan barcode lama */
 .receipt-barcode {
   display: none;
 }
@@ -443,7 +443,20 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
 .btn-danger { background: var(--danger); border: none; color: white; }
 
 /* =========================================
-   28. INERT ELEMENTS
+   28. TINY TEXT (LABEL)
+========================================= */
+.tiny-text {
+  display: block;
+  font-size: 0.65rem;
+  color: var(--gray-600);
+  margin: 12px 0 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 600;
+}
+
+/* =========================================
+   29. INERT ELEMENTS
 ========================================= */
 [inert] {
   pointer-events: none !important;
