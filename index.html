@@ -15,6 +15,8 @@
   <meta name="twitter:title" content="Asam, Pedas, Manis, Segar. Dalam Satu Wadah." />
   <meta name="twitter:description" content="Rujak premium asli Bekasi. Asam, pedas, manis, segar." />
   <meta name="twitter:image" content="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" />
+  <meta name="theme-color" content="#082E21">
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" as="script">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -59,7 +61,7 @@
   <!-- ONBOARDING -->
   <div class="onboarding-overlay" id="onboardingOverlay" role="dialog" aria-modal="true" aria-labelledby="onbTitle">
     <div class="onb-content">
-      <img class="onb-logo" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="RUJAK.Co" />
+      <img class="onb-logo" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="RUJAK.Co" loading="lazy" />
       <div id="onbNewUser" style="display:none; width:100%;">
         <h2 class="onb-title" id="onbTitle">Selamat Datang</h2>
         <p class="onb-subtitle">Nikmati keistimewaan rasa Nusantara.</p>
@@ -105,7 +107,7 @@
     <div class="hero-editorial fade-up">
       <div class="hero-gold-frame">
         <div class="hero-img-wrap">
-          <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Sajian Rujak" fetchpriority="high" decoding="async" />
+          <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Rujak premium RUJAK.Co" fetchpriority="high" decoding="async" />
           <div class="hero-overlay-new">
             <div class="hero-content">
               <h1 class="hero-title">Asam, Pedas,<br> Manis, <span class="hero-title-em">Segar.</span></h1>
@@ -237,19 +239,19 @@
         <div class="drawer-subtotal"><span>Subtotal Sajian</span><span id="cartSubtotalDisplay" class="font-fraunces">Rp0</span></div>
         <div class="checkout-forms">
           <h4>Data Penerima</h4>
-          <label class="tiny-text" style="display:block; color:var(--gray-600); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Nama Lengkap</label>
-          <input type="text" id="customerName" class="input-minimal" placeholder="Nama lengkap penerima" />
-          <label class="tiny-text" style="display:block; color:var(--gray-600); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Nomor HP (WhatsApp)</label>
+          <label class="tiny-text" for="customerName">Nama Lengkap</label>
+          <input type="text" id="customerName" class="input-minimal" placeholder="Nama lengkap penerima" autocomplete="name" />
+          <label class="tiny-text" for="customerPhone">Nomor HP (WhatsApp)</label>
           <input type="tel" id="customerPhone" inputmode="numeric" autocomplete="tel" class="input-minimal" placeholder="Nomor HP aktif" />
-          <label class="tiny-text" style="display:block; color:var(--gray-600); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Detail Alamat (Blok, No. Rumah, Patokan)</label>
-          <textarea id="customerAddress" placeholder="Blok, No. Rumah, atau patokan khusus" rows="2" class="input-minimal"></textarea>
-          <label class="tiny-text" style="display:block; color:var(--gray-600); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Titik Lokasi (Cari Kelurahan/Jalan)</label>
+          <label class="tiny-text" for="customerAddress">Detail Alamat (Blok, No. Rumah, Patokan)</label>
+          <textarea id="customerAddress" placeholder="Blok, No. Rumah, atau patokan khusus" rows="2" class="input-minimal" autocomplete="street-address"></textarea>
+          <label class="tiny-text" for="districtInput">Titik Lokasi (Cari Kelurahan/Jalan)</label>
           <div style="position:relative;">
             <input type="text" id="districtInput" class="input-minimal" placeholder="Ketik nama jalan atau kelurahan..." autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="drawerDistrictDropdown" aria-haspopup="listbox" />
             <div id="drawerDistrictDropdown" class="minimal-dropdown" style="top:100%; left:0; right:0;" role="listbox" aria-label="Hasil pencarian alamat"></div>
           </div>
           <div class="district-note">*Biaya pengiriman dihitung berdasarkan jarak tempuh aktual (km).</div>
-          <label class="tiny-text" style="display:block; color:var(--gray-600); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Jam Pengantaran</label>
+          <label class="tiny-text" for="deliveryTimeTrigger">Jam Pengantaran</label>
           <div style="position:relative;">
             <button type="button" id="deliveryTimeTrigger" class="custom-select" role="combobox" aria-haspopup="listbox" aria-controls="deliveryTimeDropdown" aria-expanded="false" style="margin-bottom:0; width:100%;">
               <span id="deliveryTimeLabel">Pilih jam pengantaran...</span>
@@ -262,7 +264,7 @@
             </div>
           </div>
           <input type="hidden" id="deliveryTime" value="Pagi (09:00 - 11:00)" />
-          <label class="tiny-text" style="display:block; color:var(--gray-600); margin: 12px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">Catatan untuk Kurir (Opsional)</label>
+          <label class="tiny-text" for="orderNotes">Catatan untuk Kurir (Opsional)</label>
           <textarea id="orderNotes" placeholder="Misal: warna pagar, lantai berapa" rows="1" class="input-minimal"></textarea>
         </div>
         <div id="shippingSection" class="checkout-forms" style="margin-top:40px;">
@@ -272,7 +274,7 @@
             <button type="button" class="log-btn" data-provider="paxel">Paxel Ekspres</button>
           </div>
           <div id="rujakcoOptions" style="margin-top:24px;">
-            <label class="tiny-text" style="display:block; color:var(--gray-600); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Jenis Kendaraan</label>
+            <label class="tiny-text">Jenis Kendaraan</label>
             <div class="logistic-options">
               <button type="button" class="veh-btn active" data-vehicle="motor">Motor</button>
               <button type="button" class="veh-btn" data-vehicle="mobil">Mobil</button>
@@ -319,24 +321,26 @@
       </div>
       <div class="drawer-body">
         <div class="qris-payment-block">
-          <div class="qris-frame"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS RUJAK.Co" /></div>
+          <button type="button" class="qris-frame-btn" aria-label="Lihat QRIS lebih besar" style="border:none; background:transparent; padding:0; width:100%; max-width:400px;">
+            <div class="qris-frame"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS RUJAK.Co – scan untuk membayar" /></div>
+          </button>
           <div id="paymentTotalDisplay" class="qris-total">Rp0</div>
         </div>
         <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 32px; width: 100%; max-width: 320px; margin-left: auto; margin-right: auto;">
           <div style="flex:1; text-align:center;">
-            <div style="width:44px; height:44px; background:var(--bg-subtle); border:1px solid var(--gray-200); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; color:var(--gray-600);">
+            <div class="payment-step-icon" style="background:var(--bg-subtle); border:1px solid var(--gray-200); color:var(--gray-600);">
               <i data-lucide="download" class="icon-sm"></i>
             </div>
             <div style="font-size:0.65rem; font-weight:700; color:var(--gray-900); text-transform:uppercase; letter-spacing:0.05em;">1. Struk</div>
           </div>
           <div style="flex:1; text-align:center;">
-            <div style="width:44px; height:44px; background:var(--bg-subtle); border:1px solid var(--gray-200); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; color:var(--gray-600);">
+            <div class="payment-step-icon" style="background:var(--bg-subtle); border:1px solid var(--gray-200); color:var(--gray-600);">
               <i data-lucide="scan-line" class="icon-sm"></i>
             </div>
             <div style="font-size:0.65rem; font-weight:700; color:var(--gray-900); text-transform:uppercase; letter-spacing:0.05em;">2. Bayar</div>
           </div>
           <div style="flex:1; text-align:center;">
-            <div style="width:44px; height:44px; background:var(--green-light); border:1px solid var(--green); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; color:var(--green); box-shadow: 0 4px 12px rgba(8,46,33,0.1);">
+            <div class="payment-step-icon" style="background:var(--green-light); border:1px solid var(--green); color:var(--green); box-shadow: 0 4px 12px rgba(8,46,33,0.1);">
               <i data-lucide="message-circle" class="icon-sm"></i>
             </div>
             <div style="font-size:0.65rem; font-weight:700; color:var(--green); text-transform:uppercase; letter-spacing:0.05em;">3. Kabari</div>
@@ -377,8 +381,8 @@
         <h4 class="section-label" style="text-align:left; border-top:none; padding-top:0;">Kontak</h4>
         <div style="display:flex; gap:20px; margin-bottom:24px;">
           <a href="https://www.instagram.com/rujakco.id?igsh=eXhyZjF5NmVmZnpi" target="_blank" rel="noopener" aria-label="Instagram" style="color:var(--gray-600);"><i data-lucide="instagram" class="icon-md"></i></a>
-          <a href="javascript:void(0)" aria-label="WhatsApp" style="color:var(--gray-600);"><i data-lucide="phone" class="icon-md"></i></a>
-          <a href="javascript:void(0)" aria-label="Email" style="color:var(--gray-600);"><i data-lucide="mail" class="icon-md"></i></a>
+          <a href="https://wa.me/6289677161680" aria-label="WhatsApp" style="color:var(--gray-600);"><i data-lucide="phone" class="icon-md"></i></a>
+          <a href="mailto:halo@rujakco.biz.id" aria-label="Email" style="color:var(--gray-600);"><i data-lucide="mail" class="icon-md"></i></a>
         </div>
         <details>
           <summary style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.15em; color:var(--gold); margin-bottom:8px; cursor:pointer; font-weight:600;">Kebijakan</summary>
