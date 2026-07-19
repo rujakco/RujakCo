@@ -1,7 +1,7 @@
-// app.js — FINAL: Pemulihan data agresif + Auto‑recover jarak + Fix Popup WA & OSM Onboarding + Sinkronisasi Upload & Telegram
+// app.js — FINAL: Semua perbaikan + Telegram dikembalikan sementara
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
-import { fmt, showToast, debounce, escapeHTML, getSupabase } from './utils/helpers.js';
+import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch } from './utils/helpers.js';
 import { loadState, saveCart, saveUser, clearUser, saveCustomer, loadCustomer, isStorageAvailable } from './modules/storage.js';
 import {
   calculateShipping,
@@ -23,7 +23,6 @@ import {
   validatePhone,
   validateAddress,
   getCartSummary,
-  showWhatsAppFallback
 } from './modules/checkout.js';
 
 // ---------------------------------------------------------------------------
@@ -33,8 +32,8 @@ const state = {
   cart: {},
   drafts: {},
   customerName: '',
-  selectedDistrict: '',      // pendek (kecamatan/kota)
-  selectedDistrictFull: '',  // alamat lengkap untuk drawer
+  selectedDistrict: '',
+  selectedDistrictFull: '',
   customerPhone: '',
   customerAddress: '',
   shippingProvider: 'rujakco',
@@ -100,12 +99,11 @@ const cacheDOM = () => {
 };
 
 // ---------------------------------------------------------------------------
-// UTILITY: Ekstrak nama pendek (kecamatan/kota) - versi robust
+// UTILITY: Ekstrak nama pendek (kecamatan/kota)
 // ---------------------------------------------------------------------------
 function extractShortLocation(fullAddress) {
   if (!fullAddress) return '';
   const parts = fullAddress.split(',').map(p => p.trim());
-  // Cari bagian yang mengandung kata kecamatan/kota/kabupaten
   for (const p of parts) {
     const lower = p.toLowerCase();
     if (lower.includes('kecamatan') || lower.includes('kota') || lower.includes('kabupaten')) {
@@ -114,13 +112,12 @@ function extractShortLocation(fullAddress) {
       return p.replace(/^(kecamatan|kota|kabupaten)\s*/i, '').trim();
     }
   }
-  // Fallback: ambil bagian kedua dari koma
   if (parts.length >= 2) return parts[1] || parts[0];
   return parts[0] || '';
 }
 
 // ---------------------------------------------------------------------------
-// SCRIPT LOADER (untuk html2canvas UMD)
+// SCRIPT LOADER (html2canvas UMD)
 // ---------------------------------------------------------------------------
 function loadScript(src) {
   return new Promise((resolve, reject) => {
@@ -134,7 +131,7 @@ function loadScript(src) {
 }
 
 // ---------------------------------------------------------------------------
-// PERSONALISASI (isi form otomatis)
+// PERSONALISASI
 // ---------------------------------------------------------------------------
 function applyPersonalization() {
   const name = state.customerName || 'Ngoedi';
@@ -416,7 +413,7 @@ function updateCartUI() {
 }
 
 // ---------------------------------------------------------------------------
-// DRAWER DISTRICT DROPDOWN (OSM)
+// DRAWER DISTRICT DROPDOWN (OSM) - gunakan queuedSearch
 // ---------------------------------------------------------------------------
 function initDrawerDistrictDropdown() {
   const input = DOM.districtInput;
@@ -427,7 +424,7 @@ function initDrawerDistrictDropdown() {
     if (query.length < 4) { dropdown.style.display = 'none'; return; }
     dropdown.innerHTML = '<div style="padding:14px;text-align:center;color:var(--gray-500);">Mencari lokasi...</div>';
     dropdown.style.display = 'block';
-    const results = await searchAddressOSM(query);
+    const results = await queuedSearch(query);
     if (results.length === 0) {
       dropdown.innerHTML = '<div style="padding:16px;text-align:center;color:var(--danger);">Lokasi tidak ditemukan. Coba lagi.</div>';
       return;
@@ -488,12 +485,12 @@ function initDrawerDistrictDropdown() {
 }
 
 // ---------------------------------------------------------------------------
-// ONBOARDING (OSM search)
+// ONBOARDING (OSM search) - gunakan queuedSearch
 // ---------------------------------------------------------------------------
 async function resolveOnboardingDistance(districtName) {
   if (!districtName) return;
   try {
-    const results = await searchAddressOSM(districtName);
+    const results = await queuedSearch(districtName);
     if (results.length > 0) {
       const place = results[0];
       const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, parseFloat(place.lat), parseFloat(place.lon));
@@ -545,10 +542,7 @@ function initOnboarding() {
 
   const input = DOM.onbDistrict;
   const dropdown = DOM.onbDistrictDropdown;
-  if (!input || !dropdown) {
-    console.warn('Onboarding district elements not found');
-    return;
-  }
+  if (!input || !dropdown) return;
 
   input.placeholder = 'Ketik alamat tujuan (jalan, kelurahan, kota)';
   input.setAttribute('role', 'combobox');
@@ -558,10 +552,8 @@ function initOnboarding() {
   input.setAttribute('aria-haspopup', 'listbox');
 
   let activeOptionIndex = -1;
-  let currentResults = [];
 
   const renderOnbDropdown = (results) => {
-    currentResults = results;
     activeOptionIndex = -1;
     if (!results.length) {
       dropdown.style.display = 'none';
@@ -624,7 +616,7 @@ function initOnboarding() {
     if (query.length < 3) { dropdown.style.display = 'none'; input.setAttribute('aria-expanded', 'false'); return; }
     dropdown.innerHTML = '<div style="padding:14px;text-align:center;color:var(--gray-500);">Mencari lokasi...</div>';
     dropdown.style.display = 'block';
-    const results = await searchAddressOSM(query);
+    const results = await queuedSearch(query);
     renderOnbDropdown(results);
   }, 700);
 
@@ -655,10 +647,7 @@ function initOnboarding() {
       e.preventDefault();
       if (activeOptionIndex >= 0 && activeOptionIndex < opts.length) {
         const opt = opts[activeOptionIndex];
-        const lat = parseFloat(opt.dataset.lat);
-        const lon = parseFloat(opt.dataset.lon);
-        const name = opt.dataset.name;
-        selectOnbDistrict(lat, lon, name);
+        selectOnbDistrict(parseFloat(opt.dataset.lat), parseFloat(opt.dataset.lon), opt.dataset.name);
       }
     } else if (e.key === 'Escape') {
       dropdown.style.display = 'none';
@@ -670,10 +659,7 @@ function initOnboarding() {
   dropdown.addEventListener('click', (e) => {
     const opt = e.target.closest('div[role="option"]');
     if (!opt) return;
-    const lat = parseFloat(opt.dataset.lat);
-    const lon = parseFloat(opt.dataset.lon);
-    const name = opt.dataset.name;
-    selectOnbDistrict(lat, lon, name);
+    selectOnbDistrict(parseFloat(opt.dataset.lat), parseFloat(opt.dataset.lon), opt.dataset.name);
   });
 
   document.addEventListener('click', (e) => {
@@ -722,7 +708,7 @@ async function downloadReceiptPNG() {
     try {
       await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
     } catch {
-      showToast('⚠️ Gagal memuat html2canvas');
+      showToast('⚠️ Gagal memuat pustaka struk. Struk tidak dapat dibuat.');
       return null;
     }
   }
@@ -771,12 +757,9 @@ async function downloadReceiptPNG() {
   }
 }
 
-// 2. sendReceiptToTelegram — tetap dengan token hardcoded (sebaiknya pindahkan ke Edge Function)
+// 2. sendReceiptToTelegram — langsung dengan token (sementara)
 async function sendReceiptToTelegram() {
-  if (!state.receiptUrl || !state.currentOrderCode) {
-    console.warn('Receipt URL atau order code kosong, Telegram tidak dikirim');
-    return;
-  }
+  if (!state.receiptUrl || !state.currentOrderCode) return;
 
   const TELEGRAM_BOT_TOKEN = '8862351367:AAF63f3lrCk5Wl_0tkAdnLiso2__dyzkvHM';
   const TELEGRAM_CHAT_ID = '792789032';
@@ -800,11 +783,10 @@ async function sendReceiptToTelegram() {
   }
 }
 
-// 3. sendReceiptToWhatsApp — redirect aman, tidak panggil Telegram
+// 3. sendReceiptToWhatsApp
 async function sendReceiptToWhatsApp() {
   const summary = getCartSummaryLocal();
   
-  // --- CEK KERANJANG KOSONG ---
   if (summary.items.length === 0) {
     showToast('❌ Keranjang kosong, tidak bisa konfirmasi.');
     return;
@@ -822,16 +804,12 @@ async function sendReceiptToWhatsApp() {
   }
   const shipCost = DOM.finalShipping?.textContent || '—';
   
-  // --- AMBIL TOTAL DARI DOM (SAMA SEPERTI TELEGRAM) ---
   let totalCost = DOM.finalTotal?.textContent || '—';
-  // Jika totalCost masih '—' atau tidak valid, fallback ke perhitungan ulang
   if (totalCost === '—' || totalCost === 'Rp0' || totalCost === 'Rp 0' || totalCost === 'Rp0,00') {
     const dist = state.userDistance;
     const ship = dist != null ? calculateShipping(dist, summary.mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority) : { cost: 0 };
-    const total = summary.subtotal + (ship.cost || 0);
-    totalCost = fmt(total);
+    totalCost = fmt(summary.subtotal + (ship.cost || 0));
   }
-  // -------------------------------------------------
 
   const distance = state.userDistance ? `${state.userDistance} km` : '—';
   let msg = `🧾 *STRUK PESANAN RUJAK.CO*\n🆔 *Order ID:* ${state.currentOrderCode || '—'}\n\n`;
@@ -844,7 +822,6 @@ async function sendReceiptToWhatsApp() {
   msg += `\n💵 *Subtotal:* ${fmt(summary.subtotal)}\n🛵 *Ongkir:* ${shipCost}\n💰 *TOTAL TRANSFER:* *${totalCost}*\n\n`;
   msg += `📎 _Struk gambar telah terunduh. Mohon lampirkan struk & bukti transfer (QRIS) di sini._`;
 
-  // Catat order ke Supabase
   const sb = getSupabase();
   if (sb) {
     try {
@@ -867,21 +844,21 @@ async function sendReceiptToWhatsApp() {
     } catch (err) {
       console.error('Gagal simpan order:', err);
     }
+  } else {
+    showToast('⚠️ Gagal menyimpan pesanan ke database.');
   }
 
-  // Kosongkan cart setelah pesan dibuat
   state.cart = {};
   updateCartUI();
 
-  // Redirect ke WhatsApp
   const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
   window.location.href = waUrl;
 }
 
 // ---------------------------------------------------------------------------
-// SHOW ORDER CONFIRMATION — handler orderConfirmLanjut disinkronisasi
+// SHOW ORDER CONFIRMATION
 // ---------------------------------------------------------------------------
-function showOrderConfirmation() {
+async function showOrderConfirmation() {
   const dist = state.userDistance;
   const summary = getCartSummaryLocal();
   const ship = dist != null ? calculateShipping(dist, summary.mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority) : { cost: null };
@@ -944,31 +921,27 @@ function showOrderConfirmation() {
   if (modal) {
     openModal(modal);
     document.getElementById('orderConfirmBack').onclick = () => closeModal(modal);
-
-    // ==================== FIX: orderConfirmLanjut ====================
     document.getElementById('orderConfirmLanjut').onclick = async () => {
       const btnLanjut = document.getElementById('orderConfirmLanjut');
-      const originalText = btnLanjut.textContent;
+      if (btnLanjut.dataset.processing === 'true') return;
+      btnLanjut.dataset.processing = 'true';
       btnLanjut.innerHTML = '<i data-lucide="loader-2" class="icon-sm" style="animation:spin 1s linear infinite;"></i> Memproses...';
       btnLanjut.style.pointerEvents = 'none';
       if (window.lucide) lucide.createIcons();
 
-      // Tunggu hingga upload selesai dan dapatkan URL
       const imageUrl = await downloadReceiptPNG();
-
       if (imageUrl) {
-        // Kirim Telegram setelah URL valid
         await sendReceiptToTelegram();
       } else {
         showToast('⚠️ Gagal memproses struk, namun pesanan tetap tercatat.');
       }
 
-      btnLanjut.textContent = originalText;
+      btnLanjut.textContent = 'Lanjutkan';
       btnLanjut.style.pointerEvents = 'auto';
+      btnLanjut.dataset.processing = 'false';
 
       closeModal(document.getElementById('orderConfirmModal'));
       setTimeout(() => {
-        // 🔥 ISI TOTAL QRIS SEBELUM BUKA MODAL
         DOM.paymentTotal.textContent = fmt(total);
         openModal(DOM.paymentModal);
       }, 50);
@@ -1003,7 +976,6 @@ function bindEvents() {
     document.getElementById('waVipSideTab')?.classList.toggle('open');
   });
 
-  // --- Beranda ---
   document.getElementById('navHomeBtn')?.addEventListener('click', () => {
     if (DOM.productPage?.classList.contains('active')) {
       closeProductPage(false);
@@ -1014,13 +986,11 @@ function bindEvents() {
     setActiveNav('navHomeBtn');
   });
 
-  // --- Produk ---
   document.getElementById('navProductBtn')?.addEventListener('click', () => {
     if (DOM.productPage?.classList.contains('active')) return;
     openProductPage(state.lastViewedProductIndex >= 0 ? state.lastViewedProductIndex : 0);
   });
 
-  // --- Keranjang ---
   document.getElementById('navCartBtn')?.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -1038,7 +1008,6 @@ function bindEvents() {
     }
   });
 
-  // --- Dropdown Waktu ---
   const deliveryTrigger = document.getElementById('deliveryTimeTrigger');
   const deliveryDropdown = document.getElementById('deliveryTimeDropdown');
   const deliveryHidden = document.getElementById('deliveryTime');
@@ -1079,13 +1048,11 @@ function bindEvents() {
   });
   document.addEventListener('click', (e) => { if (!deliveryTrigger?.contains(e.target) && !deliveryDropdown?.contains(e.target)) closeDeliveryDropdown(); });
 
-  // --- Tombol Tutup Modal ---
   document.getElementById('miniCartClose')?.addEventListener('click', () => closeModal(DOM.miniCartModal));
   document.getElementById('paymentClose')?.addEventListener('click', () => closeModal(DOM.paymentModal));
   document.getElementById('aiChatClose')?.addEventListener('click', () => closeModal(DOM.aiChatBox));
   document.getElementById('orderConfirmClose')?.addEventListener('click', () => closeModal(document.getElementById('orderConfirmModal')));
 
-  // --- Input Data Diri ---
   DOM.customerNameInput?.addEventListener('input', () => {
     state.customerName = DOM.customerNameInput.value;
     saveUser(state.customerName, state.selectedDistrict);
@@ -1101,7 +1068,6 @@ function bindEvents() {
     saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict, state.userDistance);
   });
 
-  // --- Klik Global (Delegasi) ---
   document.addEventListener('click', async (e) => {
     const boutique = e.target.closest('.boutique-item');
     if (boutique) { const idx = parseInt(boutique.dataset.idx); if (!isNaN(idx)) openProductPage(idx); return; }
@@ -1216,25 +1182,40 @@ function bindEvents() {
 
     if (e.target.id === 'priorityToggleMini') { state.isPriority = e.target.checked; updateShippingUI(); return; }
 
-    // ==================== TOMBOL SELESAIKAN RESERVASI (AUTO-RECOVER) ====================
     if (e.target.id === 'btnOpenPayment') {
-      if (e.target.disabled) return;
-      if (!Object.keys(state.cart).length) return showToast('Keranjang masih kosong.');
+      if (e.target.dataset.processing === 'true') return;
+      e.target.dataset.processing = 'true';
+
+      if (!Object.keys(state.cart).length) {
+        showToast('Keranjang masih kosong.');
+        e.target.dataset.processing = 'false';
+        return;
+      }
       const phone = DOM.customerPhoneInput?.value.trim() || '';
       const address = DOM.customerAddressInput?.value.trim() || '';
-      if (!validatePhone(phone)) return showToast('Nomor HP tidak valid.');
-      if (!validateAddress(address)) return showToast('Mohon lengkapi alamat pengantaran.');
-      if (!state.selectedDistrict && !state.selectedDistrictFull) return showToast('Mohon pilih alamat tujuan terlebih dahulu.');
+      if (!validatePhone(phone)) {
+        showToast('Nomor HP tidak valid.');
+        e.target.dataset.processing = 'false';
+        return;
+      }
+      if (!validateAddress(address)) {
+        showToast('Mohon lengkapi alamat pengantaran.');
+        e.target.dataset.processing = 'false';
+        return;
+      }
+      if (!state.selectedDistrict && !state.selectedDistrictFull) {
+        showToast('Mohon pilih alamat tujuan terlebih dahulu.');
+        e.target.dataset.processing = 'false';
+        return;
+      }
 
-      // Auto‑recover jarak jika belum ada
       if (state.userDistance == null) {
-        e.target.disabled = true;
         let recovered = false;
         const addressToSearch = state.selectedDistrictFull || DOM.districtInput?.value?.trim() ||
                                 (state.selectedDistrict ? `${state.selectedDistrict}, ${state.customerAddress}` : '');
         if (addressToSearch) {
           try {
-            const results = await searchAddressOSM(addressToSearch);
+            const results = await queuedSearch(addressToSearch);
             if (results.length > 0) {
               const place = results[0];
               const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, parseFloat(place.lat), parseFloat(place.lon));
@@ -1251,16 +1232,15 @@ function bindEvents() {
             console.warn('Auto-recover gagal:', err);
           }
         }
-        // PASTIKAN TOMBOL SELALU DIAKTIFKAN
-        e.target.disabled = false;
         if (!recovered) {
-          return showToast('Gagal menghitung jarak. Silakan pilih alamat dari pencarian di atas.');
+          showToast('Gagal menghitung jarak. Silakan pilih alamat dari pencarian di atas.');
+          e.target.dataset.processing = 'false';
+          return;
         }
       }
 
-      e.target.disabled = true;
-      showOrderConfirmation();
-      setTimeout(() => { e.target.disabled = false; }, 1000);
+      await showOrderConfirmation();
+      e.target.dataset.processing = 'false';
       return;
     }
 
