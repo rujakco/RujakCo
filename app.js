@@ -1,31 +1,15 @@
-// app.js — FINAL REMASTERED: Sinkronisasi Modular & Aman (Folder Modules)
+// app.js — FINAL GABUNGAN: Semua perbaikan UX + Telegram aktif
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch } from './utils/helpers.js';
 import { loadState, saveCart, saveUser, clearUser, saveCustomer, loadCustomer, isStorageAvailable } from './modules/storage.js';
-import {
-  calculateShipping,
-  getDrivingDistance,
-  searchAddressOSM,
-} from './modules/shipping.js';
-import {
-  renderMenu,
-  renderProductSwiper,
-  renderCart,
-  renderMiniCart,
-  getProductGlobalIndex
-} from './modules/render.js';
+import { calculateShipping, getDrivingDistance, searchAddressOSM } from './modules/shipping.js';
+import { renderMenu, renderProductSwiper, renderCart, renderMiniCart, getProductGlobalIndex } from './modules/render.js';
 import { initCarousel } from './modules/carousel.js';
 import { initAIChat } from './modules/chat.js';
 import { initAccessibility } from './modules/accessibility.js';
 import { initTestimonials } from './modules/testimonials.js';
-import {
-  validatePhone,
-  validateAddress,
-  getCartSummary,
-} from './modules/checkout.js';
-
-// FIX PATH AMAN: Mengubah jalur impor karena berkas checkout-receipt.js Anda berada di dalam folder modules/
+import { validatePhone, validateAddress, getCartSummary } from './modules/checkout.js';
 import { showOrderConfirmation as launchProReceipt } from './modules/checkout-receipt.js';
 
 // ---------------------------------------------------------------------------
@@ -102,7 +86,7 @@ const cacheDOM = () => {
 };
 
 // ---------------------------------------------------------------------------
-// UTILITY: Ekstrak nama pendek (kecamatan/kota)
+// UTILITY: Ekstrak nama pendek
 // ---------------------------------------------------------------------------
 function extractShortLocation(fullAddress) {
   if (!fullAddress) return '';
@@ -119,9 +103,6 @@ function extractShortLocation(fullAddress) {
   return parts[0] || '';
 }
 
-// ---------------------------------------------------------------------------
-// SCRIPT LOADER (html2canvas UMD)
-// ---------------------------------------------------------------------------
 function loadScript(src) {
   return new Promise((resolve, reject) => {
     if (document.querySelector(`script[src="${src}"]`)) return resolve();
@@ -137,11 +118,11 @@ function loadScript(src) {
 // PERSONALISASI
 // ---------------------------------------------------------------------------
 function applyPersonalization() {
-  const name = state.customerName || 'Ngoedi';
+  const name = state.customerName || 'Tamu';
   const district = state.selectedDistrict || 'Pilih alamat tujuan';
   DOM.headerName.textContent = name;
   DOM.headerLoc.textContent = district;
-  if (DOM.customerNameInput) DOM.customerNameInput.value = name;
+  if (DOM.customerNameInput) DOM.customerNameInput.value = name !== 'Tamu' ? name : '';
   if (DOM.customerPhoneInput) DOM.customerPhoneInput.value = state.customerPhone;
   if (DOM.customerAddressInput) DOM.customerAddressInput.value = state.customerAddress;
   if (DOM.districtInput) DOM.districtInput.value = state.selectedDistrictFull || district;
@@ -435,15 +416,26 @@ function initDrawerDistrictDropdown() {
   const dropdown = DOM.drawerDistrictDropdown;
   if (!input || !dropdown) return;
   input.placeholder = 'Ketik alamat tujuan (jalan, kelurahan, kota)';
+  
   const handleSearch = debounce(async (query) => {
-    if (query.length < 4) { dropdown.style.display = 'none'; return; }
+    // FIX: Sinkronisasi ke 3 karakter agar seragam dengan Onboarding
+    if (query.length < 3) { dropdown.style.display = 'none'; return; }
     dropdown.innerHTML = '<div style="padding:14px;text-align:center;color:var(--gray-500);">Mencari lokasi...</div>';
     dropdown.style.display = 'block';
-    const results = await queuedSearch(query);
+    
+    let results = [];
+    try {
+      results = await queuedSearch(query);
+    } catch (err) {
+      dropdown.innerHTML = '<div style="padding:16px;text-align:center;color:var(--danger);">Koneksi terputus. Gagal memuat lokasi.</div>';
+      return;
+    }
+
     if (results.length === 0) {
       dropdown.innerHTML = '<div style="padding:16px;text-align:center;color:var(--danger);">Lokasi tidak ditemukan. Coba lagi.</div>';
       return;
     }
+    
     dropdown.innerHTML = results.map((place) => {
       const displayName = place.display_name.split(',').slice(0, 3).join(',');
       return `
@@ -528,7 +520,7 @@ function initOnboarding() {
     state.selectedDistrict = extractShortLocation(saved.district) || saved.district;
     DOM.onbNewUser.style.display = 'none';
     DOM.onbReturningUser.style.display = 'block';
-    DOM.onbWelcomeName.textContent = saved.name;
+    DOM.onbWelcomeName.textContent = saved.name === 'Tamu' ? 'Pelanggan' : saved.name;
     DOM.onbWelcomeDistrict.textContent = state.selectedDistrict;
     resolveOnboardingDistance(state.selectedDistrict);
   } else {
@@ -549,9 +541,7 @@ function initOnboarding() {
     state.selectedDistrict = '';
     DOM.onboardingOverlay.classList.add('hidden');
     setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, 600);
-    DOM.headerName.textContent = 'Tamu';
-    DOM.headerLoc.textContent = 'Pilih Lokasi';
-    if (DOM.aiWelcome) DOM.aiWelcome.textContent = 'Halo, Tamu! Ada yang bisa kami bantu hari ini?';
+    applyPersonalization();
     initScrollReveal();
   });
 
@@ -631,7 +621,14 @@ function initOnboarding() {
     if (query.length < 3) { dropdown.style.display = 'none'; input.setAttribute('aria-expanded', 'false'); return; }
     dropdown.innerHTML = '<div style="padding:14px;text-align:center;color:var(--gray-500);">Mencari lokasi...</div>';
     dropdown.style.display = 'block';
-    const fontResults = await queuedSearch(query);
+    
+    let fontResults = [];
+    try {
+      fontResults = await queuedSearch(query);
+    } catch (err) {
+      dropdown.innerHTML = '<div style="padding:16px;text-align:center;color:var(--danger);">Koneksi terputus. Gagal memuat lokasi.</div>';
+      return;
+    }
     renderOnbDropdown(fontResults);
   }, 700);
 
@@ -743,7 +740,9 @@ async function downloadReceiptPNG() {
     const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
     if (!blob) return null;
 
-    const cleanCode = state.currentOrderCode.replace(/[^a-zA-Z0-9]/g, '-');
+    // FIX: Mengamankan replace dari nilai null
+    const safeCode = state.currentOrderCode || `RJ-${new Date().getTime()}`;
+    const cleanCode = safeCode.replace(/[^a-zA-Z0-9]/g, '-');
     const fileName = `${cleanCode}.png`;
 
     const { error } = await sb.storage
@@ -763,18 +762,40 @@ async function downloadReceiptPNG() {
   }
 }
 
+// *** TELEGRAM AKTIF KEMBALI ***
 async function sendReceiptToTelegram() {
-  if (!state.receiptUrl || !state.currentOrderCode) return;
+  if (!state.receiptUrl || !state.currentOrderCode) {
+    console.warn('Telegram: tidak ada URL struk atau kode pesanan');
+    return;
+  }
+
   const TELEGRAM_BOT_TOKEN = '8862351367:AAF63f3lrCk5Wl_0tkAdnLiso2__dyzkvHM';
   const TELEGRAM_CHAT_ID = '792789032';
+
   const caption = `🧾 *Order Baru:* ${state.currentOrderCode}\n👤 ${state.customerName}\n📞 ${state.customerPhone}\n💰 Total: ${DOM.finalTotal?.textContent}`;
+
   try {
-    await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
+    const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, photo: state.receiptUrl, caption, parse_mode: 'Markdown' })
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHAT_ID,
+        photo: state.receiptUrl,
+        caption,
+        parse_mode: 'Markdown'
+      })
     });
-  } catch (err) {}
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      console.error('❌ Telegram menolak:', result.description);
+    } else {
+      console.log('✅ Telegram terkirim');
+    }
+  } catch (err) {
+    console.error('Gagal koneksi ke Telegram:', err);
+  }
 }
 
 async function sendReceiptToWhatsApp() {
@@ -784,7 +805,7 @@ async function sendReceiptToWhatsApp() {
     return;
   }
 
-  const name = DOM.customerNameInput?.value || state.customerName || 'Ngoedi';
+  const name = DOM.customerNameInput?.value || state.customerName || 'Tamu';
   const phone = DOM.customerPhoneInput?.value || state.customerPhone || '—';
   const address = DOM.customerAddressInput?.value || state.customerAddress || '—';
   const deliveryTime = document.getElementById('deliveryTime')?.value || '—';
@@ -806,7 +827,9 @@ async function sendReceiptToWhatsApp() {
     msg += `• ${item.name}${spiceText} x${item.qty} = ${fmt(item.price * item.qty)}\n`;
   });
   msg += `\n💵 *Subtotal:* ${fmt(summary.subtotal)}\n🛵 *Ongkir:* ${shipCost}\n💰 *TOTAL TRANSFER:* *${totalCost}*\n\n`;
-  msg += `📎 _Struk gambar telah terunduh. Mohon lampirkan struk & bukti transfer (QRIS) di sini._`;
+  
+  // FIX: UX perbaikan agar pembeli tidak kebingungan
+  msg += `📎 _Mohon lampirkan *gambar bukti transfer (QRIS)* Anda di sini agar reservasi dapat segera kami proses._`;
 
   const sb = getSupabase();
   if (sb) {
@@ -827,19 +850,23 @@ async function sendReceiptToWhatsApp() {
         notes,
         status: 'pending_payment'
       });
-    } catch (err) {}
+    } catch (err) {
+      console.error("Gagal menyimpan ke database:", err);
+    }
   }
 
-  state.cart = {};
-  updateCartUI();
+  // FIX: Beri jeda aman sebelum keranjang dihapus
   window.location.href = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+  setTimeout(() => {
+    state.cart = {};
+    updateCartUI();
+  }, 2000);
 }
 
 // ---------------------------------------------------------------------------
 // SHOW ORDER CONFIRMATION
 // ---------------------------------------------------------------------------
 async function showOrderConfirmation() {
-  // FIX SINKRONISASI: Menghapus argument 'fmt' ganda yang memicu SyntaxError karena modul checkout-receipt.js sudah menangani global utilitasnya mandiri
   await launchProReceipt(state, DOM, overlayStack, openModal, closeModal, getCartSummaryLocal, downloadReceiptPNG, sendReceiptToTelegram, DOM.finalTotal);
 }
 
@@ -863,6 +890,13 @@ function bindEvents() {
     const shareText = `🍜 ${product.name} — ${product.desc}\nPesan sekarang di Rujak.Co!`;
     if (navigator.share) navigator.share({ title: product.name, text: shareText, url: shareUrl }).catch(() => {});
     else navigator.clipboard.writeText(shareUrl + '\n' + shareText).then(() => showToast('📋 Link produk disalin!')).catch(() => showToast('📋 Gagal menyalin link'));
+  });
+
+  // FIX: VIP Concierge tersentralisasi di JS
+  document.getElementById('btnVipConcierge')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const text = encodeURIComponent("Halo RUJAK.Co, saya tertarik dengan layanan VIP Concierge.");
+    window.open(`https://wa.me/${SYSTEM.WA_NUMBER}?text=${text}`, '_blank', 'noopener');
   });
 
   document.getElementById('waVipHandle')?.addEventListener('click', (e) => {
@@ -951,8 +985,8 @@ function bindEvents() {
   DOM.customerNameInput?.addEventListener('input', () => {
     state.customerName = DOM.customerNameInput.value;
     saveUser(state.customerName, state.selectedDistrict);
-    DOM.headerName.textContent = state.customerName || 'Ngoedi';
-    if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Halo, ${state.customerName || 'Ngoedi'}! Ada yang bisa kami bantu?`;
+    DOM.headerName.textContent = state.customerName || 'Tamu';
+    if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Halo, ${state.customerName || 'Tamu'}! Ada yang bisa kami bantu?`;
   });
 
   DOM.customerPhoneInput?.addEventListener('input', () => {
@@ -1218,7 +1252,7 @@ function init() {
     initDetailGestures();
     initAccessibility();
     const updateWelcome = initAIChat();
-    if (updateWelcome) updateWelcome(state.customerName || 'Ngoedi');
+    if (updateWelcome) updateWelcome(state.customerName || 'Tamu');
 
     bindEvents();
     initOnboarding();
