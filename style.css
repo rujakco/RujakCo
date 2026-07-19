@@ -46,6 +46,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   z-index: var(--z-onboard); display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: var(--space-6) 24px; text-align: center;
   transition: opacity 0.8s var(--transition-spring), visibility 0.8s;
+  will-change: opacity, visibility; /* AMAN: Mengoptimalkan performa rendering awal */
 }
 .onboarding-overlay.hidden { opacity: 0; visibility: hidden; }
 .onb-content { width: 100%; max-width: 340px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
@@ -100,7 +101,15 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .content-wrapper { padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)); overflow-x: hidden; }
 .hero-editorial { width: calc(100% - 40px); max-width: var(--content-max); margin: calc(-120px - env(safe-area-inset-top, 0px)) auto 0; padding: 0 !important; position: relative; z-index: 1; }
 .hero-gold-frame { position: relative; border-radius: var(--radius-xl); box-shadow: var(--shadow-floating); }
-.hero-img-wrap { width: 100%; aspect-ratio: 4 / 3; position: relative; border-radius: var(--radius-xl); overflow: hidden; z-index: 0; }
+.hero-img-wrap { 
+  width: 100%; 
+  aspect-ratio: 4 / 3; 
+  position: relative; 
+  border-radius: var(--radius-xl); 
+  overflow: hidden; 
+  z-index: 0; 
+  background-color: var(--green-light); /* AMAN: Warna penahan saat gambar memuat lambat */
+}
 .hero-img { width: 100%; height: 120%; object-fit: cover; display: block; transform: translate3d(0, 0, 0) scale(1.02); transform-origin: center center; }
 .hero-overlay-new { position: absolute; inset: auto 0 0 0; background: linear-gradient(to top, rgba(8,46,33,0.35) 10%, rgba(8,46,33,0.35) 60%, transparent 100%); display: flex; align-items: flex-end; justify-content: flex-start; padding: 60px 24px 28px; border-radius: 0 0 var(--radius-xl) var(--radius-xl); will-change: opacity, transform; }
 .hero-content { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
@@ -162,7 +171,21 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 ========================================= */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); backdrop-filter: var(--blur-soft); -webkit-backdrop-filter: var(--blur-soft); z-index: var(--z-modal); display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity var(--dur-normal) ease; }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
-.drawer-content { background: var(--bg-surface); color: var(--gray-900); width: 100%; max-width: 480px; border-radius: var(--radius-2xl) var(--radius-2xl) 0 0; transform: translateY(100%); transition: transform 0.6s var(--transition-heavy); display: flex; flex-direction: column; box-shadow: var(--shadow-luxury); height: 90vh; height: 90dvh; }
+.drawer-content { 
+  background: var(--bg-surface); 
+  color: var(--gray-900); 
+  width: 100%; 
+  max-width: 480px; 
+  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0; 
+  transform: translateY(100%); 
+  transition: transform 0.6s var(--transition-heavy); 
+  display: flex; 
+  flex-direction: column; 
+  box-shadow: var(--shadow-luxury); 
+  height: 90vh; 
+  height: 90dvh; 
+  will-change: transform; /* AMAN: Mengurangi jeda patah-patah saat ditarik/dibuka */
+}
 .modal-overlay.active .drawer-content { transform: translateY(0); }
 .drawer-header { padding: var(--space-4) var(--space-4) var(--space-3); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.04); }
 .drawer-header h3 { color: var(--green); }
@@ -175,7 +198,19 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 /* =========================================
    13. PRODUCT SWIPER OVERLAY
 ========================================= */
-.product-swiper-overlay { position: fixed; inset: 0; background: var(--gray-900); z-index: var(--z-product); display: flex; flex-direction: column; overflow: hidden; opacity: 0; pointer-events: none; transition: opacity var(--dur-normal) ease; }
+.product-swiper-overlay { 
+  position: fixed; 
+  inset: 0; 
+  background: var(--gray-900); 
+  z-index: var(--z-product); 
+  display: flex; 
+  flex-direction: column; 
+  overflow: hidden; 
+  opacity: 0; 
+  pointer-events: none; 
+  transition: opacity var(--dur-normal) ease; 
+  will-change: opacity; /* AMAN: Persiapan alokasi memori GPU untuk transisi halus */
+}
 .product-swiper-overlay.active { opacity: 1; pointer-events: auto; }
 .product-swiper-overlay .floating-close, .product-swiper-overlay .floating-share { position: fixed; top: calc(16px + env(safe-area-inset-top, 0px)); z-index: var(--z-fab); }
 .product-swiper-overlay .floating-close { left: 16px; }
@@ -354,11 +389,37 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
 .faq-container { margin: 0 20px var(--space-3); background: transparent; border: 1px solid var(--gold-soft); border-radius: var(--radius-lg); padding: 12px var(--space-3); box-shadow: none; }
 .faq-item { border-bottom: 1px solid var(--gold-soft); }
 .faq-item:last-child { border-bottom: none; }
-.faq-question { width: 100%; display: flex; justify-content: space-between; align-items: center; background: none; border: none; font-family: inherit; cursor: pointer; padding: var(--space-3) 0; text-align: left; color: rgba(255,255,255,0.7); font-size: 0.9375rem; font-weight: 600; line-height: 1.5; }
+.faq-question { 
+  width: 100%; 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  background: none; 
+  border: none; 
+  font-family: inherit; 
+  cursor: pointer; 
+  padding: var(--space-3) 0; 
+  text-align: left; 
+  color: var(--ivory); /* AMAN: Kontras ditingkatkan ke ivory murni untuk meningkatkan aksesibilitas pembacaan (WCAG AA) */
+  font-size: 0.9375rem; 
+  font-weight: 600; 
+  line-height: 1.5; 
+  opacity: 0.95;
+  transition: opacity var(--dur-fast) ease;
+}
+.faq-question:hover { opacity: 1; }
 .faq-question:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
 .faq-question i { transition: transform var(--dur-normal) ease; }
 .faq-item.open .faq-question i { transform: rotate(180deg); }
-.faq-answer { color: rgba(255,255,255,0.8); font-size: 0.875rem; line-height: 1.6; max-height: 0; overflow: hidden; transition: max-height var(--dur-normal) ease, padding var(--dur-normal) ease; }
+.faq-answer { 
+  color: var(--ivory); /* AMAN: Kontras warna ditingkatkan agar lebih nyaman dibaca */
+  opacity: 0.85;
+  font-size: 0.875rem; 
+  line-height: 1.6; 
+  max-height: 0; 
+  overflow: hidden; 
+  transition: max-height var(--dur-normal) ease, padding var(--dur-normal) ease; 
+}
 .faq-item.open .faq-answer { max-height: 300px; padding-bottom: var(--space-3); }
 
 /* =========================================
