@@ -18,7 +18,7 @@
   <meta name="theme-color" content="#082E21">
   <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" as="script">
   
-  <!-- OPTIMASI SEO: Skema JSON-LD Restoran Premium komprehensif tanpa menyentuh DOM visual -->
+  <!-- OPTIMASI SEO -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -49,21 +49,13 @@
           "@type": "MenuItem",
           "name": "Rujak Bangkok Premium",
           "description": "Potongan buah segar renyah dengan balutan bumbu Bangkok khas racikan rahasia.",
-          "offers": {
-            "@type": "Offer",
-            "price": "26000",
-            "priceCurrency": "IDR"
-          }
+          "offers": { "@type": "Offer", "price": "26000", "priceCurrency": "IDR" }
         },
         {
           "@type": "MenuItem",
           "name": "Rujak Sambal Mete Eksklusif",
           "description": "Sajian buah eksotis disandingkan dengan bumbu cocol kacang mete premium yang gurih dan pekat.",
-          "offers": {
-            "@type": "Offer",
-            "price": "32000",
-            "priceCurrency": "IDR"
-          }
+          "offers": { "@type": "Offer", "price": "32000", "priceCurrency": "IDR" }
         }
       ]
     }
@@ -75,8 +67,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-  
-  <!-- FIX: Menggunakan baris pendek yang aman tanpa atribut segel pemblokir (Integrity) -->
   <script src="https://unpkg.com/lucide@0.378.0/dist/umd/lucide.min.js" defer></script>
 </head>
 <body>
@@ -110,7 +100,7 @@
       </div>
       <div id="onbReturningUser" style="display:none; width:100%;">
         <p class="onb-welcome-text">Selamat datang kembali,</p>
-        <h2 class="onb-title" id="onbWelcomeName">Ngoedi</h2>
+        <h2 class="onb-title" id="onbWelcomeName">Tamu</h2>
         <p class="onb-subtitle" style="margin-bottom:56px;">Diantar ke <span id="onbWelcomeDistrict" style="color:var(--gold-bright);">Bekasi</span></p>
         <button type="button" class="btn-gold full-width" id="onbEnterBtn">Masuk Sekarang</button>
         <button type="button" class="btn-text-gold" id="onbResetBtn">Ganti nama &amp; kecamatan</button>
@@ -125,7 +115,7 @@
       <span class="brand-name">RUJAK.Co</span>
     </button>
     <div class="header-right">
-      <span class="user-name" id="headerNameDisplay">Ngoedi</span>
+      <span class="user-name" id="headerNameDisplay">Tamu</span>
       <span class="user-loc" id="headerLocDisplay">Bekasi</span>
     </div>
   </header>
@@ -146,7 +136,6 @@
       </div>
     </div>
     
-    <!-- Dibiarkan kosong sesuai HTML asli Anda agar render menu dari data Supabase tidak crash di app.js -->
     <div class="carousel-container fade-up">
       <div class="carousel-track" id="menuList"></div>
       <div class="carousel-dots" id="carouselDots"></div>
@@ -211,7 +200,7 @@
           <i data-lucide="chevron-down" class="w-4 h-4" aria-hidden="true"></i>
         </button>
         <div class="faq-answer" id="faq-answer-3" role="region" aria-labelledby="faq-q-3">
-          Biaya pengantaran dihitung berdasarkan jarak, mulai dari Rp8.000. Pilih kurir Rujak.Co (Lalamove) untuk pengantaran instan, atau Paxel untuk jangkauan lebih luas.
+          Biaya pengantaran dihitung berdasarkan jarak, mulai dari Rp8.000. Pilih kurir Rujak.Co untuk pengantaran internal, atau Paxel untuk jangkauan lebih luas.
         </div>
       </div>
       <div class="faq-item">
@@ -255,11 +244,10 @@
     <div class="wa-vip-side-tab" id="waVipSideTab">
       <div class="wa-vip-handle" id="waVipHandle"></div>
       <div class="wa-vip-body">
-        <a href="https://wa.me/6289677161680?text=Halo%20RUJAK.Co%2C%20saya%20tertarik%20dengan%20layanan%20VIP%20Concierge."
-           target="_blank" rel="noopener" class="wa-vip-link" aria-label="Hubungi VIP Concierge via WhatsApp">
+        <button type="button" class="wa-vip-link" id="btnVipConcierge" aria-label="Hubungi VIP Concierge via WhatsApp" style="background:transparent; border:none; cursor:pointer;">
           <i data-lucide="crown"></i>
           <span class="wa-vip-vertical-text">VIP</span>
-        </a>
+        </button>
       </div>
     </div>
   </div>
@@ -288,22 +276,25 @@
             <div id="drawerDistrictDropdown" class="minimal-dropdown" style="top:100%; left:0; right:0;" role="listbox" aria-label="Hasil pencarian alamat"></div>
           </div>
           <div class="district-note">*Biaya pengiriman dihitung berdasarkan jarak tempuh aktual (km).</div>
-          <label class="tiny-text" for="deliveryTimeTrigger">Jam Pengantaran</label>
+          
+          <label class="tiny-text" for="deliveryTimeTrigger">Jadwal Pengantaran</label>
           <div style="position:relative;">
             <button type="button" id="deliveryTimeTrigger" class="custom-select" role="combobox" aria-haspopup="listbox" aria-controls="deliveryTimeDropdown" aria-expanded="false" style="margin-bottom:0; width:100%;">
               <span id="deliveryTimeLabel">Pilih jam pengantaran...</span>
               <i data-lucide="chevron-down" class="w-4 h-4" aria-hidden="true"></i>
             </button>
             <div id="deliveryTimeDropdown" class="minimal-dropdown" style="position:absolute; top:100%; left:0; right:0;" role="listbox">
-              <div role="option" tabindex="0" data-value="Pagi (09:00 - 11:00)" aria-selected="true">Pagi (09:00 - 11:00 WIB)</div>
-              <div role="option" tabindex="0" data-value="Siang (11:00 - 13:00)" aria-selected="false">Siang (11:00 - 13:00 WIB)</div>
-              <div role="option" tabindex="0" data-value="Sore (14:00 - 17:00)" aria-selected="false">Sore (14:00 - 17:00 WIB)</div>
+              <div role="option" tabindex="0" data-value="Besok Pagi (09:00 - 11:00)" aria-selected="true">Besok Pagi (09:00 - 11:00 WIB)</div>
+              <div role="option" tabindex="0" data-value="Besok Siang (11:00 - 13:00)" aria-selected="false">Besok Siang (11:00 - 13:00 WIB)</div>
+              <div role="option" tabindex="0" data-value="Besok Sore (14:00 - 17:00)" aria-selected="false">Besok Sore (14:00 - 17:00 WIB)</div>
             </div>
           </div>
-          <input type="hidden" id="deliveryTime" value="Pagi (09:00 - 11:00)" />
+          <input type="hidden" id="deliveryTime" value="Besok Pagi (09:00 - 11:00)" />
+          
           <label class="tiny-text" for="orderNotes">Catatan untuk Kurir (Opsional)</label>
           <textarea id="orderNotes" placeholder="Misal: warna pagar, lantai berapa" rows="1" class="input-minimal" maxlength="100"></textarea>
         </div>
+        
         <div id="shippingSection" class="checkout-forms" style="margin-top:40px;">
           <h4>Pilih Kurir</h4>
           <div class="logistic-options">
@@ -317,6 +308,7 @@
               <button type="button" class="veh-btn" data-vehicle="mobil">Mobil</button>
             </div>
             <label class="priority-label"><input type="checkbox" id="priorityToggleMini" /> Prioritas (+Rp8.000)</label>
+            <div style="font-size: 0.65rem; color: var(--gray-500); margin-top: 4px; padding-left: 30px;">*Pesanan diproses pada kloter pertama esok hari.</div>
           </div>
           <div id="paxelOptions" style="display:none; margin-top:24px; font-size:13px; color:var(--gold); font-style:italic; line-height:1.6;">* Estimasi tiba dalam 1 hari kerja.</div>
           <div class="drawer-breakdown"><span id="shippingDistance"></span><span id="finalShipping" class="font-fraunces">Rp0</span></div>
@@ -442,7 +434,6 @@
   <div id="toast" role="alert" aria-live="polite"></div>
 </div>
 
-<!-- Supabase SDK & Config -->
 <script src="https://unpkg.com/@supabase/supabase-js@2" defer></script>
 <script>
   window.__SUPABASE_URL__ = 'https://ghhnnfrmftttptcejizp.supabase.co';
