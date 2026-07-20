@@ -129,6 +129,34 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
         showToast('⚠️ Gagal memproses struk, namun pesanan tetap tercatat.');
       }
 
+      // ✅ AUTO DOWNLOAD STRUK KE HP PEMBELI
+      try {
+        const receiptElement = document.getElementById('orderConfirmContent');
+        if (receiptElement && typeof html2canvas !== 'undefined') {
+          const canvas = await html2canvas(receiptElement, {
+            backgroundColor: '#ffffff',
+            scale: 2,
+            useCORS: true,
+            allowTaint: false,
+            logging: false
+          });
+          canvas.toBlob(blob => {
+            if (blob) {
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `Struk-RUJAKCo-${state.currentOrderCode}.png`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            }
+          }, 'image/png');
+        }
+      } catch (e) {
+        console.warn('Gagal mengunduh struk otomatis:', e);
+      }
+
       btnLanjut.textContent = 'Lanjutkan';
       btnLanjut.style.pointerEvents = 'auto';
       btnLanjut.dataset.processing = 'false';
