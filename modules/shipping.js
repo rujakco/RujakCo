@@ -3,7 +3,8 @@ import { SYSTEM } from '../data/config.js';
 export function calculateShipping(distance, mainQty, provider = 'rujakco', vehicle = 'motor', priority = false) {
   const dist = distance || SYSTEM?.DEFAULT_DISTANCE || 5;
   if (dist < 0) return { cost: null, label: 'Jarak tidak valid' };
-  if (dist > 50) return { cost: null, label: 'Konfirmasi via Concierge' };
+  // ✅ Diubah dari > 50 menjadi > 70
+  if (dist > 70) return { cost: null, label: 'Konfirmasi via Concierge' };
   
   const qty = Math.max(1, mainQty || 1);
 
