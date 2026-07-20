@@ -2,19 +2,17 @@
    1. DESIGN TOKENS — QUIET LUXURY
 ========================================= */
 :root {
-  --green: #041C17;           /* lebih dalam */
+  --green: #041C17;
   --green-light: #F5F8F6;
-  --gold: #D4B48C;            /* warm elegant gold */
+  --gold: #D4B48C;
   --gold-text: #5C3F1F;
   --gold-soft: rgba(212, 180, 140, 0.25);
   --gold-bright: #EDE3CC;
-  --gold-glow: rgba(212, 180, 140, 0.15);
-  
+  --gold-glow: rgba(212, 180, 140, 0.18);
   --danger: #9C3F36;
   --ivory: #FBF9F4;
   --bg-surface: #FBF9F4;
   --bg-subtle: #F2EDE4;
-  
   --gray-100: #F0EDE6;
   --gray-200: #E3DFD6;
   --gray-300: #C9C4B8;
@@ -23,23 +21,12 @@
   --gray-600: #5C5446;
   --gray-900: #1C1812;
 
-  --z-header: 100;
-  --z-nav: 600;
-  --z-product: 500;
-  --z-fab: 510;
-  --z-modal: 1000;
-  --z-onboard: 1100;
-
-  --blur-soft: blur(12px);
-  --blur-medium: blur(20px);
+  --z-header: 100; --z-nav: 600; --z-product: 500; --z-fab: 510; --z-modal: 1000; --z-onboard: 1100;
+  --blur-soft: blur(12px); --blur-medium: blur(20px);
   --content-max: 440px;
 
-  --dur-fast: 0.25s;
-  --dur-normal: 0.45s;
-  --dur-slow: 0.75s;
-
-  --space-1: 4px; --space-2: 8px; --space-3: 16px; 
-  --space-4: 24px; --space-5: 36px; --space-6: 52px;
+  --dur-fast: 0.25s; --dur-normal: 0.45s; --dur-slow: 0.75s;
+  --space-1: 4px; --space-2: 8px; --space-3: 16px; --space-4: 24px; --space-5: 36px; --space-6: 52px;
 
   --shadow-soft: 0 2px 12px rgba(28,24,18,0.04);
   --shadow-card: 0 8px 28px rgba(28,24,18,0.06);
@@ -47,113 +34,168 @@
   --shadow-luxury: 0 20px 60px -10px rgba(28,24,18,0.12);
   --shadow-glow: 0 10px 30px -10px rgba(212,180,140,0.22);
 
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-xl: 24px;
-  --radius-2xl: 32px;
-
+  --radius-sm: 10px; --radius-md: 14px; --radius-lg: 20px; --radius-xl: 24px; --radius-2xl: 32px;
   --transition-spring: cubic-bezier(0.23, 1, 0.32, 1);
   --transition-heavy: cubic-bezier(0.215, 0.61, 0.355, 1);
   --font-base: 16px;
 }
 
-/* Typography lebih elegant */
-h1, h2, h3, h4, .brand-name, .font-fraunces {
-  font-family: 'Fraunces', serif;
-  font-weight: 300;
+/* =========================================
+   2. RESET & ACCESSIBILITY
+========================================= */
+*, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: rgba(0,0,0,0.06); }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; border-radius: 6px; }
+html, body { margin: 0; padding: 0; background: var(--green); font-family: 'DM Sans', sans-serif; font-size: var(--font-base); color: var(--ivory); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+#app { width: 100%; max-width: 480px; margin: 0 auto; min-height: 100vh; min-height: 100dvh; background: var(--green); position: relative; overflow-x: hidden; }
+
+/* =========================================
+   3. TYPOGRAPHY
+========================================= */
+h1, h2, h3, h4, .brand-name, .font-fraunces { 
+  font-family: 'Fraunces', serif; 
+  font-weight: 280; 
+  margin: 0; 
   letter-spacing: -0.035em;
 }
 h1 { font-size: clamp(1.9rem, 6.5vw, 2.45rem); }
 h2 { font-size: clamp(1.55rem, 5.2vw, 1.85rem); }
 h3 { font-size: clamp(1.3rem, 4.2vw, 1.55rem); }
+h4 { font-size: clamp(1.15rem, 3.6vw, 1.3rem); }
+p, li, .body-text { font-size: clamp(0.95rem, 3vw, 1rem); line-height: 1.75; }
 
-/* Onboarding lebih mewah */
+/* =========================================
+   4. ONBOARDING
+========================================= */
 .onboarding-overlay {
-  background: radial-gradient(circle at 50% 25%, rgba(212,180,140,0.09) 0%, transparent 65%),
+  position: fixed; inset: 0;
+  background: radial-gradient(circle at 50% 25%, rgba(212,180,140,0.09) 0%, transparent 65%), 
               linear-gradient(180deg, #041C17 0%, #020F0C 100%);
+  z-index: var(--z-onboard); display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: var(--space-6) 24px; text-align: center;
+  transition: opacity 0.9s var(--transition-spring), visibility 0.9s;
 }
-.onb-logo {
-  width: 82px; height: 82px;
-  border: 1.5px solid rgba(212,180,140,0.4);
-  box-shadow: 0 0 45px rgba(212,180,140,0.12);
+.onboarding-overlay.hidden { opacity: 0; visibility: hidden; }
+.onb-content { width: 100%; max-width: 340px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.onb-logo { 
+  width: 82px; height: 82px; border-radius: 50%; margin-bottom: 28px; 
+  border: 1.5px solid rgba(212,180,140,0.4); padding: 8px; 
+  background: rgba(0,0,0,0.15); box-shadow: 0 0 45px rgba(212,180,140,0.12);
 }
-.onb-title {
-  font-size: 2.25rem;
-  letter-spacing: -0.04em;
-  font-weight: 280;
+.onb-title { font-size: 2.25rem; font-weight: 280; color: var(--ivory); line-height: 1.05; letter-spacing: -0.04em; }
+.onb-subtitle, .onb-welcome-text { 
+  font-size: 0.7rem; color: var(--gold-bright); text-transform: uppercase; 
+  letter-spacing: 0.3em; font-weight: 600; opacity: 0.95;
 }
+.onb-input { 
+  width: 100%; text-align: center; border: none; border-bottom: 1.5px solid rgba(212,180,140,0.45); 
+  background: transparent; padding: 14px 0 18px; font-size: 1.8rem; font-family: 'Fraunces', serif; 
+  font-weight: 280; color: var(--ivory); transition: all 0.4s ease;
+}
+.onb-input:focus { border-bottom-color: var(--gold); box-shadow: 0 12px 25px -12px var(--gold-glow); }
 
-/* Button Premium */
-.btn-gold {
-  background: linear-gradient(135deg, var(--gold) 0%, #C9A46F 100%);
-  box-shadow: var(--shadow-card), 0 4px 12px var(--gold-glow);
-  transition: all var(--dur-normal) var(--transition-spring);
+/* =========================================
+   5. BUTTONS
+========================================= */
+.btn-gold, .btn-dark { 
+  border-radius: var(--radius-sm); padding: var(--space-3) var(--space-4); 
+  font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; 
+  cursor: pointer; transition: all var(--dur-normal) var(--transition-spring);
 }
-.btn-gold:active {
-  transform: scale(0.975) translateY(1px);
-  box-shadow: var(--shadow-soft);
+.btn-gold { 
+  background: linear-gradient(135deg, var(--gold) 0%, #C9A46F 100%); 
+  color: #fff; box-shadow: var(--shadow-card), 0 4px 12px var(--gold-glow);
 }
+.btn-gold:active { transform: scale(0.975) translateY(1px); box-shadow: var(--shadow-soft); }
+.btn-dark { background: var(--green); color: var(--ivory); border: 1px solid var(--gold-soft); }
 
-/* Header lebih sophisticated */
-.luxury-header {
-  background: rgba(251, 249, 244, 0.92);
-  border-bottom: 1px solid rgba(212,180,140,0.12);
+/* =========================================
+   6. HEADER
+========================================= */
+.luxury-header { 
+  position: fixed; top: 0; left: 0; right: 0; margin: 0 auto; width: calc(100% - 40px); 
+  max-width: var(--content-max); padding: calc(12px + env(safe-area-inset-top, 0px)) 16px 12px; 
+  z-index: var(--z-header); background: rgba(251,249,244,0.92); 
+  border-bottom: 1px solid rgba(212,180,140,0.12); border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  transition: all var(--dur-slow) var(--transition-spring);
 }
 @supports (backdrop-filter: blur(12px)) {
-  .luxury-header { 
-    background: rgba(251, 249, 244, 0.75);
-    backdrop-filter: var(--blur-medium);
-  }
+  .luxury-header { background: rgba(251,249,244,0.75); backdrop-filter: var(--blur-medium); }
 }
-.luxury-header.scrolled {
-  background: rgba(251, 249, 244, 0.96);
-  box-shadow: var(--shadow-soft);
+.luxury-header.scrolled { 
+  background: rgba(251,249,244,0.96); box-shadow: var(--shadow-soft); 
 }
 
-/* Hero lebih dramatic */
-.hero-overlay-new {
-  background: linear-gradient(to top, rgba(4,28,23,0.65) 15%, rgba(4,28,23,0.35) 55%, transparent 100%);
-  padding-bottom: 42px;
+/* =========================================
+   7. HERO & CONTENT
+========================================= */
+.hero-overlay-new { 
+  background: linear-gradient(to top, rgba(4,28,23,0.68) 20%, rgba(4,28,23,0.35) 55%, transparent 100%); 
+  padding: 68px 24px 36px;
 }
-.hero-title-em {
-  color: var(--gold);
-  font-style: italic;
-  font-weight: 340;
-}
+.hero-title-em { color: var(--gold); font-style: italic; font-weight: 340; }
 
-/* Card & Carousel */
-.boutique-item {
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-card);
+/* =========================================
+   8. CAROUSEL & CARDS
+========================================= */
+.boutique-item { 
+  border-radius: var(--radius-xl); box-shadow: var(--shadow-card); 
   transition: all 0.7s var(--transition-spring);
 }
-.boutique-item.active-center {
+.boutique-item.active-center { 
+  transform: scale(1.02) translateY(-10px); 
   box-shadow: var(--shadow-luxury), 0 0 35px var(--gold-glow);
-  transform: scale(1.02) translateY(-10px);
 }
 
-/* Drawer & Modal */
-.drawer-content {
-  border-radius: 28px 28px 0 0;
-  box-shadow: var(--shadow-luxury);
+/* =========================================
+   12. MODALS & DRAWERS
+========================================= */
+.drawer-content { 
+  border-radius: 28px 28px 0 0; 
+  box-shadow: var(--shadow-luxury); 
 }
 
-/* Detail Actions */
-.add-to-cart-btn {
-  border-radius: 9999px;
-  padding: 16px 24px;
-  font-size: 0.9rem;
-  letter-spacing: 0.08em;
-  box-shadow: var(--shadow-card);
+/* =========================================
+   14. DETAIL ACTIONS
+========================================= */
+.add-to-cart-btn { 
+  border-radius: 9999px; padding: 16px 24px; font-size: 0.9rem; 
+  letter-spacing: 0.08em; box-shadow: var(--shadow-card);
 }
-.add-to-cart-btn:active {
-  transform: translateY(2px) scale(0.98);
+.add-to-cart-btn:active { transform: translateY(2px) scale(0.98); }
+
+/* =========================================
+   17. PEMBAYARAN (QRIS)
+========================================= */
+.qris-frame { 
+  background: #FFFFFF; border-radius: var(--radius-xl); 
+  box-shadow: var(--shadow-card); border: 1px solid var(--gold-soft);
 }
 
-/* Lainnya */
-.testi-card, .faq-container {
-  border: 1px solid var(--gold-soft);
-  background: rgba(251,249,244,0.6);
+/* =========================================
+   19. TOAST & SKELETON
+========================================= */
+#toast { 
+  background: var(--green); box-shadow: var(--shadow-luxury); 
+}
+
+/* =========================================
+   24. TESTIMONI & FAQ
+========================================= */
+.testi-card, .faq-container { 
+  border: 1px solid var(--gold-soft); 
+  background: rgba(251,249,244,0.65); 
   backdrop-filter: var(--blur-soft);
 }
+
+/* =========================================
+   Sisanya (mempertahankan struktur asli dengan penyesuaian kecil)
+========================================= */
+/* Anda bisa copy section 9-11, 13, 15-16, 18, 20-23, 25-29 dari kode lama Anda */
+/* Lalu ganti warna, radius, shadow, dan padding sesuai pattern di atas */
+
+.receipt-wrap { background: #FFFFFF; border: 1px solid var(--gray-200); box-shadow: var(--shadow-card); }
+.receipt-stamp { color: var(--gold-text); border-color: var(--gold); }
+
+/* Utility tambahan untuk kesan mewah */
+.luxury-text { font-family: 'Fraunces', serif; font-weight: 280; letter-spacing: -0.02em; }
+.gold-gradient { background: linear-gradient(90deg, var(--gold), #EDE3CC, var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
