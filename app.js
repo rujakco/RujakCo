@@ -1,4 +1,4 @@
-// app.js — FINAL GABUNGAN: Semua perbaikan UX + Telegram aktif
+// app.js — FINAL GABUNGAN: Semua perbaikan UX + Telegram aman via Edge Function
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch } from './utils/helpers.js';
@@ -762,39 +762,37 @@ async function downloadReceiptPNG() {
   }
 }
 
-// *** TELEGRAM AKTIF KEMBALI ***
+// *** TELEGRAM VIA SUPABASE EDGE FUNCTION (AMAN) ***
 async function sendReceiptToTelegram() {
   if (!state.receiptUrl || !state.currentOrderCode) {
     console.warn('Telegram: tidak ada URL struk atau kode pesanan');
     return;
   }
 
-  const TELEGRAM_BOT_TOKEN = '8862351367:AAF63f3lrCk5Wl_0tkAdnLiso2__dyzkvHM';
-  const TELEGRAM_CHAT_ID = '792789032';
+  const supabase = getSupabase();
+  if (!supabase) {
+    console.error('Supabase client tidak tersedia');
+    return;
+  }
 
   const caption = `🧾 *Order Baru:* ${state.currentOrderCode}\n👤 ${state.customerName}\n📞 ${state.customerPhone}\n💰 Total: ${DOM.finalTotal?.textContent}`;
 
   try {
-    const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: TELEGRAM_CHAT_ID,
-        photo: state.receiptUrl,
-        caption,
-        parse_mode: 'Markdown'
-      })
+    const { data, error } = await supabase.functions.invoke('send-telegram', {
+      body: {
+        order_code: state.currentOrderCode,
+        receipt_url: state.receiptUrl,
+        caption: caption
+      }
     });
 
-    const result = await response.json();
-
-    if (!response.ok) {
-      console.error('❌ Telegram menolak:', result.description);
+    if (error) {
+      console.error('❌ Edge Function error:', error);
     } else {
-      console.log('✅ Telegram terkirim');
+      console.log('✅ Telegram terkirim via Edge Function');
     }
   } catch (err) {
-    console.error('Gagal koneksi ke Telegram:', err);
+    console.error('Gagal memanggil Edge Function:', err);
   }
 }
 
