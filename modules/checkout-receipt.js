@@ -93,7 +93,7 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
         </p>
         <div style="background: var(--bg-subtle); border: 1px solid var(--gray-200); border-radius: 8px; padding: 12px; margin: 8px 0 20px; text-align: left; font-size: 0.72rem; color: var(--gray-600); line-height: 1.5; font-family: 'DM Sans', sans-serif;">
           <strong style="color: var(--green); display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.68rem; font-weight: 700;">💡 PANDUAN TRANSAKSI INSTAN VIA PONSEL:</strong>
-          1. <strong>Simpan Nota:</strong> PDF struk ini otomatis terunduh dan tersimpan di ponsel Anda.<br>
+          1. <strong>Simpan Nota:</strong> Gambar struk ini otomatis terunduh dan tersimpan di galeri ponsel Anda.<br>
           2. <strong>Buka Aplikasi:</strong> Buka m-Banking (BCA, Mandiri, dll) atau E-Wallet pilihan Anda (GoPay, OVO, Dana).<br>
           3. <strong>Pindai via Galeri:</strong> Pilih menu QRIS/Scan, tekan <strong>Ikon Galeri/Unggah Gambar</strong>, lalu pilih foto struk ini untuk membayar.<br>
           4. <strong>Konfirmasi WhatsApp:</strong> Kirim bukti transfer beserta foto struk ini ke WhatsApp kami untuk validasi instan.
@@ -129,22 +129,10 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
         showToast('⚠️ Gagal memproses struk, namun pesanan tetap tercatat.');
       }
 
-      // ✅ AUTO DOWNLOAD STRUK PDF KE HP PEMBELI
+      // ✅ AUTO DOWNLOAD STRUK KE HP PEMBELI
       try {
         const receiptElement = document.getElementById('orderConfirmContent');
         if (receiptElement && typeof html2canvas !== 'undefined') {
-          // Muat jsPDF dari CDN jika belum ada
-          if (!window.jspdf) {
-            await new Promise((resolve, reject) => {
-              const script = document.createElement('script');
-              script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-              script.onload = resolve;
-              script.onerror = () => reject(new Error('Gagal memuat jsPDF'));
-              document.head.appendChild(script);
-            });
-          }
-          const { jsPDF } = window.jspdf;
-
           const canvas = await html2canvas(receiptElement, {
             backgroundColor: '#ffffff',
             scale: 2,
@@ -152,15 +140,21 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
             allowTaint: false,
             logging: false
           });
-          const imgData = canvas.toDataURL('image/png');
-          const pdf = new jsPDF('p', 'mm', 'a4');
-          const pdfWidth = pdf.internal.pageSize.getWidth();
-          const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-          pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-          pdf.save(`Struk-RUJAKCo-${state.currentOrderCode}.pdf`);
+          canvas.toBlob(blob => {
+            if (blob) {
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `Struk-RUJAKCo-${state.currentOrderCode}.png`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            }
+          }, 'image/png');
         }
       } catch (e) {
-        console.warn('Gagal mengunduh PDF otomatis:', e);
+        console.warn('Gagal mengunduh struk otomatis:', e);
       }
 
       btnLanjut.textContent = 'Lanjutkan';
