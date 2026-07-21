@@ -1,12 +1,12 @@
 /* =========================================
-   1. DESIGN TOKENS — FINAL SILENT LUXURY
+   1. DESIGN TOKENS — SILENT LUXURY vFINAL
    ========================================= */
 :root {
   /* Warna */
   --green: #082E21;
   --green-light: #EBF2EF;
-  --gold: #B7924F;
-  --gold-hover: #C7A463;        /* untuk CTA utama sedikit lebih terang */
+  --gold: #B7924F;               /* hanya untuk CTA, harga, logo, aksen premium */
+  --gold-hover: #C4A15A;
   --gold-text: #6B4F1E;
   --gold-soft: rgba(183, 146, 79, 0.25);
   --gold-bright: #E8D5A8;
@@ -30,7 +30,7 @@
   --z-modal: 1000;
   --z-onboard: 1100;
 
-  /* Durasi */
+  /* Durasi — ritmik & cepat */
   --dur-tap: 0.15s;
   --dur-micro: 0.2s;
   --dur-drawer: 0.45s;
@@ -40,7 +40,7 @@
   --ease-standard: ease;
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Spasi 8pt */
+  /* Spasi — 8pt grid ketat */
   --space-1: 8px;
   --space-2: 16px;
   --space-3: 24px;
@@ -51,17 +51,18 @@
   --space-8: 64px;
   --space-9: 72px;
 
-  /* Shadow */
-  --shadow-soft: 0 8px 24px rgba(0,0,0,0.05);
+  /* Shadow — sangat hemat */
   --shadow-none: none;
+  --shadow-soft: 0 2px 8px rgba(0,0,0,0.04);
 
-  /* Radius – konsisten */
-  --radius-sm: 14px;   /* button */
-  --radius-md: 18px;   /* card, hero */
-  --radius-lg: 24px;   /* drawer */
+  /* Radius — editorial */
+  --radius-sm: 12px;   /* button, input */
+  --radius-md: 16px;   /* card, hero */
+  --radius-lg: 20px;   /* hero (lebih tajam) */
+  --radius-xl: 28px;   /* drawer */
   --radius-pill: 999px;
 
-  /* Blur */
+  /* Blur — glass */
   --blur-glass: blur(18px);
 
   /* Tipografi */
@@ -87,7 +88,7 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: var(--bg-surface);
+  background: var(--bg-surface);   /* ivory global */
   font-family: var(--font-body);
   font-size: var(--font-base);
   color: var(--gray-900);
@@ -105,7 +106,7 @@ html, body {
 }
 
 /* =========================================
-   3. TIPOGRAFI
+   3. TIPOGRAFI — scale konsisten
    ========================================= */
 h1, h2, h3, h4, .brand-name {
   font-family: var(--font-heading);
@@ -113,22 +114,22 @@ h1, h2, h3, h4, .brand-name {
   letter-spacing: -0.02em;
 }
 h1 {
-  font-size: clamp(2rem, 7vw, 2.35rem);
+  font-size: 2.5rem;          /* 40px */
   font-weight: 500;
   line-height: 1.15;
 }
 h2 {
-  font-size: 1.875rem;
+  font-size: 1.875rem;        /* 30px */
   font-weight: 400;
   line-height: 1.15;
 }
 h3 {
-  font-size: 1.5rem;
+  font-size: 1.5rem;          /* 24px */
   font-weight: 400;
   line-height: 1.2;
 }
 h4 {
-  font-size: 1.25rem;
+  font-size: 1.25rem;         /* 20px */
   font-weight: 400;
   line-height: 1.25;
 }
@@ -167,13 +168,13 @@ p, li, .body-text {
 @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
 /* =========================================
-   5. BUTTONS
+   5. BUTTONS — solid, tanpa brightness
    ========================================= */
 .btn-gold, .btn-dark, .add-to-cart-btn {
   border-radius: var(--radius-sm);
   padding: 0 var(--space-4);
   height: 54px;
-  font-size: 0.9375rem;
+  font-size: 0.9375rem;       /* 15px */
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -182,7 +183,7 @@ p, li, .body-text {
   display: flex; align-items: center; justify-content: center;
   width: 100%;
   border: none;
-  background: linear-gradient(180deg, #C7A463, #B7924F); /* volume subtle */
+  background: var(--gold);
   color: #fff;
   box-shadow: var(--shadow-none);
   transition: background 0.2s var(--ease-smooth), transform 0.15s var(--ease-smooth);
@@ -196,7 +197,7 @@ p, li, .body-text {
 }
 @media (hover: hover) {
   .btn-gold:hover, .add-to-cart-btn:hover {
-    background: linear-gradient(180deg, #D2AE6E, #C7A463);
+    background: var(--gold-hover);
   }
   .btn-dark:hover {
     background: #0A3A2A;
@@ -210,7 +211,7 @@ p, li, .body-text {
 .btn-text-gold:active { opacity: 0.6; }
 
 /* =========================================
-   6. HEADER
+   6. HEADER — breathable, transparan
    ========================================= */
 .luxury-header {
   position: fixed; top: 0; left: 0; right: 0; margin: 0 auto;
@@ -221,11 +222,9 @@ p, li, .body-text {
   backdrop-filter: none;
   border: none;
   box-shadow: none;
-  transition: padding 0.25s, background 0.25s, backdrop-filter 0.25s, box-shadow 0.25s;
+  transition: background 0.25s, backdrop-filter 0.25s, box-shadow 0.25s;
 }
 .luxury-header.scrolled {
-  padding-top: calc(10px + env(safe-area-inset-top, 0px));
-  padding-bottom: 8px;
   background: rgba(252, 250, 248, 0.8);
   backdrop-filter: var(--blur-glass) saturate(180%);
   -webkit-backdrop-filter: var(--blur-glass) saturate(180%);
@@ -245,18 +244,18 @@ p, li, .body-text {
 .luxury-header.scrolled .user-loc { color: var(--green); }
 
 /* =========================================
-   7. HERO — hijau hanya di sini
+   7. HERO — foto dominan, hijau hanya di sini
    ========================================= */
 .content-wrapper { padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)); }
 .hero-editorial {
   width: 100%; max-width: 480px; margin: 0 auto;
   position: relative; z-index: 1;
-  background: var(--green);
+  background: var(--green); /* latar hijau hanya di hero */
 }
 .hero-img-wrap {
   width: 100%;
   aspect-ratio: 4 / 5;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   background-color: var(--green-light);
 }
@@ -268,18 +267,18 @@ p, li, .body-text {
 .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .hero-overlay-new {
   position: absolute; inset: auto 0 0 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.22), transparent 70%);
+  background: linear-gradient(to top, rgba(8,46,33,0.42), transparent 70%);
   display: flex; align-items: flex-end; justify-content: flex-start;
   padding: 48px 24px 24px;
-  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   z-index: 2;
 }
-.hero-title { color: #fff; }
+.hero-title { color: #fff; text-shadow: none; }
 .hero-title-em { color: var(--gold); font-style: italic; }
 .hero-subtitle { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.8); margin-top: 4px; }
 
 /* =========================================
-   8. CAROUSEL – tanpa blur, depth alami
+   8. CAROUSEL — galeri dengan depth
    ========================================= */
 .carousel-container { width: 100%; margin-top: var(--space-2); }
 .carousel-track {
@@ -292,15 +291,20 @@ p, li, .body-text {
   flex: 0 0 85%;
   scroll-snap-align: center;
   display: flex; flex-direction: column; align-items: center;
-  background: none; box-shadow: none; border-radius: 0; padding: 0;
-  opacity: 0.55;
-  transform: scale(0.95);
-  filter: none;   /* tanpa blur */
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  opacity: 0.35;
+  filter: blur(2px);
+  transform: scale(0.92);
   transition: transform var(--dur-carousel) var(--ease-smooth),
-              opacity var(--dur-carousel) var(--ease-smooth);
+              opacity var(--dur-carousel) var(--ease-smooth),
+              filter var(--dur-carousel) var(--ease-smooth);
 }
 .boutique-item.active-center {
   opacity: 1;
+  filter: blur(0);
   transform: scale(1);
 }
 .btq-img {
@@ -324,7 +328,7 @@ p, li, .body-text {
 .carousel-dot.active { background: var(--green); width: 16px; border-radius: 10px; }
 
 /* =========================================
-   9. INSIGHT & SPACING
+   9. INSIGHT & SECTION SPACING
    ========================================= */
 .product-insight-container {
   text-align: center; padding: var(--space-9) var(--space-3) var(--space-8);
@@ -337,7 +341,7 @@ p, li, .body-text {
 }
 
 /* =========================================
-   10. FOOTER – editorial, hijau kembali
+   10. FOOTER — editorial, hijau kembali
    ========================================= */
 .luxury-footer {
   padding: var(--space-9) var(--space-3) calc(var(--space-6) + env(safe-area-inset-bottom));
@@ -349,14 +353,11 @@ p, li, .body-text {
 .footer-brand { font-family: var(--font-heading); font-size: 1.5rem; color: var(--gold); margin-bottom: 4px; }
 .footer-tagline { font-size: 0.875rem; color: rgba(255,255,255,0.7); letter-spacing: 0.05em; }
 .footer-est { font-size: 0.75rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.15em; }
-.footer-info { font-size: 0.6875rem; color: rgba(255,255,255,0.45); display: flex; gap: var(--space-2); justify-content: center; flex-wrap: wrap; }
-.footer-info span { opacity: 0.7; }
-.footer-social { display: flex; gap: var(--space-2); justify-content: center; margin-top: var(--space-1); }
-.footer-social a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.75rem; transition: color 0.2s; }
-.footer-social a:hover { color: var(--gold); }
+.footer-meta { font-size: 0.6875rem; color: rgba(255,255,255,0.45); display: flex; gap: var(--space-2); justify-content: center; }
+.footer-meta span { opacity: 0.7; }
 
 /* =========================================
-   11. BOTTOM NAV – ultra tipis
+   11. BOTTOM NAV — ultra ringan, glass
    ========================================= */
 .bottom-nav {
   position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
@@ -368,15 +369,14 @@ p, li, .body-text {
   border: 1px solid rgba(255,255,255,0.5);
   border-radius: var(--radius-pill);
   display: flex; justify-content: space-around; align-items: center;
-  padding: 2px 0 calc(2px + env(safe-area-inset-bottom));
-  height: 60px;
+  padding: 4px 0 calc(4px + env(safe-area-inset-bottom));
   box-shadow: var(--shadow-soft);
 }
 .nav-item {
   flex: 1; display: flex; flex-direction: column; align-items: center; gap: 1px;
   background: none; border: none;
   color: var(--gray-500);
-  font-size: 0.6875rem;
+  font-size: 0.6875rem;   /* 11px */
   font-weight: 500;
   transition: color 0.2s;
 }
@@ -400,10 +400,10 @@ p, li, .body-text {
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
 .drawer-content {
   background: var(--bg-surface); width: 100%; max-width: 480px;
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   transform: translateY(100%); transition: transform 0.5s var(--ease-smooth);
   height: 88dvh; display: flex; flex-direction: column;
-  box-shadow: var(--shadow-soft);
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.08);
 }
 .modal-overlay.active .drawer-content { transform: translateY(0); }
 .drawer-header { padding: var(--space-4); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.04); }
@@ -411,18 +411,17 @@ p, li, .body-text {
 .drawer-footer-sticky { padding: var(--space-3) var(--space-4); border-top: 1px solid var(--gray-200); }
 
 /* =========================================
-   13. PRODUCT DETAIL (progressive)
+   13. PRODUCT SWIPER & DETAIL (progressive)
    ========================================= */
 .product-swiper-overlay { /* ... */ }
 .product-slide .detail-content {
   padding: var(--space-5) var(--space-4) 120px;
-  background: var(--bg-surface); border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: var(--bg-surface); border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   margin-top: -20px; position: relative; z-index: 2;
 }
 .detail-content h2 { color: var(--green); margin-bottom: 4px; }
 .detail-price { font-size: 1.125rem; color: var(--gold-text); font-weight: 600; }
 .detail-desc { color: var(--gray-900); max-width: 400px; margin-top: var(--space-2); }
-/* hidden by default */
 .detail-specs, .detail-manifesto, .fruit-list-inline, .section-label, .cerita-teks { display: none; }
 .detail-content.expanded .detail-specs,
 .detail-content.expanded .detail-manifesto,
@@ -430,9 +429,8 @@ p, li, .body-text {
 .detail-content.expanded .section-label,
 .detail-content.expanded .cerita-teks { display: block; }
 .btn-detail-toggle {
-  background: none; border: none; color: var(--green); font-weight: 600;
-  margin-top: var(--space-2); cursor: pointer;
-  text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.8rem;
+  background: none; border: none; color: var(--green); font-weight: 600; margin-top: var(--space-2);
+  cursor: pointer; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.8rem;
 }
 
 /* =========================================
@@ -445,19 +443,15 @@ p, li, .body-text {
 .add-to-cart-btn { flex: 1; border-radius: var(--radius-pill); }
 
 /* =========================================
-   15. FORMS & QRIS (fokus, bersih)
+   15. FORMS & QRIS (netral, tanpa gold)
    ========================================= */
 .input-minimal { width: 100%; border: none; border-bottom: 1px solid var(--gray-300); padding: var(--space-2) 0; margin-bottom: var(--space-3); outline: none; transition: border-color 0.2s; }
 .input-minimal:focus { border-bottom-color: var(--green); }
-.qris-frame {
-  background: #fff; padding: var(--space-3); border-radius: var(--radius-md);
-  border: 1px solid rgba(0,0,0,0.05); box-shadow: var(--shadow-soft);
-  max-width: 280px; margin: 0 auto; /* lebih kecil & fokus */
-}
+.qris-frame { background: #fff; padding: var(--space-3); border-radius: var(--radius-md); border: 1px solid rgba(0,0,0,0.05); box-shadow: var(--shadow-soft); }
 .drawer-total #finalTotal { font-size: 2rem; color: var(--gold-text); font-family: var(--font-heading); }
 
 /* =========================================
-   16. FAQ & TESTIMONI
+   16. FAQ & TESTIMONI (hijau/ivory)
    ========================================= */
 .faq-container { margin: 0 20px var(--space-3); }
 .faq-item { border-bottom: 1px solid rgba(0,0,0,0.08); }
@@ -468,7 +462,7 @@ p, li, .body-text {
 /* =========================================
    17. TOAST (putih)
    ========================================= */
-#toast { background: #fff; color: var(--green); border: 1px solid rgba(0,0,0,0.06); box-shadow: var(--shadow-soft); border-radius: var(--radius-pill); padding: var(--space-2) var(--space-4); }
+#toast { background: #fff; color: var(--green); border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: var(--radius-pill); padding: var(--space-2) var(--space-4); }
 
 /* =========================================
    18. UTILITAS & AKSESIBILITAS
@@ -481,4 +475,4 @@ p, li, .body-text {
    19. ANIMASI
    ========================================= */
 @keyframes cartBump { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
-@keyframes buttonFlash { 0% { background: #fff; color: var(--green); } 100% { background: linear-gradient(180deg, #C7A463, #B7924F); color: #fff; } }
+@keyframes buttonFlash { 0% { background: #fff; color: var(--green); } 100% { background: var(--gold); color: #fff; } }
