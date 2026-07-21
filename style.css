@@ -6,6 +6,7 @@
   --green: #082E21;
   --green-light: #EBF2EF;
   --gold: #B7924F;               /* brass, tidak norak */
+  --gold-deep: #8C6A32;          /* untuk gradient & hover, lebih kaya */
   --gold-text: #6B4F1E;
   --gold-soft: rgba(183, 146, 79, 0.35);
   --gold-bright: #E8D5A8;
@@ -17,10 +18,14 @@
   --gray-100: #F4F2EE;
   --gray-200: #E6E4DF;
   --gray-300: #D1CFCA;
-  --gray-400: #A8A6A0;
+  --gray-400: #96938C;           /* dinaikkan kontrasnya agar lebih nyaman dibaca */
   --gray-500: #888681;
   --gray-600: #6E6C67;
   --gray-900: #1A1816;
+
+  /* Gradient & shadow bermerek — dipakai ulang, bukan diulang-ulang */
+  --gradient-gold: linear-gradient(180deg, #C9A868 0%, #A67C3D 100%);
+  --shadow-gold: 0 10px 24px -10px rgba(140, 106, 50, 0.45);
 
   /* Z-index */
   --z-header: 100;
@@ -44,7 +49,7 @@
   --space-6: 48px;
   --space-7: 56px;
 
-  /* Shadow – hanya tiga jenis */
+  /* Shadow – hanya tiga jenis + satu aksen */
   --shadow-soft: 0 2px 8px rgba(0,0,0,0.03);
   --shadow-medium: 0 8px 24px rgba(0,0,0,0.06);
   --shadow-floating: 0 20px 50px rgba(8,46,33,0.10);
@@ -90,6 +95,7 @@ html, body {
   font-size: var(--font-base);
   color: var(--ivory);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 #app {
   width: 100%;
@@ -113,18 +119,22 @@ h1, h2, h3, h4, .brand-name, .font-fraunces {
 h1 {
   font-size: clamp(1.75rem, 6vw, 2.25rem);
   letter-spacing: -0.04em;
+  line-height: 1.08;
 }
 h2 {
   font-size: clamp(1.5rem, 5vw, 1.75rem);
   letter-spacing: -0.03em;
+  line-height: 1.15;
 }
 h3 {
   font-size: clamp(1.25rem, 4vw, 1.5rem);
   letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 h4 {
   font-size: clamp(1.125rem, 3.5vw, 1.25rem);
   letter-spacing: -0.01em;
+  line-height: 1.25;
 }
 p, li, .body-text {
   font-size: clamp(0.9375rem, 3vw, 1rem);
@@ -168,7 +178,7 @@ p, li, .body-text {
 @keyframes luxuryFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
 /* =========================================
-   5. BUTTONS — lebih tenang
+   5. BUTTONS — lebih tenang, satu sumber gradasi
    ========================================= */
 .btn-gold,
 .btn-dark,
@@ -190,9 +200,9 @@ p, li, .body-text {
 }
 .btn-gold,
 .add-to-cart-btn {
-  background: linear-gradient(180deg, #C4A15A, #B38A45);
+  background: var(--gradient-gold);
   color: #fff;
-  box-shadow: var(--shadow-soft);
+  box-shadow: var(--shadow-gold);
 }
 .btn-dark {
   background: var(--green);
@@ -274,6 +284,7 @@ p, li, .body-text {
   font-size: 1rem;
   color: #fff;
   font-weight: 600;
+  letter-spacing: 0.01em;
   text-shadow: 0 2px 8px rgba(0,0,0,0.4);
   transition: color var(--dur-normal) ease, text-shadow var(--dur-normal) ease;
 }
@@ -312,7 +323,7 @@ p, li, .body-text {
 }
 
 /* =========================================
-   7. HERO — banner naik 150px ke atas
+   7. HERO — naik ke atas header tanpa terlihat "kepotong"
    ========================================= */
 .content-wrapper {
   padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
@@ -321,7 +332,8 @@ p, li, .body-text {
 .hero-editorial {
   width: 100%;
   max-width: 480px;
-  margin: -150px auto 0;   /* naik 150px */
+  /* naik ke bawah header, tapi tidak berlebihan di layar pendek */
+  margin: min(-150px, -30vh) auto 0;
   position: relative;
   z-index: 1;
 }
@@ -382,7 +394,7 @@ p, li, .body-text {
 }
 .hero-title-em {
   display: inline;
-  color: var(--gold);
+  color: var(--gold-bright);
   font-style: italic;
 }
 .hero-subtitle {
@@ -577,7 +589,7 @@ p, li, .body-text {
   text-align: center;
 }
 .footer-brand {
-  color: var(--gold);
+  color: var(--gold-bright);
   margin-bottom: 4px;
 }
 .footer-tagline {
@@ -641,8 +653,10 @@ p, li, .body-text {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1px;
-  padding: 4px 0;
+  justify-content: center;
+  gap: 2px;
+  min-height: 48px;
+  padding: 6px 0;
   background: none;
   border: none;
   font-family: inherit;
@@ -650,10 +664,11 @@ p, li, .body-text {
   font-size: 0.7rem;
   font-weight: 600;
   cursor: pointer;
+  position: relative;
   transition: color var(--dur-fast) ease, transform var(--dur-fast) ease;
 }
 .nav-item.active {
-  color: var(--gold);
+  color: var(--gold-text);
   transform: translateY(-2px);
 }
 .nav-item.active::after {
@@ -911,7 +926,7 @@ p, li, .body-text {
   vertical-align: middle;
 }
 .detail-manifesto {
-  background: transparent;
+  background: linear-gradient(180deg, rgba(183,146,79,0.05), transparent);
   padding: var(--space-4);
   border-radius: var(--radius-sm);
   border: 1px solid rgba(183,146,79,0.25);
@@ -919,7 +934,7 @@ p, li, .body-text {
 }
 .detail-manifesto h4 {
   font-size: 0.75rem;
-  color: var(--gold);
+  color: var(--gold-text);
   margin-bottom: 12px;
   font-weight: 600;
   letter-spacing: 0.15em;
@@ -1068,11 +1083,11 @@ input:-webkit-autofill:active {
 .chat-input-row { padding: var(--space-3) 20px; border-top: 1px solid var(--gray-200); display: flex; gap: 12px; background: white; }
 .chat-input-row input { margin: 0; padding: 14px 20px; background: var(--bg-subtle); border: none; border-radius: 100px; font-size: 1rem; }
 .btn-gold-round {
-  background: linear-gradient(180deg, #C4A15A, #B38A45);
+  background: var(--gradient-gold);
   color: #fff; border: none; border-radius: 50%; width: 48px; height: 48px;
   display: flex; align-items: center; justify-content: center; cursor: pointer;
   transition: transform var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
-  box-shadow: var(--shadow-soft);
+  box-shadow: var(--shadow-gold);
 }
 .btn-gold-round:active { transform: scale(0.9); }
 
@@ -1128,14 +1143,14 @@ input:-webkit-autofill:active {
 .wa-vip-vertical-text { writing-mode: vertical-rl; transform: rotate(180deg); }
 
 /* =========================================
-   23. TESTIMONI & FAQ (faq max-height 600px)
+   23. TESTIMONI & FAQ
    ========================================= */
-.testi-flip-container { position: relative; overflow: visible; min-height: 140px; margin: 24px 20px 16px; border-radius: 14px; padding: 20px 20px 32px; border: 1px solid var(--gold-soft); color: #fff; }
+.testi-flip-container { position: relative; overflow: visible; min-height: 140px; margin: var(--space-3) 20px var(--space-2); border-radius: 14px; padding: var(--space-2) var(--space-2) var(--space-4); border: 1px solid var(--gold-soft); color: #fff; }
 .testi-pause-btn { position: absolute; top: 10px; right: 10px; z-index: 3; background: rgba(255,255,255,0.15); border: 1px solid var(--gold-soft); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; color: var(--gold-bright); }
 .testi-card { position: absolute; top: 0; left: 0; right: 0; padding: 20px 20px 30px; transition: transform 0.6s cubic-bezier(0.4,0,0.2,1), opacity 0.6s; transform: translateY(100%); opacity: 0; }
 .testi-card.is-active { transform: translateY(0); opacity: 1; }
 .testi-card.is-prev { transform: translateY(-100%); opacity: 0; }
-.testi-stars { font-size: 15px; opacity: 0.85; margin-bottom: 4px; letter-spacing: 2px; }
+.testi-stars { font-size: 15px; color: var(--gold-bright); opacity: 0.9; margin-bottom: 4px; letter-spacing: 2px; }
 .testi-card p { font-size: 16px; font-weight: 600; margin: 0 0 14px; line-height: 1.55; color: rgba(255,255,255,0.85); }
 .testi-card span { font-size: 13px; color: rgba(255,255,255,0.7); opacity: 0.85; }
 .testi-dots { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 2; }
@@ -1145,11 +1160,11 @@ input:-webkit-autofill:active {
 .faq-container { margin: 0 20px var(--space-3); padding: 12px var(--space-3); border: none; }
 .faq-item { border-bottom: 1px solid var(--gold-soft); }
 .faq-item:last-child { border-bottom: none; }
-.faq-question { width: 100%; display: flex; justify-content: space-between; align-items: center; background: none; border: none; font-family: inherit; cursor: pointer; padding: var(--space-3) 0; text-align: left; color: var(--ivory); font-size: 0.9375rem; font-weight: 600; line-height: 1.5; opacity: 0.95; transition: opacity var(--dur-fast) ease; }
+.faq-question { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); background: none; border: none; font-family: inherit; cursor: pointer; padding: var(--space-3) 0; text-align: left; color: var(--ivory); font-size: 0.9375rem; font-weight: 600; line-height: 1.5; opacity: 0.95; transition: opacity var(--dur-fast) ease; }
 .faq-question:hover { opacity: 1; }
-.faq-question i { transition: transform var(--dur-normal) ease; }
+.faq-question i { flex-shrink: 0; color: var(--gold-bright); transition: transform var(--dur-normal) ease; }
 .faq-item.open .faq-question i { transform: rotate(180deg); }
-.faq-answer { color: var(--ivory); font-size: 0.875rem; line-height: 1.6; max-height: 0; overflow: hidden; opacity: 0; transform: translateY(-6px); transition: opacity 0.35s ease, transform 0.35s ease, max-height 0.4s ease, padding 0.4s ease; }
+.faq-answer { color: rgba(253,251,247,0.8); font-size: 0.875rem; line-height: 1.6; max-height: 0; overflow: hidden; opacity: 0; transform: translateY(-6px); transition: opacity 0.35s ease, transform 0.35s ease, max-height 0.4s ease, padding 0.4s ease; }
 .faq-item.open .faq-answer { opacity: 1; transform: none; max-height: 600px; padding-bottom: var(--space-3); }
 
 /* =========================================
@@ -1160,13 +1175,13 @@ input:-webkit-autofill:active {
 .sec-title { font-family: var(--font-heading); font-weight: 400; font-size: 1rem; color: var(--gold-bright); letter-spacing: 0.05em; }
 .receipt-wrap { background: #FFFFFF; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); position: relative; overflow: hidden; }
 .receipt-stamp { position: absolute; top: 22px; right: -34px; width: 140px; transform: rotate(35deg); text-align: center; padding: 5px 0; border-top: 1.5px solid var(--gold); border-bottom: 1.5px solid var(--gold); color: var(--gold-text); font-family: var(--font-body); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.85; pointer-events: none; }
-.receipt-header { text-align: center; padding: 28px 20px 18px; }
+.receipt-header { text-align: center; padding: var(--space-4) var(--space-2) 18px; }
 .receipt-logo { width: 48px; height: 48px; border-radius: 50%; margin-bottom: 10px; border: 1px solid var(--gold-soft); padding: 3px; }
 .receipt-brand { font-family: var(--font-heading); color: var(--green); font-size: 1.15rem; font-weight: 400; }
 .receipt-tagline { font-size: 0.65rem; color: var(--gray-500); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 3px; }
-.receipt-meta { display: flex; justify-content: space-between; align-items: center; margin: 18px 20px 0; padding-bottom: 18px; border-bottom: 1px dashed rgba(183,146,79,0.45); font-size: 0.7rem; color: var(--gray-500); font-family: var(--font-body); }
+.receipt-meta { display: flex; justify-content: space-between; align-items: center; margin: var(--space-2) var(--space-2) 0; padding-bottom: var(--space-2); border-bottom: 1px dashed rgba(183,146,79,0.45); font-size: 0.7rem; color: var(--gray-500); font-family: var(--font-body); }
 .receipt-meta .code { color: var(--gold-text); font-weight: 700; letter-spacing: 0.05em; }
-.receipt-section { padding: 16px 20px; border-bottom: 1px dashed rgba(0,0,0,0.08); }
+.receipt-section { padding: var(--space-2); border-bottom: 1px dashed rgba(0,0,0,0.08); }
 .receipt-section:last-of-type { border-bottom: none; }
 .receipt-section-title { display: flex; align-items: center; gap: 8px; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--gold-text); font-weight: 700; margin-bottom: 10px; }
 .receipt-section-title::after { content: ''; flex: 1; height: 1px; background: rgba(183,146,79,0.25); }
@@ -1176,7 +1191,7 @@ input:-webkit-autofill:active {
 .confirm-row.total { margin-top: 6px; padding-top: 14px; border-top: 1px solid var(--gray-200); align-items: baseline; }
 .confirm-row.total span:first-child { font-family: var(--font-body); font-weight: 700; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); }
 .confirm-row.total span:last-child { font-family: var(--font-heading); font-size: 1.4rem; color: var(--green); font-weight: 400; }
-.receipt-footer { text-align: center; padding: 22px 20px 26px; }
+.receipt-footer { text-align: center; padding: 22px var(--space-2) 26px; }
 .receipt-footer p { font-family: var(--font-heading); font-style: italic; color: var(--gray-600); font-size: 0.875rem; margin: 0 0 10px; }
 .receipt-code-text { font-size: 0.7rem; letter-spacing: 0.25em; color: var(--gray-600); font-weight: 600; font-family: 'DM Sans', monospace; text-transform: uppercase; }
 .receipt-qris-wrap { width: 160px; height: 160px; margin: 16px auto 12px; border-radius: var(--radius-sm); border: 1.5px dashed var(--gold); background: white; overflow: hidden; position: relative; }
@@ -1186,7 +1201,7 @@ input:-webkit-autofill:active {
 /* Animasi */
 @keyframes cartBump { 0% { transform: scale(1); } 50% { transform: scale(1.3) translateY(-4px); color: var(--gold); } 100% { transform: scale(1); } }
 .nav-cart-wrapper.bump .nav-badge, .nav-cart-wrapper.bump .nav-icon { animation: cartBump 0.4s ease; }
-@keyframes buttonFlash { 0% { background: #FFFFFF; color: var(--green); transform: scale(0.97); } 100% { background: linear-gradient(180deg, #C4A15A, #B38A45); color: #fff; transform: scale(1); } }
+@keyframes buttonFlash { 0% { background: #FFFFFF; color: var(--green); transform: scale(0.97); } 100% { background: var(--gradient-gold); color: #fff; transform: scale(1); } }
 .add-to-cart-btn.success-flash { animation: buttonFlash 0.4s ease forwards; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
