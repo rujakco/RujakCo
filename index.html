@@ -15,9 +15,10 @@
   <meta name="twitter:title" content="Asam, Pedas, Manis, Segar. Dalam Satu Wadah." />
   <meta name="twitter:description" content="Rujak premium asli Bekasi. Asam, pedas, manis, segar." />
   <meta name="twitter:image" content="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" />
-  <meta name="theme-color" content="#061F16">
+  <meta name="theme-color" content="#082E21">
   <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" as="script">
-
+  
+  <!-- OPTIMASI SEO -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -70,7 +71,7 @@
 </head>
 <body>
 <noscript>
-  <div style="background:#061F16;color:white;text-align:center;padding:16px;font-family:'DM Sans', sans-serif;">
+  <div style="background:#082E21;color:white;text-align:center;padding:16px;font-family:'DM Sans', sans-serif;">
     Mohon aktifkan JavaScript untuk menggunakan seluruh fitur reservasi premium kami.
   </div>
 </noscript>
@@ -134,19 +135,19 @@
         </div>
       </div>
     </div>
-
+    
     <div class="carousel-container fade-up">
       <div class="carousel-track" id="menuList"></div>
       <div class="carousel-dots" id="carouselDots"></div>
     </div>
-
+    
     <div class="product-insight-container fade-up">
       <p id="productInsightText" class="typing-text"></p>
     </div>
-
+    
     <div class="testi-flip-container" id="testiFlipContainer" role="region" aria-roledescription="carousel" aria-label="Testimoni pelanggan">
       <button type="button" id="testiPauseBtn" class="testi-pause-btn" aria-label="Jeda testimoni otomatis" aria-pressed="false">
-        <i data-lucide="pause" class="icon-sm" aria-hidden="true"></i>
+        <i data-lucide="pause" style="width:14px;height:14px;" aria-hidden="true"></i>
       </button>
       <div id="testiLiveRegion" class="sr-only" aria-live="polite" aria-atomic="true"></div>
       <div class="testi-card is-active" data-index="0">
@@ -170,15 +171,15 @@
         <button type="button" class="testi-dot" data-dot="2" aria-label="Testimoni 3" aria-current="false"></button>
       </div>
     </div>
-
+    
     <div class="divider"></div>
     <div class="sec-header"><span class="sec-title">Pertanyaan Umum</span></div>
-
+    
     <div class="faq-container" id="faqContainer">
       <div class="faq-item open">
         <button type="button" class="faq-question" data-toggle="faq" aria-expanded="true" aria-controls="faq-answer-1" id="faq-q-1">
           <span>Mengapa sambal dikemas terpisah?</span>
-          <i data-lucide="chevron-down" class="icon-sm" aria-hidden="true"></i>
+          <i data-lucide="chevron-down" class="w-4 h-4" aria-hidden="true"></i>
         </button>
         <div class="faq-answer" id="faq-answer-1" role="region" aria-labelledby="faq-q-1">
           Agar buah tetap segar dan renyah saat diterima — tidak lembek, tidak tumpah.
@@ -187,7 +188,7 @@
       <div class="faq-item">
         <button type="button" class="faq-question" data-toggle="faq" aria-expanded="false" aria-controls="faq-answer-2" id="faq-q-2">
           <span>Mengapa pesanan dikirim keesokan harinya?</span>
-          <i data-lucide="chevron-down" class="icon-sm" aria-hidden="true"></i>
+          <i data-lucide="chevron-down" class="w-4 h-4" aria-hidden="true"></i>
         </button>
         <div class="faq-answer" id="faq-answer-2" role="region" aria-labelledby="faq-q-2">
           Kami menerapkan standar <strong>Fresh-Prep</strong>: buah dipotong 15 menit sebelum pengantaran esok hari, demi kerenyahan maksimal.
@@ -196,7 +197,7 @@
       <div class="faq-item">
         <button type="button" class="faq-question" data-toggle="faq" aria-expanded="false" aria-controls="faq-answer-3" id="faq-q-3">
           <span>Berapa biaya pengantarannya?</span>
-          <i data-lucide="chevron-down" class="icon-sm" aria-hidden="true"></i>
+          <i data-lucide="chevron-down" class="w-4 h-4" aria-hidden="true"></i>
         </button>
         <div class="faq-answer" id="faq-answer-3" role="region" aria-labelledby="faq-q-3">
           Biaya pengantaran dihitung berdasarkan jarak, mulai dari Rp8.000. Pilih kurir Rujak.Co untuk pengantaran internal, atau Paxel untuk jangkauan lebih luas.
@@ -205,14 +206,14 @@
       <div class="faq-item">
         <button type="button" class="faq-question" data-toggle="faq" aria-expanded="false" aria-controls="faq-answer-4" id="faq-q-4">
           <span>Bagaimana jika rujak tiba dalam kondisi tidak sempurna?</span>
-          <i data-lucide="chevron-down" class="icon-sm" aria-hidden="true"></i>
+          <i data-lucide="chevron-down" class="w-4 h-4" aria-hidden="true"></i>
         </button>
         <div class="faq-answer" id="faq-answer-4" role="region" aria-labelledby="faq-q-4">
           Kami akan menggantinya. Namun dengan <strong>Fresh-Lock System™</strong>, kemungkinan itu terjadi sangat kecil.
         </div>
       </div>
     </div>
-
+    
     <footer class="luxury-footer fade-up">
       <div class="footer-row">
         <h3 class="footer-brand">RUJAK.Co</h3>
@@ -275,12 +276,12 @@
             <div id="drawerDistrictDropdown" class="minimal-dropdown" style="top:100%; left:0; right:0;" role="listbox" aria-label="Hasil pencarian alamat"></div>
           </div>
           <div class="district-note">*Biaya pengiriman dihitung berdasarkan jarak tempuh aktual (km).</div>
-
+          
           <label class="tiny-text" for="deliveryTimeTrigger">Jadwal Pengantaran</label>
           <div style="position:relative;">
             <button type="button" id="deliveryTimeTrigger" class="custom-select" role="combobox" aria-haspopup="listbox" aria-controls="deliveryTimeDropdown" aria-expanded="false" style="margin-bottom:0; width:100%;">
               <span id="deliveryTimeLabel">Pilih jam pengantaran...</span>
-              <i data-lucide="chevron-down" class="icon-sm" aria-hidden="true"></i>
+              <i data-lucide="chevron-down" class="w-4 h-4" aria-hidden="true"></i>
             </button>
             <div id="deliveryTimeDropdown" class="minimal-dropdown" style="position:absolute; top:100%; left:0; right:0;" role="listbox">
               <div role="option" tabindex="0" data-value="Besok Pagi (09:00 - 11:00)" aria-selected="true">Besok Pagi (09:00 - 11:00 WIB)</div>
@@ -289,11 +290,11 @@
             </div>
           </div>
           <input type="hidden" id="deliveryTime" value="Besok Pagi (09:00 - 11:00)" />
-
+          
           <label class="tiny-text" for="orderNotes">Catatan untuk Kurir (Opsional)</label>
           <textarea id="orderNotes" placeholder="Misal: warna pagar, lantai berapa" rows="1" class="input-minimal" maxlength="100"></textarea>
         </div>
-
+        
         <div id="shippingSection" class="checkout-forms" style="margin-top:40px;">
           <h4>Pilih Kurir</h4>
           <div class="logistic-options">
