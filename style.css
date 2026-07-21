@@ -1172,7 +1172,7 @@ input:-webkit-autofill:active {
    ========================================= */
 .divider { width: calc(100% - 40px); max-width: 440px; margin: var(--space-3) auto; border-top: 1px solid rgba(183,146,79,0.25); }
 .sec-header { width: calc(100% - 40px); max-width: 440px; margin: 0 auto var(--space-4); padding: 0; }
-.sec-title { font-family: var(--font-heading); font-weight: 400; font-size: 1rem; color: var(--gold-bright); letter-spacing: 0.05em; }
+.sec-title { font-family: var(--font-heading); font-weight: 600; font-size: 1.0625rem; color: var(--gold-bright); letter-spacing: 0.08em; text-transform: uppercase; }
 .receipt-wrap { background: #FFFFFF; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); position: relative; overflow: hidden; }
 .receipt-stamp { position: absolute; top: 22px; right: -34px; width: 140px; transform: rotate(35deg); text-align: center; padding: 5px 0; border-top: 1.5px solid var(--gold); border-bottom: 1.5px solid var(--gold); color: var(--gold-text); font-family: var(--font-body); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.85; pointer-events: none; }
 .receipt-header { text-align: center; padding: var(--space-4) var(--space-2) 18px; }
