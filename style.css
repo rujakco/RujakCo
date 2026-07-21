@@ -1,12 +1,11 @@
 /* =========================================
-   1. DESIGN TOKENS — SILENT LUXURY vFINAL
+   1. DESIGN TOKENS — SILENT LUXURY v2
    ========================================= */
 :root {
   /* Warna */
   --green: #082E21;
   --green-light: #EBF2EF;
-  --gold: #B7924F;               /* hanya untuk CTA, harga, logo, aksen premium */
-  --gold-hover: #C4A15A;
+  --gold: #B7924F;               /* hanya untuk CTA, harga, logo, status premium */
   --gold-text: #6B4F1E;
   --gold-soft: rgba(183, 146, 79, 0.25);
   --gold-bright: #E8D5A8;
@@ -30,11 +29,11 @@
   --z-modal: 1000;
   --z-onboard: 1100;
 
-  /* Durasi — ritmik & cepat */
+  /* Durasi — ritmik */
   --dur-tap: 0.15s;
   --dur-micro: 0.2s;
   --dur-drawer: 0.45s;
-  --dur-carousel: 0.45s;
+  --dur-carousel: 0.65s;
 
   /* Easing */
   --ease-standard: ease;
@@ -49,24 +48,23 @@
   --space-6: 48px;
   --space-7: 56px;
   --space-8: 64px;
-  --space-9: 72px;
 
   /* Shadow — sangat hemat */
   --shadow-none: none;
   --shadow-soft: 0 2px 8px rgba(0,0,0,0.04);
 
-  /* Radius — editorial */
+  /* Radius — lebih konsisten */
   --radius-sm: 12px;   /* button, input */
-  --radius-md: 16px;   /* card, hero */
-  --radius-lg: 20px;   /* hero (lebih tajam) */
-  --radius-xl: 28px;   /* drawer */
+  --radius-md: 20px;   /* card, modal */
+  --radius-lg: 28px;   /* hero */
+  --radius-xl: 32px;   /* drawer */
   --radius-pill: 999px;
 
   /* Blur — glass */
-  --blur-glass: blur(18px);
+  --blur-glass: blur(24px);
 
   /* Tipografi */
-  --font-heading: 'Instrument Serif', serif;
+  --font-heading: 'Instrument Serif', serif; /* modern, seperti Aesop */
   --font-body: 'DM Sans', sans-serif;
   --font-base: 16px;
 }
@@ -88,10 +86,10 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: var(--bg-surface);   /* ivory global */
+  background: var(--green);
   font-family: var(--font-body);
   font-size: var(--font-base);
-  color: var(--gray-900);
+  color: var(--ivory);
   -webkit-font-smoothing: antialiased;
 }
 #app {
@@ -100,47 +98,32 @@ html, body {
   margin: 0 auto;
   min-height: 100vh;
   min-height: 100dvh;
-  background: var(--bg-surface);
+  background: var(--green);
   position: relative;
   overflow-x: hidden;
 }
 
 /* =========================================
-   3. TIPOGRAFI — scale konsisten
+   3. TIPOGRAFI
    ========================================= */
 h1, h2, h3, h4, .brand-name {
   font-family: var(--font-heading);
+  font-weight: 400;
   margin: 0;
   letter-spacing: -0.02em;
 }
-h1 {
-  font-size: 2.5rem;          /* 40px */
-  font-weight: 500;
-  line-height: 1.15;
-}
-h2 {
-  font-size: 1.875rem;        /* 30px */
-  font-weight: 400;
-  line-height: 1.15;
-}
-h3 {
-  font-size: 1.5rem;          /* 24px */
-  font-weight: 400;
-  line-height: 1.2;
-}
-h4 {
-  font-size: 1.25rem;         /* 20px */
-  font-weight: 400;
-  line-height: 1.25;
-}
+h1 { font-size: clamp(1.75rem, 5.5vw, 2.125rem); line-height: 1.1; }
+h2 { font-size: clamp(1.5rem, 4.5vw, 1.75rem); line-height: 1.15; }
+h3 { font-size: clamp(1.25rem, 4vw, 1.5rem); line-height: 1.2; }
+h4 { font-size: clamp(1.125rem, 3.5vw, 1.25rem); line-height: 1.25; }
 p, li, .body-text {
-  font-size: 1rem;
+  font-size: clamp(0.9375rem, 3vw, 1rem);
   line-height: 1.6;
   font-weight: 400;
 }
 
 /* =========================================
-   4. ONBOARDING
+   4. ONBOARDING (tetap minimal)
    ========================================= */
 .onboarding-overlay {
   position: fixed; inset: 0;
@@ -168,16 +151,15 @@ p, li, .body-text {
 @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
 /* =========================================
-   5. BUTTONS — solid, tanpa brightness
+   5. BUTTONS — solid, elegan
    ========================================= */
 .btn-gold, .btn-dark, .add-to-cart-btn {
   border-radius: var(--radius-sm);
-  padding: 0 var(--space-4);
-  height: 54px;
-  font-size: 0.9375rem;       /* 15px */
+  padding: var(--space-2) var(--space-4);
+  font-size: 0.875rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.05em;
   font-family: var(--font-body);
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
@@ -186,7 +168,7 @@ p, li, .body-text {
   background: var(--gold);
   color: #fff;
   box-shadow: var(--shadow-none);
-  transition: background 0.2s var(--ease-smooth), transform 0.15s var(--ease-smooth);
+  transition: transform 0.15s var(--ease-smooth), filter 0.15s;
 }
 .btn-dark {
   background: var(--green);
@@ -194,13 +176,11 @@ p, li, .body-text {
 }
 .btn-gold:active, .btn-dark:active, .add-to-cart-btn:active {
   transform: scale(0.98);
+  filter: brightness(0.95);
 }
 @media (hover: hover) {
   .btn-gold:hover, .add-to-cart-btn:hover {
-    background: var(--gold-hover);
-  }
-  .btn-dark:hover {
-    background: #0A3A2A;
+    filter: brightness(1.08);
   }
 }
 .btn-text-gold {
@@ -211,7 +191,7 @@ p, li, .body-text {
 .btn-text-gold:active { opacity: 0.6; }
 
 /* =========================================
-   6. HEADER — breathable, transparan
+   6. HEADER — breathable
    ========================================= */
 .luxury-header {
   position: fixed; top: 0; left: 0; right: 0; margin: 0 auto;
@@ -225,7 +205,7 @@ p, li, .body-text {
   transition: background 0.25s, backdrop-filter 0.25s, box-shadow 0.25s;
 }
 .luxury-header.scrolled {
-  background: rgba(252, 250, 248, 0.8);
+  background: rgba(253,251,247,0.8);
   backdrop-filter: var(--blur-glass) saturate(180%);
   -webkit-backdrop-filter: var(--blur-glass) saturate(180%);
   border-bottom: 1px solid rgba(255,255,255,0.2);
@@ -244,17 +224,13 @@ p, li, .body-text {
 .luxury-header.scrolled .user-loc { color: var(--green); }
 
 /* =========================================
-   7. HERO — foto dominan, hijau hanya di sini
+   7. HERO — foto dominan, 4:5
    ========================================= */
 .content-wrapper { padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)); }
-.hero-editorial {
-  width: 100%; max-width: 480px; margin: 0 auto;
-  position: relative; z-index: 1;
-  background: var(--green); /* latar hijau hanya di hero */
-}
+.hero-editorial { width: 100%; max-width: 480px; margin: 0 auto; position: relative; z-index: 1; }
 .hero-img-wrap {
   width: 100%;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 4 / 5; /* 0.8 */
   border-radius: var(--radius-lg);
   overflow: hidden;
   background-color: var(--green-light);
@@ -267,7 +243,7 @@ p, li, .body-text {
 .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .hero-overlay-new {
   position: absolute; inset: auto 0 0 0;
-  background: linear-gradient(to top, rgba(8,46,33,0.42), transparent 70%);
+  background: linear-gradient(to top, rgba(8,46,33,0.15), transparent 70%);
   display: flex; align-items: flex-end; justify-content: flex-start;
   padding: 48px 24px 24px;
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
@@ -278,7 +254,7 @@ p, li, .body-text {
 .hero-subtitle { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.8); margin-top: 4px; }
 
 /* =========================================
-   8. CAROUSEL — galeri dengan depth
+   8. CAROUSEL — galeri editorial tanpa card
    ========================================= */
 .carousel-container { width: 100%; margin-top: var(--space-2); }
 .carousel-track {
@@ -295,16 +271,12 @@ p, li, .body-text {
   box-shadow: none;
   border-radius: 0;
   padding: 0;
-  opacity: 0.35;
-  filter: blur(2px);
-  transform: scale(0.92);
-  transition: transform var(--dur-carousel) var(--ease-smooth),
-              opacity var(--dur-carousel) var(--ease-smooth),
-              filter var(--dur-carousel) var(--ease-smooth);
+  opacity: 0.75;
+  transform: scale(0.96);
+  transition: transform 0.65s var(--ease-smooth), opacity 0.65s;
 }
 .boutique-item.active-center {
   opacity: 1;
-  filter: blur(0);
   transform: scale(1);
 }
 .btq-img {
@@ -316,77 +288,56 @@ p, li, .body-text {
 }
 .btq-text-container {
   width: 100%; text-align: center; margin-top: var(--space-2);
-  opacity: 0; transform: translateY(4px);
+  opacity: 0.6; transform: translateY(4px);
   transition: opacity 0.3s, transform 0.3s;
 }
 .boutique-item.active-center .btq-text-container { opacity: 1; transform: translateY(0); }
-.btq-badge { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--green); font-weight: 600; margin-bottom: 4px; }
-.btq-name { font-size: 1.5rem; color: var(--green); font-weight: 400; margin-bottom: 4px; }
-.btq-price { font-size: 1.125rem; color: var(--gold-text); font-weight: 600; }
+.btq-badge { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold-text); font-weight: 600; margin-bottom: 4px; }
+.btq-name { font-size: 1.25rem; color: var(--green); font-weight: 400; margin-bottom: 4px; }
+.btq-price { font-size: 1rem; color: var(--gray-600); font-weight: 500; }
 .carousel-dots { display: flex; justify-content: center; gap: 8px; margin-top: var(--space-2); }
-.carousel-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(0,0,0,0.2); border: none; cursor: pointer; transition: background 0.2s; }
-.carousel-dot.active { background: var(--green); width: 16px; border-radius: 10px; }
+.carousel-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.3); border: none; cursor: pointer; transition: background 0.2s; }
+.carousel-dot.active { background: var(--gold); width: 16px; border-radius: 10px; }
 
 /* =========================================
-   9. INSIGHT & SECTION SPACING
+   9. INSIGHT
    ========================================= */
-.product-insight-container {
-  text-align: center; padding: var(--space-9) var(--space-3) var(--space-8);
-  background: var(--bg-surface);
-}
-.typing-text {
-  font-family: var(--font-heading); font-style: italic;
-  font-size: 1rem; color: var(--gray-900); line-height: 1.7;
-  max-width: 340px; margin: 0 auto;
-}
+.product-insight-container { text-align: center; padding: 0 var(--space-3); margin: var(--space-3) 0 var(--space-5); }
+.typing-text { font-family: var(--font-heading); font-style: italic; font-size: 1rem; color: #fff; line-height: 1.7; max-width: 320px; margin: 0 auto; }
 
 /* =========================================
-   10. FOOTER — editorial, hijau kembali
+   10. FOOTER — ultra minimal
    ========================================= */
-.luxury-footer {
-  padding: var(--space-9) var(--space-3) calc(var(--space-6) + env(safe-area-inset-bottom));
-  background: var(--green);
-  color: #fff;
-  text-align: center;
-}
-.footer-row { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
-.footer-brand { font-family: var(--font-heading); font-size: 1.5rem; color: var(--gold); margin-bottom: 4px; }
-.footer-tagline { font-size: 0.875rem; color: rgba(255,255,255,0.7); letter-spacing: 0.05em; }
-.footer-est { font-size: 0.75rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.15em; }
-.footer-meta { font-size: 0.6875rem; color: rgba(255,255,255,0.45); display: flex; gap: var(--space-2); justify-content: center; }
-.footer-meta span { opacity: 0.7; }
+.luxury-footer { padding: var(--space-6) var(--space-2) calc(var(--space-5) + env(safe-area-inset-bottom)); background: var(--green); border-top: 1px solid rgba(255,255,255,0.08); text-align: center; }
+.footer-row { display: flex; flex-direction: column; align-items: center; gap: var(--space-1); }
+.footer-brand { color: var(--gold); margin-bottom: 2px; }
+.footer-quote { font-family: var(--font-heading); font-style: italic; font-size: 0.8rem; color: rgba(255,255,255,0.45); margin: var(--space-1) 0 var(--space-2); }
+.footer-meta { font-size: 0.7rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.05em; }
 
 /* =========================================
-   11. BOTTOM NAV — ultra ringan, glass
+   11. BOTTOM NAV — glass ala iOS 18
    ========================================= */
 .bottom-nav {
   position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
   width: calc(100% - 48px); max-width: 400px;
   z-index: var(--z-nav);
-  background: rgba(252, 250, 248, 0.72);
+  background: rgba(252, 250, 248, 0.75);
   backdrop-filter: var(--blur-glass) saturate(200%);
   -webkit-backdrop-filter: var(--blur-glass) saturate(200%);
-  border: 1px solid rgba(255,255,255,0.5);
+  border: 1px solid rgba(255,255,255,0.3);
   border-radius: var(--radius-pill);
   display: flex; justify-content: space-around; align-items: center;
-  padding: 4px 0 calc(4px + env(safe-area-inset-bottom));
+  padding: 6px 0 calc(6px + env(safe-area-inset-bottom));
   box-shadow: var(--shadow-soft);
 }
-.nav-item {
-  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 1px;
-  background: none; border: none;
-  color: var(--gray-500);
-  font-size: 0.6875rem;   /* 11px */
-  font-weight: 500;
-  transition: color 0.2s;
-}
-.nav-item.active { color: var(--green); }
-.nav-icon { width: 22px; height: 22px; }
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; background: none; border: none; color: var(--gray-500); font-size: 0.65rem; font-weight: 500; transition: color 0.2s; }
+.nav-item.active { color: var(--gold); }
+.nav-icon { width: 20px; height: 20px; }
 .nav-badge {
   position: absolute; top: -4px; right: -8px;
-  background: var(--green); color: #fff; font-size: 0.6rem; font-weight: 700;
+  background: var(--gold); color: #fff; font-size: 0.6rem; font-weight: 700;
   width: 14px; height: 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  border: 1px solid rgba(255,255,255,0.8);
+  border: 1px solid var(--bg-surface);
 }
 
 /* =========================================
@@ -411,26 +362,33 @@ p, li, .body-text {
 .drawer-footer-sticky { padding: var(--space-3) var(--space-4); border-top: 1px solid var(--gray-200); }
 
 /* =========================================
-   13. PRODUCT SWIPER & DETAIL (progressive)
+   13. PRODUCT SWIPER OVERLAY (detail produk)
+   Progressive disclosure: default ringkas, .detail-expanded tampilkan semua
    ========================================= */
-.product-swiper-overlay { /* ... */ }
+.product-swiper-overlay { /* seperti modal */ }
 .product-slide .detail-content {
   padding: var(--space-5) var(--space-4) 120px;
   background: var(--bg-surface); border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   margin-top: -20px; position: relative; z-index: 2;
 }
 .detail-content h2 { color: var(--green); margin-bottom: 4px; }
-.detail-price { font-size: 1.125rem; color: var(--gold-text); font-weight: 600; }
+.detail-price { font-size: 1.35rem; color: var(--gold-text); font-weight: 600; }
 .detail-desc { color: var(--gray-900); max-width: 400px; margin-top: var(--space-2); }
-.detail-specs, .detail-manifesto, .fruit-list-inline, .section-label, .cerita-teks { display: none; }
+/* Sembunyikan bagian yang tidak perlu di awal */
+.detail-specs, .detail-manifesto, .fruit-list-inline, .section-label, .cerita-teks {
+  display: none;
+}
+/* Saat diperluas */
 .detail-content.expanded .detail-specs,
 .detail-content.expanded .detail-manifesto,
 .detail-content.expanded .fruit-list-inline,
 .detail-content.expanded .section-label,
-.detail-content.expanded .cerita-teks { display: block; }
+.detail-content.expanded .cerita-teks {
+  display: block; /* atau grid */
+}
 .btn-detail-toggle {
-  background: none; border: none; color: var(--green); font-weight: 600; margin-top: var(--space-2);
-  cursor: pointer; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.8rem;
+  background: none; border: none; color: var(--gold); font-weight: 600; margin-top: var(--space-2); cursor: pointer;
+  text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.8rem;
 }
 
 /* =========================================
@@ -443,24 +401,22 @@ p, li, .body-text {
 .add-to-cart-btn { flex: 1; border-radius: var(--radius-pill); }
 
 /* =========================================
-   15. FORMS & QRIS (netral, tanpa gold)
+   15. FORMS (minim gold)
    ========================================= */
 .input-minimal { width: 100%; border: none; border-bottom: 1px solid var(--gray-300); padding: var(--space-2) 0; margin-bottom: var(--space-3); outline: none; transition: border-color 0.2s; }
 .input-minimal:focus { border-bottom-color: var(--green); }
 .qris-frame { background: #fff; padding: var(--space-3); border-radius: var(--radius-md); border: 1px solid rgba(0,0,0,0.05); box-shadow: var(--shadow-soft); }
-.drawer-total #finalTotal { font-size: 2rem; color: var(--gold-text); font-family: var(--font-heading); }
 
 /* =========================================
-   16. FAQ & TESTIMONI (hijau/ivory)
+   16. FAQ (animasi opacity)
    ========================================= */
-.faq-container { margin: 0 20px var(--space-3); }
-.faq-item { border-bottom: 1px solid rgba(0,0,0,0.08); }
-.faq-question { background: none; border: none; color: var(--green); padding: var(--space-3) 0; width: 100%; text-align: left; font-size: 0.9375rem; font-weight: 600; display: flex; justify-content: space-between; cursor: pointer; }
-.faq-answer { max-height: 0; overflow: hidden; opacity: 0; color: var(--gray-900); transition: opacity 0.4s, max-height 0.4s; }
+.faq-item { border-bottom: 1px solid rgba(255,255,255,0.08); }
+.faq-question { background: none; border: none; color: var(--ivory); padding: var(--space-3) 0; width: 100%; text-align: left; font-size: 0.9375rem; font-weight: 600; display: flex; justify-content: space-between; cursor: pointer; }
+.faq-answer { max-height: 0; overflow: hidden; opacity: 0; transition: opacity 0.4s, max-height 0.4s; }
 .faq-item.open .faq-answer { opacity: 1; max-height: 600px; padding-bottom: var(--space-3); }
 
 /* =========================================
-   17. TOAST (putih)
+   17. TOAST (putih) dan lainnya
    ========================================= */
 #toast { background: #fff; color: var(--green); border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: var(--radius-pill); padding: var(--space-2) var(--space-4); }
 
