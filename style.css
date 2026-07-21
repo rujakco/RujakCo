@@ -60,8 +60,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 4. ONBOARDING
 ========================================= */
 .onboarding-overlay { position: fixed; inset: 0; background: radial-gradient(circle at 50% 30%, rgba(197, 160, 89, 0.08) 0%, transparent 60%), linear-gradient(180deg, #082E21 0%, #030F0A 100%); z-index: var(--z-onboard); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--space-6) 24px; text-align: center; transition: opacity 0.8s var(--transition-spring), visibility 0.8s; will-change: opacity, visibility; }
-/* TEKSTUR & GLOW (Poin 1.A) */
-.onboarding-overlay::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(255,255,255,0.04), transparent 60%); pointer-events: none; z-index: -1; }
 .onboarding-overlay.hidden { opacity: 0; visibility: hidden; }
 .onb-content { width: 100%; max-width: 340px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .onb-logo { width: 76px; height: 76px; border-radius: 50%; margin-bottom: 24px; border: 1px solid rgba(197, 160, 89, 0.3); padding: 6px; background: rgba(0,0,0,0.15); box-shadow: 0 0 40px rgba(197, 160, 89, 0.08); }
@@ -69,9 +67,9 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .onb-subtitle, .onb-welcome-text { font-family: 'DM Sans', sans-serif; font-size: 0.65rem; color: var(--gold-bright); margin-bottom: 56px; text-transform: uppercase; letter-spacing: 0.25em; font-weight: 600; opacity: 1; }
 .onb-step { display: none; width: 100%; animation: fadeUp 0.6s var(--transition-spring) both; }
 .onb-step.active { display: block; }
-.onb-label { display: block; font-size: 0.65rem; font-weight: 600; color: rgba(253, 251, 247, 0.85); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.16em; } /* Diperbarui (Poin 5) */
-.onb-input { width: 100%; text-align: center; border: none; border-bottom: 1px solid rgba(197, 160, 89, 0.5); background: transparent; padding: 12px 0 16px; font-size: 1.75rem; font-family: 'Fraunces', serif; font-weight: 300; color: var(--ivory); margin-bottom: 52px; transition: border-color 0.35s ease, box-shadow 0.35s ease; outline: none; border-radius: 0; } /* Diperbarui (Poin 1.C) */
-.onb-input:focus { border-bottom-color: var(--gold); box-shadow: 0 6px 18px rgba(197,160,89,0.15); } /* Diperbarui (Poin 1.C) */
+.onb-label { display: block; font-size: 0.65rem; font-weight: 600; color: rgba(253, 251, 247, 0.85); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.2em; } /* Diperbarui (Poin 12) */
+.onb-input { width: 100%; text-align: center; border: none; border-bottom: 1px solid rgba(197, 160, 89, 0.5); background: transparent; padding: 12px 0 16px; font-size: 1.75rem; font-family: 'Fraunces', serif; font-weight: 300; color: var(--ivory); margin-bottom: 52px; transition: border-color 0.4s ease, box-shadow 0.4s ease; outline: none; border-radius: 0; } /* Diperbarui (Poin 12) */
+.onb-input:focus { border-bottom-color: var(--gold); box-shadow: 0 12px 20px -12px rgba(197,160,89,0.15); }
 .onb-input::placeholder { font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 400; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(253, 251, 247, 0.45); }
 #onbDistrictDropdown { background: rgba(4,18,13,0.9); backdrop-filter: var(--blur-medium); border: 1px solid rgba(197,160,89,0.2); border-radius: var(--radius-lg); box-shadow: 0 16px 40px rgba(0,0,0,0.4); }
 #onbDistrictDropdown div { padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--ivory); font-family: 'DM Sans', sans-serif; font-weight: 400; cursor: pointer; font-size: 0.95rem; transition: all 0.2s ease; }
@@ -83,15 +81,10 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 /* =========================================
 5. BUTTONS
 ========================================= */
-.btn-gold, .btn-dark, .add-to-cart-btn { border-radius: var(--radius-sm); padding: var(--space-3) var(--space-4); font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; font-family: 'DM Sans', sans-serif; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 100%; border: none; transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s ease, opacity 0.45s ease; }
-/* SHADOW LEMBUT LUXURY (Poin 1.B) */
-.btn-gold, .add-to-cart-btn { background: linear-gradient(135deg, #D1B06A, #BA9042); color: #fff; box-shadow: 0 8px 30px rgba(0,0,0,0.18), inset 0 1px rgba(255,255,255,0.2); text-shadow: 0 1px 2px rgba(107, 79, 30, 0.25); } 
-.btn-dark { background: var(--green); color: var(--ivory); border: 1px solid var(--gold-soft); box-shadow: 0 8px 30px rgba(0,0,0,0.18), inset 0 1px rgba(255,255,255,0.05); } /* Diperbarui (Poin 1.B) */
-.btn-gold:active, .btn-dark:active, .add-to-cart-btn:active { transform: scale(0.98); opacity: 0.9; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-/* HOVER CHECKOUT (Poin 7) */
-@media (hover: hover) {
-  .btn-gold:hover, .add-to-cart-btn:hover { transform: translateY(-2px); box-shadow: 0 18px 40px rgba(197,160,89,0.25), inset 0 1px rgba(255,255,255,0.2); }
-}
+.btn-gold, .btn-dark, .add-to-cart-btn { border-radius: var(--radius-sm); padding: var(--space-3) var(--space-4); font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; font-family: 'DM Sans', sans-serif; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 100%; border: none; transition: transform var(--dur-normal) var(--transition-spring), box-shadow var(--dur-normal) ease, opacity var(--dur-normal) ease; }
+.btn-gold, .add-to-cart-btn { background: linear-gradient(135deg, #D1B06A, #BA9042); color: #fff; box-shadow: var(--shadow-card); text-shadow: 0 1px 2px rgba(107, 79, 30, 0.25); } /* Diperbarui (Poin 10) */
+.btn-dark { background: var(--green); color: var(--ivory); border: 1px solid var(--gold-soft); box-shadow: var(--shadow-card); }
+.btn-gold:active, .btn-dark:active, .add-to-cart-btn:active { transform: scale(0.98); opacity: 0.9; }
 .btn-text-gold { background: none; border: none; color: var(--gold-bright); font-size: 0.75rem; margin-top: 32px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; transition: opacity 0.3s ease; }
 .btn-text-gold:active { opacity: 0.6; }
 .btn-loading { opacity: 0.7; cursor: wait; pointer-events: none; }
@@ -101,7 +94,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 6. HEADER
 ========================================= */
 .luxury-header { position: fixed; top: 0; left: 0; right: 0; margin: 0 auto; width: calc(100% - 40px); max-width: var(--content-max); display: flex; align-items: center; justify-content: space-between; padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 10px; z-index: var(--z-header); background: rgba(253, 251, 247, 0.95); border-bottom: 1px solid rgba(255,255,255,0.1); border-radius: 0 0 var(--radius-lg) var(--radius-lg); transition: transform var(--dur-slow) var(--transition-spring), background-color var(--dur-slow) ease, box-shadow var(--dur-slow) ease; }
-.luxury-header.scrolled { background: rgba(253, 251, 247, 0.78); backdrop-filter: blur(18px) saturate(180%); -webkit-backdrop-filter: blur(18px) saturate(180%); border-bottom: 1px solid rgba(255, 255, 255, 0.18); box-shadow: 0 8px 24px rgba(8, 46, 33, 0.06); transform: translateY(-1px); }
+.luxury-header.scrolled { background: rgba(253, 251, 247, 0.78); backdrop-filter: blur(18px) saturate(180%); -webkit-backdrop-filter: blur(18px) saturate(180%); border-bottom: 1px solid rgba(255, 255, 255, 0.18); box-shadow: 0 8px 24px rgba(8, 46, 33, 0.06); transform: translateY(-1px); } /* Diperbarui (Poin 1) */
 .header-left { display: flex; align-items: center; gap: 10px; background: none; border: none; font: inherit; color: inherit; padding: 0; cursor: pointer; }
 .brand-logo img { width: 28px; height: 28px; border-radius: 50%; box-shadow: var(--shadow-soft); }
 .brand-name { font-size: 1rem; color: #FFFFFF; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.2); transition: color 0.4s ease, text-shadow 0.4s ease; }
@@ -119,12 +112,10 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .content-wrapper { padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)); overflow-x: hidden; }
 .hero-editorial { width: calc(100% - 40px); max-width: var(--content-max); margin: calc(-120px - env(safe-area-inset-top, 0px)) auto 0; padding: 0 !important; position: relative; z-index: 1; }
 .hero-gold-frame { position: relative; border-radius: var(--radius-xl); box-shadow: var(--shadow-floating); }
-/* TINGGI HERO DISESUAIKAN (Poin 2) */
-.hero-img-wrap { width: 100%; height: 200px; position: relative; border-radius: var(--radius-xl); overflow: hidden; z-index: 0; background-color: var(--green-light); }
-.hero-img-wrap::after { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 90px; background: linear-gradient(180deg, rgba(0,0,0,0.18), transparent); pointer-events: none; z-index: 1; }
+.hero-img-wrap { width: 100%; aspect-ratio: 4 / 3; position: relative; border-radius: var(--radius-xl); overflow: hidden; z-index: 0; background-color: var(--green-light); }
+.hero-img-wrap::after { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 90px; background: linear-gradient(180deg, rgba(0,0,0,0.18), transparent); pointer-events: none; z-index: 1; } /* Diperbarui (Poin 5) */
 .hero-img { width: 100%; height: 120%; object-fit: cover; display: block; transform: translate3d(0, 0, 0) scale(1.02); transform-origin: center center; position: relative; z-index: 0; }
-/* GRADIENT HERO LEBIH GELAP & MENYELURUH (Poin 2) */
-.hero-overlay-new { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.55)); display: flex; align-items: flex-end; justify-content: flex-start; padding: 60px 24px 28px; border-radius: 0 0 var(--radius-xl) var(--radius-xl); will-change: opacity, transform; z-index: 2; }
+.hero-overlay-new { position: absolute; inset: auto 0 0 0; background: linear-gradient(to top, rgba(8, 46, 33, 0.24) 0%, rgba(8, 46, 33, 0.18) 45%, transparent 100%); display: flex; align-items: flex-end; justify-content: flex-start; padding: 60px 24px 28px; border-radius: 0 0 var(--radius-xl) var(--radius-xl); will-change: opacity, transform; z-index: 2; } /* Diperbarui (Poin 2) */
 .hero-content { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
 .hero-title { line-height: 1.1; color: #FFFFFF; margin: 0; text-shadow: 0 2px 8px rgba(0,0,0,0.25); }
 .hero-title-em { display: inline; color: var(--gold); font-weight: 400; font-style: italic; }
@@ -136,9 +127,8 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .carousel-container { width: 100%; padding: 0; margin-top: 16px; position: relative; overflow: visible; }
 .carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: auto; -ms-overflow-style: none; scrollbar-width: none; padding: 32px 20px 24px; }
 .carousel-track::-webkit-scrollbar { display: none; }
-/* UPDATE PRODUCT CARD (Poin 3) */
-.boutique-item { flex: 0 0 100%; max-width: var(--content-max); margin: 0 -24px; scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; transform: scale(0.92) translateY(8px); opacity: 0.60; background: #FAF8F4; border: none; border-radius: 22px; padding: 26px; z-index: 1; transition: transform var(--dur-slow) var(--transition-spring), opacity var(--dur-slow) ease, box-shadow var(--dur-slow) ease; color: var(--gray-900); } 
-.boutique-item.active-center { transform: scale(1) translateY(-4px); opacity: 1; z-index: 10; box-shadow: 0 18px 60px rgba(0,0,0,0.14); } 
+.boutique-item { flex: 0 0 100%; max-width: var(--content-max); margin: 0 -24px; scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; transform: scale(0.92) translateY(8px); opacity: 0.60; background: var(--bg-surface); border: none; border-radius: var(--radius-xl); padding: 36px 32px; z-index: 1; transition: transform var(--dur-slow) var(--transition-spring), opacity var(--dur-slow) ease, box-shadow var(--dur-slow) ease; color: var(--gray-900); } /* Diperbarui (Poin 3) */
+.boutique-item.active-center { transform: scale(1) translateY(-4px); opacity: 1; z-index: 10; box-shadow: 0 10px 22px rgba(8,46,33,0.12), 0 0 18px rgba(197,160,89,0.08); } /* Diperbarui (Poin 3 & 4) */
 .btq-img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: var(--radius-md); margin-bottom: 0; background: var(--bg-subtle); transition: transform var(--dur-slow) var(--transition-spring); }
 .boutique-item.active-center .btq-img { transform: scale(1.01); }
 .btq-text-container { display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 20px; opacity: 0.6; transform: translateY(6px); pointer-events: none; transition: opacity var(--dur-normal) var(--transition-spring), transform var(--dur-normal) var(--transition-spring); }
@@ -156,13 +146,13 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 9. INSIGHT
 ========================================= */
 .product-insight-container { text-align: center; padding: 0 24px; margin-top: 1px; margin-bottom: 24px; min-height: 48px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 50; }
-.typing-text { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; font-size: 1rem; color: #fff; letter-spacing: 0.02em; margin: auto; line-height: 1.7; text-shadow: 0 2px 4px rgba(0,0,0,0.3); padding: 0 20px; max-width: 320px; transition: opacity var(--dur-normal) ease; }
+.typing-text { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; font-size: 1rem; color: #fff; letter-spacing: 0.02em; margin: auto; line-height: 1.7; text-shadow: 0 2px 4px rgba(0,0,0,0.3); padding: 0 20px; max-width: 320px; transition: opacity var(--dur-normal) ease; } /* Diperbarui (Poin 11) */
 .typing-text.fade-out { opacity: 0; }
 
 /* =========================================
 10. FOOTER
 ========================================= */
-.luxury-footer { padding: 72px 16px calc(56px + env(safe-area-inset-bottom)); background: var(--green); border-top: 1px solid rgba(197,160,89,0.12); }
+.luxury-footer { padding: 72px 16px calc(56px + env(safe-area-inset-bottom)); background: var(--green); border-top: 1px solid rgba(197,160,89,0.12); } /* Diperbarui (Poin 8) */
 .footer-row { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; width: 100%; max-width: var(--content-max); margin: 0 auto; text-align: center; }
 .footer-brand { color: var(--gold); margin-bottom: 4px; }
 .footer-tagline { font-family: 'DM Sans', sans-serif; font-size: 0.875rem; color: rgba(255,255,255,0.7); font-style: italic; letter-spacing: 0.05em; margin-bottom: 16px; }
@@ -172,8 +162,8 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 /* =========================================
 11. BOTTOM NAV
 ========================================= */
-.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; margin: 0 auto; width: calc(100% - 40px); max-width: var(--content-max); z-index: var(--z-nav); background: var(--bg-surface); display: flex; justify-content: space-around; align-items: center; padding: 5px 0 calc(6px + env(safe-area-inset-bottom)); border-top: 1px solid rgba(197,160,89,0.15); border-radius: 16px 16px 0 0; box-shadow: 0 -4px 24px rgba(0,0,0,0.02); }
-.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 4px 0; background: none; border: none; font: inherit; color: var(--gray-400); font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: color var(--dur-fast) ease, transform var(--dur-fast) ease; position: relative; }
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; margin: 0 auto; width: calc(100% - 40px); max-width: var(--content-max); z-index: var(--z-nav); background: var(--bg-surface); display: flex; justify-content: space-around; align-items: center; padding: 5px 0 calc(6px + env(safe-area-inset-bottom)); border-top: 1px solid rgba(197,160,89,0.15); border-radius: 16px 16px 0 0; box-shadow: 0 -4px 24px rgba(0,0,0,0.02); } /* Diperbarui (Poin 9) */
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 4px 0; background: none; border: none; font: inherit; color: var(--gray-400); font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: color var(--dur-fast) ease, transform var(--dur-fast) ease; position: relative; } /* Diperbarui (Poin 9) */
 .nav-item.active { color: var(--gold); transform: translateY(-4px); }
 .nav-item.active::after { content: ''; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); width: 20px; height: 2px; background: var(--gold); border-radius: 2px; }
 .nav-icon { width: 20px; height: 20px; }
@@ -183,15 +173,12 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 /* =========================================
 12. MODALS & DRAWERS
 ========================================= */
-/* MODAL OVERLAY & ANIMASI PREMIUM (Poin 8 & 9) */
-.modal-overlay { position: fixed; inset: 0; background: rgba(15,15,15,0.35); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); z-index: var(--z-modal); display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.45s ease; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); backdrop-filter: var(--blur-soft); -webkit-backdrop-filter: var(--blur-soft); z-index: var(--z-modal); display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity var(--dur-normal) ease; }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
-.drawer-content { background: var(--bg-surface); color: var(--gray-900); width: 100%; max-width: 480px; border-radius: var(--radius-2xl) var(--radius-2xl) 0 0; transform: translateY(100%) scale(0.98); opacity: 0; transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease; display: flex; flex-direction: column; box-shadow: var(--shadow-luxury); height: 90vh; height: 90dvh; will-change: transform, opacity; }
-.modal-overlay.active .drawer-content { transform: translateY(0) scale(1); opacity: 1; }
-.drawer-header { position: relative; padding: var(--space-4) var(--space-4) var(--space-3); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.04); }
-.drawer-header h3 { color: var(--green); position: relative; }
-/* GARIS EMAS TIPIS DI HEADER MODAL (Poin 10) */
-.drawer-header h3::after { content: ""; display: block; width: 56px; height: 2px; margin-top: 16px; background: var(--gold); border-radius: 99px; }
+.drawer-content { background: var(--bg-surface); color: var(--gray-900); width: 100%; max-width: 480px; border-radius: var(--radius-2xl) var(--radius-2xl) 0 0; transform: translateY(100%); transition: transform 0.75s var(--transition-heavy); display: flex; flex-direction: column; box-shadow: var(--shadow-luxury); height: 90vh; height: 90dvh; will-change: transform; }
+.modal-overlay.active .drawer-content { transform: translateY(0); }
+.drawer-header { padding: var(--space-4) var(--space-4) var(--space-3); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.04); }
+.drawer-header h3 { color: var(--green); }
 .glass-btn-dark { background: var(--bg-subtle); border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gray-900); cursor: pointer; transition: background-color var(--dur-fast) ease; }
 .glass-btn-dark:active { background: var(--gray-200); }
 .drawer-body { flex: 1; overflow-y: auto; overscroll-behavior-y: contain; padding: var(--space-4) var(--space-4) calc(var(--space-6) + 80px); }
@@ -223,14 +210,14 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .price-line { flex: 1; height: 1px; background: var(--gold); opacity: 0.35; }
 .detail-desc { color: var(--gray-900); text-align: left; max-width: 400px; }
 .step-2-content { display: none; animation: fadeUp 0.4s ease forwards; background: white; padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--gray-200); }
-.spice-selector label { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--gray-600); margin-bottom: var(--space-3); font-weight: 600; }
+.spice-selector label { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray-600); margin-bottom: var(--space-3); font-weight: 600; }
 .spice-selector label .spice-current { text-transform: none; letter-spacing: 0; font-family: 'Fraunces', serif; font-size: 1rem; color: var(--green); font-weight: 500; }
 .spice-options { display: flex; justify-content: space-between; margin-bottom: var(--space-4); }
 .spice-option { width: 44px; height: 44px; border: 1px solid var(--gray-200); background: transparent; border-radius: 50%; font-size: 0.875rem; font-weight: 500; color: var(--gray-900); cursor: pointer; transition: background-color var(--dur-fast) ease, border-color var(--dur-fast) ease, color var(--dur-fast) ease; }
 .spice-option.active { background: var(--green); color: white; border-color: var(--green); }
 .detail-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; padding: 0; font-size: 0.875rem; color: var(--gray-600); }
 .detail-specs strong { color: var(--green); font-weight: 600; display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
-.section-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--gray-600); margin-bottom: var(--space-3); font-weight: 600; display: block; text-align: center; padding-top: calc(var(--space-5) + var(--space-2)); margin-top: 0; }
+.section-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--gray-600); margin-bottom: var(--space-3); font-weight: 600; display: block; text-align: center; padding-top: calc(var(--space-5) + var(--space-2)); margin-top: 0; }
 .fruit-list-inline { display: block; text-align: center; line-height: 1.8; color: var(--gray-900); margin-bottom: var(--space-5); padding: 0 16px; }
 .fruit-bullet { display: inline-block !important; color: var(--gold); margin: 0 8px; font-size: 12px; opacity: 0.75; vertical-align: middle; }
 .detail-manifesto { background: transparent; padding: var(--space-4); border-radius: var(--radius-md); border: 1px solid rgba(197,160,89,0.25); text-align: center; }
@@ -238,14 +225,15 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .detail-manifesto p { color: var(--gray-900); font-family: 'Fraunces', serif; font-style: italic; margin: 0; }
 
 /* =========================================
-14. DETAIL ACTIONS (SELECTOR & QUANTITY)
+14. DETAIL ACTIONS
 ========================================= */
 .detail-actions { display: flex; gap: 12px; margin-top: var(--space-4); align-items: stretch; }
-/* QUANTITY STYLE APPLE (Poin 4) */
-.qty-minimal { display: flex; align-items: center; border: none; border-radius: 0; padding: 0; gap: 16px; justify-content: flex-start; background: transparent; width: auto; height: auto; }
-.qty-minimal button { width: 36px; height: 36px; background: transparent; border: 1px solid rgba(0,0,0,0.1); font-size: 1.25rem; color: var(--green); cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background-color var(--dur-fast) ease; }
+.qty-minimal { display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--gold-soft); border-radius: 100px; padding: 4px; background: transparent; width: auto; height: auto; }
+.qty-minimal button { width: 44px; height: 44px; background: transparent; border: none; font-size: 1.5rem; color: var(--green); cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background-color var(--dur-fast) ease; }
 .qty-minimal button:active { background-color: var(--green-light); }
 .qty-minimal span { width: 36px; text-align: center; font-size: 1.125rem; font-weight: 500; color: var(--gray-900); font-family: 'Fraunces', serif; }
+.add-to-cart-btn { flex: 1; border-radius: 100px; padding: 0 16px; transform: translateY(0); transition: transform var(--dur-fast) cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow var(--dur-fast) ease; }
+.add-to-cart-btn:active { transform: translateY(2px) scale(0.97); box-shadow: none; }
 
 /* =========================================
 15. CERITA
@@ -257,17 +245,15 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 ========================================= */
 button.custom-select { background: transparent; border: none; font: inherit; color: inherit; cursor: pointer; }
 input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active { -webkit-box-shadow: 0 0 0 30px var(--bg-surface) inset !important; -webkit-text-fill-color: var(--gray-900) !important; transition: background-color 5000s ease-in-out 0s; border-bottom: 1px solid var(--gray-300) !important; }
-/* LIST ITEM RESERVASI (Poin 4) */
-.cart-item-row { display: flex; justify-content: space-between; align-items: center; padding: 36px 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
+.cart-item-row { display: flex; justify-content: space-between; align-items: center; padding: var(--space-3) 0; border-bottom: 1px solid var(--gray-200); }
 .cart-empty { text-align: center; padding: 40px var(--space-3); color: var(--gray-600); }
-.cart-item-info p { font-size: 17px; color: var(--gold-text); margin: 0; font-weight: 600; }
+.cart-item-info p { font-size: 0.875rem; color: var(--gold-text); margin: 0; font-weight: 600; }
 .drawer-subtotal { display: flex; justify-content: space-between; font-weight: 600; padding: var(--space-4) 0; border-bottom: 1px solid var(--gray-200); margin-bottom: var(--space-5); color: var(--gray-600); }
 .drawer-subtotal span:last-child { color: var(--gray-900); font-weight: 700; }
-/* FORM (Poin 5) */
 .input-minimal { width: 100%; border: none; border-bottom: 1px solid var(--gray-300); background: transparent; padding: var(--space-3) 0; font-family: inherit; font-size: 1rem; margin-bottom: var(--space-4); border-radius: 0; transition: border-color var(--dur-fast) ease, box-shadow var(--dur-fast) ease; outline: none; color: var(--gray-900); }
 textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
 .input-minimal:focus { border-bottom-color: var(--gold); box-shadow: var(--shadow-glow); }
-.input-minimal::placeholder { color: #7A756D; font-weight: 400; }
+.input-minimal::placeholder { color: var(--gray-500); font-weight: 400; }
 .custom-select { display: flex; align-items: center; justify-content: space-between; padding: var(--space-3) 0; border-bottom: 1px solid var(--gray-300); cursor: pointer; font-size: 1rem; color: var(--gray-900); }
 .minimal-dropdown { display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--gray-200); z-index: 10; max-height: 200px; overflow-y: auto; box-shadow: var(--shadow-floating); border-radius: var(--radius-md); margin-top: 4px; }
 .minimal-dropdown div { padding: 14px 20px; font-size: 0.875rem; cursor: pointer; border-bottom: 1px solid var(--gray-100); transition: background-color var(--dur-fast) ease, color var(--dur-fast) ease; }
@@ -281,8 +267,7 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
 .priority-label input { accent-color: var(--green); width: 20px; height: 20px; }
 .drawer-breakdown { font-size: 0.875rem; color: var(--gray-600); display: flex; justify-content: space-between; margin-top: var(--space-5); padding-top: var(--space-4); border-top: 1px solid var(--gray-200); }
 .drawer-total { display: flex; justify-content: space-between; align-items: flex-end; font-weight: 500; color: var(--gray-600); }
-/* TOTAL PESANAN GRAND & LUXURY (Poin 6) */
-.drawer-total #finalTotal { font-size: 54px; color: var(--green); font-family: 'Fraunces', serif; line-height: 1; }
+.drawer-total #finalTotal { font-size: 2rem; color: var(--green); font-family: 'Fraunces', serif; line-height: 1; }
 .qris-frame { background: #FFFFFF; padding: var(--space-3); border-radius: var(--radius-xl); box-shadow: var(--shadow-card); display: block; margin: 0 auto var(--space-4) auto; border: 1px solid rgba(197,160,89,0.15); width: 100%; }
 .qris-frame img { width: 100%; height: auto; display: block; border-radius: 10px; }
 .qris-payment-block { display: flex; flex-direction: column; align-items: center; }
@@ -291,7 +276,7 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
 .district-note { font-size: 0.7rem; color: var(--gold-text); font-weight: 600; line-height: 1.4; margin-top: -12px; margin-bottom: var(--space-4); }
 
 /* =========================================
-17. PEMBAYARAN (QRIS)
+17. PEMBAYARAN (QRIS) - LEBAR PENUH MAKSIMAL
 ========================================= */
 #btnOpenPayment { margin-bottom: env(safe-area-inset-bottom, 0px); padding: 18px var(--space-4); }
 #paymentModal .drawer-body { display: flex; flex-direction: column; align-items: center; padding: 16px 20px calc(24px + env(safe-area-inset-bottom, 0px)); overflow-y: auto; }
@@ -318,7 +303,7 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
 .msg-user span { background: var(--green); color: white; padding: 14px 18px; border-radius: 18px; border-bottom-right-radius: 4px; display: inline-block; max-width: 85%; box-shadow: var(--shadow-card); }
 .chat-input-row { padding: var(--space-3) 20px; border-top: 1px solid var(--gray-200); display: flex; gap: 12px; background: white; }
 .chat-input-row input { margin: 0; padding: 14px 20px; background: var(--bg-subtle); border: none; border-radius: 100px; font-size: 1rem; }
-.btn-gold-round { background: linear-gradient(135deg, #D1B06A, #BA9042); color: #fff; border: none; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform var(--dur-fast) ease, box-shadow var(--dur-fast) ease; box-shadow: var(--shadow-card); } 
+.btn-gold-round { background: linear-gradient(135deg, #D1B06A, #BA9042); color: #fff; border: none; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform var(--dur-fast) ease, box-shadow var(--dur-fast) ease; box-shadow: var(--shadow-card); } /* Diperbarui (Poin 10) */
 .btn-gold-round:active { transform: scale(0.9); }
 
 /* =========================================
@@ -372,9 +357,9 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
 .testi-card { position: absolute; top: 0; left: 0; right: 0; padding: 20px 20px 30px; transition: transform 0.6s cubic-bezier(0.4,0,0.2,1), opacity 0.6s; transform: translateY(100%); opacity: 0; }
 .testi-card.is-active { transform: translateY(0); opacity: 1; }
 .testi-card.is-prev { transform: translateY(-100%); opacity: 0; }
-.testi-stars { font-size: 15px; opacity: 0.85; margin-bottom: 4px; letter-spacing: 2px; } 
-.testi-card p { font-size: 16px; font-weight: 600; margin: 0 0 14px; line-height: 1.55; color: rgba(255,255,255,0.85); } 
-.testi-card span { font-size: 13px; color: rgba(255,255,255,0.7); opacity: 0.85; } 
+.testi-stars { font-size: 15px; opacity: 0.85; margin-bottom: 4px; letter-spacing: 2px; } /* Diperbarui (Poin 6) */
+.testi-card p { font-size: 16px; font-weight: 600; margin: 0 0 14px; line-height: 1.55; color: rgba(255,255,255,0.85); } /* Diperbarui (Poin 6) */
+.testi-card span { font-size: 13px; color: rgba(255,255,255,0.7); opacity: 0.85; } /* Diperbarui (Poin 6) */
 .testi-dots { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 2; }
 .testi-dot { width: 6px; height: 6px; border-radius: 50%; border: none; padding: 0; cursor: pointer; background: rgba(255,255,255,0.4); }
 .testi-dot[aria-current="true"] { background: var(--gold-bright); width: 16px; border-radius: 10px; }
@@ -387,8 +372,8 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
 .faq-question:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
 .faq-question i { transition: transform var(--dur-normal) ease; }
 .faq-item.open .faq-question i { transform: rotate(180deg); }
-.faq-answer { color: var(--ivory); font-size: 0.875rem; line-height: 1.6; max-height: 0; overflow: hidden; opacity: 0; transform: translateY(-6px); transition: opacity 0.35s ease, transform 0.35s ease, max-height 0.4s ease, padding 0.4s ease; } 
-.faq-item.open .faq-answer { opacity: 1; transform: none; max-height: 300px; padding-bottom: var(--space-3); } 
+.faq-answer { color: var(--ivory); font-size: 0.875rem; line-height: 1.6; max-height: 0; overflow: hidden; opacity: 0; transform: translateY(-6px); transition: opacity 0.35s ease, transform 0.35s ease, max-height 0.4s ease, padding 0.4s ease; } /* Diperbarui (Poin 7) */
+.faq-item.open .faq-answer { opacity: 1; transform: none; max-height: 300px; padding-bottom: var(--space-3); } /* Diperbarui (Poin 7) */
 
 /* =========================================
 25. DIVIDER, SECTION, STRUK, & ANIMASI
@@ -447,7 +432,7 @@ textarea.input-minimal { resize: none; overflow: hidden; padding-right: 0; }
 /* =========================================
 28. TINY TEXT (LABEL)
 ========================================= */
-.tiny-text { display: block; font-size: 0.65rem; color: var(--gray-600); margin: 12px 0 4px; text-transform: uppercase; letter-spacing: 0.16em; font-weight: 600; } /* Diperbarui (Poin 5) */
+.tiny-text { display: block; font-size: 0.65rem; color: var(--gray-600); margin: 12px 0 4px; text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; }
 
 /* =========================================
 29. INERT ELEMENTS
