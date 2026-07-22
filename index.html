@@ -136,7 +136,14 @@
     </div>
     
     <div class="carousel-container fade-up">
-      <div class="carousel-track" id="menuList"></div>
+      <div class="carousel-track" id="menuList">
+        <!-- Skeleton loading -->
+        <div class="skeleton-card">
+          <div class="skeleton-img"></div>
+          <div class="skeleton-text w-60"></div>
+          <div class="skeleton-text w-40"></div>
+        </div>
+      </div>
       <div class="carousel-dots" id="carouselDots"></div>
     </div>
     
@@ -239,7 +246,16 @@
   <div class="product-swiper-overlay" id="productPage" role="dialog" aria-modal="true" aria-hidden="true">
     <button type="button" id="backFromProduct" class="glass-btn floating-close" aria-label="Kembali"><i data-lucide="arrow-left" class="icon-sm"></i></button>
     <button type="button" id="shareProductBtn" class="glass-btn floating-share" aria-label="Bagikan Produk"><i data-lucide="share-2" class="icon-sm"></i></button>
-    <div class="product-swiper-track" id="productSwiperTrack"></div>
+    <div class="product-swiper-track" id="productSwiperTrack">
+      <!-- Skeleton loading -->
+      <div class="product-slide" style="display:flex; align-items:center; justify-content:center; background:var(--dark-green-deep);">
+        <div style="text-align:center; color:var(--ivory-60);">
+          <div class="skeleton-img" style="width:200px; height:200px; margin:0 auto 20px; background:var(--gray-100);"></div>
+          <div class="skeleton-text w-80" style="margin:0 auto 12px;"></div>
+          <div class="skeleton-text w-60" style="margin:0 auto;"></div>
+        </div>
+      </div>
+    </div>
     <div class="wa-vip-side-tab" id="waVipSideTab">
       <div class="wa-vip-handle" id="waVipHandle"></div>
       <div class="wa-vip-body">
