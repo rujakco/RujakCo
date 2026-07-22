@@ -135,11 +135,27 @@
   box-sizing: border-box;
   -webkit-tap-highlight-color: var(--black-08);
 }
+
+/* PERBAIKAN: fokus hanya pada elemen interaktif + hilangkan border-radius paksa */
 :focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 4px;
+}
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+.btn-gold:focus-visible,
+.btn-dark:focus-visible,
+.add-to-cart-btn:focus-visible,
+.carousel-dot:focus-visible,
+.nav-item:focus-visible,
+.spice-option:focus-visible,
+.qty-minimal button:focus-visible,
+.glass-btn:focus-visible,
+.glass-btn-dark:focus-visible {
   border-radius: 4px;
 }
+
 html {
   margin: 0;
   padding: 0;
@@ -153,6 +169,7 @@ body {
   color: var(--ivory);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-x: hidden; /* AMAN: cegah scroll horizontal */
 }
 #app {
   position: relative;
@@ -197,6 +214,10 @@ p, li, .body-text {
   line-height: 1.7;
 }
 
+/* UTILITY AMAN */
+.full-width { width: 100%; }
+.inline { display: inline-block; vertical-align: middle; }
+
 /* =========================================
    4. ONBOARDING
    ========================================= */
@@ -235,6 +256,7 @@ p, li, .body-text {
   border: 1px solid var(--gold-30);
   border-radius: 50%;
   box-shadow: 0 0 40px var(--gold-08);
+  /* loading="lazy" dihapus dari HTML */
 }
 .onb-title {
   margin-bottom: 6px;
@@ -1441,12 +1463,20 @@ input:-webkit-autofill:active {
 #paymentModal .qris-connector {
   display: none;
 }
-#paymentModal .qris-frame {
+/* AMAN: tombol QRIS tanpa dekorasi bawaan */
+.qris-frame-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  width: 100%;
+  max-width: 400px;
+}
+.qris-frame {
   display: block;
   width: 100%;
   max-width: 400px;
   margin-right: auto;
-  margin-bottom: 16px;
   margin-left: auto;
   padding: 12px;
   background: var(--white);
@@ -1454,13 +1484,13 @@ input:-webkit-autofill:active {
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-soft);
 }
-#paymentModal .qris-frame img {
+.qris-frame img {
   display: block;
   width: 100%;
   height: auto;
   border-radius: 10px;
 }
-#paymentModal .qris-total {
+.qris-total {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1471,14 +1501,14 @@ input:-webkit-autofill:active {
   font-weight: 600;
   color: var(--green);
 }
-#paymentModal .qris-total::before, #paymentModal .qris-total::after {
+.qris-total::before, .qris-total::after {
   content: '';
   flex: 1;
   height: 1px;
   background: var(--gold);
 }
-#paymentModal .qris-total::before { margin-right: 12px; }
-#paymentModal .qris-total::after { margin-left: 12px; }
+.qris-total::before { margin-right: 12px; }
+.qris-total::after { margin-left: 12px; }
 .payment-step-icon {
   display: flex;
   align-items: center;
@@ -1501,40 +1531,6 @@ input:-webkit-autofill:active {
   margin-top: auto;
   margin-bottom: 0;
   padding: 14px var(--space-4);
-}
-.qris-frame {
-  display: block;
-  width: 100%;
-  margin: 0 auto var(--space-4) auto;
-  padding: var(--space-3);
-  background: var(--white);
-  border: 1px solid var(--gold-08);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-soft);
-}
-.qris-frame img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: 10px;
-}
-.qris-payment-block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.qris-connector {
-  width: 1px;
-  height: var(--space-4);
-  background: var(--gold-soft);
-}
-.qris-total {
-  margin-top: var(--space-2);
-  font-family: var(--font-heading);
-  font-size: 2.25rem;
-  font-weight: 400;
-  color: var(--green);
-  letter-spacing: -0.02em;
 }
 
 /* =========================================
