@@ -99,7 +99,7 @@
   /* Z-index */
   --z-header: 100;
   --z-nav: 600;
-  --z-product: 500;
+  --z-product: 700;   /* ✅ dinaikkan agar di atas bottom nav */
   --z-fab: 510;
   --z-modal: 1000;
   --z-onboard: 1100;
@@ -974,7 +974,7 @@ p, li, .body-text {
 .drawer-body {
   flex: 1;
   overflow-y: auto;
-  padding: var(--space-4) var(--space-4) 140px; /* ruang footer */
+  padding: var(--space-4) var(--space-4) 140px;
   overscroll-behavior-y: contain;
 }
 .drawer-footer-sticky {
@@ -1077,6 +1077,7 @@ p, li, .body-text {
 .detail-image-wrap img.lazy-detail {
   opacity: 0;
   transition: opacity var(--dur-normal) ease;
+  background: var(--bg-subtle); /* fallback */
 }
 .detail-image-wrap img.lazy-detail.loaded {
   opacity: 1;
