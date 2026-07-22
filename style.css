@@ -340,7 +340,7 @@ p, li, .body-text {
 }
 
 /* =========================================
-   7. HERO — TATA LETAK AMAN & ELEGAN
+   7. HERO — SLIM CINEMATIC BANNER
    ========================================= */
 .content-wrapper {
   padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
@@ -357,13 +357,13 @@ p, li, .body-text {
   position: relative;
   border-radius: var(--radius-md); 
   box-shadow: var(--shadow-soft);
-  margin-top: calc(76px + env(safe-area-inset-top, 0px));
+  margin-top: calc(64px + env(safe-area-inset-top, 0px));
   margin-left: 20px;
   margin-right: 20px;
 }
 .hero-img-wrap {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 9;
   position: relative;
   border-radius: var(--radius-md);
   overflow: hidden;
@@ -377,7 +377,7 @@ p, li, .body-text {
   top: 0;
   left: 0;
   right: 0;
-  height: 120px;
+  height: 80px;
   background: linear-gradient(180deg, rgba(0,0,0,0.4), transparent);
   pointer-events: none;
   z-index: 1;
@@ -395,11 +395,11 @@ p, li, .body-text {
 .hero-overlay-new {
   position: absolute;
   inset: auto 0 0 0;
-  background: linear-gradient(to top, rgba(8,46,33,0.4), rgba(8,46,33,0.1), transparent);
+  background: linear-gradient(to top, rgba(8,46,33,0.5), rgba(8,46,33,0.1), transparent);
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
-  padding: 60px 24px 28px;
+  padding: 30px 20px 18px;
   border-radius: 0 0 var(--radius-md) var(--radius-md);
   z-index: 2;
 }
@@ -408,9 +408,10 @@ p, li, .body-text {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
+  gap: 2px;
 }
 .hero-title {
+  font-size: clamp(1.4rem, 5vw, 1.85rem);
   line-height: 1.1;
   color: #fff;
   text-shadow: 0 2px 8px rgba(0,0,0,0.3);
@@ -427,8 +428,8 @@ p, li, .body-text {
   text-transform: uppercase;
   color: rgba(255,255,255,0.9);
   margin: 0;
-  font-size: 0.7rem;
-  transform: translateY(5px);
+  font-size: 0.65rem;
+  transform: translateY(3px);
 }
 
 /* =========================================
