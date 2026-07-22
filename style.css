@@ -75,19 +75,19 @@
   --ivory-95: rgba(253, 251, 247, 0.95);
   --danger-soft: rgba(181, 74, 63, 0.35);
 
-  /* Gradients & Shadows */
+  /* Gradients & Shadows — UPDATED ke Green-Tinted Ambient */
   --gradient-gold: linear-gradient(180deg, #C9A868 0%, #A67C3D 100%);
-  --shadow-soft: 0 2px 8px var(--black-03);
-  --shadow-medium: 0 8px 24px var(--black-05);
-  --shadow-floating: 0 20px 50px rgba(8, 46, 33, 0.10);
+  --shadow-soft: 0 2px 8px rgba(2, 10, 7, 0.15);
+  --shadow-medium: 0 8px 24px rgba(2, 10, 7, 0.18);
+  --shadow-floating: 0 20px 50px rgba(2, 10, 7, 0.20);
   
-  /* Semantic Shadows (Refactored) */
-  --shadow-emboss: inset 0 2px 0 var(--white-15), inset 0 -2px 0 var(--black-20), 0 10px 20px -8px rgba(140, 106, 50, 0.40);
-  --shadow-deboss: inset 0 3px 6px var(--black-25), 0 2px 4px -2px rgba(140, 106, 50, 0.20);
-  --shadow-drawer: 0 -20px 50px var(--black-40), 0 0 0 1px var(--gold-15) inset;
-  --shadow-drawer-dark: 0 -30px 60px var(--black-80);
-  --shadow-input-deboss: inset 0 4px 10px var(--black-50);
-  --shadow-hero-dark: 0 12px 24px -6px var(--gold-30), inset 0 0 0 1px var(--gold-15);
+  /* Semantic Shadows (Green-Tinted) */
+  --shadow-emboss: inset 0 2px 0 var(--white-15), inset 0 -2px 0 rgba(2,10,7,0.25), 0 10px 20px -8px rgba(2,10,7,0.45);
+  --shadow-deboss: inset 0 3px 6px rgba(2,10,7,0.30), 0 2px 4px -2px rgba(2,10,7,0.25);
+  --shadow-drawer: 0 -20px 50px rgba(2,10,7,0.45), 0 0 0 1px var(--gold-15) inset;
+  --shadow-drawer-dark: 0 -30px 60px rgba(2,10,7,0.80);
+  --shadow-input-deboss: inset 0 4px 10px rgba(2,10,7,0.55);
+  --shadow-hero-dark: 0 12px 24px -6px rgba(2,10,7,0.40), inset 0 0 0 1px var(--gold-15);
 
   /* Z-index */
   --z-header: 100;
@@ -135,27 +135,11 @@
   box-sizing: border-box;
   -webkit-tap-highlight-color: var(--black-08);
 }
-
-/* PERBAIKAN: fokus hanya pada elemen interaktif + hilangkan border-radius paksa */
 :focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 4px;
-}
-button:focus-visible,
-a:focus-visible,
-[role="button"]:focus-visible,
-.btn-gold:focus-visible,
-.btn-dark:focus-visible,
-.add-to-cart-btn:focus-visible,
-.carousel-dot:focus-visible,
-.nav-item:focus-visible,
-.spice-option:focus-visible,
-.qty-minimal button:focus-visible,
-.glass-btn:focus-visible,
-.glass-btn-dark:focus-visible {
   border-radius: 4px;
 }
-
 html {
   margin: 0;
   padding: 0;
@@ -169,7 +153,6 @@ body {
   color: var(--ivory);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden; /* AMAN: cegah scroll horizontal */
 }
 #app {
   position: relative;
@@ -214,12 +197,8 @@ p, li, .body-text {
   line-height: 1.7;
 }
 
-/* UTILITY AMAN */
-.full-width { width: 100%; }
-.inline { display: inline-block; vertical-align: middle; }
-
 /* =========================================
-   4. ONBOARDING
+   4. ONBOARDING – Updated layout & spacing
    ========================================= */
 .onboarding-overlay {
   position: fixed;
@@ -245,21 +224,20 @@ p, li, .body-text {
   align-items: center;
   width: 100%;
   max-width: 340px;
-  gap: 16px;
+  gap: 12px; /* dikurangi dari 16px agar lebih rapat */
 }
 .onb-logo {
   width: 76px;
   height: 76px;
-  margin-bottom: 24px;
+  margin-bottom: 20px; /* sedikit dikurangi */
   padding: 6px;
   background: var(--black-15);
   border: 1px solid var(--gold-30);
   border-radius: 50%;
   box-shadow: 0 0 40px var(--gold-08);
-  /* loading="lazy" dihapus dari HTML */
 }
 .onb-title {
-  margin-bottom: 6px;
+  margin-bottom: 2px; /* lebih rapat */
   font-family: var(--font-heading);
   font-size: 2.1rem;
   font-weight: 350;
@@ -268,7 +246,7 @@ p, li, .body-text {
   letter-spacing: 0.02em;
 }
 .onb-subtitle, .onb-welcome-text {
-  margin-bottom: 56px;
+  margin-bottom: 40px; /* dikurangi dari 56px */
   font-family: var(--font-body);
   font-size: 0.65rem;
   font-weight: 600;
@@ -279,6 +257,8 @@ p, li, .body-text {
 .onb-step {
   display: none;
   width: 100%;
+  max-width: 290px; /* baru: sejajar dengan tombol */
+  margin: 0 auto;   /* tengah */
   animation: fadeUp 0.6s ease both;
 }
 .onb-step.active {
@@ -286,41 +266,60 @@ p, li, .body-text {
 }
 .onb-label {
   display: block;
-  margin-bottom: 20px;
+  margin-bottom: 12px; /* sedikit dikurangi */
   font-size: 0.65rem;
   font-weight: 600;
   color: var(--ivory-85);
   text-transform: uppercase;
   letter-spacing: 0.2em;
 }
+
+/* --- INPUT DENGAN EFEK SINEMATIK --- */
 .onb-input {
   width: 100%;
-  margin-bottom: 52px;
-  padding: 12px 0 16px;
-  background: transparent;
+  margin-bottom: 28px;
+  padding: 8px 0 12px;
+  background-image: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+  background-size: 0% 2px;
+  background-position: center bottom;
+  background-repeat: no-repeat;
   border: none;
-  border-bottom: 1px solid var(--gold-50);
+  border-bottom: 1px solid var(--gold-20);
   border-radius: 0;
   font-family: var(--font-heading);
-  font-size: 1.75rem;
+  font-size: 1.6rem;
   font-weight: 350;
   color: var(--ivory);
   text-align: center;
   outline: none;
-  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  transition: background-size 0.5s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease, text-shadow 0.3s ease;
 }
 .onb-input:focus {
-  border-bottom-color: var(--gold);
-  box-shadow: 0 12px 20px -12px var(--gold-15);
+  border-bottom-color: transparent;
+  background-size: 100% 2px;
+  color: var(--gold-bright);
+  text-shadow: 0 0 12px var(--gold-40);
+  animation: inputFlash 0.7s ease-out forwards;
 }
 .onb-input::placeholder {
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 400;
-  color: var(--ivory-45);
+  color: var(--ivory-35);
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.1em;
+  transition: opacity 0.4s ease, letter-spacing 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
+.onb-input:focus::placeholder {
+  opacity: 0;
+  letter-spacing: 0.4em;
+}
+@keyframes inputFlash {
+  0% { box-shadow: 0 20px 20px -10px transparent; }
+  40% { box-shadow: 0 20px 20px -10px var(--gold-25); }
+  100% { box-shadow: 0 12px 20px -12px var(--gold-10); }
+}
+
 #onbDistrictDropdown {
   background: rgba(4, 18, 13, 0.90);
   border: 1px solid var(--gold-20);
@@ -423,7 +422,7 @@ p, li, .body-text {
 }
 
 /* =========================================
-   6. HEADER
+   6. HEADER — Updated gradient
    ========================================= */
 .luxury-header {
   position: fixed;
@@ -438,7 +437,8 @@ p, li, .body-text {
   max-width: 480px;
   margin: 0 auto;
   padding: calc(10px + env(safe-area-inset-top, 0px)) 20px 10px;
-  background: linear-gradient(180deg, var(--black-35), var(--black-15), transparent);
+  /* UPDATED: gradien lebih panjang & organik */
+  background: linear-gradient(180deg, rgba(2,10,7,0.75) 0%, rgba(8,46,33,0.55) 70%, transparent 100%);
   transition: background-color var(--dur-normal) ease, backdrop-filter var(--dur-normal) ease, box-shadow var(--dur-normal) ease;
 }
 .luxury-header.scrolled {
@@ -509,7 +509,7 @@ p, li, .body-text {
 }
 
 /* =========================================
-   7. HERO — SLIM CINEMATIC BANNER
+   7. HERO — SLIM CINEMATIC BANNER (Updated gradient)
    ========================================= */
 .content-wrapper {
   padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
@@ -539,6 +539,7 @@ p, li, .body-text {
   box-shadow: var(--shadow-hero-dark);
   aspect-ratio: 16 / 9;
 }
+/* UPDATED: area pelindung diperlebar & multi-stop */
 .hero-img-wrap::after {
   content: "";
   position: absolute;
@@ -546,8 +547,8 @@ p, li, .body-text {
   right: 0;
   left: 0;
   z-index: 1;
-  height: 80px;
-  background: linear-gradient(180deg, var(--black-40), transparent);
+  height: 180px;
+  background: linear-gradient(180deg, rgba(2,10,7,0.60) 0%, rgba(2,10,7,0.35) 50%, transparent 100%);
   pointer-events: none;
 }
 .hero-img {
@@ -601,7 +602,7 @@ p, li, .body-text {
 }
 
 /* =========================================
-   8. CAROUSEL
+   8. CAROUSEL — .boutique-item tetap asli
    ========================================= */
 .carousel-container {
   position: relative;
@@ -1233,7 +1234,7 @@ p, li, .body-text {
   font-family: var(--font-heading);
   font-size: 1.125rem;
   font-weight: 500;
-  color: var(--ivory);
+  color: var(--gray-900); /* PERBAIKAN 1 */
   text-align: center;
 }
 .add-to-cart-btn {
@@ -1463,20 +1464,12 @@ input:-webkit-autofill:active {
 #paymentModal .qris-connector {
   display: none;
 }
-/* AMAN: tombol QRIS tanpa dekorasi bawaan */
-.qris-frame-btn {
-  border: none;
-  background: transparent;
-  padding: 0;
-  cursor: pointer;
-  width: 100%;
-  max-width: 400px;
-}
-.qris-frame {
+#paymentModal .qris-frame {
   display: block;
   width: 100%;
   max-width: 400px;
   margin-right: auto;
+  margin-bottom: 16px;
   margin-left: auto;
   padding: 12px;
   background: var(--white);
@@ -1484,40 +1477,77 @@ input:-webkit-autofill:active {
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-soft);
 }
-.qris-frame img {
+#paymentModal .qris-frame img {
   display: block;
   width: 100%;
   height: auto;
   border-radius: 10px;
 }
-.qris-total {
+/* PERBAIKAN 5: margin & garis harga spesifik modal */
+#paymentModal .qris-total {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  margin: 0 0 16px 0;
+  margin: 24px 0 20px 0;
   font-family: var(--font-heading);
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--green);
 }
-.qris-total::before, .qris-total::after {
+#paymentModal .qris-total::before,
+#paymentModal .qris-total::after {
   content: '';
   flex: 1;
   height: 1px;
   background: var(--gold);
+  transform: translateY(2px);
 }
-.qris-total::before { margin-right: 12px; }
-.qris-total::after { margin-left: 12px; }
+#paymentModal .qris-total::before { margin-right: 12px; }
+#paymentModal .qris-total::after  { margin-left: 12px; }
+
+/* PERBAIKAN 5: payment steps */
+.payment-steps-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 24px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+.payment-step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
 .payment-step-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
-  margin: 0 auto 6px;
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: 1px solid var(--gray-300);
   border-radius: 50%;
+  color: var(--gray-600);
+  transition: border-color var(--dur-fast) ease, color var(--dur-fast) ease, background-color var(--dur-fast) ease;
 }
+.payment-step-item:active .payment-step-icon {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--gold-05);
+}
+.payment-step-label {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
 #paymentModal .qris-payment-block + div {
   margin-bottom: 16px;
 }
@@ -1531,6 +1561,41 @@ input:-webkit-autofill:active {
   margin-top: auto;
   margin-bottom: 0;
   padding: 14px var(--space-4);
+}
+/* Global QRIS (jika dipakai di luar modal) */
+.qris-frame {
+  display: block;
+  width: 100%;
+  margin: 0 auto var(--space-4) auto;
+  padding: var(--space-3);
+  background: var(--white);
+  border: 1px solid var(--gold-08);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-soft);
+}
+.qris-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+.qris-payment-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.qris-connector {
+  width: 1px;
+  height: var(--space-4);
+  background: var(--gold-soft);
+}
+.qris-total {
+  margin-top: var(--space-2);
+  font-family: var(--font-heading);
+  font-size: 2.25rem;
+  font-weight: 400;
+  color: var(--green);
+  letter-spacing: -0.02em;
 }
 
 /* =========================================
@@ -2160,11 +2225,13 @@ input:-webkit-autofill:active {
   border: 1.5px dashed var(--gold);
   border-radius: var(--radius-sm);
 }
+/* PERBAIKAN 1: crop QRIS */
 .receipt-qris-cropped {
   position: absolute;
-  top: 50%;
+  width: 230%;
+  max-width: none;
   left: 50%;
-  width: 170%;
+  top: 52%;
   transform: translate(-50%, -50%);
 }
 .receipt-barcode {
@@ -2257,51 +2324,66 @@ input:-webkit-autofill:active {
 }
 
 /* =========================================
-   28. SPICE LEVEL SELECTOR
+   28. PREMIUM SPICE LEVEL SELECTOR (PILL GROUP)
    ========================================= */
-.spice-label-text {
-  display: block;
+.spice-level-container {
+  width: 100%;
+  margin: 16px 0 24px;
+}
+.spice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
   margin-bottom: 12px;
-  font-size: 0.65rem;
+  padding: 0 4px;
+}
+.spice-title {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
   font-weight: 700;
-  color: var(--gray-500);
-  text-align: center;
+  color: var(--ivory-80);
   text-transform: uppercase;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.15em;
+}
+.spice-status {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--gold-bright);
+  font-style: italic;
+  letter-spacing: 0.02em;
 }
 .spice-selector {
   display: flex;
-  margin-bottom: 16px;
   padding: 4px;
-  gap: 2px;
-  background: var(--dark-green-deep);
-  border: 1px solid var(--gold-10);
+  background: var(--dark-green-pitch);
+  border: 1px solid var(--gold-15);
   border-radius: 100px;
-  box-shadow: inset 0 4px 10px var(--black-60), 0 1px 0 var(--white-80);
+  box-shadow: var(--shadow-input-deboss);
 }
 .spice-option {
-  position: relative;
   flex: 1;
   padding: 12px 0;
   background: transparent;
   border: none;
   border-radius: 100px;
   font-family: var(--font-heading);
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 600;
   color: var(--ivory-35);
   cursor: pointer;
-  transition: transform 0.3s var(--transition-heavy), background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.4s var(--transition-heavy), 
+              background-color 0.3s ease, 
+              color 0.3s ease, 
+              box-shadow 0.3s ease;
 }
 .spice-option.active {
   z-index: 2;
   background: var(--matte-gold);
   color: var(--white);
-  box-shadow: inset 0 2px 0 var(--white-25), inset 0 -3px 0 var(--black-20), 0 6px 12px var(--black-40);
+  box-shadow: inset 0 2px 0 var(--white-25), 
+              inset 0 -3px 0 var(--black-20), 
+              0 6px 16px rgba(2, 10, 7, 0.5);
   text-shadow: 0 1px 2px var(--black-20);
-  transform: scale(1.02);
-}
-[id^="step1_"], [id^="step2_"] {
-  transition: opacity 0.4s ease, transform 0.4s var(--transition-heavy);
-  will-change: opacity, transform;
+  transform: scale(1.04);
 }
