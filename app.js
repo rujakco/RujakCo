@@ -29,7 +29,6 @@ const state = {
   userDistance: null,
   lastViewedProductIndex: -1,
   currentOrderCode: null,
-  haversineUsed: false,
   receiptUrl: null,
 };
 
@@ -83,6 +82,7 @@ const cacheDOM = () => {
   DOM.priorityToggle = document.getElementById('priorityToggleMini');
   DOM.mainContent = document.getElementById('mainContent');
   DOM.bottomNav = document.getElementById('bottomNav');
+  DOM.liveCartRegion = document.getElementById('cartLiveRegion');
 };
 
 // ---------------------------------------------------------------------------
@@ -207,10 +207,12 @@ function closeModal(modalEl, fromPopState = false) {
     DOM.bottomNav?.removeAttribute('inert');
   }
   releaseInert();
-  if (previousFocusedElement) {
+  if (previousFocusedElement && document.body.contains(previousFocusedElement)) {
     previousFocusedElement.focus();
-    previousFocusedElement = null;
+  } else {
+    document.getElementById('navHomeBtn')?.focus();
   }
+  previousFocusedElement = null;
   if (!fromPopState) {
     isProgrammaticBack = true;
     history.back();
@@ -248,13 +250,21 @@ function showConfirmModal(title, message, onConfirm) {
   modal.addEventListener('transitionend', (e) => {
     if (!modal.classList.contains('active') && e.target === modal) {
       modal.remove();
-      if (triggerEl && typeof triggerEl.focus === 'function') triggerEl.focus();
+      if (triggerEl && document.body.contains(triggerEl)) triggerEl.focus();
     }
   });
 }
 
+// ---------------------------------------------------------------------------
+// PRODUCT PAGE
+// ---------------------------------------------------------------------------
 function openProductPage(globalIndex) {
   if (!DOM.productPage) return;
+  // Disconnect observer lama sebelum buat baru
+  if (DOM._productObserver) {
+    DOM._productObserver.disconnect();
+    DOM._productObserver = null;
+  }
   renderProductSwiper(state.drafts);
   DOM.productPage.style.display = 'flex';
   void DOM.productPage.offsetWidth;
@@ -271,7 +281,6 @@ function openProductPage(globalIndex) {
     DOM.productSwiperTrack.scrollLeft = targetSlide.offsetLeft;
     DOM.productSwiperTrack.style.scrollBehavior = 'smooth';
   }
-  if (DOM._productObserver) DOM._productObserver.disconnect();
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -373,7 +382,7 @@ function initDetailGestures() {
 }
 
 // ---------------------------------------------------------------------------
-// UTILITIES & FLOW
+// CART & SHIPPING
 // ---------------------------------------------------------------------------
 function getCartSummaryLocal() {
   return getCartSummary(state.cart);
@@ -405,6 +414,13 @@ function updateCartUI() {
     renderMiniCart(state.cart);
     updateShippingUI();
   }
+  // Live region update
+  const totalItems = Object.values(state.cart).reduce((sum, item) => sum + item.qty, 0);
+  if (DOM.liveCartRegion) {
+    DOM.liveCartRegion.textContent = totalItems > 0
+      ? `${totalItems} item di keranjang`
+      : 'Keranjang kosong';
+  }
   if (window.lucide) lucide.createIcons();
 }
 
@@ -418,7 +434,6 @@ function initDrawerDistrictDropdown() {
   input.placeholder = 'Ketik alamat tujuan (jalan, kelurahan, kota)';
   
   const handleSearch = debounce(async (query) => {
-    // FIX: Sinkronisasi ke 3 karakter agar seragam dengan Onboarding
     if (query.length < 3) { dropdown.style.display = 'none'; return; }
     dropdown.innerHTML = '<div style="padding:14px;text-align:center;color:var(--gray-500);">Mencari lokasi...</div>';
     dropdown.style.display = 'block';
@@ -468,7 +483,6 @@ function initDrawerDistrictDropdown() {
     try {
       const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, lat, lon);
       state.userDistance = result.distance;
-      state.haversineUsed = result.isHaversine;
     } catch (err) {
       showToast('Gagal menghitung jarak, coba lagi.');
       return;
@@ -492,7 +506,7 @@ function initDrawerDistrictDropdown() {
 }
 
 // ---------------------------------------------------------------------------
-// ONBOARDING (OSM search)
+// ONBOARDING
 // ---------------------------------------------------------------------------
 async function resolveOnboardingDistance(districtName) {
   if (!districtName) return;
@@ -502,7 +516,6 @@ async function resolveOnboardingDistance(districtName) {
       const place = results[0];
       const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, parseFloat(place.lat), parseFloat(place.lon));
       state.userDistance = result.distance;
-      state.haversineUsed = result.isHaversine;
       state.selectedDistrict = extractShortLocation(place.display_name) || districtName;
       state.selectedDistrictFull = place.display_name;
       saveCustomer(state.customerPhone, state.customerAddress, place.display_name, state.userDistance);
@@ -602,7 +615,6 @@ function initOnboarding() {
     try {
       const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, lat, lon);
       state.userDistance = result.distance;
-      state.haversineUsed = result.isHaversine;
       state.selectedDistrictFull = displayName;
       state.selectedDistrict = extractShortLocation(displayName);
       input.value = displayName;
@@ -709,7 +721,7 @@ function initOnboarding() {
 }
 
 // ---------------------------------------------------------------------------
-// WHATSAPP, TELEGRAM & DOWNLOAD STRUK (CDN)
+// WHATSAPP, TELEGRAM & DOWNLOAD STRUK
 // ---------------------------------------------------------------------------
 async function downloadReceiptPNG() {
   const element = document.getElementById('orderConfirmContent');
@@ -740,7 +752,6 @@ async function downloadReceiptPNG() {
     const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
     if (!blob) return null;
 
-    // FIX: Mengamankan replace dari nilai null
     const safeCode = state.currentOrderCode || `RJ-${new Date().getTime()}`;
     const cleanCode = safeCode.replace(/[^a-zA-Z0-9]/g, '-');
     const fileName = `${cleanCode}.png`;
@@ -752,47 +763,38 @@ async function downloadReceiptPNG() {
         upsert: true,
       });
 
-    if (error) return null;
+    if (error) {
+      showToast('⚠️ Gagal menyimpan struk. Coba lagi.');
+      return null;
+    }
 
     const { data: publicUrl } = sb.storage.from('receipts').getPublicUrl(fileName);
     state.receiptUrl = publicUrl.publicUrl;
     return publicUrl.publicUrl;
   } catch (err) {
+    showToast('⚠️ Gagal membuat struk. Silakan coba lagi.');
     return null;
   }
 }
 
-// *** TELEGRAM VIA SUPABASE EDGE FUNCTION (AMAN) ***
 async function sendReceiptToTelegram() {
   if (!state.receiptUrl || !state.currentOrderCode) {
     console.warn('Telegram: tidak ada URL struk atau kode pesanan');
     return;
   }
-
   const supabase = getSupabase();
   if (!supabase) {
     console.error('Supabase client tidak tersedia');
     return;
   }
-
   const caption = `🧾 *Order Baru:* ${state.currentOrderCode}\n👤 ${state.customerName}\n📞 ${state.customerPhone}\n💰 Total: ${DOM.finalTotal?.textContent}`;
-
   try {
-    const { data, error } = await supabase.functions.invoke('send-telegram', {
-      body: {
-        order_code: state.currentOrderCode,
-        receipt_url: state.receiptUrl,
-        caption: caption
-      }
+    await supabase.functions.invoke('send-telegram', {
+      body: { order_code: state.currentOrderCode, receipt_url: state.receiptUrl, caption }
     });
-
-    if (error) {
-      console.error('❌ Edge Function error:', error);
-    } else {
-      console.log('✅ Telegram terkirim via Edge Function');
-    }
+    console.log('✅ Telegram terkirim via Edge Function');
   } catch (err) {
-    console.error('Gagal memanggil Edge Function:', err);
+    console.error('Gagal mengirim ke Telegram:', err);
   }
 }
 
@@ -825,8 +827,6 @@ async function sendReceiptToWhatsApp() {
     msg += `• ${item.name}${spiceText} x${item.qty} = ${fmt(item.price * item.qty)}\n`;
   });
   msg += `\n💵 *Subtotal:* ${fmt(summary.subtotal)}\n🛵 *Ongkir:* ${shipCost}\n💰 *TOTAL TRANSFER:* *${totalCost}*\n\n`;
-  
-  // FIX: UX perbaikan agar pembeli tidak kebingungan
   msg += `📎 _Mohon lampirkan *gambar bukti transfer (QRIS)* Anda di sini agar reservasi dapat segera kami proses._`;
 
   const sb = getSupabase();
@@ -853,19 +853,24 @@ async function sendReceiptToWhatsApp() {
     }
   }
 
-  // FIX: Beri jeda aman sebelum keranjang dihapus
-  window.location.href = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
-  setTimeout(() => {
+  // Buka WhatsApp di tab baru, lalu bersihkan keranjang segera
+  const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+  const newWindow = window.open(waUrl, '_blank', 'noopener');
+  if (newWindow) {
     state.cart = {};
     updateCartUI();
-  }, 2000);
+    showToast('Pesanan terkirim. Lanjutkan pembayaran di WhatsApp.');
+  } else {
+    showToast('⚠️ Pop‑up diblokir. Silakan kirim manual ke WhatsApp kami.');
+  }
 }
 
 // ---------------------------------------------------------------------------
 // SHOW ORDER CONFIRMATION
 // ---------------------------------------------------------------------------
 async function showOrderConfirmation() {
-  await launchProReceipt(state, DOM, overlayStack, openModal, closeModal, getCartSummaryLocal, downloadReceiptPNG, sendReceiptToTelegram, DOM.finalTotal);
+  const receiptOk = await launchProReceipt(state, DOM, overlayStack, openModal, closeModal, getCartSummaryLocal, downloadReceiptPNG, sendReceiptToTelegram, DOM.finalTotal);
+  return receiptOk;
 }
 
 // ---------------------------------------------------------------------------
@@ -890,7 +895,6 @@ function bindEvents() {
     else navigator.clipboard.writeText(shareUrl + '\n' + shareText).then(() => showToast('📋 Link produk disalin!')).catch(() => showToast('📋 Gagal menyalin link'));
   });
 
-  // FIX: VIP Concierge tersentralisasi di JS
   document.getElementById('btnVipConcierge')?.addEventListener('click', (e) => {
     e.preventDefault();
     const text = encodeURIComponent("Halo RUJAK.Co, saya tertarik dengan layanan VIP Concierge.");
@@ -968,10 +972,23 @@ function bindEvents() {
   deliveryDropdown?.addEventListener('keydown', (e) => {
     const opts = [...deliveryDropdown.querySelectorAll('[role="option"]')];
     if (!opts.length) return;
-    if (e.key === 'ArrowDown') { e.preventDefault(); deliveryActiveIndex = Math.min(deliveryActiveIndex + 1, opts.length - 1); opts[deliveryActiveIndex].focus(); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); deliveryActiveIndex = Math.max(deliveryActiveIndex - 1, 0); opts[deliveryActiveIndex].focus(); }
-    else if (e.key === 'Enter') { e.preventDefault(); setDeliveryOption(opts[deliveryActiveIndex]); }
-    else if (e.key === 'Escape') { closeDeliveryDropdown(); deliveryTrigger.focus(); }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      deliveryActiveIndex = Math.min(deliveryActiveIndex + 1, opts.length - 1);
+      opts.forEach((o, i) => o.setAttribute('aria-selected', i === deliveryActiveIndex ? 'true' : 'false'));
+      opts[deliveryActiveIndex].focus();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      deliveryActiveIndex = Math.max(deliveryActiveIndex - 1, 0);
+      opts.forEach((o, i) => o.setAttribute('aria-selected', i === deliveryActiveIndex ? 'true' : 'false'));
+      opts[deliveryActiveIndex].focus();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      setDeliveryOption(opts[deliveryActiveIndex]);
+    } else if (e.key === 'Escape') {
+      closeDeliveryDropdown();
+      deliveryTrigger.focus();
+    }
   });
   document.addEventListener('click', (e) => { if (!deliveryTrigger?.contains(e.target) && !deliveryDropdown?.contains(e.target)) closeDeliveryDropdown(); });
 
@@ -998,6 +1015,7 @@ function bindEvents() {
     saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict, state.userDistance);
   });
 
+  // Handler utama untuk klik global
   document.addEventListener('click', async (e) => {
     const boutique = e.target.closest('.boutique-item');
     if (boutique) { const idx = parseInt(boutique.dataset.idx); if (!isNaN(idx)) openProductPage(idx); return; }
@@ -1141,8 +1159,10 @@ function bindEvents() {
 
       if (state.userDistance == null) {
         let recovered = false;
-        const addressToSearch = state.selectedDistrictFull || DOM.districtInput?.value?.trim() ||
-                                (state.selectedDistrict ? `${state.selectedDistrict}, ${state.customerAddress}` : '');
+        const addressToSearch = state.selectedDistrictFull
+          || (state.selectedDistrict && state.customerAddress ? `${state.selectedDistrict}, ${state.customerAddress}` : '')
+          || DOM.districtInput?.value?.trim()
+          || state.customerAddress;
         if (addressToSearch) {
           try {
             const results = await queuedSearch(addressToSearch);
@@ -1150,7 +1170,6 @@ function bindEvents() {
               const place = results[0];
               const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, parseFloat(place.lat), parseFloat(place.lon));
               state.userDistance = result.distance;
-              state.haversineUsed = result.isHaversine;
               state.selectedDistrictFull = place.display_name;
               state.selectedDistrict = extractShortLocation(place.display_name);
               DOM.districtInput && (DOM.districtInput.value = place.display_name);
@@ -1169,7 +1188,11 @@ function bindEvents() {
         }
       }
 
-      await showOrderConfirmation();
+      const receiptOk = await showOrderConfirmation();
+      if (!receiptOk) {
+        e.target.dataset.processing = 'false';
+        return;
+      }
       e.target.dataset.processing = 'false';
       return;
     }
@@ -1273,6 +1296,8 @@ function init() {
       if (isProgrammaticBack) { isProgrammaticBack = false; return; }
       if (overlayStack.length > 0) {
         const topOverlay = overlayStack[overlayStack.length - 1];
+        // Cek kecocokan id dari state
+        if (e.state && e.state.id && e.state.id !== topOverlay.id) return;
         if (topOverlay.id === 'productPage') closeProductPage(true);
         else closeModal(topOverlay, true);
       }
