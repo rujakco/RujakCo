@@ -17,11 +17,8 @@
   <meta name="twitter:image" content="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" />
   <meta name="theme-color" content="#082E21">
 
-  <!-- Prefetch untuk resource yang hanya diperlukan nanti -->
+  <!-- Prefetch resource opsional -->
   <link rel="prefetch" href="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" as="script" />
-  
-  <!-- PWA manifest (jika sudah dibuat) -->
-  <!-- <link rel="manifest" href="/manifest.json" /> -->
 
   <script type="application/ld+json">
   {
@@ -72,11 +69,50 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  <!-- Non‑blocking CSS: langsung tampilkan konten, CSS menyusul -->
+  <!-- ✅ CRITICAL CSS INLINE — mencegah FOUC -->
+  <style>
+    /* Reset & body */
+    *,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:rgba(0,0,0,0.08)}
+    html,body{margin:0;padding:0;background-color:#082E21;font-family:'DM Sans',sans-serif;font-size:16px;color:#FDFBF7}
+    #app{position:relative;width:100%;max-width:480px;min-height:100dvh;margin:0 auto;overflow-x:hidden}
+
+    /* Onboarding */
+    .onboarding-overlay{position:fixed;inset:0;z-index:1100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;background:radial-gradient(circle at 50% 30%,rgba(183,146,79,0.08),transparent 60%),linear-gradient(180deg,#082E21,#020A07);text-align:center}
+    .onb-logo{width:76px;height:76px;margin-bottom:20px;padding:6px;background:rgba(0,0,0,0.15);border:1px solid rgba(183,146,79,0.3);border-radius:50%}
+    .onb-title{font-family:'Fraunces',serif;font-size:2.1rem;font-weight:350;line-height:1.1;color:#FDFBF7}
+    .onb-subtitle,.onb-welcome-text{font-size:0.65rem;font-weight:600;color:#E8D5A8;text-transform:uppercase;letter-spacing:0.25em}
+
+    /* Header */
+    .luxury-header{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;max-width:480px;margin:0 auto;padding:10px 20px;background:linear-gradient(180deg,rgba(2,10,7,0.75),rgba(8,46,33,0.55) 70%,transparent)}
+    .header-left{display:flex;align-items:center;gap:10px;background:none;border:none;color:inherit;cursor:pointer}
+    .brand-logo img{width:28px;height:28px;border-radius:50%}
+    .brand-name{font-family:'Fraunces',serif;font-size:1rem;font-weight:600;color:white}
+    .header-right{display:flex;align-items:center;gap:4px}
+    .user-name{font-size:0.875rem;font-weight:700;color:white}
+    .user-loc{font-size:0.75rem;color:rgba(255,255,255,0.9)}.user-loc::before{content:'•';margin-right:4px;opacity:0.7}
+
+    /* Hero */
+    .content-wrapper{padding-bottom:120px}.hero-gold-frame{margin:64px 20px 0;border-radius:20px}.hero-img-wrap{position:relative;overflow:hidden;aspect-ratio:16/9;background-color:#051C14;border-radius:20px}.hero-img{display:block;width:100%;height:100%;object-fit:cover}
+    .hero-overlay-new{position:absolute;inset:auto 0 0 0;display:flex;align-items:flex-end;padding:30px 20px 18px;background:linear-gradient(to top,rgba(0,0,0,0.5),rgba(0,0,0,0.1),transparent)}
+    .hero-title{font-family:'Fraunces',serif;font-size:clamp(1.4rem,5vw,1.85rem);line-height:1.1;color:white}.hero-title-em{color:#E8D5A8;font-style:italic}
+    .hero-subtitle{font-size:0.65rem;text-transform:uppercase;color:rgba(255,255,255,0.9)}
+
+    /* Skeleton card */
+    .skeleton-card{flex:0 0 100%;max-width:440px;margin:0 -12px;padding:32px 28px;background:white;border-radius:28px;text-align:center}
+    .skeleton-img{width:100%;aspect-ratio:1/1;background:#E6E4DF;border-radius:12px;position:relative;overflow:hidden}
+    .skeleton-text{height:14px;background:#E6E4DF;border-radius:4px;margin:20px auto 8px;position:relative;overflow:hidden}.skeleton-text.w-60{width:60%}.skeleton-text.w-40{width:40%}.skeleton-text.w-80{width:80%}
+
+    /* Bottom nav */
+    .bottom-nav{position:fixed;right:0;bottom:0;left:0;z-index:600;display:flex;justify-content:space-around;max-width:480px;margin:0 auto;padding:5px 0 6px;background:rgba(5,28,20,0.92);border-top:1px solid rgba(183,146,79,0.2);border-radius:16px 16px 0 0}
+    .nav-item{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;min-height:48px;background:none;border:none;color:rgba(253,251,247,0.35);font-size:0.7rem;font-weight:600;cursor:pointer}
+    .nav-item.active{color:#A67C3D}
+    .nav-icon{width:20px;height:20px}
+  </style>
+
+  <!-- CSS Non‑blocking untuk komponen lain -->
   <link rel="stylesheet" href="style.css" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="style.css" /></noscript>
 
-  <!-- Script eksternal dengan defer agar tidak memblokir rendering -->
   <script src="https://unpkg.com/lucide@0.378.0/dist/umd/lucide.min.js" defer></script>
 </head>
 <body>
