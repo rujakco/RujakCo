@@ -69,20 +69,16 @@
   <script src="https://unpkg.com/lucide@0.378.0/dist/umd/lucide.min.js" defer></script>
 </head>
 <body>
-<!-- Skip link -->
-<a href="#mainContent" class="skip-link" style="position:absolute;top:-100%;left:0;background:var(--green);color:#fff;padding:8px;z-index:10000;">Langsung ke konten</a>
-
 <noscript>
   <div style="background:#082E21;color:white;text-align:center;padding:16px;font-family:'DM Sans', sans-serif;">
     Mohon aktifkan JavaScript untuk menggunakan seluruh fitur reservasi premium kami.
   </div>
 </noscript>
-
 <div id="app">
   <!-- ONBOARDING -->
   <div class="onboarding-overlay" id="onboardingOverlay" role="dialog" aria-modal="true" aria-labelledby="onbTitle">
     <div class="onb-content">
-      <img class="onb-logo" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="RUJAK.Co" />
+      <img class="onb-logo" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="RUJAK.Co" loading="lazy" />
       <div id="onbNewUser" style="display:none; width:100%;">
         <h2 class="onb-title" id="onbTitle">Selamat Datang</h2>
         <p class="onb-subtitle">Nikmati keistimewaan rasa Nusantara.</p>
@@ -128,7 +124,7 @@
     <div class="hero-editorial fade-up">
       <div class="hero-gold-frame">
         <div class="hero-img-wrap">
-          <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Rujak premium RUJAK.Co" width="1280" height="720" fetchpriority="high" decoding="async" onerror="this.onerror=null; this.style.backgroundColor='var(--green-light)';" />
+          <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Rujak premium RUJAK.Co" fetchpriority="high" decoding="async" onerror="this.onerror=null; this.style.backgroundColor='var(--green-light)';" />
           <div class="hero-overlay-new">
             <div class="hero-content">
               <h1 class="hero-title">Asam, Pedas,<br> Manis, <span class="hero-title-em">Segar.</span></h1>
@@ -148,9 +144,6 @@
       <p id="productInsightText" class="typing-text"></p>
     </div>
     
-    <!-- Live region keranjang -->
-    <div id="cartLiveRegion" class="sr-only" aria-live="polite" aria-atomic="true"></div>
-
     <div class="testi-flip-container" id="testiFlipContainer" role="region" aria-roledescription="carousel" aria-label="Testimoni pelanggan">
       <button type="button" id="testiPauseBtn" class="testi-pause-btn" aria-label="Jeda testimoni otomatis" aria-pressed="false">
         <i data-lucide="pause" style="width:14px;height:14px;" aria-hidden="true"></i>
@@ -182,7 +175,6 @@
     <div class="sec-header"><span class="sec-title">Pertanyaan Umum</span></div>
     
     <div class="faq-container" id="faqContainer">
-      <!-- FAQ items tetap sama seperti sebelumnya, tidak ada perubahan -->
       <div class="faq-item open">
         <button type="button" class="faq-question" data-toggle="faq" aria-expanded="true" aria-controls="faq-answer-1" id="faq-q-1">
           <span>Mengapa sambal dikemas terpisah?</span>
@@ -272,11 +264,11 @@
         <div class="checkout-forms">
           <h4>Data Penerima</h4>
           <label class="tiny-text" for="customerName">Nama Lengkap</label>
-          <input type="text" id="customerName" class="input-minimal" placeholder="Nama lengkap penerima" autocomplete="name" maxlength="50" required aria-required="true" />
+          <input type="text" id="customerName" class="input-minimal" placeholder="Nama lengkap penerima" autocomplete="name" maxlength="50" required />
           <label class="tiny-text" for="customerPhone">Nomor HP (WhatsApp)</label>
-          <input type="tel" id="customerPhone" inputmode="numeric" autocomplete="tel" class="input-minimal" placeholder="Nomor HP aktif (Contoh: 08123...)" maxlength="15" required aria-required="true" />
+          <input type="tel" id="customerPhone" inputmode="numeric" autocomplete="tel" class="input-minimal" placeholder="Nomor HP aktif (Contoh: 08123...)" maxlength="15" required />
           <label class="tiny-text" for="customerAddress">Detail Alamat (Blok, No. Rumah, Patokan)</label>
-          <textarea id="customerAddress" placeholder="Blok, No. Rumah, atau patokan khusus" rows="2" class="input-minimal" autocomplete="street-address" maxlength="200" required aria-required="true"></textarea>
+          <textarea id="customerAddress" placeholder="Blok, No. Rumah, atau patokan khusus" rows="2" class="input-minimal" autocomplete="street-address" maxlength="200" required></textarea>
           <label class="tiny-text" for="districtInput">Titik Lokasi (Cari Kelurahan/Jalan)</label>
           <div style="position:relative;">
             <input type="text" id="districtInput" class="input-minimal" placeholder="Ketik nama jalan atau kelurahan..." autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="drawerDistrictDropdown" aria-haspopup="listbox" />
@@ -357,29 +349,29 @@
       </div>
       <div class="drawer-body">
         <div class="qris-payment-block">
-          <button type="button" class="qris-frame-btn" aria-label="Lihat QRIS lebih besar">
+          <button type="button" class="qris-frame-btn" aria-label="Lihat QRIS lebih besar" style="border:none; background:transparent; padding:0; width:100%; max-width:400px; cursor:zoom-in;">
             <div class="qris-frame"><img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="QRIS RUJAK.Co – scan untuk membayar" onerror="this.onerror=null; this.src='https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp';" /></div>
           </button>
           <div id="paymentTotalDisplay" class="qris-total">Rp0</div>
         </div>
-        <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 32px; width: 100%; max-width: 320px; margin-left: auto; margin-right: auto;">
-          <div style="flex:1; text-align:center;">
-            <div class="payment-step-icon" style="background:var(--bg-subtle); border:1px solid var(--gray-200); color:var(--gray-600);">
+        <div class="payment-steps-row">
+          <div class="payment-step-item" id="btnDownloadStruk">
+            <div class="payment-step-icon">
               <i data-lucide="download" class="icon-sm"></i>
             </div>
-            <div style="font-size:0.65rem; font-weight:700; color:var(--gray-900); text-transform:uppercase; letter-spacing:0.05em;">1. Struk</div>
+            <span class="payment-step-label">1. Struk</span>
           </div>
-          <div style="flex:1; text-align:center;">
-            <div class="payment-step-icon" style="background:var(--bg-subtle); border:1px solid var(--gray-200); color:var(--gray-600);">
+          <div class="payment-step-item" id="btnScanBayar">
+            <div class="payment-step-icon">
               <i data-lucide="scan-line" class="icon-sm"></i>
             </div>
-            <div style="font-size:0.65rem; font-weight:700; color:var(--gray-900); text-transform:uppercase; letter-spacing:0.05em;">2. Bayar</div>
+            <span class="payment-step-label">2. Bayar</span>
           </div>
-          <div style="flex:1; text-align:center;">
-            <div class="payment-step-icon" style="background:var(--green-light); border:1px solid var(--green); color:var(--green); box-shadow: 0 4px 12px rgba(8,46,33,0.1);">
+          <div class="payment-step-item" id="btnKabariWa">
+            <div class="payment-step-icon" style="background:var(--green-light); border-color:var(--green); color:var(--green); box-shadow: 0 4px 12px rgba(8,46,33,0.1);">
               <i data-lucide="message-circle" class="icon-sm"></i>
             </div>
-            <div style="font-size:0.65rem; font-weight:700; color:var(--green); text-transform:uppercase; letter-spacing:0.05em;">3. Kabari</div>
+            <span class="payment-step-label" style="color:var(--green);">3. Kabari</span>
           </div>
         </div>
         <button type="button" class="btn-dark full-width" id="confirmPaymentBtn" data-action="confirm-wa"><i data-lucide="check" class="icon-sm inline" style="margin-right:8px;"></i> Validasi Reservasi via WhatsApp</button>
