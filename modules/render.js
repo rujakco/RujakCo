@@ -26,6 +26,17 @@ export function renderMenu(containerId = 'menuList') {
         <div class="btq-price-wrap"><span class="btq-price">${fmt(p.price)}</span></div>
       </div>
     </div>`).join('');
+
+  // Skeleton handling untuk gambar carousel
+  container.querySelectorAll('img.btq-img').forEach(img => {
+    if (img.complete && img.naturalWidth > 0) {
+      img.classList.add('loaded');
+    } else {
+      img.addEventListener('load', () => img.classList.add('loaded'));
+      img.addEventListener('error', () => img.classList.add('loaded')); // fallback
+    }
+  });
+
   container.querySelectorAll('img').forEach(img => {
     img.addEventListener('error', () => {
       img.style.display = 'none';
@@ -62,7 +73,6 @@ export function renderProductSwiper(drafts, trackId = 'productSwiperTrack') {
             <button class="step-1-btn btn-gold" data-idx="${index}" data-pid="${p.id}">Sesuaikan &amp; Pesan</button>
           </div>
           <div id="step2_${index}_${p.id}" class="step-2-content">
-            <!-- STRUKTUR BARU SPICE SELECTOR (PILL GROUP) -->
             <div class="spice-level-container">
               <div class="spice-header">
                 <span class="spice-title">Tingkat Pedas</span>
@@ -72,7 +82,6 @@ export function renderProductSwiper(drafts, trackId = 'productSwiperTrack') {
                 ${[1,2,3,4,5].map(i => `<button class="spice-option ${i === draft.spice ? 'active' : ''}" data-spice="${i}" data-pid="${p.id}">${i}</button>`).join('')}
               </div>
             </div>
-            <!-- AKHIR STRUKTUR BARU -->
             <div class="detail-actions" style="margin-bottom:0;">
               <div class="qty-minimal">
                 <button class="qty-minus" data-pid="${p.id}" aria-label="Kurangi jumlah">−</button>
