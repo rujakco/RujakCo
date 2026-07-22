@@ -20,10 +20,6 @@
   <!-- Prefetch resource opsional -->
   <link rel="prefetch" href="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" as="script" />
 
-  <!-- Preload font agar siap sebelum render -->
-  <link rel="preload" href="https://fonts.gstatic.com/s/fraunces/v36/6NUu8FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0I.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="https://fonts.gstatic.com/s/dmsans/v15/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0.woff2" as="font" type="font/woff2" crossorigin />
-
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -73,7 +69,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  <!-- ✅ CRITICAL CSS INLINE — mencakup semua elemen above the fold -->
+  <!-- ✅ CRITICAL CSS INLINE — mencegah FOUC -->
   <style>
     *,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:rgba(0,0,0,0.08)}
     html,body{margin:0;padding:0;background-color:#082E21;font-family:'DM Sans',sans-serif;font-size:16px;color:#FDFBF7;-webkit-font-smoothing:antialiased}
@@ -84,19 +80,17 @@
     h4{font-size:clamp(1.125rem,3.5vw,1.25rem);line-height:1.25}
     p,li{font-size:clamp(0.9375rem,3vw,1rem);line-height:1.7}
 
-    /* Onboarding */
     .onboarding-overlay{position:fixed;inset:0;z-index:1100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;background:radial-gradient(circle at 50% 30%,rgba(183,146,79,0.08),transparent 60%),linear-gradient(180deg,#082E21,#020A07);text-align:center;transition:opacity 0.8s,visibility 0.8s}
     .onb-logo{width:76px;height:76px;margin-bottom:20px;padding:6px;background:rgba(0,0,0,0.15);border:1px solid rgba(183,146,79,0.3);border-radius:50%}
     .onb-title{font-family:'Fraunces',serif;font-size:2.1rem;font-weight:350;line-height:1.1;color:#FDFBF7}
     .onb-subtitle,.onb-welcome-text{font-size:0.65rem;font-weight:600;color:#E8D5A8;text-transform:uppercase;letter-spacing:0.25em;margin-bottom:36px}
     .onb-step{display:none;width:100%;max-width:290px;margin:0 auto;animation:fadeUp 0.6s ease both}.onb-step.active{display:block}
     .onb-label{display:block;margin-bottom:12px;font-size:0.65rem;font-weight:600;color:rgba(253,251,247,0.85);text-transform:uppercase;letter-spacing:0.2em}
-    .onb-input{width:100%;margin-bottom:24px;padding:14px 12px;background:rgba(2,10,7,0.3);border:1px solid rgba(255,255,255,0.2);border-radius:12px;font-family:'Fraunces',serif;font-size:1.6rem;font-weight:350;color:#FDFBF7;text-align:center;outline:none;transition:border-color 0.4s,background-color 0.4s,box-shadow 0.4s,color 0.3s,text-shadow 0.3s}
+    .onb-input{width:100%;margin-bottom:24px;padding:14px 12px;background:rgba(2,10,7,0.3);border:1px solid rgba(255,255,255,0.2);border-radius:12px;font-family:'Fraunces',serif;font-size:1.6rem;font-weight:350;color:#FDFBF7;text-align:center;outline:none}
     .btn-gold,.btn-dark{display:flex;align-items:center;justify-content:center;width:100%;padding:24px 32px;border:none;border-radius:12px;font-size:0.875rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;cursor:pointer}.btn-gold{background:#A67C3D;color:white}.btn-dark{background:#082E21;border:1px solid #C9A868;color:#FDFBF7}
     .btn-text-gold{background:none;border:none;font-size:0.75rem;color:#E8D5A8;text-transform:uppercase;letter-spacing:0.15em;cursor:pointer;margin-top:32px}
     @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
-    /* Header */
     .luxury-header{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;max-width:480px;margin:0 auto;padding:10px 20px;background:linear-gradient(180deg,rgba(2,10,7,0.75),rgba(8,46,33,0.55) 70%,transparent)}
     .header-left{display:flex;align-items:center;gap:10px;background:none;border:none;color:inherit;cursor:pointer}
     .brand-logo img{width:28px;height:28px;border-radius:50%}
@@ -104,34 +98,23 @@
     .header-right{display:flex;align-items:center;gap:4px}
     .user-name{font-size:0.875rem;font-weight:700;color:white}.user-loc{font-size:0.75rem;color:rgba(255,255,255,0.9)}.user-loc::before{content:'•';margin-right:4px;opacity:0.7}
 
-    /* Hero */
     .content-wrapper{padding-bottom:120px}.hero-gold-frame{margin:64px 20px 0;border-radius:20px}.hero-img-wrap{position:relative;overflow:hidden;aspect-ratio:16/9;background:#051C14;border-radius:20px}.hero-img{display:block;width:100%;height:100%;object-fit:cover}
     .hero-overlay-new{position:absolute;inset:auto 0 0 0;display:flex;align-items:flex-end;padding:30px 20px 18px;background:linear-gradient(to top,rgba(0,0,0,0.5),rgba(0,0,0,0.1),transparent)}.hero-title{font-size:clamp(1.4rem,5vw,1.85rem);line-height:1.1;color:white}.hero-title-em{color:#E8D5A8;font-style:italic}.hero-subtitle{font-size:0.65rem;text-transform:uppercase;color:rgba(255,255,255,0.9)}
 
-    /* Carousel & Skeleton */
     .carousel-container{position:relative;width:100%;margin-top:16px}.carousel-track{display:flex;overflow-x:auto;padding:40px 20px 24px;scroll-snap-type:x mandatory;scrollbar-width:none}.carousel-track::-webkit-scrollbar{display:none}
     .skeleton-card{flex:0 0 100%;max-width:440px;margin:0 -12px;padding:32px 28px;background:white;border-radius:28px;text-align:center}
-    .skeleton-img{width:100%;aspect-ratio:1/1;background:#E6E4DF;border-radius:12px;position:relative;overflow:hidden}
-    .skeleton-text{height:14px;background:#E6E4DF;border-radius:4px;margin:20px auto 8px;position:relative;overflow:hidden}.skeleton-text.w-60{width:60%}.skeleton-text.w-40{width:40%}.skeleton-text.w-80{width:80%}
+    .skeleton-img{width:100%;aspect-ratio:1/1;background:#E6E4DF;border-radius:12px;overflow:hidden}
+    .skeleton-text{height:14px;background:#E6E4DF;border-radius:4px;margin:20px auto 8px;overflow:hidden}.skeleton-text.w-60{width:60%}.skeleton-text.w-40{width:40%}.skeleton-text.w-80{width:80%}
 
-    /* Product Insight */
     .product-insight-container{display:flex;align-items:center;justify-content:center;min-height:48px;margin-bottom:24px;padding:0 24px;text-align:center}
     .typing-text{max-width:320px;font-family:'Fraunces',serif;font-size:1rem;font-style:italic;line-height:1.9;color:white}
-
-    /* Testimoni */
     .testi-flip-container{position:relative;min-height:140px;margin:24px 20px 16px;padding:16px 16px 32px;border:1px solid #C9A868;border-radius:14px;color:white}
-
-    /* Footer */
     .luxury-footer{padding:72px 16px 56px;background:#082E21;border-top:1px solid rgba(183,146,79,0.12)}.footer-row{display:flex;flex-direction:column;align-items:center;max-width:440px;margin:0 auto;gap:8px;text-align:center}.footer-brand{color:#E8D5A8}
 
-    /* Bottom Nav */
     .bottom-nav{position:fixed;right:0;bottom:0;left:0;z-index:600;display:flex;justify-content:space-around;max-width:480px;margin:0 auto;padding:5px 0 6px;background:rgba(5,28,20,0.92);border-top:1px solid rgba(183,146,79,0.2);border-radius:16px 16px 0 0}
     .nav-item{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;min-height:48px;background:none;border:none;color:rgba(253,251,247,0.35);font-size:0.7rem;font-weight:600;cursor:pointer}.nav-item.active{color:#A67C3D}.nav-icon{width:20px;height:20px}
 
-    /* Full-width utility */
     .full-width{width:100%}
-
-    /* Fade up */
     .fade-up{opacity:0;transform:translateY(32px);transition:opacity 0.8s,transform 0.8s}.fade-up.visible{opacity:1;transform:translateY(0)}
   </style>
 
@@ -210,7 +193,6 @@
     
     <div class="carousel-container fade-up">
       <div class="carousel-track" id="menuList">
-        <!-- Skeleton loading -->
         <div class="skeleton-card">
           <div class="skeleton-img"></div>
           <div class="skeleton-text w-60"></div>
@@ -320,7 +302,6 @@
     <button type="button" id="backFromProduct" class="glass-btn floating-close" aria-label="Kembali"><i data-lucide="arrow-left" class="icon-sm"></i></button>
     <button type="button" id="shareProductBtn" class="glass-btn floating-share" aria-label="Bagikan Produk"><i data-lucide="share-2" class="icon-sm"></i></button>
     <div class="product-swiper-track" id="productSwiperTrack">
-      <!-- Skeleton loading -->
       <div class="product-slide" style="display:flex; align-items:center; justify-content:center; background:var(--dark-green-deep);">
         <div style="text-align:center; color:var(--ivory-60);">
           <div class="skeleton-img" style="width:200px; height:200px; margin:0 auto 20px; background:var(--gray-100);"></div>
