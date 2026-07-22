@@ -1,5 +1,5 @@
 /* =========================================
-   1. DESIGN TOKENS — QUIET & STATEMENT LUXURY
+   1. DESIGN TOKENS — STATEMENT LUXURY
    ========================================= */
 :root {
   /* Warna */
@@ -753,7 +753,6 @@ p, li, .body-text {
   height: 88dvh;
   will-change: transform;
   color: var(--gray-900);
-  
   box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.4), 
               0 0 0 1px rgba(183, 146, 79, 0.15) inset;
   background: var(--bg-surface);
@@ -801,7 +800,7 @@ p, li, .body-text {
 }
 
 /* =========================================
-   13. PRODUCT SWIPER OVERLAY
+   13. THE VELVET ROOM (DARK PRODUCT PAGE)
    ========================================= */
 .product-swiper-overlay {
   position: fixed;
@@ -824,23 +823,26 @@ p, li, .body-text {
 }
 .product-swiper-overlay .floating-close { left: 16px; }
 .product-swiper-overlay .floating-share { right: 16px; }
+
+/* Tombol Melayang Kaca Gelap */
 .glass-btn {
-  background: rgba(253,251,247,0.96);
-  border: 1px solid rgba(255,255,255,0.8);
+  background: rgba(5, 28, 20, 0.6);
+  border: 1px solid rgba(183, 146, 79, 0.3);
   width: 44px;
   height: 44px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--green);
+  color: var(--gold-bright);
   cursor: pointer;
   backdrop-filter: var(--blur-glass);
   -webkit-backdrop-filter: var(--blur-glass);
   transition: transform var(--dur-fast) ease;
-  box-shadow: var(--shadow-soft);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
-.glass-btn:active { transform: scale(0.92); }
+.glass-btn:active { background: rgba(183, 146, 79, 0.2); transform: scale(0.92); }
+
 .product-swiper-track {
   display: flex;
   width: 100%;
@@ -859,8 +861,8 @@ p, li, .body-text {
   overflow-y: auto;
   overscroll-behavior-y: contain;
   overflow-x: hidden;
-  background: var(--bg-surface);
-  color: var(--gray-900);
+  background: var(--green); /* Velvet Room Background */
+  color: var(--ivory);
   position: relative;
 }
 .detail-image-wrap {
@@ -875,23 +877,22 @@ p, li, .body-text {
   object-fit: cover;
   display: block;
 }
-.detail-image-wrap img.lazy-detail {
-  opacity: 0;
-  transition: opacity var(--dur-normal) ease;
-}
+.detail-image-wrap img.lazy-detail { opacity: 0; transition: opacity var(--dur-normal) ease; }
 .detail-image-wrap img.lazy-detail.loaded { opacity: 1; }
+
 .detail-content {
   padding: 56px 32px 120px;
-  background: var(--bg-surface);
+  background: #051C14; /* Dasar konten hijau pekat */
   position: relative;
   z-index: 2;
   margin-top: -20px;
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   min-height: 40vh;
-  box-shadow: 0 -20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.6);
+  border-top: 1px solid rgba(183, 146, 79, 0.15);
   line-height: 1.8;
 }
-.detail-content h2 { color: var(--green); margin-bottom: 4px; }
+.detail-content h2 { color: var(--gold-bright); margin-bottom: 4px; letter-spacing: 0.05em; }
 .detail-content > .detail-desc,
 .detail-content > .action-area,
 .detail-content > .detail-specs,
@@ -904,16 +905,17 @@ p, li, .body-text {
   margin: 0;
 }
 .price-line { flex: 1; height: 1px; background: var(--gold); opacity: 0.35; }
-.detail-desc { color: var(--gray-900); text-align: left; max-width: 400px; }
+.detail-desc { color: rgba(253, 251, 247, 0.85); text-align: left; max-width: 400px; }
+
 .detail-specs {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px 16px;
   font-size: 0.875rem;
-  color: var(--gray-600);
+  color: rgba(253, 251, 247, 0.6);
 }
 .detail-specs strong {
-  color: var(--green);
+  color: var(--gold);
   font-weight: 600;
   display: block;
   font-size: 0.75rem;
@@ -925,7 +927,7 @@ p, li, .body-text {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: var(--gray-600);
+  color: var(--gold-soft);
   margin-bottom: var(--space-3);
   font-weight: 600;
   display: block;
@@ -937,7 +939,7 @@ p, li, .body-text {
   display: block;
   text-align: center;
   line-height: 1.8;
-  color: var(--gray-900);
+  color: rgba(253, 251, 247, 0.95);
   margin-bottom: var(--space-5);
   padding: 0 16px;
 }
@@ -950,10 +952,10 @@ p, li, .body-text {
   vertical-align: middle;
 }
 .detail-manifesto {
-  background: linear-gradient(180deg, rgba(183,146,79,0.05), transparent);
+  background: rgba(183, 146, 79, 0.05);
   padding: var(--space-4);
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(183,146,79,0.25);
+  border: 1px solid rgba(183, 146, 79, 0.2);
   text-align: center;
 }
 .detail-manifesto h4 {
@@ -965,7 +967,7 @@ p, li, .body-text {
   text-transform: uppercase;
 }
 .detail-manifesto p {
-  color: var(--gray-900);
+  color: var(--gold-bright);
   font-family: var(--font-heading);
   font-style: italic;
   margin: 0;
@@ -975,7 +977,7 @@ p, li, .body-text {
   font-style: italic;
   font-size: 1.05rem;
   line-height: 1.6;
-  color: var(--gray-600);
+  color: rgba(183, 146, 79, 0.8);
   font-weight: 400;
 }
 
@@ -987,23 +989,24 @@ p, li, .body-text {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid var(--gold-soft);
+  border: 1px solid rgba(183, 146, 79, 0.4);
   border-radius: 100px;
   padding: 4px;
 }
 .qty-minimal button {
   width: 44px; height: 44px;
   background: transparent; border: none;
-  font-size: 1.5rem; color: var(--green);
+  font-size: 1.5rem; 
+  color: var(--gold-bright);
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   border-radius: 50%;
   transition: background-color var(--dur-fast) ease;
 }
-.qty-minimal button:active { background-color: var(--green-light); }
+.qty-minimal button:active { background-color: rgba(183, 146, 79, 0.15); }
 .qty-minimal span {
   width: 36px; text-align: center; font-size: 1.125rem; font-weight: 500;
-  color: var(--gray-900); font-family: var(--font-heading);
+  color: var(--ivory); font-family: var(--font-heading);
 }
 .add-to-cart-btn {
   flex: 1; border-radius: 100px; padding: 0 16px;
@@ -1153,10 +1156,30 @@ input:-webkit-autofill:active {
   padding: var(--space-4); font-size: 0.9375rem; line-height: 1.6;
   display: flex; flex-direction: column; gap: 16px;
 }
+.msg-bot {
+  position: relative;
+  margin-top: 8px; 
+}
+.msg-bot::before {
+  content: '✦';
+  position: absolute;
+  left: -2px;
+  top: -16px;
+  font-size: 0.85rem;
+  color: var(--gold-bright);
+  text-shadow: 0 0 10px var(--gold);
+}
 .msg-bot span { 
-  background: var(--bg-surface); color: var(--green); padding: 16px 20px; 
+  background: rgba(183, 146, 79, 0.08); 
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--ivory); 
+  padding: 16px 20px; 
   border-radius: 2px 20px 20px 20px; display: inline-block; max-width: 85%; 
-  border: 1px solid rgba(183, 146, 79, 0.4); box-shadow: 0 8px 16px rgba(0,0,0,0.15); font-weight: 500;
+  border: 1px solid rgba(183, 146, 79, 0.25); 
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2); 
+  font-weight: 400;
+  letter-spacing: 0.02em;
 }
 .msg-user { text-align: right; }
 .msg-user span { 
@@ -1167,13 +1190,21 @@ input:-webkit-autofill:active {
 }
 .chat-input-row { 
   padding: var(--space-3) 20px calc(var(--space-3) + env(safe-area-inset-bottom, 0px)); 
-  border-top: 1px solid rgba(183, 146, 79, 0.15); display: flex; gap: 12px; background: #030F0A; 
+  border-top: 1px solid rgba(183, 146, 79, 0.15); display: flex; gap: 12px; 
+  background: #020A07; box-shadow: 0 -10px 20px rgba(0,0,0,0.4);
 }
 .chat-input-row input { 
-  margin: 0; padding: 14px 20px; background: rgba(255, 255, 255, 0.04); 
-  border: 1px solid rgba(183, 146, 79, 0.3); border-radius: 100px; font-size: 1rem; color: var(--ivory); transition: all 0.3s ease;
+  margin: 0; padding: 14px 20px; 
+  background: #051C14; 
+  border: 1px solid rgba(183, 146, 79, 0.2); 
+  box-shadow: inset 0 4px 10px rgba(0,0,0,0.5); 
+  color: var(--gold-bright);
+  border-radius: 100px; font-size: 1rem; transition: all 0.3s ease;
 }
-.chat-input-row input:focus { background: rgba(255, 255, 255, 0.08); border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold) inset; }
+.chat-input-row input:focus { 
+  border-color: var(--gold); 
+  box-shadow: inset 0 4px 10px rgba(0,0,0,0.5), 0 0 0 1px var(--gold) inset; 
+}
 .chat-input-row input::placeholder { color: rgba(183, 146, 79, 0.5); font-style: italic; }
 .btn-gold-round {
   background: #A67C3D; color: #fff; border: none; border-radius: 50%; width: 48px; height: 48px;
@@ -1317,3 +1348,55 @@ input:-webkit-autofill:active {
    27. INERT
    ========================================= */
 [inert] { pointer-events: none !important; user-select: none !important; }
+
+/* =========================================
+   28. SPICE LEVEL SELECTOR (KAPSUL VVIP)
+   ========================================= */
+.spice-label-text {
+  display: block;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--gray-500);
+  margin-bottom: 12px;
+  text-align: center;
+  font-weight: 700;
+}
+.spice-selector {
+  display: flex;
+  background: #051C14;
+  border-radius: 100px;
+  padding: 4px;
+  gap: 2px;
+  box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(183, 146, 79, 0.1);
+  margin-bottom: 16px;
+}
+.spice-option {
+  flex: 1;
+  background: transparent;
+  color: rgba(253, 251, 247, 0.35);
+  border: none;
+  padding: 12px 0;
+  border-radius: 100px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+}
+.spice-option.active {
+  background: #A67C3D;
+  color: #fff;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.25), 
+              inset 0 -3px 0 rgba(0, 0, 0, 0.2), 
+              0 6px 12px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transform: scale(1.02);
+  z-index: 2;
+}
+[id^="step1_"], [id^="step2_"] {
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
