@@ -196,23 +196,29 @@ function openModal(modalEl) {
 
 function closeModal(modalEl, fromPopState = false) {
   if (!modalEl) return;
-  modalEl.classList.remove('active');
-  modalEl.setAttribute('aria-hidden', 'true');
-  modalEl.setAttribute('inert', '');
-  const index = overlayStack.indexOf(modalEl);
-  if (index > -1) overlayStack.splice(index, 1);
-  if (overlayStack.length === 0 && !DOM.productPage.classList.contains('active')) {
-    document.body.style.overflow = '';
-    DOM.mainContent?.removeAttribute('inert');
-    DOM.bottomNav?.removeAttribute('inert');
-  }
-  releaseInert();
+
+  // Pindahkan fokus SEBELUM menambahkan aria-hidden/inert
   if (previousFocusedElement && document.body.contains(previousFocusedElement)) {
     previousFocusedElement.focus();
   } else {
     document.getElementById('navHomeBtn')?.focus();
   }
   previousFocusedElement = null;
+
+  modalEl.classList.remove('active');
+  modalEl.setAttribute('aria-hidden', 'true');
+  modalEl.setAttribute('inert', '');
+
+  const index = overlayStack.indexOf(modalEl);
+  if (index > -1) overlayStack.splice(index, 1);
+
+  if (overlayStack.length === 0 && !DOM.productPage.classList.contains('active')) {
+    document.body.style.overflow = '';
+    DOM.mainContent?.removeAttribute('inert');
+    DOM.bottomNav?.removeAttribute('inert');
+  }
+  releaseInert();
+
   if (!fromPopState) {
     isProgrammaticBack = true;
     history.back();
@@ -299,6 +305,10 @@ function openProductPage(globalIndex) {
 
 function closeProductPage(fromPopState = false) {
   if (!DOM.productPage) return;
+
+  // Pindahkan fokus sebelum menyembunyikan
+  document.getElementById('navHomeBtn')?.focus();
+
   DOM.productPage.classList.remove('active');
   setTimeout(() => {
     DOM.productPage.style.display = 'none';
@@ -414,7 +424,6 @@ function updateCartUI() {
     renderMiniCart(state.cart);
     updateShippingUI();
   }
-  // Live region update
   const totalItems = Object.values(state.cart).reduce((sum, item) => sum + item.qty, 0);
   if (DOM.liveCartRegion) {
     DOM.liveCartRegion.textContent = totalItems > 0
@@ -1296,7 +1305,6 @@ function init() {
       if (isProgrammaticBack) { isProgrammaticBack = false; return; }
       if (overlayStack.length > 0) {
         const topOverlay = overlayStack[overlayStack.length - 1];
-        // Cek kecocokan id dari state
         if (e.state && e.state.id && e.state.id !== topOverlay.id) return;
         if (topOverlay.id === 'productPage') closeProductPage(true);
         else closeModal(topOverlay, true);
