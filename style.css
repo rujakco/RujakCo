@@ -1,20 +1,20 @@
 /* =========================================
-   1. DESIGN TOKENS — ARCHITECTURE POLISHED
+   1. DESIGN TOKENS — LENGKAP
    ========================================= */
 :root {
   /* Core Colors */
   --green: #082E21;
   --green-light: #EBF2EF;
-  --gold: #B7924F;               
-  --gold-deep: #8C6A32;          
+  --gold: #B7924F;
+  --gold-deep: #8C6A32;
   --gold-text: #6B4F1E;
   --gold-bright: #E8D5A8;
   --danger: #B54A3F;
   --ivory: #FDFBF7;
-  --bg-surface: #FCFAF8;         
+  --bg-surface: #FCFAF8;
   --bg-subtle: #F6F4F0;
 
-  /* Extended Core Colors (Refactored) */
+  /* Extended Core Colors */
   --white: #FFFFFF;
   --dark-green-deep: #051C14;
   --dark-green-pitch: #020A07;
@@ -25,62 +25,70 @@
   --gray-100: #F4F2EE;
   --gray-200: #E6E4DF;
   --gray-300: #D1CFCA;
-  --gray-400: #96938C;           
+  --gray-400: #96938C;
   --gray-500: #888681;
   --gray-600: #6E6C67;
   --gray-900: #1A1816;
 
   /* Transparencies: Black */
-  --black-03: rgba(0, 0, 0, 0.03);
-  --black-05: rgba(0, 0, 0, 0.05);
-  --black-08: rgba(0, 0, 0, 0.08);
-  --black-10: rgba(0, 0, 0, 0.10);
-  --black-15: rgba(0, 0, 0, 0.15);
-  --black-20: rgba(0, 0, 0, 0.20);
-  --black-30: rgba(0, 0, 0, 0.30);
-  --black-35: rgba(0, 0, 0, 0.35);
-  --black-40: rgba(0, 0, 0, 0.40);
-  --black-50: rgba(0, 0, 0, 0.50);
-  --black-60: rgba(0, 0, 0, 0.60);
-  --black-80: rgba(0, 0, 0, 0.80);
+  --black-03: rgba(0,0,0,0.03);
+  --black-05: rgba(0,0,0,0.05);
+  --black-08: rgba(0,0,0,0.08);
+  --black-10: rgba(0,0,0,0.10);
+  --black-15: rgba(0,0,0,0.15);
+  --black-20: rgba(0,0,0,0.20);
+  --black-25: rgba(0,0,0,0.25);
+  --black-30: rgba(0,0,0,0.30);
+  --black-35: rgba(0,0,0,0.35);
+  --black-40: rgba(0,0,0,0.40);
+  --black-50: rgba(0,0,0,0.50);
+  --black-60: rgba(0,0,0,0.60);
+  --black-80: rgba(0,0,0,0.80);
 
   /* Transparencies: White */
-  --white-04: rgba(255, 255, 255, 0.04);
-  --white-15: rgba(255, 255, 255, 0.15);
-  --white-25: rgba(255, 255, 255, 0.25);
-  --white-40: rgba(255, 255, 255, 0.40);
-  --white-80: rgba(255, 255, 255, 0.80);
-  --white-85: rgba(255, 255, 255, 0.85);
-  --white-90: rgba(255, 255, 255, 0.90);
+  --white-04: rgba(255,255,255,0.04);
+  --white-15: rgba(255,255,255,0.15);
+  --white-18: rgba(255,255,255,0.18);
+  --white-25: rgba(255,255,255,0.25);
+  --white-40: rgba(255,255,255,0.40);
+  --white-80: rgba(255,255,255,0.80);
+  --white-85: rgba(255,255,255,0.85);
+  --white-90: rgba(255,255,255,0.90);
 
   /* Transparencies: Gold */
-  --gold-05: rgba(183, 146, 79, 0.05);
-  --gold-08: rgba(183, 146, 79, 0.08);
-  --gold-10: rgba(183, 146, 79, 0.10);
-  --gold-15: rgba(183, 146, 79, 0.15);
-  --gold-20: rgba(183, 146, 79, 0.20);
-  --gold-25: rgba(183, 146, 79, 0.25);
-  --gold-30: rgba(183, 146, 79, 0.30);
-  --gold-40: rgba(183, 146, 79, 0.40);
-  --gold-50: rgba(183, 146, 79, 0.50);
-  --gold-80: rgba(183, 146, 79, 0.80);
+  --gold-05: rgba(183,146,79,0.05);
+  --gold-08: rgba(183,146,79,0.08);
+  --gold-10: rgba(183,146,79,0.10);
+  --gold-12: rgba(183,146,79,0.12);
+  --gold-15: rgba(183,146,79,0.15);
+  --gold-20: rgba(183,146,79,0.20);
+  --gold-25: rgba(183,146,79,0.25);
+  --gold-30: rgba(183,146,79,0.30);
+  --gold-40: rgba(183,146,79,0.40);
+  --gold-45: rgba(183,146,79,0.45);
+  --gold-50: rgba(183,146,79,0.50);
+  --gold-60: rgba(183,146,79,0.60);
+  --gold-80: rgba(183,146,79,0.80);
+
+  /* Gold Solid */
+  --gold-soft: #C9A868;
 
   /* Transparencies: Ivory & Danger */
-  --ivory-35: rgba(253, 251, 247, 0.35);
-  --ivory-45: rgba(253, 251, 247, 0.45);
-  --ivory-60: rgba(253, 251, 247, 0.60);
-  --ivory-80: rgba(253, 251, 247, 0.80);
-  --ivory-82: rgba(253, 251, 247, 0.82);
-  --ivory-85: rgba(253, 251, 247, 0.85);
-  --ivory-95: rgba(253, 251, 247, 0.95);
-  --danger-soft: rgba(181, 74, 63, 0.35);
+  --ivory-35: rgba(253,251,247,0.35);
+  --ivory-45: rgba(253,251,247,0.45);
+  --ivory-60: rgba(253,251,247,0.60);
+  --ivory-80: rgba(253,251,247,0.80);
+  --ivory-82: rgba(253,251,247,0.82);
+  --ivory-85: rgba(253,251,247,0.85);
+  --ivory-95: rgba(253,251,247,0.95);
+  --danger-soft: rgba(181,74,63,0.35);
 
-  /* Gradients & Shadows — Green-Tinted Ambient */
+  /* Gradients & Shadows — Green-Tinted */
   --gradient-gold: linear-gradient(180deg, #C9A868 0%, #A67C3D 100%);
-  --shadow-soft: 0 2px 8px rgba(2, 10, 7, 0.15);
-  --shadow-medium: 0 8px 24px rgba(2, 10, 7, 0.18);
-  --shadow-floating: 0 20px 50px rgba(2, 10, 7, 0.20);
-  
+  --shadow-soft: 0 2px 8px rgba(2,10,7,0.15);
+  --shadow-medium: 0 8px 24px rgba(2,10,7,0.18);
+  --shadow-floating: 0 20px 50px rgba(2,10,7,0.20);
+
   --shadow-emboss: inset 0 2px 0 var(--white-15), inset 0 -2px 0 rgba(2,10,7,0.25), 0 10px 20px -8px rgba(2,10,7,0.45);
   --shadow-deboss: inset 0 3px 6px rgba(2,10,7,0.30), 0 2px 4px -2px rgba(2,10,7,0.25);
   --shadow-drawer: 0 -20px 50px rgba(2,10,7,0.45), 0 0 0 1px var(--gold-15) inset;
@@ -197,7 +205,7 @@ p, li, .body-text {
 }
 
 /* =========================================
-   4. ONBOARDING – Perbaiki input & spacing
+   4. ONBOARDING – Input modern + spacing rapi
    ========================================= */
 .onboarding-overlay {
   position: fixed;
@@ -273,7 +281,7 @@ p, li, .body-text {
   letter-spacing: 0.2em;
 }
 
-/* --- INPUT DENGAN EFEK SINEMATIK + MODERN --- */
+/* Input sinematik dengan border-radius */
 .onb-input {
   width: 100%;
   margin-bottom: 24px;
@@ -288,7 +296,6 @@ p, li, .body-text {
   text-align: center;
   outline: none;
   transition: border-color 0.4s ease, background-color 0.4s ease, box-shadow 0.4s ease, color 0.3s ease, text-shadow 0.3s ease;
-  /* simpan efek garis tengah sebagai background-image */
   background-image: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
   background-size: 0% 2px;
   background-position: center calc(100% - 2px);
@@ -510,7 +517,7 @@ p, li, .body-text {
 }
 
 /* =========================================
-   7. HERO — SLIM CINEMATIC BANNER
+   7. HERO — Gradien diperpanjang
    ========================================= */
 .content-wrapper {
   padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
@@ -602,7 +609,7 @@ p, li, .body-text {
 }
 
 /* =========================================
-   8. CAROUSEL — .boutique-item tetap asli
+   8. CAROUSEL
    ========================================= */
 .carousel-container {
   position: relative;
@@ -967,7 +974,7 @@ p, li, .body-text {
 .drawer-body {
   flex: 1;
   overflow-y: auto;
-  padding: var(--space-4) var(--space-4) 140px; /* tambahan ruang footer */
+  padding: var(--space-4) var(--space-4) 140px; /* ruang footer */
   overscroll-behavior-y: contain;
 }
 .drawer-footer-sticky {
@@ -1090,7 +1097,7 @@ p, li, .body-text {
   margin-bottom: 4px;
   color: var(--gold-bright);
   letter-spacing: 0.05em;
-  font-size: clamp(1.5rem, 5vw, 2rem);   /* perbaikan ukuran font */
+  font-size: clamp(1.5rem, 5vw, 2rem);
   font-weight: 400;
 }
 .detail-content > .detail-desc,
@@ -1108,7 +1115,7 @@ p, li, .body-text {
 }
 .detail-price {
   margin: 0;
-  font-size: 1.5rem;   /* sedikit lebih kecil agar tidak dominan */
+  font-size: 1.5rem;
   font-weight: 600;
   letter-spacing: 0.05em;
 }
@@ -1200,12 +1207,12 @@ p, li, .body-text {
 }
 
 /* =========================================
-   14. DETAIL ACTIONS — perbaiki jarak tombol
+   14. DETAIL ACTIONS – Spacing tombol
    ========================================= */
 .detail-actions {
   display: flex;
   align-items: stretch;
-  margin-top: 28px;   /* tambah jarak dengan elemen di atas */
+  margin-top: 28px;
   gap: 12px;
 }
 .qty-minimal {
@@ -1446,7 +1453,7 @@ input:-webkit-autofill:active {
 }
 
 /* =========================================
-   16. PEMBAYARAN (QRIS) — perbaiki footer & spacing
+   16. PEMBAYARAN (QRIS) – Footer & spacing
    ========================================= */
 #btnOpenPayment {
   margin-bottom: env(safe-area-inset-bottom, 0px);
@@ -1456,7 +1463,7 @@ input:-webkit-autofill:active {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16px 20px 100px; /* tambahan bawah */
+  padding: 16px 20px 100px;
   overflow-y: auto;
 }
 #paymentModal .qris-payment-block {
@@ -1510,7 +1517,7 @@ input:-webkit-autofill:active {
 #paymentModal .qris-total::before { margin-right: 12px; }
 #paymentModal .qris-total::after  { margin-left: 12px; }
 
-/* payment steps */
+/* Payment steps */
 .payment-steps-row {
   display: flex;
   align-items: flex-start;
@@ -1603,7 +1610,7 @@ input:-webkit-autofill:active {
 }
 
 /* =========================================
-   17. CHAT BUBBLES — VVIP CONCIERGE (perbaiki layout)
+   17. CHAT BUBBLES — VVIP CONCIERGE (Layout fix)
    ========================================= */
 #aiChatBox .drawer-content {
   background: var(--dark-green-deep);
@@ -1627,7 +1634,7 @@ input:-webkit-autofill:active {
   flex-direction: column;
   padding: 0;
   background: transparent;
-  height: 100%; /* memenuhi drawer */
+  height: 100%;
 }
 .chat-messages {
   flex: 1;
@@ -1635,7 +1642,7 @@ input:-webkit-autofill:active {
   padding: 20px 16px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end; /* bubble mulai dari bawah */
+  justify-content: flex-end;
   gap: 16px;
   font-size: 0.9375rem;
   line-height: 1.6;
@@ -2396,7 +2403,7 @@ input:-webkit-autofill:active {
 }
 
 /* =========================================
-   29. RESPONSIVE MOBILE – safety net
+   29. RESPONSIVE MOBILE – Safety net
    ========================================= */
 @media (max-width: 480px) {
   .drawer-content,
@@ -2408,4 +2415,32 @@ input:-webkit-autofill:active {
   img, video, canvas, svg {
     max-width: 100%;
   }
+}
+
+/* =========================================
+   PELENGKAP KESINKRONAN (ditambahkan)
+   ========================================= */
+.full-width {
+  width: 100%;
+}
+
+.step-2-content {
+  display: none;
+}
+.action-step-1 {
+  display: block;
+}
+
+.priority-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: var(--gray-900);
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.detail-image-wrap img.lazy-detail {
+  background: var(--bg-subtle);
 }
