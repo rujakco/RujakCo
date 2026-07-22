@@ -62,12 +62,17 @@ export function renderProductSwiper(drafts, trackId = 'productSwiperTrack') {
             <button class="step-1-btn btn-gold" data-idx="${index}" data-pid="${p.id}">Sesuaikan &amp; Pesan</button>
           </div>
           <div id="step2_${index}_${p.id}" class="step-2-content">
-            <div class="spice-selector">
-              <label><span>Tingkat Pedas</span><span class="spice-current" id="spiceLabel_${index}_${p.id}">${spiceLabel}</span></label>
-              <div class="spice-options" id="spice_${index}_${p.id}">
+            <!-- STRUKTUR BARU SPICE SELECTOR (PILL GROUP) -->
+            <div class="spice-level-container">
+              <div class="spice-header">
+                <span class="spice-title">Tingkat Pedas</span>
+                <span class="spice-status" id="spiceLabel_${index}_${p.id}">${spiceLabel}</span>
+              </div>
+              <div class="spice-selector">
                 ${[1,2,3,4,5].map(i => `<button class="spice-option ${i === draft.spice ? 'active' : ''}" data-spice="${i}" data-pid="${p.id}">${i}</button>`).join('')}
               </div>
             </div>
+            <!-- AKHIR STRUKTUR BARU -->
             <div class="detail-actions" style="margin-bottom:0;">
               <div class="qty-minimal">
                 <button class="qty-minus" data-pid="${p.id}" aria-label="Kurangi jumlah">−</button>
