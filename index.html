@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>RUJAK.Co — Premium Rujak</title>
-  <meta name="description" content="Rujak premium asli Bekasi. Asam, pedas, manis, segar." />
+  <title>RUJAK.Co | Rujak Buah Premium Segar & Sambal Mete – Bekasi & Jakarta</title>
+  <meta name="description" content="Nikmati rujak buah premium segar dengan bumbu mete otentik dari RUJAK.Co. Dipotong segar dengan sistem Fresh‑Prep, diantar esok hari. Pesan online sekarang untuk area Bekasi dan sekitarnya!" />
   <meta property="og:title" content="Asam, Pedas, Manis, Segar. Dalam Satu Wadah." />
   <meta property="og:description" content="Rujak premium asli Bekasi. Asam, pedas, manis, segar." />
   <meta property="og:image" content="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" />
@@ -17,10 +17,10 @@
   <meta name="twitter:image" content="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" />
   <meta name="theme-color" content="#082E21">
 
-  <!-- ✅ Preconnect untuk Supabase — mempercepat koneksi API -->
+  <!-- Preconnect untuk Supabase -->
   <link rel="preconnect" href="https://ghhnnfrmftttptcejizp.supabase.co" crossorigin />
 
-  <!-- Preload gambar hero untuk LCP < 1s -->
+  <!-- Preload gambar hero -->
   <link rel="preload" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" as="image" />
 
   <!-- Prefetch html2canvas -->
@@ -75,7 +75,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  <!-- ✅ Critical CSS — container dengan min-height untuk mencegah CLS -->
+  <!-- Critical CSS inline -->
   <style>
     *,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:rgba(0,0,0,0.08)}
     html,body{margin:0;padding:0;background-color:#082E21;font-family:'DM Sans',sans-serif;font-size:16px;color:#FDFBF7;-webkit-font-smoothing:antialiased}
@@ -83,7 +83,7 @@
     h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:350}
     h2{font-size:clamp(1.5rem,5vw,1.75rem)}h3{font-size:clamp(1.25rem,4vw,1.5rem)}h4{font-size:clamp(1.125rem,3.5vw,1.25rem)}
 
-    /* ✅ Onboarding — container dengan min-height agar teks tidak geser */
+    /* Onboarding */
     .onboarding-overlay{position:fixed;inset:0;z-index:1100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;background:radial-gradient(circle at 50% 30%,rgba(183,146,79,0.08),transparent 60%),linear-gradient(180deg,#082E21,#020A07);text-align:center}
     .onb-logo{width:76px;height:76px;margin-bottom:20px;padding:6px;background:rgba(0,0,0,0.15);border:1px solid rgba(183,146,79,0.3);border-radius:50%}
     .onb-title{font-size:2.1rem;line-height:1.1;color:#FDFBF7;min-height:3.5rem;display:flex;align-items:center;justify-content:center}
@@ -99,7 +99,7 @@
     .content-wrapper{padding-bottom:120px}.hero-gold-frame{margin:64px 20px 0;border-radius:20px}.hero-img-wrap{position:relative;overflow:hidden;aspect-ratio:16/9;background:#051C14;border-radius:20px}.hero-img{display:block;width:100%;height:100%;object-fit:cover}
     .hero-overlay-new{position:absolute;inset:auto 0 0 0;padding:30px 20px 18px;background:linear-gradient(to top,rgba(0,0,0,0.5),rgba(0,0,0,0.1),transparent)}.hero-title{font-size:clamp(1.4rem,5vw,1.85rem);line-height:1.1;color:white}.hero-title-em{color:#E8D5A8;font-style:italic}
 
-    /* Carousel & Skeleton — tinggi fixed */
+    /* Carousel & Skeleton */
     .carousel-container{position:relative;width:100%;margin-top:16px}.carousel-track{display:flex;overflow-x:auto;padding:40px 20px 24px;scroll-snap-type:x mandatory;scrollbar-width:none;min-height:440px}.carousel-track::-webkit-scrollbar{display:none}
     .skeleton-card{flex:0 0 100%;max-width:440px;margin:0 -12px;padding:32px 28px;background:white;border-radius:28px;text-align:center;display:flex;flex-direction:column;align-items:center}
     .skeleton-img{width:100%;aspect-ratio:1/1;background:#E6E4DF;border-radius:12px;overflow:hidden}
@@ -131,7 +131,8 @@
           <label class="onb-label" for="onbName">Bolehkah kami mengenal nama Anda?</label>
           <input type="text" id="onbName" class="onb-input" placeholder="Nama lengkap" autocomplete="name" maxlength="30" enterkeyhint="next" required />
           <button type="button" class="btn-gold full-width" id="onbNextBtn">Lanjutkan</button>
-          <button type="button" class="btn-text-gold" id="onbGuestBtn" style="margin-top: 24px;">Lewati, Masuk sebagai Tamu</button>
+          <!-- ✅ Tombol "Intip Menu Dulu" -->
+          <button type="button" class="btn-text-gold" id="onbGuestBtn" style="margin-top: 24px;">Intip Menu Dulu</button>
         </div>
         <div id="onbStep2" class="onb-step">
           <label class="onb-label" for="onbDistrict">Kecamatan tujuan pengantaran</label>
@@ -266,6 +267,16 @@
           Kami akan menggantinya. Namun dengan <strong>Fresh-Lock System™</strong>, kemungkinan itu terjadi sangat kecil.
         </div>
       </div>
+      <!-- ✅ FAQ BARU: masa simpan -->
+      <div class="faq-item">
+        <button type="button" class="faq-question" data-toggle="faq" aria-expanded="false" aria-controls="faq-answer-5" id="faq-q-5">
+          <span>Berapa lama rujak bisa disimpan?</span>
+          <i data-lucide="chevron-down" class="icon-sm" aria-hidden="true"></i>
+        </button>
+        <div class="faq-answer" id="faq-answer-5" role="region" aria-labelledby="faq-q-5">
+          Buah segar kami sebaiknya langsung dinikmati pada hari pengantaran. Sambal Mete Premium dapat bertahan hingga <strong>3 hari</strong> di dalam lemari es.
+        </div>
+      </div>
     </div>
     
     <footer class="luxury-footer fade-up">
@@ -273,8 +284,12 @@
         <h3 class="footer-brand">RUJAK.Co</h3>
         <span class="footer-tagline">Indonesia dalam Satu Wadah</span>
         <div class="footer-meta"><span>EST. 2024</span><span class="meta-dot">•</span><span>Bekasi</span></div>
+        <!-- ✅ Nomor WhatsApp di footer -->
         <div style="margin-top: 12px; font-size: 0.75rem; color: rgba(255,255,255,0.6);">
           Sen–Jum: 10.00–20.00 | Sab–Min: 09.00–18.00
+        </div>
+        <div style="margin-top: 8px; font-size: 0.85rem; color: var(--gold-bright); font-weight: 600;">
+          📞 +62 896-7716-1680
         </div>
         <div style="margin-top: 8px; display: flex; gap: 16px; justify-content: center;">
           <a href="https://www.tiktok.com/@rujakco" target="_blank" rel="noopener noreferrer" aria-label="TikTok RUJAK.Co" style="color: var(--gold-bright);">
@@ -379,6 +394,10 @@
           <span>Total Pesanan</span>
           <span id="finalTotal">Rp0</span>
         </div>
+        <!-- ✅ Teks garansi -->
+        <p style="text-align: center; font-size: 0.7rem; color: var(--gray-600); margin: 8px 0 4px;">
+          🛡️ Setiap pesanan dilindungi <strong>Fresh‑Lock System™</strong>. Buah rusak atau layu di perjalanan? Kami ganti baru.
+        </p>
         <button type="button" class="btn-gold full-width" id="btnOpenPayment" style="margin-top:8px;">Selesaikan Reservasi</button>
       </div>
     </div>
