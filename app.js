@@ -197,7 +197,6 @@ function openModal(modalEl) {
 function closeModal(modalEl, fromPopState = false) {
   if (!modalEl) return;
 
-  // Pindahkan fokus SEBELUM menambahkan aria-hidden/inert
   if (previousFocusedElement && document.body.contains(previousFocusedElement)) {
     previousFocusedElement.focus();
   } else {
@@ -266,7 +265,6 @@ function showConfirmModal(title, message, onConfirm) {
 // ---------------------------------------------------------------------------
 function openProductPage(globalIndex) {
   if (!DOM.productPage) return;
-  // Disconnect observer lama sebelum buat baru
   if (DOM._productObserver) {
     DOM._productObserver.disconnect();
     DOM._productObserver = null;
@@ -308,10 +306,7 @@ function openProductPage(globalIndex) {
 
 function closeProductPage(fromPopState = false) {
   if (!DOM.productPage) return;
-
-  // Pindahkan fokus sebelum menyembunyikan
   document.getElementById('navHomeBtn')?.focus();
-
   DOM.productPage.classList.remove('active');
   setTimeout(() => {
     DOM.productPage.style.display = 'none';
@@ -867,7 +862,7 @@ async function sendReceiptToWhatsApp() {
 
   // Buka WhatsApp di tab baru, lalu bersihkan keranjang segera
   const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
-  const newWindow = window.open(waUrl, '_blank', 'noopener');
+  const newWindow = window.open(waUrl, '_blank', 'noopener,noreferrer');
   if (newWindow) {
     state.cart = {};
     updateCartUI();
@@ -910,7 +905,7 @@ function bindEvents() {
   document.getElementById('btnVipConcierge')?.addEventListener('click', (e) => {
     e.preventDefault();
     const text = encodeURIComponent("Halo RUJAK.Co, saya tertarik dengan layanan VIP Concierge.");
-    window.open(`https://wa.me/${SYSTEM.WA_NUMBER}?text=${text}`, '_blank', 'noopener');
+    window.open(`https://wa.me/${SYSTEM.WA_NUMBER}?text=${text}`, '_blank', 'noopener,noreferrer');
   });
 
   document.getElementById('waVipHandle')?.addEventListener('click', (e) => {
