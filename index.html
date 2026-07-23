@@ -80,7 +80,7 @@
     *,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:rgba(0,0,0,0.08)}
     html,body{margin:0;padding:0;background-color:#082E21;font-family:'DM Sans',sans-serif;font-size:16px;color:#FDFBF7;-webkit-font-smoothing:antialiased}
     #app{position:relative;width:100%;max-width:480px;min-height:100dvh;margin:0 auto;overflow-x:hidden}
-    h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:350}
+    h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:400}
     h2{font-size:clamp(1.5rem,5vw,1.75rem)}h3{font-size:clamp(1.25rem,4vw,1.5rem)}h4{font-size:clamp(1.125rem,3.5vw,1.25rem)}
 
     /* Onboarding */
@@ -106,8 +106,8 @@
     .skeleton-text{height:14px;background:#E6E4DF;border-radius:4px;margin:20px auto 8px;overflow:hidden}.skeleton-text.w-60{width:60%}.skeleton-text.w-40{width:40%}.skeleton-text.w-80{width:80%}
 
     /* Bottom Nav */
-    .bottom-nav{position:fixed;right:0;bottom:0;left:0;z-index:600;display:flex;justify-content:space-around;max-width:480px;margin:0 auto;padding:5px 0 6px;background:rgba(5,28,20,0.92);border-top:1px solid rgba(183,146,79,0.2);border-radius:16px 16px 0 0}
-    .nav-item{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;min-height:48px;background:none;border:none;color:rgba(253,251,247,0.35);font-size:0.7rem;font-weight:600;cursor:pointer}.nav-item.active{color:#A67C3D}
+    .bottom-nav{position:fixed;right:0;bottom:0;left:0;z-index:1100;display:flex;justify-content:space-around;max-width:480px;margin:0 auto;padding:5px 0 6px;background:rgba(5,28,20,0.92);border-top:1px solid rgba(183,146,79,0.2);border-radius:16px 16px 0 0}
+    .nav-item{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;min-height:48px;background:none;border:none;color:rgba(253,251,247,0.6);font-size:0.7rem;font-weight:600;cursor:pointer}.nav-item.active{color:#A67C3D}
 
     .full-width{width:100%}.fade-up{opacity:0;transform:translateY(32px);transition:opacity 0.8s,transform 0.8s}.fade-up.visible{opacity:1;transform:translateY(0)}
   </style>
@@ -132,7 +132,7 @@
           <input type="text" id="onbName" class="onb-input" placeholder="Nama lengkap" autocomplete="name" maxlength="30" enterkeyhint="next" required />
           <button type="button" class="btn-gold full-width" id="onbNextBtn">Lanjutkan</button>
           <!-- ✅ Tombol "Intip Menu Dulu" -->
-          <button type="button" class="btn-text-gold" id="onbGuestBtn" style="margin-top: 24px;">Intip Menu Dulu</button>
+          <button type="button" class="btn-text-gold" id="onbGuestBtn" style="margin-top: 12px;">Intip Menu Dulu</button>
         </div>
         <div id="onbStep2" class="onb-step">
           <label class="onb-label" for="onbDistrict">Kecamatan tujuan pengantaran</label>
