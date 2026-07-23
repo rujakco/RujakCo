@@ -129,7 +129,6 @@ function applyPersonalization() {
   if (DOM.districtInput) DOM.districtInput.value = state.selectedDistrictFull || district;
   if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Halo, ${name}! Ada yang bisa kami bantu untuk pesanan Anda?`;
 
-  // ✅ Pastikan nav tampil jika onboarding sudah tidak ada
   if (DOM.bottomNav) {
     const ob = DOM.onboardingOverlay;
     if (!ob || ob.classList.contains('hidden') || ob.style.display === 'none') {
@@ -196,7 +195,6 @@ function openModal(modalEl) {
   overlayStack.push(modalEl);
   history.pushState({ isOverlay: true, id: modalEl.id }, '');
   DOM.mainContent?.setAttribute('inert', '');
-  // ❌ DOM.bottomNav?.setAttribute('inert', '');
   const firstInput = modalEl.querySelector('button, input, textarea, select');
   if (firstInput) firstInput.focus();
   syncBottomNav();
@@ -287,6 +285,12 @@ function openProductPage(globalIndex) {
   overlayStack.push(DOM.productPage);
   history.pushState({ isOverlay: true, id: 'productPage' }, '');
 
+  // ✅ Nav siap tampil
+  if (DOM.bottomNav) {
+    DOM.bottomNav.style.display = 'flex';
+    DOM.bottomNav.classList.add('nav-visible');
+  }
+
   const targetSlide = document.querySelector(`.product-slide[data-idx="${globalIndex}"]`);
   if (targetSlide && DOM.productSwiperTrack) {
     DOM.productSwiperTrack.style.scrollBehavior = 'auto';
@@ -312,23 +316,27 @@ function openProductPage(globalIndex) {
   document.querySelectorAll('.product-slide').forEach(slide => {
     observer.observe(slide);
     
-    // ✅ Scroll‑aware nav bar
     let lastScrollTop = 0;
     slide.addEventListener('scroll', () => {
       const st = slide.scrollTop;
       const nav = DOM.bottomNav;
       if (!nav) return;
       
-      if (st > lastScrollTop && st > 80) {
-        // Scroll ke bawah → sembunyikan nav
+      if (st <= 10) {
+        nav.classList.remove('nav-hidden');
+        nav.classList.add('nav-visible');
+        lastScrollTop = 0;
+        return;
+      }
+
+      if (st > lastScrollTop && st > 40) {
         nav.classList.add('nav-hidden');
         nav.classList.remove('nav-visible');
-      } else {
-        // Scroll ke atas → tampilkan nav
+      } else if (st < lastScrollTop) {
         nav.classList.remove('nav-hidden');
         nav.classList.add('nav-visible');
       }
-      lastScrollTop = st <= 0 ? 0 : st;
+      lastScrollTop = st;
     }, { passive: true });
   });
 
@@ -1089,7 +1097,6 @@ function bindEvents() {
 
   // Handler utama untuk klik global
   document.addEventListener('click', async (e) => {
-    // ✅ Abaikan klik yang berasal dari tombol navigasi
     if (e.target.closest('.nav-item') || isNavClick) return;
 
     const boutique = e.target.closest('.boutique-item');
