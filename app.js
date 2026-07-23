@@ -128,6 +128,14 @@ function applyPersonalization() {
   if (DOM.customerAddressInput) DOM.customerAddressInput.value = state.customerAddress;
   if (DOM.districtInput) DOM.districtInput.value = state.selectedDistrictFull || district;
   if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Halo, ${name}! Ada yang bisa kami bantu untuk pesanan Anda?`;
+
+  // ✅ Pastikan nav tampil jika onboarding sudah tidak ada
+  if (DOM.bottomNav) {
+    const ob = DOM.onboardingOverlay;
+    if (!ob || ob.classList.contains('hidden') || ob.style.display === 'none') {
+      DOM.bottomNav.style.display = 'flex';
+    }
+  }
 }
 
 function initScrollReveal() {
@@ -224,13 +232,14 @@ function closeModal(modalEl, fromPopState = false) {
   syncBottomNav();
 }
 
+// ✅ Perbaikan confirm modal tampil di tengah
 function showConfirmModal(title, message, onConfirm) {
   const old = document.getElementById('confirmModal');
   if (old) old.remove();
   const triggerEl = document.activeElement;
   const modal = document.createElement('div');
   modal.id = 'confirmModal';
-  modal.className = 'modal-overlay confirm-modal';
+  modal.className = 'modal-overlay centered confirm-modal'; // ✅ centered
   modal.setAttribute('role', 'dialog');
   modal.setAttribute('aria-modal', 'true');
   modal.innerHTML = `
@@ -422,6 +431,7 @@ function updateCartUI() {
     updateShippingUI();
   }
   const totalItems = Object.values(state.cart).reduce((sum, item) => sum + item.qty, 0);
+  // ✅ live region sekarang benar‑benar ada
   if (DOM.liveCartRegion) {
     DOM.liveCartRegion.textContent = totalItems > 0
       ? `${totalItems} item di keranjang`
@@ -552,14 +562,18 @@ function initOnboarding() {
     if (!name) return showToast('Mohon isi nama Anda.');
     state.customerName = name;
     DOM.onbStep1.classList.remove('active');
-    setTimeout(() => { DOM.onbStep2.classList.add('active'); DOM.onbDistrict.focus(); }, 100);
+    // ✅ Hapus timeout untuk focus, biarkan user klik sendiri
+    DOM.onbStep2.classList.add('active');
   });
 
   document.getElementById('onbGuestBtn')?.addEventListener('click', () => {
     state.customerName = 'Tamu';
     state.selectedDistrict = '';
     DOM.onboardingOverlay.classList.add('hidden');
-    setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, 600);
+    setTimeout(() => {
+      DOM.onboardingOverlay.style.display = 'none';
+      if (DOM.bottomNav) DOM.bottomNav.style.display = 'flex';
+    }, 600);
     applyPersonalization();
     initScrollReveal();
   });
@@ -703,14 +717,20 @@ function initOnboarding() {
     if (!state.selectedDistrict) return showToast('Mohon pilih alamat tujuan.');
     saveUser(state.customerName, state.selectedDistrict);
     DOM.onboardingOverlay.classList.add('hidden');
-    setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, 600);
+    setTimeout(() => {
+      DOM.onboardingOverlay.style.display = 'none';
+      if (DOM.bottomNav) DOM.bottomNav.style.display = 'flex';
+    }, 600);
     applyPersonalization();
     initScrollReveal();
   });
 
   document.getElementById('onbEnterBtn').addEventListener('click', () => {
     DOM.onboardingOverlay.classList.add('hidden');
-    setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, 600);
+    setTimeout(() => {
+      DOM.onboardingOverlay.style.display = 'none';
+      if (DOM.bottomNav) DOM.bottomNav.style.display = 'flex';
+    }, 600);
     applyPersonalization();
     initScrollReveal();
   });
@@ -723,6 +743,7 @@ function initOnboarding() {
     DOM.onbNewUser.style.display = 'block';
     DOM.onbStep2.classList.remove('active');
     DOM.onbStep1.classList.add('active');
+    if (DOM.bottomNav) DOM.bottomNav.style.display = 'none';
   });
 }
 
