@@ -174,7 +174,7 @@ function releaseInert() {
   if (!anyModalOpen && !productPageOpen) {
     document.body.style.overflow = '';
     DOM.mainContent?.removeAttribute('inert');
-    DOM.bottomNav?.removeAttribute('inert');
+    // bottomNav tidak perlu dikunci, jadi tidak disentuh di sini
   }
 }
 
@@ -188,7 +188,7 @@ function openModal(modalEl) {
   overlayStack.push(modalEl);
   history.pushState({ isOverlay: true, id: modalEl.id }, '');
   DOM.mainContent?.setAttribute('inert', '');
-  DOM.bottomNav?.setAttribute('inert', '');
+  // ❌ DOM.bottomNav?.setAttribute('inert', '');  // Dihapus agar nav selalu interaktif
   const firstInput = modalEl.querySelector('button, input, textarea, select');
   if (firstInput) firstInput.focus();
   syncBottomNav();
@@ -214,7 +214,6 @@ function closeModal(modalEl, fromPopState = false) {
   if (overlayStack.length === 0 && !DOM.productPage.classList.contains('active')) {
     document.body.style.overflow = '';
     DOM.mainContent?.removeAttribute('inert');
-    DOM.bottomNav?.removeAttribute('inert');
   }
   releaseInert();
 
@@ -860,7 +859,6 @@ async function sendReceiptToWhatsApp() {
     }
   }
 
-  // Buka WhatsApp di tab baru, lalu bersihkan keranjang segera
   const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
   const newWindow = window.open(waUrl, '_blank', 'noopener,noreferrer');
   if (newWindow) {
