@@ -86,7 +86,6 @@
   --shadow-input-deboss: inset 0 4px 10px rgba(2,10,7,0.55);
   --shadow-hero-dark: 0 12px 24px -6px rgba(2,10,7,0.40), inset 0 0 0 1px var(--gold-15);
 
-  /* ✅ Z‑index yang benar */
   --z-header: 100;
   --z-nav: 600;          /* nav di bawah modal */
   --z-product: 700;
@@ -179,13 +178,37 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .onb-content { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 340px; gap: 12px; }
 .onb-logo { width: 76px; height: 76px; margin-bottom: 20px; padding: 6px; background: var(--black-15); border: 1px solid var(--gold-30); border-radius: 50%; box-shadow: 0 0 40px var(--gold-08); }
 .onb-title { margin-bottom: 2px; font-size: 2.1rem; font-weight: 400; line-height: 1.1; color: var(--ivory); letter-spacing: 0.02em; }
-.onb-subtitle, .onb-welcome-text { margin-bottom: 36px; font-size: 0.65rem; font-weight: 600; color: var(--gold-bright); text-transform: uppercase; letter-spacing: 0.25em; }
+.onb-subtitle, .onb-welcome-text {
+  margin-bottom: 36px;
+  font-family: var(--font-body);
+  font-size: 0.75rem;          /* ✅ naik dari 0.65rem */
+  font-weight: 600;
+  color: var(--gold-bright);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;      /* ✅ sedikit lebih rapat */
+}
 .onb-step { display: none; width: 100%; max-width: 290px; margin: 0 auto; animation: fadeUp 0.6s ease both; }
 .onb-step.active { display: block; }
-.onb-label { display: block; margin-bottom: 12px; font-size: 0.65rem; font-weight: 600; color: var(--ivory-85); text-transform: uppercase; letter-spacing: 0.2em; }
+.onb-label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 0.75rem;          /* ✅ naik */
+  font-weight: 600;
+  color: var(--ivory-85);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
 .onb-input { width: 100%; margin-bottom: 24px; padding: 14px 12px; background-color: rgba(2,10,7,0.3); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; font-size: 1.6rem; font-weight: 400; color: var(--ivory); text-align: center; outline: none; transition: border-color 0.4s ease, background-color 0.4s ease, box-shadow 0.4s ease, color 0.3s ease, text-shadow 0.3s ease; background-image: linear-gradient(90deg, transparent, var(--gold-bright), transparent); background-size: 0% 2px; background-position: center calc(100% - 2px); background-repeat: no-repeat; }
 .onb-input:focus { border-color: var(--gold); background-color: rgba(2,10,7,0.5); background-size: 100% 2px; color: var(--gold-bright); text-shadow: 0 0 12px var(--gold-40); box-shadow: 0 0 0 4px rgba(183,146,79,0.1); animation: inputFlash 0.7s ease-out forwards; }
-.onb-input::placeholder { font-family: var(--font-body); font-size: 0.75rem; font-weight: 400; color: var(--ivory-35); text-transform: uppercase; letter-spacing: 0.1em; transition: opacity 0.4s ease, letter-spacing 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+.onb-input::placeholder {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--ivory-60);       /* ✅ kontras lebih tinggi */
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: opacity 0.4s ease, letter-spacing 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
 .onb-input:focus::placeholder { opacity: 0; letter-spacing: 0.4em; }
 @keyframes inputFlash {
   0% { box-shadow: 0 0 0 4px rgba(183,146,79,0.1), 0 20px 20px -10px transparent; }
@@ -302,7 +325,15 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .boutique-item.active-center .btq-img { transform: scale(1.01); }
 .btq-text-container { display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 20px; opacity: 0.6; pointer-events: none; transform: translateY(6px); transition: opacity var(--dur-normal) var(--transition-spring), transform var(--dur-normal) var(--transition-spring); }
 .boutique-item.active-center .btq-text-container { pointer-events: auto; opacity: 1; transform: translateY(0); }
-.btq-badge { display: block; margin-bottom: 8px; font-size: 0.6rem; font-weight: 600; color: var(--gold-80); text-transform: uppercase; letter-spacing: 0.25em; }
+.btq-badge {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.7rem;           /* ✅ naik */
+  font-weight: 600;
+  color: var(--gold-80);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
 .btq-name { margin: 0 0 12px 0; font-weight: 500; color: var(--dark-green-deep); text-transform: uppercase; letter-spacing: 0.15em; }
 .btq-price-wrap { display: flex; align-items: center; justify-content: center; width: 100%; gap: 12px; }
 .btq-price-wrap::before, .btq-price-wrap::after { content: ''; flex: 1; max-width: 40px; height: 1px; background: var(--gold-soft); }
@@ -345,7 +376,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   min-height: 44px;
   padding: 4px 0; gap: 2px;
   background: none; border: none;
-  font-family: inherit; font-size: 0.65rem; font-weight: 600;
+  font-family: inherit; font-size: 0.65rem; font-weight: 600;  /* ✅ tetap kecil pengecualian */
   color: var(--ivory-60);
   cursor: pointer; transition: color var(--dur-fast) ease, transform var(--dur-fast) ease;
 }
@@ -373,7 +404,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 /* 12. MODALS & DRAWER */
 .modal-overlay { position: fixed; inset: 0; z-index: var(--z-modal); display: flex; align-items: flex-end; justify-content: center; background: var(--black-35); opacity: 0; pointer-events: none; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: opacity var(--dur-normal) ease; }
 .modal-overlay.active { pointer-events: auto; opacity: 1; }
-/* ✅ Tambahan agar confirm modal di tengah */
+/* ✅ Confirm modal di tengah */
 .modal-overlay.centered { align-items: center; }
 .drawer-content {
   display: flex; flex-direction: column; width: 100%; max-width: 480px;
@@ -655,12 +686,26 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .receipt-header { padding: var(--space-4) var(--space-2) 18px; text-align: center; }
 .receipt-logo { width: 48px; height: 48px; margin-bottom: 10px; padding: 3px; border: 1px solid var(--gold-soft); border-radius: 50%; }
 .receipt-brand { font-family: var(--font-heading); font-size: 1.15rem; font-weight: 400; color: var(--green); }
-.receipt-tagline { margin-top: 3px; font-size: 0.65rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.15em; }
+.receipt-tagline {
+  margin-top: 3px;
+  font-size: 0.75rem;          /* ✅ naik */
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
 .receipt-meta { display: flex; align-items: center; justify-content: space-between; margin: var(--space-2) var(--space-2) 0; padding-bottom: var(--space-2); border-bottom: 1px dashed var(--gold-45); font-family: var(--font-body); font-size: 0.7rem; color: var(--gray-500); }
 .receipt-meta .code { font-weight: 700; color: var(--gold-text); letter-spacing: 0.05em; }
 .receipt-section { padding: var(--space-2); border-bottom: 1px dashed var(--black-08); }
 .receipt-section:last-of-type { border-bottom: none; }
-.receipt-section-title { display: flex; align-items: center; margin-bottom: 10px; gap: 8px; font-size: 0.65rem; font-weight: 700; color: var(--gold-text); text-transform: uppercase; letter-spacing: 0.18em; }
+.receipt-section-title {
+  display: flex; align-items: center;
+  margin-bottom: 10px; gap: 8px;
+  font-size: 0.75rem;          /* ✅ naik */
+  font-weight: 700;
+  color: var(--gold-text);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
 .receipt-section-title::after { content: ''; flex: 1; height: 1px; background: var(--gold-25); }
 .confirm-row { display: flex; justify-content: space-between; padding: 5px 0; gap: 12px; font-size: 0.875rem; }
 .confirm-row span:first-child { color: var(--gray-500); }
@@ -690,8 +735,15 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .btn-outline { background: var(--white); border: 1px solid var(--gray-300); color: var(--gray-900); }
 .btn-danger { background: var(--danger); border: none; color: var(--white); }
 
-/* 26. TINY TEXT */
-.tiny-text { display: block; margin: 12px 0 4px; font-size: 0.65rem; font-weight: 600; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.15em; }
+/* 26. TINY TEXT – dinaikkan */
+.tiny-text {
+  display: block; margin: 12px 0 4px;
+  font-size: 0.75rem;          /* ✅ naik */
+  font-weight: 600;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
 
 /* 27. INERT */
 [inert] { pointer-events: none !important; user-select: none !important; }
