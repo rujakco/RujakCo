@@ -1,5 +1,5 @@
 /* =========================================
-   1. DESIGN TOKENS — LENGKAP
+   1. DESIGN TOKENS — LENGKAP (Z‑index diperbaiki)
    ========================================= */
 :root {
   --green: #082E21;
@@ -86,12 +86,13 @@
   --shadow-input-deboss: inset 0 4px 10px rgba(2,10,7,0.55);
   --shadow-hero-dark: 0 12px 24px -6px rgba(2,10,7,0.40), inset 0 0 0 1px var(--gold-15);
 
+  /* ✅ Z‑index yang benar */
   --z-header: 100;
-  --z-nav: 1100;
+  --z-nav: 600;          /* nav di bawah modal */
   --z-product: 700;
   --z-fab: 510;
-  --z-modal: 1000;
-  --z-onboard: 1100;
+  --z-modal: 1000;       /* modal di atas nav */
+  --z-onboard: 1100;     /* onboarding paling atas */
 
   --dur-fast: 0.25s;
   --dur-normal: 0.45s;
@@ -118,6 +119,9 @@
   --transition-heavy: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* =========================================
+   2. RESET, ACCESSIBILITY & BODY
+   ========================================= */
 *,
 *::before,
 *::after {
@@ -161,7 +165,9 @@ h3 { font-size: clamp(1.25rem, 4vw, 1.5rem); line-height: 1.2; letter-spacing: -
 h4 { font-size: clamp(1.125rem, 3.5vw, 1.25rem); line-height: 1.25; letter-spacing: -0.01em; }
 p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 
-/* 4. ONBOARDING */
+/* =========================================
+   4. ONBOARDING
+   ========================================= */
 .onboarding-overlay {
   position: fixed; inset: 0; z-index: var(--z-onboard);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -193,7 +199,9 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 #onbWelcomeDistrict { animation-delay: 0.15s; }
 @keyframes luxuryFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-/* 5. BUTTONS – ukuran ringkas & elegan */
+/* =========================================
+   5. BUTTONS
+   ========================================= */
 .btn-gold,
 .btn-dark,
 .add-to-cart-btn {
@@ -227,7 +235,9 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .btn-loading { opacity: 0.7; pointer-events: none; cursor: wait; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
-/* 6. HEADER */
+/* =========================================
+   6. HEADER
+   ========================================= */
 .luxury-header {
   position: fixed; top: 0; left: 0; right: 0; z-index: var(--z-header);
   display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 480px; margin: 0 auto;
@@ -246,7 +256,9 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .user-loc::before { content: '•'; margin-right: 4px; opacity: 0.7; }
 .luxury-header.scrolled .user-name, .luxury-header.scrolled .user-loc { color: var(--green); text-shadow: none; }
 
-/* 7. HERO – lebih pendek & teks besar, hijau segar */
+/* =========================================
+   7. HERO – lebih pendek & teks besar, hijau segar
+   ========================================= */
 .content-wrapper { padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)); overflow-x: hidden; }
 .hero-editorial { position: relative; z-index: 1; width: 100%; max-width: 480px; margin: 0 auto; }
 .hero-gold-frame {
@@ -278,7 +290,9 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 }
 .hero-subtitle { margin: 0; font-family: var(--font-body); font-size: 0.65rem; font-weight: 500; color: var(--white-90); text-transform: uppercase; letter-spacing: 0.15em; transform: translateY(2px); }
 
-/* 8. CAROUSEL */
+/* =========================================
+   8. CAROUSEL
+   ========================================= */
 .carousel-container { position: relative; overflow: visible; width: 100%; margin-top: 16px; padding: 0; }
 .carousel-track { display: flex; overflow-x: auto; padding: var(--space-5) 20px var(--space-3); scroll-snap-type: x mandatory; -ms-overflow-style: none; scrollbar-width: none; }
 .carousel-track::-webkit-scrollbar { display: none; }
@@ -303,18 +317,15 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .typing-text { max-width: 320px; padding: 0 20px; font-family: var(--font-heading); font-size: 1rem; font-style: italic; font-weight: 400; line-height: 1.9; color: var(--white); text-shadow: 0 1px 4px var(--black-30); transition: opacity var(--dur-normal) ease; }
 .typing-text.fade-out { opacity: 0; }
 
-/* 10. FOOTER – tambah padding bawah agar tidak tertutup nav */
-.luxury-footer {
-  padding: 72px 16px calc(56px + 60px + env(safe-area-inset-bottom));
-  background: var(--green); border-top: 1px solid var(--gold-12);
-}
+/* 10. FOOTER */
+.luxury-footer { padding: 72px 16px calc(56px + 60px + env(safe-area-inset-bottom)); background: var(--green); border-top: 1px solid var(--gold-12); }
 .footer-row { display: flex; flex-direction: column; align-items: center; max-width: 440px; margin: 0 auto; gap: 8px; text-align: center; }
 .footer-brand { margin-bottom: 4px; color: var(--gold-bright); }
 .footer-tagline { margin-bottom: 16px; font-family: var(--font-body); font-size: 0.875rem; font-style: italic; color: var(--white-80); letter-spacing: 0.05em; }
 .footer-meta { display: flex; align-items: center; gap: 12px; font-size: 0.75rem; color: var(--white-80); text-transform: uppercase; letter-spacing: 0.1em; }
 .meta-dot { color: var(--gold-soft); }
 
-/* 11. BOTTOM NAV – proporsi ringan & elegan, DIJAMIN MUNCUL */
+/* 11. BOTTOM NAV – proporsi ringan & elegan */
 .bottom-nav {
   position: fixed; right: 0; bottom: 0; left: 0; z-index: var(--z-nav);
   display: flex;            /* fallback penting */
@@ -359,9 +370,11 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   color: var(--white); box-shadow: var(--shadow-soft);
 }
 
-/* 12. MODALS & DRAWER – padding agar tidak tertutup nav */
+/* 12. MODALS & DRAWER */
 .modal-overlay { position: fixed; inset: 0; z-index: var(--z-modal); display: flex; align-items: flex-end; justify-content: center; background: var(--black-35); opacity: 0; pointer-events: none; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: opacity var(--dur-normal) ease; }
 .modal-overlay.active { pointer-events: auto; opacity: 1; }
+/* ✅ Tambahan agar confirm modal di tengah */
+.modal-overlay.centered { align-items: center; }
 .drawer-content {
   display: flex; flex-direction: column; width: 100%; max-width: 480px;
   height: 88dvh;
@@ -486,8 +499,11 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .qris-connector { width: 1px; height: var(--space-4); background: var(--gold-soft); }
 .qris-total { margin-top: var(--space-2); font-family: var(--font-heading); font-size: 2.25rem; font-weight: 400; color: var(--green); letter-spacing: -0.02em; }
 
-/* 17. CHAT BUBBLES – tombol kirim lebih kecil */
-#aiChatBox .drawer-content { background: var(--dark-green-deep); border-top: 1px solid var(--gold-20); box-shadow: var(--shadow-drawer-dark); }
+/* 17. CHAT BUBBLES – perbaikan keyboard */
+#aiChatBox .drawer-content {
+  background: var(--dark-green-deep); border-top: 1px solid var(--gold-20); box-shadow: var(--shadow-drawer-dark);
+  max-height: 70dvh; height: auto;   /* ✅ agar responsif terhadap keyboard */
+}
 #aiChatBox .drawer-header { border-bottom: 1px solid var(--gold-15); }
 #aiChatBox .drawer-header h3 { font-family: var(--font-heading); color: var(--gold-bright); letter-spacing: 0.05em; }
 #aiChatBox .glass-btn-dark { background: var(--gold-10); color: var(--gold-bright); }
@@ -512,7 +528,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 }
 .btn-gold-round:active { transform: scale(0.9) translateY(2px); box-shadow: inset 0 3px 6px var(--black-25); }
 
-/* 18. TOAST & SKELETON LOADING (DITINGKATKAN) */
+/* 18. TOAST & SKELETON LOADING */
 #toast {
   position: fixed; top: 100px; left: 50%; z-index: var(--z-onboard); max-width: 90%;
   padding: 14px 28px; background: var(--green); border-radius: 100px;
@@ -586,8 +602,12 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .fade-up { opacity: 0; transform: translateY(var(--space-4)); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
 .fade-up.visible { opacity: 1; transform: translateY(0); }
 
-/* 22. WA VIP SIDE TAB */
-.wa-vip-side-tab { position: fixed; bottom: 120px; left: -30px; z-index: 610; display: flex; flex-direction: row; width: 48px; height: 120px; transition: left var(--dur-normal) cubic-bezier(0.4, 0, 0.2, 1); }
+/* 22. WA VIP SIDE TAB – sekarang di luar overlay, posisinya global */
+.wa-vip-side-tab {
+  position: fixed; bottom: 120px; left: -30px; z-index: 610;
+  display: flex; flex-direction: row; width: 48px; height: 120px;
+  transition: left var(--dur-normal) cubic-bezier(0.4, 0, 0.2, 1);
+}
 .wa-vip-side-tab.open { left: 0; }
 .wa-vip-handle { position: relative; flex-shrink: 0; width: 12px; height: 100%; background: linear-gradient(135deg, var(--gray-900) 0%, var(--green) 100%); border: 1px solid var(--gold-soft); border-right: none; border-radius: 12px 0 0 12px; cursor: pointer; }
 .wa-vip-handle::after { content: ''; position: absolute; top: 50%; right: 2px; width: 4px; height: var(--space-4); background: var(--gold); border-radius: 2px; transform: translateY(-50%); }
