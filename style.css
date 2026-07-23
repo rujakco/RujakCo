@@ -314,10 +314,12 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .footer-meta { display: flex; align-items: center; gap: 12px; font-size: 0.75rem; color: var(--white-80); text-transform: uppercase; letter-spacing: 0.1em; }
 .meta-dot { color: var(--gold-soft); }
 
-/* 11. BOTTOM NAV – proporsi ringan & elegan */
+/* 11. BOTTOM NAV – proporsi ringan & elegan, DIJAMIN MUNCUL */
 .bottom-nav {
   position: fixed; right: 0; bottom: 0; left: 0; z-index: var(--z-nav);
-  display: flex; align-items: center; justify-content: space-around;
+  display: flex;            /* fallback penting */
+  align-items: center;
+  justify-content: space-around;
   width: 100%; max-width: 480px; margin: 0 auto;
   padding: 2px 0 calc(4px + env(safe-area-inset-bottom));
   background: rgba(5,28,20,0.85);
