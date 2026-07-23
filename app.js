@@ -39,6 +39,7 @@ PRODUCTS.forEach(p => {
 const overlayStack = [];
 window.__overlayStack__ = overlayStack;
 let isProgrammaticBack = false;
+let isNavClick = false; // ✅ flag untuk mencegah konflik klik global
 
 // ---------------------------------------------------------------------------
 // DOM CACHE
@@ -174,7 +175,6 @@ function releaseInert() {
   if (!anyModalOpen && !productPageOpen) {
     document.body.style.overflow = '';
     DOM.mainContent?.removeAttribute('inert');
-    // bottomNav tidak perlu dikunci, jadi tidak disentuh di sini
   }
 }
 
@@ -217,7 +217,7 @@ function closeModal(modalEl, fromPopState = false) {
   }
   releaseInert();
 
-  if (!fromPopState) {
+  if (!fromPopState && !isNavClick) { // ✅ tidak panggil history.back jika dari nav
     isProgrammaticBack = true;
     history.back();
   }
@@ -320,7 +320,7 @@ function closeProductPage(fromPopState = false) {
       DOM._productObserver = null;
     }
     releaseInert();
-    if (!fromPopState) {
+    if (!fromPopState && !isNavClick) {
       isProgrammaticBack = true;
       history.back();
     }
@@ -911,37 +911,54 @@ function bindEvents() {
     document.getElementById('waVipSideTab')?.classList.toggle('open');
   });
 
+  // ✅ NAVIGASI BARU: selalu responsif dengan flag isNavClick
   document.getElementById('navHomeBtn')?.addEventListener('click', () => {
-    if (DOM.productPage?.classList.contains('active')) {
-      closeProductPage(false);
-      setTimeout(releaseInert, 500);
-      setTimeout(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 200);
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    isNavClick = true;
+    if (DOM.productPage?.classList.contains('active')) closeProductPage(false);
+    if (DOM.miniCartModal?.classList.contains('active')) closeModal(DOM.miniCartModal);
+    if (DOM.paymentModal?.classList.contains('active')) closeModal(DOM.paymentModal);
+    if (document.getElementById('orderConfirmModal')?.classList.contains('active')) closeModal(document.getElementById('orderConfirmModal'));
+    if (DOM.aiChatBox?.classList.contains('active')) closeModal(DOM.aiChatBox);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     setActiveNav('navHomeBtn');
+    setTimeout(() => { isNavClick = false; }, 100);
   });
 
   document.getElementById('navProductBtn')?.addEventListener('click', () => {
-    if (DOM.productPage?.classList.contains('active')) return;
+    isNavClick = true;
+    if (DOM.productPage?.classList.contains('active')) { isNavClick = false; return; }
+    if (DOM.miniCartModal?.classList.contains('active')) closeModal(DOM.miniCartModal);
+    if (DOM.paymentModal?.classList.contains('active')) closeModal(DOM.paymentModal);
+    if (document.getElementById('orderConfirmModal')?.classList.contains('active')) closeModal(document.getElementById('orderConfirmModal'));
+    if (DOM.aiChatBox?.classList.contains('active')) closeModal(DOM.aiChatBox);
     openProductPage(state.lastViewedProductIndex >= 0 ? state.lastViewedProductIndex : 0);
+    setTimeout(() => { isNavClick = false; }, 100);
   });
 
   document.getElementById('navCartBtn')?.addEventListener('click', (e) => {
+    isNavClick = true;
     e.preventDefault();
-    e.stopPropagation();
-    if (DOM.productPage?.classList.contains('active')) {
-      closeProductPage(false);
-      setTimeout(() => {
-        openModal(DOM.miniCartModal);
-        renderMiniCart(state.cart);
-        updateShippingUI();
-      }, 400);
-    } else {
+    if (DOM.productPage?.classList.contains('active')) closeProductPage(false);
+    if (DOM.paymentModal?.classList.contains('active')) closeModal(DOM.paymentModal);
+    if (document.getElementById('orderConfirmModal')?.classList.contains('active')) closeModal(document.getElementById('orderConfirmModal'));
+    if (DOM.aiChatBox?.classList.contains('active')) closeModal(DOM.aiChatBox);
+    setTimeout(() => {
       openModal(DOM.miniCartModal);
       renderMiniCart(state.cart);
       updateShippingUI();
-    }
+      isNavClick = false;
+    }, 400);
+  });
+
+  document.getElementById('aiChatToggle')?.addEventListener('click', (e) => {
+    isNavClick = true;
+    e.preventDefault();
+    if (DOM.productPage?.classList.contains('active')) closeProductPage(false);
+    if (DOM.miniCartModal?.classList.contains('active')) closeModal(DOM.miniCartModal);
+    if (DOM.paymentModal?.classList.contains('active')) closeModal(DOM.paymentModal);
+    if (document.getElementById('orderConfirmModal')?.classList.contains('active')) closeModal(document.getElementById('orderConfirmModal'));
+    openModal(DOM.aiChatBox);
+    setTimeout(() => { isNavClick = false; }, 100);
   });
 
   const deliveryTrigger = document.getElementById('deliveryTimeTrigger');
@@ -1022,6 +1039,9 @@ function bindEvents() {
 
   // Handler utama untuk klik global
   document.addEventListener('click', async (e) => {
+    // ✅ Abaikan klik yang berasal dari tombol navigasi
+    if (e.target.closest('.nav-item') || isNavClick) return;
+
     const boutique = e.target.closest('.boutique-item');
     if (boutique) { const idx = parseInt(boutique.dataset.idx); if (!isNaN(idx)) openProductPage(idx); return; }
 
