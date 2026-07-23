@@ -79,7 +79,7 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:rgba(0,0,0,0.08)}
     html,body{margin:0;padding:0;background-color:#082E21;font-family:'DM Sans',sans-serif;font-size:16px;color:#FDFBF7;-webkit-font-smoothing:antialiased}
-    #app{position:relative;width:100%;max-width:480px;min-height:100dvh;margin:0 auto;overflow-x:hidden}
+    #app{position:relative;width:100%;max-width:480px;min-height:100dvh;margin:0 auto;overflow-x:hidden;padding-bottom:64px}
     h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:400}
     h2{font-size:clamp(1.5rem,5vw,1.75rem)}h3{font-size:clamp(1.25rem,4vw,1.5rem)}h4{font-size:clamp(1.125rem,3.5vw,1.25rem)}
 
@@ -88,16 +88,21 @@
     .onb-logo{width:76px;height:76px;margin-bottom:20px;padding:6px;background:rgba(0,0,0,0.15);border:1px solid rgba(183,146,79,0.3);border-radius:50%}
     .onb-title{font-size:2.1rem;line-height:1.1;color:#FDFBF7;min-height:3.5rem;display:flex;align-items:center;justify-content:center}
     .onb-subtitle,.onb-welcome-text{font-size:0.65rem;font-weight:600;color:#E8D5A8;text-transform:uppercase;letter-spacing:0.25em;min-height:1rem;margin-bottom:36px}
-    .btn-gold,.btn-dark{display:flex;align-items:center;justify-content:center;width:100%;padding:24px 32px;border:none;border-radius:12px;font-size:0.875rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;cursor:pointer}.btn-gold{background:#A67C3D;color:white}.btn-dark{background:#082E21;border:1px solid #C9A868;color:#FDFBF7}
+    .btn-gold,.btn-dark{display:flex;align-items:center;justify-content:center;width:100%;padding:10px 20px;border:none;border-radius:8px;font-size:0.8125rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;cursor:pointer;min-height:44px}.btn-gold{background:#A67C3D;color:white}.btn-dark{background:#082E21;border:1px solid #C9A868;color:#FDFBF7}
 
     /* Header */
     .luxury-header{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;max-width:480px;margin:0 auto;padding:10px 20px;background:linear-gradient(180deg,rgba(2,10,7,0.75),rgba(8,46,33,0.55) 70%,transparent)}
     .brand-logo img{width:28px;height:28px;border-radius:50%}
     .brand-name{font-size:1rem;font-weight:600;color:white}
 
-    /* Hero */
-    .content-wrapper{padding-bottom:120px}.hero-gold-frame{margin:64px 20px 0;border-radius:20px}.hero-img-wrap{position:relative;overflow:hidden;aspect-ratio:16/9;background:#051C14;border-radius:20px}.hero-img{display:block;width:100%;height:100%;object-fit:cover}
-    .hero-overlay-new{position:absolute;inset:auto 0 0 0;padding:30px 20px 18px;background:linear-gradient(to top,rgba(0,0,0,0.5),rgba(0,0,0,0.1),transparent)}.hero-title{font-size:clamp(1.4rem,5vw,1.85rem);line-height:1.1;color:white}.hero-title-em{color:#E8D5A8;font-style:italic}
+    /* Hero – pendek & teks besar, hijau segar */
+    .content-wrapper{padding-bottom:120px}
+    .hero-gold-frame{margin:48px 20px 0;border-radius:20px}
+    .hero-img-wrap{position:relative;overflow:hidden;aspect-ratio:2/1;background:#051C14;border-radius:20px}
+    .hero-img{display:block;width:100%;height:100%;object-fit:cover}
+    .hero-overlay-new{position:absolute;inset:auto 0 0 0;padding:24px 20px 16px;background:linear-gradient(to top,rgba(0,0,0,0.5),rgba(0,0,0,0.1),transparent)}
+    .hero-title{font-size:clamp(1.6rem,6vw,2.2rem);line-height:1.1;color:white}
+    .hero-title-em{color:#B8E6C8;font-style:italic}
 
     /* Carousel & Skeleton */
     .carousel-container{position:relative;width:100%;margin-top:16px}.carousel-track{display:flex;overflow-x:auto;padding:40px 20px 24px;scroll-snap-type:x mandatory;scrollbar-width:none;min-height:440px}.carousel-track::-webkit-scrollbar{display:none}
@@ -105,9 +110,9 @@
     .skeleton-img{width:100%;aspect-ratio:1/1;background:#E6E4DF;border-radius:12px;overflow:hidden}
     .skeleton-text{height:14px;background:#E6E4DF;border-radius:4px;margin:20px auto 8px;overflow:hidden}.skeleton-text.w-60{width:60%}.skeleton-text.w-40{width:40%}.skeleton-text.w-80{width:80%}
 
-    /* Bottom Nav */
-    .bottom-nav{position:fixed;right:0;bottom:0;left:0;z-index:1100;display:flex;justify-content:space-around;max-width:480px;margin:0 auto;padding:5px 0 6px;background:rgba(5,28,20,0.92);border-top:1px solid rgba(183,146,79,0.2);border-radius:16px 16px 0 0}
-    .nav-item{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;min-height:48px;background:none;border:none;color:rgba(253,251,247,0.6);font-size:0.7rem;font-weight:600;cursor:pointer}.nav-item.active{color:#A67C3D}
+    /* Bottom Nav – ramping */
+    .bottom-nav{position:fixed;right:0;bottom:0;left:0;z-index:1100;display:flex;justify-content:space-around;max-width:480px;margin:0 auto;padding:2px 0 4px;background:rgba(5,28,20,0.85);border-top:1px solid rgba(183,146,79,0.15);border-radius:12px 12px 0 0}
+    .nav-item{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;min-height:44px;background:none;border:none;color:rgba(253,251,247,0.6);font-size:0.65rem;font-weight:600;cursor:pointer}.nav-item.active{color:#A67C3D}
 
     .full-width{width:100%}.fade-up{opacity:0;transform:translateY(32px);transition:opacity 0.8s,transform 0.8s}.fade-up.visible{opacity:1;transform:translateY(0)}
   </style>
@@ -131,7 +136,6 @@
           <label class="onb-label" for="onbName">Bolehkah kami mengenal nama Anda?</label>
           <input type="text" id="onbName" class="onb-input" placeholder="Nama lengkap" autocomplete="name" maxlength="30" enterkeyhint="next" required />
           <button type="button" class="btn-gold full-width" id="onbNextBtn">Lanjutkan</button>
-          <!-- ✅ Tombol "Intip Menu Dulu" -->
           <button type="button" class="btn-text-gold" id="onbGuestBtn" style="margin-top: 12px;">Intip Menu Dulu</button>
         </div>
         <div id="onbStep2" class="onb-step">
@@ -173,7 +177,7 @@
           <img class="hero-img"
                src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp"
                alt="Rujak premium RUJAK.Co"
-               width="480" height="270"
+               width="480" height="240"
                fetchpriority="high" decoding="async" />
           <div class="hero-overlay-new">
             <div class="hero-content">
@@ -267,7 +271,7 @@
           Kami akan menggantinya. Namun dengan <strong>Fresh-Lock System™</strong>, kemungkinan itu terjadi sangat kecil.
         </div>
       </div>
-      <!-- ✅ FAQ BARU: masa simpan -->
+      <!-- FAQ BARU: masa simpan -->
       <div class="faq-item">
         <button type="button" class="faq-question" data-toggle="faq" aria-expanded="false" aria-controls="faq-answer-5" id="faq-q-5">
           <span>Berapa lama rujak bisa disimpan?</span>
@@ -284,7 +288,6 @@
         <h3 class="footer-brand">RUJAK.Co</h3>
         <span class="footer-tagline">Indonesia dalam Satu Wadah</span>
         <div class="footer-meta"><span>EST. 2024</span><span class="meta-dot">•</span><span>Bekasi</span></div>
-        <!-- ✅ Nomor WhatsApp di footer -->
         <div style="margin-top: 12px; font-size: 0.75rem; color: rgba(255,255,255,0.6);">
           Sen–Jum: 10.00–20.00 | Sab–Min: 09.00–18.00
         </div>
@@ -394,7 +397,6 @@
           <span>Total Pesanan</span>
           <span id="finalTotal">Rp0</span>
         </div>
-        <!-- ✅ Teks garansi -->
         <p style="text-align: center; font-size: 0.7rem; color: var(--gray-600); margin: 8px 0 4px;">
           🛡️ Setiap pesanan dilindungi <strong>Fresh‑Lock System™</strong>. Buah rusak atau layu di perjalanan? Kami ganti baru.
         </p>
@@ -480,7 +482,7 @@
   </div>
 
   <!-- BOTTOM NAV -->
-  <nav class="bottom-nav" id="bottomNav">
+  <nav class="bottom-nav" id="bottomNav" style="display:none;">
     <button type="button" class="nav-item active" id="navHomeBtn" aria-label="Beranda"><i data-lucide="home" class="nav-icon"></i></button>
     <button type="button" class="nav-item" id="navCartBtn" aria-label="Reservasi">
       <span class="nav-cart-wrapper"><i data-lucide="shopping-bag" class="nav-icon"></i><span class="nav-badge" id="cartBadgeNav" style="display:none;">0</span></span>
