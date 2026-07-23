@@ -39,7 +39,7 @@ PRODUCTS.forEach(p => {
 const overlayStack = [];
 window.__overlayStack__ = overlayStack;
 let isProgrammaticBack = false;
-let isNavClick = false; // ✅ flag untuk mencegah konflik klik global
+let isNavClick = false;
 
 // ---------------------------------------------------------------------------
 // DOM CACHE
@@ -196,7 +196,7 @@ function openModal(modalEl) {
   overlayStack.push(modalEl);
   history.pushState({ isOverlay: true, id: modalEl.id }, '');
   DOM.mainContent?.setAttribute('inert', '');
-  // ❌ DOM.bottomNav?.setAttribute('inert', '');  // Dihapus agar nav selalu interaktif
+  // ❌ DOM.bottomNav?.setAttribute('inert', '');
   const firstInput = modalEl.querySelector('button, input, textarea, select');
   if (firstInput) firstInput.focus();
   syncBottomNav();
@@ -225,21 +225,20 @@ function closeModal(modalEl, fromPopState = false) {
   }
   releaseInert();
 
-  if (!fromPopState && !isNavClick) { // ✅ tidak panggil history.back jika dari nav
+  if (!fromPopState && !isNavClick) {
     isProgrammaticBack = true;
     history.back();
   }
   syncBottomNav();
 }
 
-// ✅ Perbaikan confirm modal tampil di tengah
 function showConfirmModal(title, message, onConfirm) {
   const old = document.getElementById('confirmModal');
   if (old) old.remove();
   const triggerEl = document.activeElement;
   const modal = document.createElement('div');
   modal.id = 'confirmModal';
-  modal.className = 'modal-overlay centered confirm-modal'; // ✅ centered
+  modal.className = 'modal-overlay centered confirm-modal';
   modal.setAttribute('role', 'dialog');
   modal.setAttribute('aria-modal', 'true');
   modal.innerHTML = `
@@ -269,7 +268,7 @@ function showConfirmModal(title, message, onConfirm) {
 }
 
 // ---------------------------------------------------------------------------
-// PRODUCT PAGE
+// PRODUCT PAGE (DENGAN SCROLL-AWARE NAV)
 // ---------------------------------------------------------------------------
 function openProductPage(globalIndex) {
   if (!DOM.productPage) return;
@@ -287,12 +286,14 @@ function openProductPage(globalIndex) {
   state.lastViewedProductIndex = globalIndex;
   overlayStack.push(DOM.productPage);
   history.pushState({ isOverlay: true, id: 'productPage' }, '');
+
   const targetSlide = document.querySelector(`.product-slide[data-idx="${globalIndex}"]`);
   if (targetSlide && DOM.productSwiperTrack) {
     DOM.productSwiperTrack.style.scrollBehavior = 'auto';
     DOM.productSwiperTrack.scrollLeft = targetSlide.offsetLeft;
     DOM.productSwiperTrack.style.scrollBehavior = 'smooth';
   }
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -307,7 +308,30 @@ function openProductPage(globalIndex) {
       }
     });
   }, { rootMargin: '0px 0px 200px 0px' });
-  document.querySelectorAll('.product-slide').forEach(slide => observer.observe(slide));
+
+  document.querySelectorAll('.product-slide').forEach(slide => {
+    observer.observe(slide);
+    
+    // ✅ Scroll‑aware nav bar
+    let lastScrollTop = 0;
+    slide.addEventListener('scroll', () => {
+      const st = slide.scrollTop;
+      const nav = DOM.bottomNav;
+      if (!nav) return;
+      
+      if (st > lastScrollTop && st > 80) {
+        // Scroll ke bawah → sembunyikan nav
+        nav.classList.add('nav-hidden');
+        nav.classList.remove('nav-visible');
+      } else {
+        // Scroll ke atas → tampilkan nav
+        nav.classList.remove('nav-hidden');
+        nav.classList.add('nav-visible');
+      }
+      lastScrollTop = st <= 0 ? 0 : st;
+    }, { passive: true });
+  });
+
   DOM._productObserver = observer;
   syncBottomNav();
 }
@@ -316,6 +340,13 @@ function closeProductPage(fromPopState = false) {
   if (!DOM.productPage) return;
   document.getElementById('navHomeBtn')?.focus();
   DOM.productPage.classList.remove('active');
+  
+  // ✅ Kembalikan nav ke keadaan normal
+  if (DOM.bottomNav) {
+    DOM.bottomNav.classList.remove('nav-hidden', 'nav-visible');
+    DOM.bottomNav.style.display = 'flex';
+  }
+
   setTimeout(() => {
     DOM.productPage.style.display = 'none';
     DOM.productPage.setAttribute('aria-hidden', 'true');
@@ -431,7 +462,6 @@ function updateCartUI() {
     updateShippingUI();
   }
   const totalItems = Object.values(state.cart).reduce((sum, item) => sum + item.qty, 0);
-  // ✅ live region sekarang benar‑benar ada
   if (DOM.liveCartRegion) {
     DOM.liveCartRegion.textContent = totalItems > 0
       ? `${totalItems} item di keranjang`
@@ -562,7 +592,6 @@ function initOnboarding() {
     if (!name) return showToast('Mohon isi nama Anda.');
     state.customerName = name;
     DOM.onbStep1.classList.remove('active');
-    // ✅ Hapus timeout untuk focus, biarkan user klik sendiri
     DOM.onbStep2.classList.add('active');
   });
 
