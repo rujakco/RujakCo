@@ -111,7 +111,7 @@
     .skeleton-text{height:14px;background:#E6E4DF;border-radius:4px;margin:20px auto 8px;overflow:hidden}.skeleton-text.w-60{width:60%}.skeleton-text.w-40{width:40%}.skeleton-text.w-80{width:80%}
 
     /* Bottom Nav – ramping */
-    .bottom-nav{position:fixed;right:0;bottom:0;left:0;z-index:1100;display:flex;justify-content:space-around;max-width:480px;margin:0 auto;padding:2px 0 4px;background:rgba(5,28,20,0.85);border-top:1px solid rgba(183,146,79,0.15);border-radius:12px 12px 0 0}
+    .bottom-nav{position:fixed;right:0;bottom:0;left:0;z-index:600;display:flex;justify-content:space-around;max-width:480px;margin:0 auto;padding:2px 0 4px;background:rgba(5,28,20,0.85);border-top:1px solid rgba(183,146,79,0.15);border-radius:12px 12px 0 0}
     .nav-item{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;min-height:44px;background:none;border:none;color:rgba(253,251,247,0.6);font-size:0.65rem;font-weight:600;cursor:pointer}.nav-item.active{color:#A67C3D}
 
     .full-width{width:100%}.fade-up{opacity:0;transform:translateY(32px);transition:opacity 0.8s,transform 0.8s}.fade-up.visible{opacity:1;transform:translateY(0)}
@@ -306,6 +306,17 @@
     </footer>
   </main>
 
+  <!-- ✅ TOMBOL VIP GLOBAL (dipindahkan ke luar overlay) -->
+  <div class="wa-vip-side-tab" id="waVipSideTab">
+    <div class="wa-vip-handle" id="waVipHandle"></div>
+    <div class="wa-vip-body">
+      <button type="button" class="wa-vip-link" id="btnVipConcierge" aria-label="Hubungi VIP Concierge via WhatsApp" style="background:transparent; border:none; cursor:pointer;">
+        <i data-lucide="crown"></i>
+        <span class="wa-vip-vertical-text">VIP</span>
+      </button>
+    </div>
+  </div>
+
   <!-- PRODUCT DETAIL OVERLAY -->
   <div class="product-swiper-overlay" id="productPage" role="dialog" aria-modal="true" aria-hidden="true">
     <button type="button" id="backFromProduct" class="glass-btn floating-close" aria-label="Kembali"><i data-lucide="arrow-left" class="icon-sm"></i></button>
@@ -317,15 +328,6 @@
           <div class="skeleton-text w-80" style="height:14px;background:#E6E4DF;border-radius:4px;margin:0 auto 12px;"></div>
           <div class="skeleton-text w-60" style="height:14px;background:#E6E4DF;border-radius:4px;margin:0 auto;"></div>
         </div>
-      </div>
-    </div>
-    <div class="wa-vip-side-tab" id="waVipSideTab">
-      <div class="wa-vip-handle" id="waVipHandle"></div>
-      <div class="wa-vip-body">
-        <button type="button" class="wa-vip-link" id="btnVipConcierge" aria-label="Hubungi VIP Concierge via WhatsApp" style="background:transparent; border:none; cursor:pointer;">
-          <i data-lucide="crown"></i>
-          <span class="wa-vip-vertical-text">VIP</span>
-        </button>
       </div>
     </div>
   </div>
@@ -446,7 +448,7 @@
 
   <!-- AI CHAT -->
   <div class="modal-overlay" id="aiChatBox" role="dialog" aria-modal="true" aria-labelledby="aiChatTitle" aria-hidden="true">
-    <div class="drawer-content" style="height:70vh;">
+    <div class="drawer-content" style="max-height:70dvh; height:auto;">
       <div class="drawer-header">
         <h3 id="aiChatTitle">Concierge RUJAK.Co</h3>
         <button type="button" id="aiChatClose" class="glass-btn-dark" aria-label="Tutup Chat"><i data-lucide="x" class="icon-sm"></i></button>
@@ -490,6 +492,9 @@
     <button type="button" class="nav-item" id="navProductBtn" aria-label="Lihat Produk"><i data-lucide="utensils" class="nav-icon"></i></button>
     <button type="button" class="nav-item" id="aiChatToggle" aria-label="Concierge"><i data-lucide="sparkles" class="nav-icon"></i></button>
   </nav>
+
+  <!-- ✅ Elemen live region untuk cart (aksesibilitas) -->
+  <div id="cartLiveRegion" class="sr-only" aria-live="polite"></div>
 
   <div id="toast" role="alert" aria-live="polite"></div>
 </div>
