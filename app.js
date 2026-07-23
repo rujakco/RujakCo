@@ -1,4 +1,7 @@
-// app.js — FINAL GABUNGAN: Semua perbaikan UX + Telegram aman via Edge Function
+// ===========================================================================
+// app.js — KODE FULL FINAL: Semua perbaikan UX + Telegram aman via Edge Function
+// ===========================================================================
+
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch } from './utils/helpers.js';
@@ -285,7 +288,6 @@ function openProductPage(globalIndex) {
   overlayStack.push(DOM.productPage);
   history.pushState({ isOverlay: true, id: 'productPage' }, '');
 
-  // ✅ Nav siap tampil
   if (DOM.bottomNav) {
     DOM.bottomNav.style.display = 'flex';
     DOM.bottomNav.classList.add('nav-visible');
@@ -349,7 +351,6 @@ function closeProductPage(fromPopState = false) {
   document.getElementById('navHomeBtn')?.focus();
   DOM.productPage.classList.remove('active');
   
-  // ✅ Kembalikan nav ke keadaan normal
   if (DOM.bottomNav) {
     DOM.bottomNav.classList.remove('nav-hidden', 'nav-visible');
     DOM.bottomNav.style.display = 'flex';
@@ -969,7 +970,6 @@ function bindEvents() {
     document.getElementById('waVipSideTab')?.classList.toggle('open');
   });
 
-  // ✅ NAVIGASI BARU: selalu responsif dengan flag isNavClick
   document.getElementById('navHomeBtn')?.addEventListener('click', () => {
     isNavClick = true;
     if (DOM.productPage?.classList.contains('active')) closeProductPage(false);
@@ -1095,7 +1095,6 @@ function bindEvents() {
     saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict, state.userDistance);
   });
 
-  // Handler utama untuk klik global
   document.addEventListener('click', async (e) => {
     if (e.target.closest('.nav-item') || isNavClick) return;
 
