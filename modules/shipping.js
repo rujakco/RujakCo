@@ -4,26 +4,20 @@ export function calculateShipping(distance, mainQty, provider = 'lalamove', tier
   const dist = distance || SYSTEM?.DEFAULT_DISTANCE || 5;
   if (dist < 0) return { cost: null, label: 'Jarak tidak valid' };
   if (dist > 70) return { cost: null, label: 'Konfirmasi via Concierge' };
-
   const qty = Math.max(1, mainQty || 1);
-
   if (provider === 'paxel') {
     const large = Math.floor(qty / 2);
     const med = qty % 2;
     return { cost: (large * 25000) + (med * 20000) + ((large + med) * 3000), label: 'Paxel Ekspres' };
   }
-
-  // Lalamove Reguler
   let cost = dist <= 3 ? 8000 :
              dist <= 10 ? 8000 + (dist - 3) * 1800 :
              dist <= 20 ? 20600 + (dist - 10) * 1600 :
              dist <= 30 ? 36600 + (dist - 20) * 1400 :
              50600 + (dist - 30) * 1150;
-
   if (tier === 'prioritas') {
-    cost = Math.round(cost * 1.25); // 25% lebih mahal
+    cost = Math.round(cost * 1.25);
   }
-
   return { cost, label: tier === 'prioritas' ? 'Prioritas' : 'Reguler' };
 }
 
@@ -37,9 +31,7 @@ function calculateHaversine(lat1, lon1, lat2, lon2) {
 }
 
 export async function getDrivingDistance(lat1, lon1, lat2, lon2) {
-  if (isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) {
-    throw new Error('Koordinat tidak valid');
-  }
+  if (isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) throw new Error('Koordinat tidak valid');
   const url = `https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=false`;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 8000);
@@ -48,9 +40,7 @@ export async function getDrivingDistance(lat1, lon1, lat2, lon2) {
     clearTimeout(timeout);
     if (!response.ok) throw new Error('OSRM gagal');
     const data = await response.json();
-    if (data.routes && data.routes.length > 0) {
-      return { distance: parseFloat((data.routes[0].distance / 1000).toFixed(1)), isHaversine: false };
-    }
+    if (data.routes && data.routes.length > 0) return { distance: parseFloat((data.routes[0].distance / 1000).toFixed(1)), isHaversine: false };
     throw new Error('Rute jalan raya tidak ditemukan');
   } catch (error) {
     clearTimeout(timeout);
@@ -59,11 +49,14 @@ export async function getDrivingDistance(lat1, lon1, lat2, lon2) {
   }
 }
 
-export async function searchAddressOSM(query) {
+export async function searchAddressOSM(query, externalSignal) {
   const viewbox = '106.4,-6.6,107.2,-6.0';
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&countrycodes=id&viewbox=${viewbox}&bounded=1&limit=5`;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 6000);
+  if (externalSignal) {
+    externalSignal.addEventListener('abort', () => controller.abort());
+  }
   try {
     const response = await fetch(url, {
       headers: { 'User-Agent': 'RujakCo-DeliveryApp/1.0 (halo@rujakco.biz.id)' },
@@ -74,7 +67,27 @@ export async function searchAddressOSM(query) {
     return await response.json();
   } catch (error) {
     clearTimeout(timeout);
+    if (error.name === 'AbortError') return [];
     console.error('Gagal mengambil data lokasi dari OSM:', error);
     return [];
+  }
+}
+
+export async function reverseGeocode(lat, lon) {
+  const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1&accept-language=id`;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 6000);
+  try {
+    const response = await fetch(url, {
+      headers: { 'User-Agent': 'RujakCo-DeliveryApp/1.0 (halo@rujakco.biz.id)' },
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    if (!response.ok) return null;
+    return await response.json();
+  } catch (error) {
+    clearTimeout(timeout);
+    console.error('Gagal reverse geocode:', error);
+    return null;
   }
 }
