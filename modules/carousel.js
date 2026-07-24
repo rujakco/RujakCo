@@ -12,17 +12,15 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
   const insightEl = document.getElementById(insightId);
   if (!insightEl) return;
 
-  // Duplikasi item untuk infinite scroll
-  const originalItems = [...track.children];
-  if (originalItems.length === 0) return;
-  const totalItems = originalItems.length;
-  track.innerHTML = '';
-  for (let i = 0; i < LOOP_MULTIPLIER; i++) {
-    originalItems.forEach(el => {
-      const clone = el.cloneNode(true);
-      track.appendChild(clone);
-    });
-  }
+  // CATATAN: renderMenu() (render.js) SUDAH men-triple-kan produk
+  // (LOOP_MULTIPLIER = 3) sebelum initCarousel() dipanggil. Jangan
+  // di-triple lagi di sini — cukup pakai DOM yang sudah ada, supaya
+  // hasil akhirnya tetap 3x (bukan 9x) elemen produk.
+  const currentItems = track.children;
+  if (currentItems.length === 0) return;
+  // totalItems = jumlah produk ASLI (bukan yang sudah di-triple),
+  // dipakai sebagai basis perhitungan recentering di bawah.
+  const totalItems = currentItems.length / LOOP_MULTIPLIER;
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
