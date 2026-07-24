@@ -17,13 +17,8 @@
   <meta name="twitter:image" content="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" />
   <meta name="theme-color" content="#082E21">
 
-  <!-- Preconnect untuk Supabase -->
   <link rel="preconnect" href="https://ghhnnfrmftttptcejizp.supabase.co" crossorigin />
-
-  <!-- Preload gambar hero -->
   <link rel="preload" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" as="image" />
-
-  <!-- Prefetch html2canvas -->
   <link rel="prefetch" href="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" as="script" />
 
   <script type="application/ld+json">
@@ -81,33 +76,22 @@
     #app{position:relative;width:100%;max-width:480px;min-height:100dvh;margin:0 auto;overflow-x:hidden}
     h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:350}
     h2{font-size:clamp(1.5rem,5vw,1.75rem)}h3{font-size:clamp(1.25rem,4vw,1.5rem)}h4{font-size:clamp(1.125rem,3.5vw,1.25rem)}
-
-    /* Onboarding */
     .onboarding-overlay{position:fixed;inset:0;z-index:1100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;background:radial-gradient(circle at 50% 30%,rgba(183,146,79,0.08),transparent 60%),linear-gradient(180deg,#082E21,#020A07);text-align:center}
     .onb-logo{width:76px;height:76px;margin-bottom:20px;padding:6px;background:rgba(0,0,0,0.15);border:1px solid rgba(183,146,79,0.3);border-radius:50%}
     .onb-title{font-size:2.1rem;line-height:1.1;color:#FDFBF7;min-height:3.5rem;display:flex;align-items:center;justify-content:center}
     .onb-subtitle,.onb-welcome-text{font-size:0.65rem;font-weight:600;color:#E8D5A8;text-transform:uppercase;letter-spacing:0.25em;min-height:1rem;margin-bottom:36px}
     .btn-gold,.btn-dark{display:flex;align-items:center;justify-content:center;width:100%;padding:24px 32px;border:none;border-radius:12px;font-size:0.875rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;cursor:pointer}.btn-gold{background:#A67C3D;color:white}.btn-dark{background:#082E21;border:1px solid #C9A868;color:#FDFBF7}
-
-    /* Header */
     .luxury-header{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;max-width:480px;margin:0 auto;padding:10px 20px;background:linear-gradient(180deg,rgba(2,10,7,0.75),rgba(8,46,33,0.55) 70%,transparent)}
     .brand-logo img{width:28px;height:28px;border-radius:50%}
     .brand-name{font-size:1rem;font-weight:600;color:white}
-
-    /* Hero */
     .content-wrapper{padding-bottom:120px}.hero-gold-frame{margin:64px 20px 0;border-radius:20px}.hero-img-wrap{position:relative;overflow:hidden;aspect-ratio:16/9;background:#051C14;border-radius:20px}.hero-img{display:block;width:100%;height:100%;object-fit:cover}
     .hero-overlay-new{position:absolute;inset:auto 0 0 0;padding:30px 20px 18px;background:linear-gradient(to top,rgba(0,0,0,0.5),rgba(0,0,0,0.1),transparent)}.hero-title{font-size:clamp(1.4rem,5vw,1.85rem);line-height:1.1;color:white}.hero-title-em{color:#E8D5A8;font-style:italic}
-
-    /* Carousel & Skeleton */
     .carousel-container{position:relative;width:100%;margin-top:16px}.carousel-track{display:flex;overflow-x:auto;padding:40px 20px 24px;scroll-snap-type:x mandatory;scrollbar-width:none;min-height:440px}.carousel-track::-webkit-scrollbar{display:none}
     .skeleton-card{flex:0 0 100%;max-width:440px;margin:0 -12px;padding:32px 28px;background:white;border-radius:28px;text-align:center;display:flex;flex-direction:column;align-items:center}
     .skeleton-img{width:100%;aspect-ratio:1/1;background:#E6E4DF;border-radius:12px;overflow:hidden}
     .skeleton-text{height:14px;background:#E6E4DF;border-radius:4px;margin:20px auto 8px;overflow:hidden}.skeleton-text.w-60{width:60%}.skeleton-text.w-40{width:40%}.skeleton-text.w-80{width:80%}
-
-    /* Bottom Nav */
     .bottom-nav{position:fixed;right:0;bottom:0;left:0;z-index:600;display:flex;justify-content:space-around;max-width:480px;margin:0 auto;padding:5px 0 6px;background:rgba(5,28,20,0.92);border-top:1px solid rgba(183,146,79,0.2);border-radius:16px 16px 0 0}
     .nav-item{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;min-height:48px;background:none;border:none;color:rgba(253,251,247,0.35);font-size:0.7rem;font-weight:600;cursor:pointer}.nav-item.active{color:#A67C3D}
-
     .full-width{width:100%}.fade-up{opacity:0;transform:translateY(32px);transition:opacity 0.8s,transform 0.8s}.fade-up.visible{opacity:1;transform:translateY(0)}
   </style>
 
@@ -129,7 +113,6 @@
           <label class="onb-label" for="onbName">Bolehkah kami mengenal nama Anda?</label>
           <input type="text" id="onbName" class="onb-input" placeholder="Nama lengkap" autocomplete="name" maxlength="30" enterkeyhint="next" required />
           <button type="button" class="btn-gold full-width" id="onbNextBtn">Lanjutkan</button>
-          <!-- ✅ Tombol "Intip Menu Dulu" -->
           <button type="button" class="btn-text-gold" id="onbGuestBtn" style="margin-top: 24px;">Lihat Menu Dulu, Isi Alamat Nanti</button>
         </div>
         <div id="onbStep2" class="onb-step">
@@ -137,10 +120,11 @@
             Kami melayani area Jabodetabek. Kecamatan Anda menentukan estimasi ongkir pengantaran.
           </p>
           <label class="onb-label" for="onbDistrict">Kecamatan tujuan pengantaran</label>
-          <div style="position:relative;">
-            <input type="text" id="onbDistrict" class="onb-input" placeholder="Ketik nama kecamatan..." autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="onbDistrictDropdown" aria-haspopup="listbox" enterkeyhint="done" />
-            <div id="onbDistrictDropdown" class="minimal-dropdown" style="text-align:left;" role="listbox" aria-label="Daftar kecamatan"></div>
+          <div id="onbDistrictWrapper" class="district-input-wrapper">
+            <input type="text" id="onbDistrict" class="onb-input" placeholder="Ketik alamat tujuan (jalan, kelurahan, kota)" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="onbDistrictDropdown" aria-haspopup="listbox" enterkeyhint="done" />
+            <span class="valid-indicator is-hidden" id="onbValidIndicator"><i data-lucide="check" class="icon-sm"></i> Alamat dipilih</span>
           </div>
+          <div id="onbDistrictDropdown" class="minimal-dropdown" style="text-align:left;" role="listbox" aria-label="Daftar kecamatan"></div>
           <button type="button" class="btn-gold full-width" id="onbStartBtn" style="margin-top:24px;">Masuk Sekarang</button>
         </div>
       </div>
@@ -171,11 +155,7 @@
     <div class="hero-editorial fade-up">
       <div class="hero-gold-frame">
         <div class="hero-img-wrap">
-          <img class="hero-img"
-               src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp"
-               alt="Rujak premium RUJAK.Co"
-               width="480" height="270"
-               fetchpriority="high" decoding="async" />
+          <img class="hero-img" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" alt="Rujak premium RUJAK.Co" width="480" height="270" fetchpriority="high" decoding="async" />
           <div class="hero-overlay-new">
             <div class="hero-content">
               <h1 class="hero-title">Asam, Pedas,<br> Manis, <span class="hero-title-em">Segar.</span></h1>
@@ -345,11 +325,12 @@
           <input type="tel" id="customerPhone" inputmode="numeric" autocomplete="tel" class="input-minimal" placeholder="Nomor HP aktif (Contoh: 08123...)" maxlength="15" required />
           <label class="tiny-text" for="customerAddress">Detail Alamat (Blok, No. Rumah, Patokan)</label>
           <textarea id="customerAddress" placeholder="Blok, No. Rumah, atau patokan khusus" rows="2" class="input-minimal" autocomplete="street-address" maxlength="200" required></textarea>
-          <label class="tiny-text" for="districtInput">📍 Titik Lokasi <span style="color:var(--danger);text-transform:none;letter-spacing:normal;">— Wajib pilih dari hasil pencarian</span></label>
-          <div style="position:relative;">
+          <label class="tiny-text" for="districtInput">📍 Titik Lokasi <span style="color:#A93226;font-size:0.7rem;text-transform:none;letter-spacing:normal;">— Wajib pilih dari hasil pencarian</span></label>
+          <div class="district-input-wrapper">
             <input type="text" id="districtInput" class="input-minimal" placeholder="Ketik nama jalan atau kelurahan..." autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="drawerDistrictDropdown" aria-haspopup="listbox" />
-            <div id="drawerDistrictDropdown" class="minimal-dropdown" style="top:100%; left:0; right:0;" role="listbox" aria-label="Hasil pencarian alamat"></div>
+            <span class="valid-indicator is-hidden" id="districtValidIndicator"><i data-lucide="check" class="icon-sm"></i> Alamat dipilih</span>
           </div>
+          <div id="drawerDistrictDropdown" class="minimal-dropdown" style="top:100%; left:0; right:0;" role="listbox" aria-label="Hasil pencarian alamat"></div>
           <div class="district-note">*Biaya pengiriman dihitung berdasarkan jarak tempuh aktual (km).</div>
           
           <label class="tiny-text" for="deliveryTimeTrigger">Jadwal Pengantaran</label>
@@ -377,7 +358,7 @@
             <button type="button" class="log-btn" data-provider="paxel">Paxel Ekspres</button>
           </div>
           <div id="lalamoveOptions" style="margin-top:24px;">
-            <label class="tiny-text">Jenis Layanan</label>
+            <p style="font-size:0.75rem;color:var(--gray-500);margin-bottom:8px;">Pilih jenis layanan pengiriman</p>
             <div class="logistic-options">
               <button type="button" class="veh-btn active" data-tier="reguler">Reguler <small id="estReguler" style="display:block;font-weight:400;opacity:0.75;"></small></button>
               <button type="button" class="veh-btn" data-tier="prioritas">Prioritas <small id="estPrioritas" style="display:block;font-weight:400;opacity:0.75;"></small></button>
