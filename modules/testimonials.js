@@ -8,8 +8,8 @@ export function initTestimonials() {
   if (!cards.length) return;
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const PAUSE_DURATION = 6000;
-  let currentIndex = 0, prevIndex = cards.length - 1;
+  const AUTO_ADVANCE_INTERVAL = 6000; // interval auto-lanjut
+  let currentIndex = 0, prevIndex = 0; // prevIndex = 0, bukan cards.length - 1
   let interval = null, userPaused = prefersReducedMotion, tempPaused = false;
   let resumeTimer = null;
 
@@ -35,7 +35,7 @@ export function initTestimonials() {
   }
 
   function nextCard() { if (userPaused || tempPaused) return; showCard((currentIndex + 1) % cards.length, true); }
-  function startFlip() { if (interval) clearInterval(interval); if (!userPaused) interval = setInterval(nextCard, PAUSE_DURATION); }
+  function startFlip() { if (interval) clearInterval(interval); if (!userPaused) interval = setInterval(nextCard, AUTO_ADVANCE_INTERVAL); }
   function setPauseUI(paused) {
     pauseBtn.setAttribute('aria-pressed', paused);
     pauseBtn.setAttribute('aria-label', paused ? 'Lanjutkan testimoni otomatis' : 'Jeda testimoni otomatis');
@@ -62,8 +62,8 @@ export function initTestimonials() {
     });
   });
 
-  // Inisialisasi
-  showCard(0, true);
+  // Inisialisasi: tidak perlu panggil showCard(0, true) karena sudah di index 0
+  if (liveRegion) liveRegion.textContent = `Testimoni dari ${getAuthor(cards[0])}`;
   setPauseUI(userPaused);
   startFlip();
 }
