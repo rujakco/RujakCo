@@ -2,14 +2,14 @@
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch } from './utils/helpers.js';
-import { loadState, saveCart, saveUser, clearUser, saveCustomer, loadCustomer, isStorageAvailable } from './modules/storage.js';
+import { loadState, saveCart, saveUser, clearUser, saveCustomer, loadCustomer, isStorageAvailable, readRaw } from './modules/storage.js';
 import { calculateShipping, getDrivingDistance, searchAddressOSM } from './modules/shipping.js';
 import { renderMenu, renderProductSwiper, renderCart, renderMiniCart, getProductGlobalIndex } from './modules/render.js';
 import { initCarousel } from './modules/carousel.js';
 import { initAIChat } from './modules/chat.js';
 import { initAccessibility } from './modules/accessibility.js';
 import { initTestimonials } from './modules/testimonials.js';
-import { validatePhone, validateAddress, getCartSummary } from './modules/checkout.js';
+import { validatePhone, validateAddress, getCartSummary, showWhatsAppFallback } from './modules/checkout.js';
 import { showOrderConfirmation as launchProReceipt } from './modules/checkout-receipt.js';
 
 // ---------------------------------------------------------------------------
@@ -27,6 +27,7 @@ const state = {
   vehicleType: 'motor',
   isPriority: false,
   userDistance: null,
+  haversineUsed: false,
   lastViewedProductIndex: -1,
   currentOrderCode: null,
   receiptUrl: null,
@@ -119,13 +120,13 @@ function loadScript(src) {
 // ---------------------------------------------------------------------------
 function applyPersonalization() {
   const name = state.customerName || 'Tamu';
-  const district = state.selectedDistrict || 'Pilih alamat tujuan';
+  const districtLabel = state.selectedDistrict || 'Pilih alamat tujuan';
   DOM.headerName.textContent = name;
-  DOM.headerLoc.textContent = district;
+  DOM.headerLoc.textContent = districtLabel;
   if (DOM.customerNameInput) DOM.customerNameInput.value = name !== 'Tamu' ? name : '';
   if (DOM.customerPhoneInput) DOM.customerPhoneInput.value = state.customerPhone;
   if (DOM.customerAddressInput) DOM.customerAddressInput.value = state.customerAddress;
-  if (DOM.districtInput) DOM.districtInput.value = state.selectedDistrictFull || district;
+  if (DOM.districtInput) DOM.districtInput.value = state.selectedDistrictFull || '';
   if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Halo, ${name}! Ada yang bisa kami bantu untuk pesanan Anda?`;
 }
 
@@ -197,7 +198,6 @@ function openModal(modalEl) {
 function closeModal(modalEl, fromPopState = false) {
   if (!modalEl) return;
 
-  // Pindahkan fokus SEBELUM menambahkan aria-hidden/inert
   if (previousFocusedElement && document.body.contains(previousFocusedElement)) {
     previousFocusedElement.focus();
   } else {
@@ -266,7 +266,6 @@ function showConfirmModal(title, message, onConfirm) {
 // ---------------------------------------------------------------------------
 function openProductPage(globalIndex) {
   if (!DOM.productPage) return;
-  // Disconnect observer lama sebelum buat baru
   if (DOM._productObserver) {
     DOM._productObserver.disconnect();
     DOM._productObserver = null;
@@ -308,10 +307,7 @@ function openProductPage(globalIndex) {
 
 function closeProductPage(fromPopState = false) {
   if (!DOM.productPage) return;
-
-  // Pindahkan fokus sebelum menyembunyikan
   document.getElementById('navHomeBtn')?.focus();
-
   DOM.productPage.classList.remove('active');
   setTimeout(() => {
     DOM.productPage.style.display = 'none';
@@ -495,6 +491,7 @@ function initDrawerDistrictDropdown() {
     try {
       const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, lat, lon);
       state.userDistance = result.distance;
+      state.haversineUsed = result.isHaversine;
     } catch (err) {
       showToast('Gagal menghitung jarak, coba lagi.');
       return;
@@ -528,6 +525,7 @@ async function resolveOnboardingDistance(districtName) {
       const place = results[0];
       const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, parseFloat(place.lat), parseFloat(place.lon));
       state.userDistance = result.distance;
+      state.haversineUsed = result.isHaversine;
       state.selectedDistrict = extractShortLocation(place.display_name) || districtName;
       state.selectedDistrictFull = place.display_name;
       saveCustomer(state.customerPhone, state.customerAddress, place.display_name, state.userDistance);
@@ -627,6 +625,7 @@ function initOnboarding() {
     try {
       const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, lat, lon);
       state.userDistance = result.distance;
+      state.haversineUsed = result.isHaversine;
       state.selectedDistrictFull = displayName;
       state.selectedDistrict = extractShortLocation(displayName);
       input.value = displayName;
@@ -842,9 +841,12 @@ async function sendReceiptToWhatsApp() {
   msg += `📎 _Mohon lampirkan *gambar bukti transfer (QRIS)* Anda di sini agar reservasi dapat segera kami proses._`;
 
   const sb = getSupabase();
+  let orderSaved = false;
   if (sb) {
     try {
-      await sb.from('orders').insert({
+      const shipCostNum = parseInt(shipCost.replace(/\D/g, ''), 10);
+      const totalNum = parseInt(totalCost.replace(/\D/g, ''), 10);
+      const { error } = await sb.from('orders').insert({
         order_code: state.currentOrderCode,
         customer_name: name,
         customer_phone: phone,
@@ -853,27 +855,36 @@ async function sendReceiptToWhatsApp() {
         distance_km: state.userDistance,
         items: summary.items,
         subtotal: summary.subtotal,
-        shipping_cost: parseInt(shipCost.replace(/\D/g, '')) || null,
-        total: parseInt(totalCost.replace(/\D/g, '')) || null,
+        shipping_cost: Number.isNaN(shipCostNum) ? null : shipCostNum,
+        total: Number.isNaN(totalNum) ? null : totalNum,
         shipping_provider: logisticInfo,
         delivery_time: deliveryTime,
         notes,
         status: 'pending_payment'
       });
+      if (error) {
+        console.error("Gagal menyimpan ke database:", error);
+      } else {
+        orderSaved = true;
+      }
     } catch (err) {
       console.error("Gagal menyimpan ke database:", err);
     }
   }
 
-  // Buka WhatsApp di tab baru, lalu bersihkan keranjang segera
   const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
   const newWindow = window.open(waUrl, '_blank', 'noopener');
+
+  if (!orderSaved) {
+    showToast('⚠️ Pesanan diteruskan, namun catatan kami mungkin belum tersimpan. Simpan tangkapan layar struk Anda.');
+  }
+
   if (newWindow) {
     state.cart = {};
     updateCartUI();
-    showToast('Pesanan terkirim. Lanjutkan pembayaran di WhatsApp.');
+    if (orderSaved) showToast('Pesanan terkirim. Lanjutkan pembayaran di WhatsApp.');
   } else {
-    showToast('⚠️ Pop‑up diblokir. Silakan kirim manual ke WhatsApp kami.');
+    showWhatsAppFallback(SYSTEM.WA_NUMBER, msg);
   }
 }
 
@@ -1182,6 +1193,7 @@ function bindEvents() {
               const place = results[0];
               const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, parseFloat(place.lat), parseFloat(place.lon));
               state.userDistance = result.distance;
+              state.haversineUsed = result.isHaversine;
               state.selectedDistrictFull = place.display_name;
               state.selectedDistrict = extractShortLocation(place.display_name);
               DOM.districtInput && (DOM.districtInput.value = place.display_name);
@@ -1270,13 +1282,11 @@ function init() {
       }
       if (cust.distance !== null && cust.distance !== undefined && !isNaN(cust.distance)) {
         state.userDistance = cust.distance;
-      } else {
-        const raw = localStorage.getItem('rj_user_distance');
-        if (raw !== null) {
-          const parsed = parseFloat(raw);
-          if (!isNaN(parsed)) state.userDistance = parsed;
-        }
       }
+      // Catatan: loadCustomer() sudah membaca 'rj_user_distance' lewat
+      // safeGet secara aman (tahan in-app browser/incognito). Tidak perlu
+      // baca ulang — kalau cust.distance kosong di sini, memang belum
+      // ada data tersimpan, bukan kegagalan yang perlu fallback tambahan.
     }
 
     renderMenu();
