@@ -6,7 +6,7 @@ import { calculateShipping } from './shipping.js';
 export async function showOrderConfirmation(state, DOM, overlayStack, openModal, closeModal, getCartSummaryLocal, downloadReceiptPNG, sendReceiptToTelegram) {
   const dist = state.userDistance;
   const summary = getCartSummaryLocal();
-  const ship = dist != null ? calculateShipping(dist, summary.mainProductQty || 1, state.shippingProvider, 'motor', state.tier === 'prioritas') : { cost: null };
+  const ship = dist != null ? calculateShipping(dist, summary.mainProductQty || 1, state.shippingProvider, state.tier) : { cost: null };
   if (ship.cost === null) {
     showToast('Maaf, jarak terlalu jauh. Silakan hubungi Concierge.');
     return false;
@@ -21,13 +21,11 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
   const phone = escapeHTML(currentPhone);
   const address = escapeHTML(currentAddress);
   const deliveryTime = escapeHTML(document.getElementById('deliveryTimeLabel')?.textContent || '—');
-  
+
   let kurirDetail = state.shippingProvider === 'paxel' ? 'Paxel Ekspres (Next-Day)' : 'Kurir Lalamove';
   if (state.shippingProvider === 'lalamove') {
     kurirDetail += ` (${state.tier === 'prioritas' ? 'Prioritas' : 'Reguler'})`;
   }
-
-  const baseShippingCost = ship.cost || 0; // untuk tampilan
 
   let itemsHtml = '';
   summary.items.forEach(item => {
@@ -80,8 +78,7 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
       <div class="receipt-section">
         <div class="receipt-section-title">Rincian Pembayaran</div>
         <div class="confirm-row"><span>Subtotal Produk</span><span>${fmt(summary.subtotal)}</span></div>
-        <div class="confirm-row"><span>Ongkos Kirim Jarak</span><span>${fmt(baseShippingCost)}</span></div>
-        ${state.tier === 'prioritas' ? `<div class="confirm-row" style="color: var(--gold-text);"><span>Layanan Prioritas (Ekspres)</span><span>+${fmt(8000)}</span></div>` : ''}
+        <div class="confirm-row"><span>Ongkos Kirim (${state.tier === 'prioritas' ? 'Prioritas' : 'Reguler'})</span><span>${fmt(ship.cost)}</span></div>
         <div class="confirm-row" style="border-top: 1px dashed var(--gray-200); margin-top: 4px; padding-top: 4px;"><span>Metode Bayar</span><span>QRIS Otomatis</span></div>
         <div class="confirm-row total"><span>Total Tagihan</span><span>${fmt(calculatedTotal)}</span></div>
       </div>
