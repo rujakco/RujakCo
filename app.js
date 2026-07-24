@@ -1,9 +1,9 @@
-// app.js — FINAL: Semua perbaikan UX + Lalamove + Telegram aman
+// app.js — FINAL FASE 1: Semua perbaikan UX, aksesibilitas, stabilitas, dan maintainability
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch } from './utils/helpers.js';
 import { loadState, saveCart, saveUser, clearUser, saveCustomer, loadCustomer, isStorageAvailable } from './modules/storage.js';
-import { calculateShipping, getDrivingDistance, searchAddressOSM } from './modules/shipping.js';
+import { calculateShipping, getDrivingDistance, reverseGeocode } from './modules/shipping.js';
 import { renderMenu, renderProductSwiper, renderCart, renderMiniCart, getProductGlobalIndex, updateProductDots } from './modules/render.js';
 import { initCarousel } from './modules/carousel.js';
 import { initAIChat } from './modules/chat.js';
@@ -104,6 +104,27 @@ function loadScript(src) {
     script.onload = resolve;
     script.onerror = () => reject(new Error(`Gagal memuat script: ${src}`));
     document.head.appendChild(script);
+  });
+}
+
+const PERMISSION_DENIED = globalThis.GeolocationPositionError?.PERMISSION_DENIED ?? 1;
+
+function requestLocation() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      showToast('Browser tidak mendukung geolokasi.');
+      return reject(new Error('Geolocation not supported'));
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+      (err) => {
+        if (err.code === PERMISSION_DENIED) {
+          showToast('📍 Lokasi tidak dapat diakses. Silakan pilih alamat secara manual.');
+        }
+        reject(err);
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+    );
   });
 }
 
@@ -426,7 +447,7 @@ function updateCartUI() {
 }
 
 // ---------------------------------------------------------------------------
-// DRAWER DISTRICT DROPDOWN
+// DRAWER DISTRICT DROPDOWN (dengan GPS, spinner terpisah, AbortController)
 // ---------------------------------------------------------------------------
 function initDrawerDistrictDropdown() {
   const input = DOM.districtInput;
@@ -434,19 +455,76 @@ function initDrawerDistrictDropdown() {
   if (!input || !dropdown) return;
   input.placeholder = 'Ketik alamat tujuan (jalan, kelurahan, kota)';
 
+  const validIndicator = document.getElementById('districtValidIndicator');
+  const wrapper = input.parentElement;
+
+  const gpsBtn = document.createElement('button');
+  gpsBtn.type = 'button';
+  gpsBtn.className = 'gps-btn';
+  gpsBtn.innerHTML = '<i data-lucide="map-pin" class="icon-sm"></i>';
+  gpsBtn.setAttribute('aria-label', 'Gunakan lokasi saya');
+  wrapper.appendChild(gpsBtn);
+
+  const spinner = document.createElement('span');
+  spinner.className = 'input-spinner is-hidden';
+  spinner.innerHTML = '<i data-lucide="loader-2" class="icon-sm spin"></i>';
+  wrapper.appendChild(spinner);
+  if (window.lucide) lucide.createIcons();
+
+  let gpsLoading = false;
+  let searchLoading = false;
+
+  function updateSpinner() {
+    if (gpsLoading || searchLoading) {
+      spinner.classList.remove('is-hidden');
+      gpsBtn.classList.add('is-hidden');
+    } else {
+      spinner.classList.add('is-hidden');
+      gpsBtn.classList.remove('is-hidden');
+    }
+  }
+  function setGpsLoading(v) {
+    gpsLoading = v;
+    updateSpinner();
+  }
+  function setSearchLoading(v) {
+    searchLoading = v;
+    updateSpinner();
+  }
+
+  let searchAbortController = null;
+
   const handleSearch = debounce(async (query) => {
     if (query.length < 3) { dropdown.style.display = 'none'; return; }
+    if (searchAbortController) searchAbortController.abort();
+    searchAbortController = new AbortController();
+    const controller = searchAbortController;
+    const signal = controller.signal;
+
+    setSearchLoading(true);
     dropdown.innerHTML = '<div style="padding:14px;text-align:center;color:var(--gray-500);">Mencari lokasi...</div>';
     dropdown.style.display = 'block';
+
     let results = [];
-    try { results = await queuedSearch(query); } catch (err) {
-      dropdown.innerHTML = '<div style="padding:16px;text-align:center;color:var(--danger);">Koneksi terputus. Gagal memuat lokasi.</div>';
+    try {
+      results = await queuedSearch(query, signal);
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        dropdown.innerHTML = '<div style="padding:16px;text-align:center;color:var(--danger);">Koneksi terputus.</div>';
+      }
       return;
+    } finally {
+      setSearchLoading(false);
+      if (searchAbortController === controller) searchAbortController = null;
     }
+
+    if (signal.aborted) return;
+
     if (results.length === 0) {
       dropdown.innerHTML = '<div style="padding:16px;text-align:center;color:var(--danger);">Lokasi tidak ditemukan. Coba lagi.</div>';
       return;
     }
+
     dropdown.innerHTML = results.map((place) => {
       const displayNameRaw = place.display_name.split(',').slice(0, 3).join(',');
       const displayName = escapeHTML(displayNameRaw);
@@ -463,6 +541,8 @@ function initDrawerDistrictDropdown() {
   input.addEventListener('input', (e) => {
     state.selectedDistrict = ''; state.selectedDistrictFull = ''; state.userDistance = null;
     input.style.borderBottomColor = '';
+    validIndicator.classList.add('is-hidden');
+    validIndicator.classList.remove('is-visible');
     updateShippingUI();
     handleSearch(e.target.value.trim());
   });
@@ -483,16 +563,48 @@ function initDrawerDistrictDropdown() {
     state.selectedDistrict = extractShortLocation(placeName);
     input.value = placeName;
     input.style.borderBottomColor = 'var(--green)';
+    validIndicator.classList.remove('is-hidden');
+    validIndicator.classList.add('is-visible');
     applyPersonalization();
     updateShippingUI();
     if (DOM.miniCartModal?.classList.contains('active')) renderMiniCart(state.cart);
     saveCustomer(state.customerPhone, state.customerAddress, placeName, state.userDistance);
   });
 
-  document.addEventListener('click', (e) => {
-    if (!input.contains(e.target) && !dropdown.contains(e.target)) {
-      dropdown.style.display = 'none';
-      input.setAttribute('aria-expanded', 'false');
+  // GPS handler
+  gpsBtn.addEventListener('click', async () => {
+    if (gpsBtn.disabled) return;
+    gpsBtn.disabled = true;
+    gpsBtn.setAttribute('aria-busy', 'true');
+    setGpsLoading(true);
+    try {
+      const { lat, lon } = await requestLocation();
+      input.value = 'Mendapatkan alamat...';
+      const place = await reverseGeocode(lat, lon);
+      if (!place?.display_name) throw new Error('No result');
+      const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, lat, lon);
+      state.userDistance = result.distance;
+      state.haversineUsed = result.isHaversine;
+      const displayName = place.display_name;
+      state.selectedDistrictFull = displayName;
+      state.selectedDistrict = extractShortLocation(displayName);
+      input.value = displayName;
+      input.style.borderBottomColor = 'var(--green)';
+      validIndicator.classList.remove('is-hidden');
+      validIndicator.classList.add('is-visible');
+      applyPersonalization();
+      updateShippingUI();
+      if (DOM.miniCartModal?.classList.contains('active')) renderMiniCart(state.cart);
+      saveCustomer(state.customerPhone, state.customerAddress, displayName, state.userDistance);
+    } catch (err) {
+      if (err.message !== 'Geolocation not supported' && err.code !== PERMISSION_DENIED) {
+        showToast('⚠️ Gagal mendapatkan alamat. Silakan pilih manual.');
+      }
+      input.value = '';
+    } finally {
+      setGpsLoading(false);
+      gpsBtn.disabled = false;
+      gpsBtn.setAttribute('aria-busy', 'false');
     }
   });
 }
@@ -618,7 +730,7 @@ function initOnboarding() {
     dropdown.style.display = 'block';
     let results = [];
     try { results = await queuedSearch(query); } catch (err) {
-      dropdown.innerHTML = '<div style="padding:16px;text-align:center;color:var(--danger);">Koneksi terputus. Gagal memuat lokasi.</div>';
+      dropdown.innerHTML = '<div style="padding:16px;text-align:center;color:var(--danger);">Koneksi terputus.</div>';
       return;
     }
     renderOnbDropdown(results);
@@ -755,11 +867,11 @@ async function sendReceiptToWhatsApp() {
 
   const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
   const newWindow = window.open(waUrl, '_blank', 'noopener');
-  if (!orderSaved) showToast('⚠️ Pesanan diteruskan, namun catatan kami mungkin belum tersimpan. Simpan tangkapan layar struk Anda.');
+  if (!orderSaved) showToast('Pesanan diteruskan, namun catatan kami belum tersimpan. Mohon simpan tangkapan layar struk Anda.');
   if (newWindow) {
     state.cart = {};
     updateCartUI();
-    if (orderSaved) showToast('Pesanan terkirim. Lanjutkan pembayaran di WhatsApp.');
+    if (orderSaved) showToast('Pesanan berhasil dikirim. Lanjutkan pembayaran di WhatsApp.');
   } else {
     showWhatsAppFallback(SYSTEM.WA_NUMBER, msg);
   }
@@ -876,6 +988,14 @@ function bindEvents() {
 
   // Global click handler
   document.addEventListener('click', async (e) => {
+    // Tutup dropdown alamat (drawer) jika klik di luar
+    const drawerInput = DOM.districtInput;
+    const drawerDropdown = DOM.drawerDistrictDropdown;
+    if (drawerInput && drawerDropdown && !drawerInput.contains(e.target) && !drawerDropdown.contains(e.target)) {
+      drawerDropdown.style.display = 'none';
+      drawerInput.setAttribute('aria-expanded', 'false');
+    }
+
     const boutique = e.target.closest('.boutique-item');
     if (boutique) { const idx = parseInt(boutique.dataset.idx); if (!isNaN(idx)) openProductPage(idx); return; }
 
@@ -916,7 +1036,7 @@ function bindEvents() {
       state.drafts[pid].qty = 1;
       document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = 1);
       updateCartUI();
-      showToast('Sajian ditambahkan ke reservasi.');
+      showToast('Sajian Anda sudah dicatat di reservasi.');
       const cartNav = document.querySelector('.nav-cart-wrapper');
       if (cartNav) { cartNav.classList.remove('bump'); void cartNav.offsetWidth; cartNav.classList.add('bump'); }
       addBtn.classList.add('success-flash');
@@ -930,9 +1050,23 @@ function bindEvents() {
       }, 900);
       return;
     }
+    if (e.target.id === 'emptyCartBrowse') {
+      closeModal(DOM.miniCartModal);
+      openProductPage(0);
+      return;
+    }
     if (e.target.closest('[data-action="confirm-wa"]')) {
-      sendReceiptToWhatsApp();
-      closeModal(DOM.paymentModal);
+      const btn = e.target.closest('[data-action="confirm-wa"]');
+      if (btn.dataset.processing === 'true') return;
+      btn.dataset.processing = 'true';
+      btn.textContent = 'Mengirim...';
+      try {
+        await sendReceiptToWhatsApp();
+      } finally {
+        closeModal(DOM.paymentModal);
+        btn.textContent = 'Validasi Reservasi via WhatsApp';
+        btn.dataset.processing = 'false';
+      }
       return;
     }
     const actionBtn = e.target.closest('[data-action]');
