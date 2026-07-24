@@ -2,7 +2,7 @@
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch } from './utils/helpers.js';
-import { loadState, saveCart, saveUser, clearUser, saveCustomer, loadCustomer, isStorageAvailable, readRaw } from './modules/storage.js';
+import { loadState, saveCart, saveUser, clearUser, saveCustomer, loadCustomer, isStorageAvailable } from './modules/storage.js';
 import { calculateShipping, getDrivingDistance, searchAddressOSM } from './modules/shipping.js';
 import { renderMenu, renderProductSwiper, renderCart, renderMiniCart, getProductGlobalIndex } from './modules/render.js';
 import { initCarousel } from './modules/carousel.js';
@@ -433,7 +433,7 @@ function updateCartUI() {
 }
 
 // ---------------------------------------------------------------------------
-// DRAWER DISTRICT DROPDOWN (OSM)
+// DRAWER DISTRICT DROPDOWN (OSM)  [Patch 9: escapeHTML]
 // ---------------------------------------------------------------------------
 function initDrawerDistrictDropdown() {
   const input = DOM.districtInput;
@@ -460,10 +460,12 @@ function initDrawerDistrictDropdown() {
     }
     
     dropdown.innerHTML = results.map((place) => {
-      const displayName = place.display_name.split(',').slice(0, 3).join(',');
+      const displayNameRaw = place.display_name.split(',').slice(0, 3).join(',');
+      const displayName = escapeHTML(displayNameRaw);
+      const mainLabel = escapeHTML(place.address.road || place.address.suburb || place.name);
       return `
         <div role="option" tabindex="0" data-lat="${place.lat}" data-lon="${place.lon}" data-name="${displayName}">
-          <strong>${place.address.road || place.address.suburb || place.name}</strong><br>
+          <strong>${mainLabel}</strong><br>
           <span style="font-size:0.75rem;color:var(--gray-500);">${displayName}</span>
         </div>`;
     }).join('');
@@ -589,13 +591,15 @@ function initOnboarding() {
       return;
     }
     dropdown.innerHTML = results.map((place, i) => {
-      const displayName = place.display_name.split(',').slice(0, 3).join(',');
+      const displayNameRaw = place.display_name.split(',').slice(0, 3).join(',');
+      const displayName = escapeHTML(displayNameRaw);
+      const mainLabel = escapeHTML(place.address.road || place.address.suburb || place.name);
       return `
         <div role="option" id="onbDistrictOpt-${i}" tabindex="0"
              data-lat="${place.lat}" data-lon="${place.lon}"
              data-name="${displayName}"
              aria-selected="false">
-          <strong>${place.address.road || place.address.suburb || place.name}</strong>
+          <strong>${mainLabel}</strong>
           <br><span style="font-size:0.75rem;color:var(--gray-500);">${displayName}</span>
         </div>`;
     }).join('');
@@ -645,14 +649,14 @@ function initOnboarding() {
     dropdown.innerHTML = '<div style="padding:14px;text-align:center;color:var(--gray-500);">Mencari lokasi...</div>';
     dropdown.style.display = 'block';
     
-    let fontResults = [];
+    let results = [];
     try {
-      fontResults = await queuedSearch(query);
+      results = await queuedSearch(query);
     } catch (err) {
       dropdown.innerHTML = '<div style="padding:16px;text-align:center;color:var(--danger);">Koneksi terputus. Gagal memuat lokasi.</div>';
       return;
     }
-    renderOnbDropdown(fontResults);
+    renderOnbDropdown(results);
   }, 700);
 
   input.addEventListener('input', (e) => {
@@ -892,8 +896,7 @@ async function sendReceiptToWhatsApp() {
 // SHOW ORDER CONFIRMATION
 // ---------------------------------------------------------------------------
 async function showOrderConfirmation() {
-  const receiptOk = await launchProReceipt(state, DOM, overlayStack, openModal, closeModal, getCartSummaryLocal, downloadReceiptPNG, sendReceiptToTelegram, DOM.finalTotal);
-  return receiptOk;
+  return await launchProReceipt(state, DOM, overlayStack, openModal, closeModal, getCartSummaryLocal, downloadReceiptPNG, sendReceiptToTelegram, DOM.finalTotal);
 }
 
 // ---------------------------------------------------------------------------
@@ -1106,7 +1109,7 @@ function bindEvents() {
     if (e.target.closest('[data-action="confirm-wa"]')) {
       sendReceiptToWhatsApp();
       closeModal(DOM.paymentModal);
-      showToast('Terima kasih! Menyambungkan ke WhatsApp...');
+      // Toast akhir akan ditampilkan oleh sendReceiptToWhatsApp setelah operasi asinkron selesai
       return;
     }
 
@@ -1283,10 +1286,6 @@ function init() {
       if (cust.distance !== null && cust.distance !== undefined && !isNaN(cust.distance)) {
         state.userDistance = cust.distance;
       }
-      // Catatan: loadCustomer() sudah membaca 'rj_user_distance' lewat
-      // safeGet secara aman (tahan in-app browser/incognito). Tidak perlu
-      // baca ulang — kalau cust.distance kosong di sini, memang belum
-      // ada data tersimpan, bukan kegagalan yang perlu fallback tambahan.
     }
 
     renderMenu();
