@@ -27,13 +27,12 @@ export function renderMenu(containerId = 'menuList') {
       </div>
     </div>`).join('');
 
-  // Skeleton handling untuk gambar carousel
   container.querySelectorAll('img.btq-img').forEach(img => {
     if (img.complete && img.naturalWidth > 0) {
       img.classList.add('loaded');
     } else {
       img.addEventListener('load', () => img.classList.add('loaded'));
-      img.addEventListener('error', () => img.classList.add('loaded')); // fallback
+      img.addEventListener('error', () => img.classList.add('loaded'));
     }
   });
 
@@ -104,6 +103,7 @@ export function renderProductSwiper(drafts, trackId = 'productSwiperTrack') {
       </div>
     </div>`;
   }).join('');
+
   track.querySelectorAll('.lazy-detail').forEach(img => {
     img.addEventListener('error', () => {
       img.style.display = 'none';
@@ -113,7 +113,24 @@ export function renderProductSwiper(drafts, trackId = 'productSwiperTrack') {
       img.parentElement.appendChild(fb);
     });
   });
+
+  // Dots indikator: satu dot per produk ASLI (bukan per salinan loop)
+  const dotsContainer = document.getElementById('productProgressDots');
+  if (dotsContainer && products.length) {
+    dotsContainer.innerHTML = products.map(() => '<span class="dot"></span>').join('');
+  }
+
   if (window.lucide) window.lucide.createIcons();
+}
+
+// Dipanggil dari app.js saat scroll di halaman produk berhenti
+export function updateProductDots(globalIndex) {
+  const dotsContainer = document.getElementById('productProgressDots');
+  if (!dotsContainer || !PRODUCTS.length) return;
+  const realIndex = globalIndex % PRODUCTS.length;
+  dotsContainer.querySelectorAll('.dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === realIndex);
+  });
 }
 
 export function renderCart(cart, badgeIds = ['cartBadgeNav']) {
