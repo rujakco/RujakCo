@@ -75,7 +75,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  <!-- Critical CSS inline -->
   <style>
     *,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:rgba(0,0,0,0.08)}
     html,body{margin:0;padding:0;background-color:#082E21;font-family:'DM Sans',sans-serif;font-size:16px;color:#FDFBF7;-webkit-font-smoothing:antialiased}
@@ -112,7 +111,6 @@
     .full-width{width:100%}.fade-up{opacity:0;transform:translateY(32px);transition:opacity 0.8s,transform 0.8s}.fade-up.visible{opacity:1;transform:translateY(0)}
   </style>
 
-  <!-- CSS Non‑blocking -->
   <link rel="stylesheet" href="style.css" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="style.css" /></noscript>
 
@@ -132,15 +130,18 @@
           <input type="text" id="onbName" class="onb-input" placeholder="Nama lengkap" autocomplete="name" maxlength="30" enterkeyhint="next" required />
           <button type="button" class="btn-gold full-width" id="onbNextBtn">Lanjutkan</button>
           <!-- ✅ Tombol "Intip Menu Dulu" -->
-          <button type="button" class="btn-text-gold" id="onbGuestBtn" style="margin-top: 24px;">Intip Menu Dulu</button>
+          <button type="button" class="btn-text-gold" id="onbGuestBtn" style="margin-top: 24px;">Lihat Menu Dulu, Isi Alamat Nanti</button>
         </div>
         <div id="onbStep2" class="onb-step">
+          <p style="font-size:0.7rem;color:var(--ivory-60);margin-bottom:16px;line-height:1.6;">
+            Kami melayani area Jabodetabek. Kecamatan Anda menentukan estimasi ongkir pengantaran.
+          </p>
           <label class="onb-label" for="onbDistrict">Kecamatan tujuan pengantaran</label>
           <div style="position:relative;">
             <input type="text" id="onbDistrict" class="onb-input" placeholder="Ketik nama kecamatan..." autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="onbDistrictDropdown" aria-haspopup="listbox" enterkeyhint="done" />
             <div id="onbDistrictDropdown" class="minimal-dropdown" style="text-align:left;" role="listbox" aria-label="Daftar kecamatan"></div>
           </div>
-          <button type="button" class="btn-gold full-width" id="onbStartBtn" style="margin-top:24px;">Masuk ke Butik</button>
+          <button type="button" class="btn-gold full-width" id="onbStartBtn" style="margin-top:24px;">Masuk Sekarang</button>
         </div>
       </div>
       <div id="onbReturningUser" style="display:none; width:100%;">
@@ -255,7 +256,7 @@
           <i data-lucide="chevron-down" class="icon-sm" aria-hidden="true"></i>
         </button>
         <div class="faq-answer" id="faq-answer-3" role="region" aria-labelledby="faq-q-3">
-          Biaya pengantaran dihitung berdasarkan jarak, mulai dari Rp8.000. Pilih kurir Rujak.Co untuk pengantaran internal, atau Paxel untuk jangkauan lebih luas.
+          Biaya pengantaran dihitung berdasarkan jarak, mulai dari Rp8.000. Pilih kurir Lalamove untuk pengantaran internal, atau Paxel untuk jangkauan lebih luas.
         </div>
       </div>
       <div class="faq-item">
@@ -267,7 +268,6 @@
           Kami akan menggantinya. Namun dengan <strong>Fresh-Lock System™</strong>, kemungkinan itu terjadi sangat kecil.
         </div>
       </div>
-      <!-- ✅ FAQ BARU: masa simpan -->
       <div class="faq-item">
         <button type="button" class="faq-question" data-toggle="faq" aria-expanded="false" aria-controls="faq-answer-5" id="faq-q-5">
           <span>Berapa lama rujak bisa disimpan?</span>
@@ -284,7 +284,6 @@
         <h3 class="footer-brand">RUJAK.Co</h3>
         <span class="footer-tagline">Indonesia dalam Satu Wadah</span>
         <div class="footer-meta"><span>EST. 2024</span><span class="meta-dot">•</span><span>Bekasi</span></div>
-        <!-- ✅ Nomor WhatsApp di footer -->
         <div style="margin-top: 12px; font-size: 0.75rem; color: rgba(255,255,255,0.6);">
           Sen–Jum: 10.00–20.00 | Sab–Min: 09.00–18.00
         </div>
@@ -307,6 +306,7 @@
   <div class="product-swiper-overlay" id="productPage" role="dialog" aria-modal="true" aria-hidden="true">
     <button type="button" id="backFromProduct" class="glass-btn floating-close" aria-label="Kembali"><i data-lucide="arrow-left" class="icon-sm"></i></button>
     <button type="button" id="shareProductBtn" class="glass-btn floating-share" aria-label="Bagikan Produk"><i data-lucide="share-2" class="icon-sm"></i></button>
+    <div class="product-progress-dots" id="productProgressDots" aria-hidden="true"></div>
     <div class="product-swiper-track" id="productSwiperTrack">
       <div class="product-slide" style="display:flex; align-items:center; justify-content:center; background:var(--dark-green-deep);">
         <div style="text-align:center; color:var(--ivory-60);">
@@ -345,7 +345,7 @@
           <input type="tel" id="customerPhone" inputmode="numeric" autocomplete="tel" class="input-minimal" placeholder="Nomor HP aktif (Contoh: 08123...)" maxlength="15" required />
           <label class="tiny-text" for="customerAddress">Detail Alamat (Blok, No. Rumah, Patokan)</label>
           <textarea id="customerAddress" placeholder="Blok, No. Rumah, atau patokan khusus" rows="2" class="input-minimal" autocomplete="street-address" maxlength="200" required></textarea>
-          <label class="tiny-text" for="districtInput">Titik Lokasi (Cari Kelurahan/Jalan)</label>
+          <label class="tiny-text" for="districtInput">📍 Titik Lokasi <span style="color:var(--danger);text-transform:none;letter-spacing:normal;">— Wajib pilih dari hasil pencarian</span></label>
           <div style="position:relative;">
             <input type="text" id="districtInput" class="input-minimal" placeholder="Ketik nama jalan atau kelurahan..." autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="drawerDistrictDropdown" aria-haspopup="listbox" />
             <div id="drawerDistrictDropdown" class="minimal-dropdown" style="top:100%; left:0; right:0;" role="listbox" aria-label="Hasil pencarian alamat"></div>
@@ -373,17 +373,16 @@
         <div id="shippingSection" class="checkout-forms" style="margin-top:40px;">
           <h4>Pilih Kurir</h4>
           <div class="logistic-options">
-            <button type="button" class="log-btn active" data-provider="rujakco">Kurir RUJAK.Co</button>
+            <button type="button" class="log-btn active" data-provider="lalamove">Kurir Lalamove</button>
             <button type="button" class="log-btn" data-provider="paxel">Paxel Ekspres</button>
           </div>
-          <div id="rujakcoOptions" style="margin-top:24px;">
-            <label class="tiny-text">Jenis Kendaraan</label>
+          <div id="lalamoveOptions" style="margin-top:24px;">
+            <label class="tiny-text">Jenis Layanan</label>
             <div class="logistic-options">
-              <button type="button" class="veh-btn active" data-vehicle="motor">Motor</button>
-              <button type="button" class="veh-btn" data-vehicle="mobil">Mobil</button>
+              <button type="button" class="veh-btn active" data-tier="reguler">Reguler <small id="estReguler" style="display:block;font-weight:400;opacity:0.75;"></small></button>
+              <button type="button" class="veh-btn" data-tier="prioritas">Prioritas <small id="estPrioritas" style="display:block;font-weight:400;opacity:0.75;"></small></button>
             </div>
-            <label class="priority-label"><input type="checkbox" id="priorityToggleMini" /> Prioritas (+Rp8.000)</label>
-            <div style="font-size: 0.65rem; color: var(--gray-500); margin-top: 4px; padding-left: 30px;">*Pesanan diproses pada kloter pertama esok hari.</div>
+            <div style="font-size: 0.65rem; color: var(--gray-500); margin-top: 8px;">*Prioritas diproses pada kloter pertama esok hari.</div>
           </div>
           <div id="paxelOptions" style="display:none; margin-top:24px; font-size:13px; color:var(--gold); font-style:italic; line-height:1.6;">* Estimasi tiba dalam 1 hari kerja.</div>
           <div class="drawer-breakdown"><span id="shippingDistance"></span><span id="finalShipping" class="font-fraunces">Rp0</span></div>
@@ -394,7 +393,6 @@
           <span>Total Pesanan</span>
           <span id="finalTotal">Rp0</span>
         </div>
-        <!-- ✅ Teks garansi -->
         <p style="text-align: center; font-size: 0.7rem; color: var(--gray-600); margin: 8px 0 4px;">
           🛡️ Setiap pesanan dilindungi <strong>Fresh‑Lock System™</strong>. Buah rusak atau layu di perjalanan? Kami ganti baru.
         </p>
@@ -415,7 +413,7 @@
       </div>
       <div class="drawer-footer" style="display: flex; gap: 8px; padding: var(--space-3) var(--space-4); border-top: 1px solid var(--gray-200); flex-wrap: wrap;">
         <button type="button" class="btn-dark" id="orderConfirmBack" style="flex:1;">Kembali</button>
-        <button type="button" class="btn-gold" id="orderConfirmLanjut" style="flex:1;">Lanjutkan</button>
+        <button type="button" class="btn-gold" id="orderConfirmLanjut" style="flex:1;">Lanjut ke Pembayaran</button>
       </div>
     </div>
   </div>
