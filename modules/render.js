@@ -28,9 +28,8 @@ export function renderMenu(containerId = 'menuList') {
     </div>`).join('');
 
   container.querySelectorAll('img.btq-img').forEach(img => {
-    if (img.complete && img.naturalWidth > 0) {
-      img.classList.add('loaded');
-    } else {
+    if (img.complete && img.naturalWidth > 0) img.classList.add('loaded');
+    else {
       img.addEventListener('load', () => img.classList.add('loaded'));
       img.addEventListener('error', () => img.classList.add('loaded'));
     }
@@ -114,7 +113,6 @@ export function renderProductSwiper(drafts, trackId = 'productSwiperTrack') {
     });
   });
 
-  // Dots indikator: satu dot per produk ASLI (bukan per salinan loop)
   const dotsContainer = document.getElementById('productProgressDots');
   if (dotsContainer && products.length) {
     dotsContainer.innerHTML = products.map(() => '<span class="dot"></span>').join('');
@@ -123,7 +121,6 @@ export function renderProductSwiper(drafts, trackId = 'productSwiperTrack') {
   if (window.lucide) window.lucide.createIcons();
 }
 
-// Dipanggil dari app.js saat scroll di halaman produk berhenti
 export function updateProductDots(globalIndex) {
   const dotsContainer = document.getElementById('productProgressDots');
   if (!dotsContainer || !PRODUCTS.length) return;
@@ -146,7 +143,12 @@ export function renderMiniCart(cart, listId = 'miniCartList', subtotalId = 'cart
   const list = document.getElementById(listId);
   if (!list) return sum;
   list.innerHTML = sum.items.length === 0
-    ? '<p class="cart-empty">Reservasi Anda masih kosong.<br>Silakan pilih mahakarya sajian kami.</p>'
+    ? `<div class="cart-empty">
+         <i data-lucide="shopping-bag" style="width:48px;height:48px;color:var(--gray-400);margin-bottom:16px;"></i>
+         <p style="font-weight:600;margin-bottom:8px;">Keranjangmu masih kosong</p>
+         <p style="font-size:0.875rem;color:var(--gray-500);">Yuk jelajahi menu dan pilih sajian favoritmu.</p>
+         <button class="btn-dark" id="emptyCartBrowse" style="margin-top:20px;">Lihat Menu</button>
+       </div>`
     : sum.items.map(i => `
       <div class="cart-item-row">
         <div class="cart-item-info">
