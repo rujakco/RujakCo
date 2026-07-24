@@ -123,16 +123,11 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
         showToast('⚠️ Gagal memproses struk, namun pesanan tetap tercatat.');
       }
 
-      // Auto download struk ke HP pembeli
       try {
         const receiptElement = document.getElementById('orderConfirmContent');
         if (receiptElement && typeof html2canvas !== 'undefined') {
           const canvas = await html2canvas(receiptElement, {
-            backgroundColor: '#ffffff',
-            scale: 2,
-            useCORS: true,
-            allowTaint: false,
-            logging: false
+            backgroundColor: '#ffffff', scale: 2, useCORS: true, allowTaint: false, logging: false
           });
           canvas.toBlob(blob => {
             if (blob) {
@@ -147,9 +142,7 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
             }
           }, 'image/png');
         }
-      } catch (e) {
-        console.warn('Gagal mengunduh struk otomatis:', e);
-      }
+      } catch (e) { console.warn('Gagal mengunduh struk otomatis:', e); }
 
       btnLanjut.textContent = 'Lanjutkan';
       btnLanjut.style.pointerEvents = 'auto';
