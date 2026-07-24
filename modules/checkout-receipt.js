@@ -1,14 +1,12 @@
-// FIX PATH ABSOLUT: Menggunakan '/' di awal agar browser mencari dari root folder, bukan terjebak di dalam folder modules
-import { SYSTEM } from '/data/config.js';
-import { fmt, showToast, escapeHTML, getSupabase } from '/utils/helpers.js';
-import { saveCustomer } from '/modules/storage.js';
-import { calculateShipping, getDrivingDistance } from '/modules/shipping.js';
-import { renderMiniCart } from '/modules/render.js';
+import { SYSTEM } from '../data/config.js';
+import { fmt, showToast, escapeHTML, getSupabase } from '../utils/helpers.js';
+import { saveCustomer } from './storage.js';
+import { calculateShipping } from './shipping.js';
 
 export async function showOrderConfirmation(state, DOM, overlayStack, openModal, closeModal, getCartSummaryLocal, downloadReceiptPNG, sendReceiptToTelegram) {
   const dist = state.userDistance;
   const summary = getCartSummaryLocal();
-  const ship = dist != null ? calculateShipping(dist, summary.mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority) : { cost: null };
+  const ship = dist != null ? calculateShipping(dist, summary.mainProductQty || 1, state.shippingProvider, 'motor', state.tier === 'prioritas') : { cost: null };
   if (ship.cost === null) {
     showToast('Maaf, jarak terlalu jauh. Silakan hubungi Concierge.');
     return false;
@@ -24,12 +22,12 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
   const address = escapeHTML(currentAddress);
   const deliveryTime = escapeHTML(document.getElementById('deliveryTimeLabel')?.textContent || '—');
   
-  let kurirDetail = state.shippingProvider === 'paxel' ? 'Paxel Ekspres (Next-Day)' : 'Kurir Internal RUJAK.Co';
-  if (state.shippingProvider === 'rujakco') {
-    kurirDetail += ` (${state.vehicleType === 'mobil' ? 'Mobil' : 'Motor'})`;
+  let kurirDetail = state.shippingProvider === 'paxel' ? 'Paxel Ekspres (Next-Day)' : 'Kurir Lalamove';
+  if (state.shippingProvider === 'lalamove') {
+    kurirDetail += ` (${state.tier === 'prioritas' ? 'Prioritas' : 'Reguler'})`;
   }
 
-  const baseShippingCost = state.shippingProvider === 'paxel' ? (ship.cost || 0) : (ship.cost || 0) - (state.isPriority ? 8000 : 0);
+  const baseShippingCost = ship.cost || 0; // untuk tampilan
 
   let itemsHtml = '';
   summary.items.forEach(item => {
@@ -83,7 +81,7 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
         <div class="receipt-section-title">Rincian Pembayaran</div>
         <div class="confirm-row"><span>Subtotal Produk</span><span>${fmt(summary.subtotal)}</span></div>
         <div class="confirm-row"><span>Ongkos Kirim Jarak</span><span>${fmt(baseShippingCost)}</span></div>
-        ${state.isPriority ? `<div class="confirm-row" style="color: var(--gold-text);"><span>Layanan Prioritas (Ekspres)</span><span>+${fmt(8000)}</span></div>` : ''}
+        ${state.tier === 'prioritas' ? `<div class="confirm-row" style="color: var(--gold-text);"><span>Layanan Prioritas (Ekspres)</span><span>+${fmt(8000)}</span></div>` : ''}
         <div class="confirm-row" style="border-top: 1px dashed var(--gray-200); margin-top: 4px; padding-top: 4px;"><span>Metode Bayar</span><span>QRIS Otomatis</span></div>
         <div class="confirm-row total"><span>Total Tagihan</span><span>${fmt(calculatedTotal)}</span></div>
       </div>
@@ -93,7 +91,7 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
         </p>
         <div style="background: var(--bg-subtle); border: 1px solid var(--gray-200); border-radius: 8px; padding: 12px; margin: 8px 0 20px; text-align: left; font-size: 0.72rem; color: var(--gray-600); line-height: 1.5; font-family: 'DM Sans', sans-serif;">
           <strong style="color: var(--green); display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.68rem; font-weight: 700;">💡 PANDUAN TRANSAKSI INSTAN VIA PONSEL:</strong>
-          1. <strong>Simpan Nota:</strong> Gambar struk ini otomatis terunduh dan tersimpan di galeri ponsel Anda.<br>
+          1. <strong>Simpan Nota:</strong> Gambar struk ini otomatis tersimpan — cek folder "Download" atau aplikasi Galeri/Foto di HP Anda.<br>
           2. <strong>Buka Aplikasi:</strong> Buka m-Banking (BCA, Mandiri, dll) atau E-Wallet pilihan Anda (GoPay, OVO, Dana).<br>
           3. <strong>Pindai via Galeri:</strong> Pilih menu QRIS/Scan, tekan <strong>Ikon Galeri/Unggah Gambar</strong>, lalu pilih foto struk ini untuk membayar.<br>
           4. <strong>Konfirmasi WhatsApp:</strong> Kirim bukti transfer beserta foto struk ini ke WhatsApp kami untuk validasi instan.
@@ -101,7 +99,6 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
         <div class="receipt-qris-wrap" style="margin-top: 16px; margin-bottom: 16px;">
           <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="Scan QRIS" class="receipt-qris-cropped" crossorigin="anonymous" />
         </div>
-        <div class="receipt-code-text" style="font-weight: 700; color: var(--green); letter-spacing: 0.15em;">${state.currentOrderCode}</div>
         <div style="font-size: 0.6rem; color: var(--gray-400); margin-top: 20px; line-height: 1.4; border-top: 1px solid var(--gray-100); padding-top: 10px; font-family: 'DM Sans', sans-serif; text-align: center;">
           <strong>Kebijakan Kesegaran:</strong> Komplain kualitas buah wajib menyertakan video unboxing (maksimal 2 jam setelah diterima). Seluruh buah dipotong segar melalui sistem 15-Minute Fresh-Prep.
         </div>
@@ -129,7 +126,7 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
         showToast('⚠️ Gagal memproses struk, namun pesanan tetap tercatat.');
       }
 
-      // ✅ AUTO DOWNLOAD STRUK KE HP PEMBELI
+      // Auto download struk ke HP pembeli
       try {
         const receiptElement = document.getElementById('orderConfirmContent');
         if (receiptElement && typeof html2canvas !== 'undefined') {
