@@ -11,7 +11,7 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
   const ship = dist != null ? calculateShipping(dist, summary.mainProductQty || 1, state.shippingProvider, state.vehicleType, state.isPriority) : { cost: null };
   if (ship.cost === null) {
     showToast('Maaf, jarak terlalu jauh. Silakan hubungi Concierge.');
-    return;
+    return false;
   }
 
   const currentPhone = DOM.customerPhoneInput?.value || state.customerPhone;
@@ -47,7 +47,7 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
   });
 
   const contentEl = document.getElementById('orderConfirmContent');
-  if (!contentEl) return;
+  if (!contentEl) return false;
   const now = new Date();
   const dateStr = now.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
   const timeStr = now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' }) + ' WIB';
@@ -167,5 +167,7 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
         openModal(DOM.paymentModal);
       }, 50);
     };
+    return true;
   }
+  return false;
 }
