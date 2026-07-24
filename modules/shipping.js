@@ -1,33 +1,30 @@
 import { SYSTEM } from '../data/config.js';
 
-export function calculateShipping(distance, mainQty, provider = 'rujakco', vehicle = 'motor', priority = false) {
+export function calculateShipping(distance, mainQty, provider = 'lalamove', tier = 'reguler') {
   const dist = distance || SYSTEM?.DEFAULT_DISTANCE || 5;
   if (dist < 0) return { cost: null, label: 'Jarak tidak valid' };
-  // ✅ Diubah dari > 50 menjadi > 70
   if (dist > 70) return { cost: null, label: 'Konfirmasi via Concierge' };
-  
+
   const qty = Math.max(1, mainQty || 1);
 
   if (provider === 'paxel') {
     const large = Math.floor(qty / 2);
     const med = qty % 2;
     return { cost: (large * 25000) + (med * 20000) + ((large + med) * 3000), label: 'Paxel Ekspres' };
-  } else {
-    let cost = dist <= 3 ? 8000 : 
-               dist <= 10 ? 8000 + (dist - 3) * 1800 : 
-               dist <= 20 ? 20600 + (dist - 10) * 1600 : 
-               dist <= 30 ? 36600 + (dist - 20) * 1400 : 
-               50600 + (dist - 30) * 1150;
-               
-    if (vehicle === 'mobil') {
-      cost = dist <= 3 ? 24000 : 
-             dist <= 10 ? 24000 + (dist - 3) * 4500 : 
-             dist <= 20 ? 55500 + (dist - 10) * 4000 : 
-             95500 + (dist - 20) * 3500;
-    }
-    if (priority) cost += 8000;
-    return { cost, label: vehicle === 'motor' ? 'Motor' : 'Mobil' };
   }
+
+  // Lalamove Reguler
+  let cost = dist <= 3 ? 8000 :
+             dist <= 10 ? 8000 + (dist - 3) * 1800 :
+             dist <= 20 ? 20600 + (dist - 10) * 1600 :
+             dist <= 30 ? 36600 + (dist - 20) * 1400 :
+             50600 + (dist - 30) * 1150;
+
+  if (tier === 'prioritas') {
+    cost = Math.round(cost * 1.25); // 25% lebih mahal
+  }
+
+  return { cost, label: tier === 'prioritas' ? 'Prioritas' : 'Reguler' };
 }
 
 function calculateHaversine(lat1, lon1, lat2, lon2) {
@@ -40,7 +37,6 @@ function calculateHaversine(lat1, lon1, lat2, lon2) {
 }
 
 export async function getDrivingDistance(lat1, lon1, lat2, lon2) {
-  // Validasi koordinat
   if (isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) {
     throw new Error('Koordinat tidak valid');
   }
@@ -69,9 +65,9 @@ export async function searchAddressOSM(query) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 6000);
   try {
-    const response = await fetch(url, { 
+    const response = await fetch(url, {
       headers: { 'User-Agent': 'RujakCo-DeliveryApp/1.0 (halo@rujakco.biz.id)' },
-      signal: controller.signal 
+      signal: controller.signal
     });
     clearTimeout(timeout);
     if (!response.ok) return [];
