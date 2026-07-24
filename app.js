@@ -390,8 +390,7 @@ function updateShippingUI() {
   const { subtotal, mainProductQty } = getCartSummaryLocal();
   if (dist != null) {
     section.style.display = 'block';
-    const isPriority = state.tier === 'prioritas';
-    const ship = calculateShipping(dist, mainProductQty || 1, state.shippingProvider, 'motor', isPriority);
+    const ship = calculateShipping(dist, mainProductQty || 1, state.shippingProvider, state.tier);
     const shipCost = ship.cost;
     const hasValidCost = shipCost !== null && shipCost !== undefined;
     document.getElementById('shippingDistance').textContent = `${dist} km`;
@@ -401,8 +400,8 @@ function updateShippingUI() {
     const estReguler = document.getElementById('estReguler');
     const estPrioritas = document.getElementById('estPrioritas');
     if (estReguler && estPrioritas) {
-      const reg = calculateShipping(dist, mainProductQty || 1, 'lalamove', 'motor', false);
-      const pri = calculateShipping(dist, mainProductQty || 1, 'lalamove', 'motor', true);
+      const reg = calculateShipping(dist, mainProductQty || 1, 'lalamove', 'reguler');
+      const pri = calculateShipping(dist, mainProductQty || 1, 'lalamove', 'prioritas');
       estReguler.textContent = reg.cost != null ? fmt(reg.cost) : '—';
       estPrioritas.textContent = pri.cost != null ? fmt(pri.cost) : '—';
     }
@@ -600,7 +599,7 @@ function initOnboarding() {
       input.value = displayName;
       applyPersonalization();
       saveCustomer(state.customerPhone, state.customerAddress, displayName, state.userDistance);
-      const testShip = calculateShipping(result.distance, 1, 'lalamove', 'motor', false);
+      const testShip = calculateShipping(result.distance, 1, 'lalamove', 'reguler');
       if (testShip.cost === null) {
         showToast('⚠️ Area Anda mungkin di luar jangkauan pengantaran kami. Anda tetap bisa lanjut, tim kami akan konfirmasi via Concierge.');
       } else {
