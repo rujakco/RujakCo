@@ -1,5 +1,5 @@
 /* =========================================
-   1. DESIGN TOKENS — LENGKAP & DIRAPIKAN
+   DESIGN TOKENS — LENGKAP & DIRAPIKAN
    ========================================= */
 :root {
   --green: #082E21;
@@ -13,7 +13,6 @@
   --bg-surface: #FCFAF8;
   --bg-subtle: #F6F4F0;
 
-  /* Aksen "gaul" — dipakai sangat terbatas: badge baru, notif, highlight energik */
   --accent-punch: #FF6B4A;
   --accent-punch-soft: rgba(255,107,74,0.12);
 
@@ -101,7 +100,6 @@
   --dur-normal: 0.45s;
   --dur-slow: 0.8s;
 
-  /* Skala spacing — SEMUA jarak di file ini wajib memakai token ini */
   --space-1: 8px;
   --space-2: 16px;
   --space-3: 24px;
@@ -110,19 +108,16 @@
   --space-6: 48px;
   --space-7: 56px;
 
-  /* Skala radius — 4 tier saja */
-  --radius-sm: 12px;    /* input, chip, tombol kecil */
-  --radius-md: 20px;    /* card produk, dropdown */
-  --radius-lg: 28px;    /* drawer, modal, hero */
-  --radius-pill: 999px; /* tombol pill, selector */
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --radius-pill: 999px;
 
   --blur-glass: blur(16px);
 
-  /* Skala tipografi mikro — HANYA 2 ukuran untuk teks kecil */
-  --text-label: 0.75rem;      /* label, tombol kecil, teks sekunder */
-  --text-caption: 0.6875rem;  /* caption, meta, timestamp */
+  --text-label: 0.75rem;
+  --text-caption: 0.6875rem;
 
-  /* Tinggi tombol interaktif standar */
   --tap-height: 48px;
 
   --font-heading: 'Fraunces', serif;
@@ -132,9 +127,7 @@
   --transition-heavy: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-*,
-*::before,
-*::after {
+*, *::before, *::after {
   box-sizing: border-box;
   -webkit-tap-highlight-color: var(--black-08);
 }
@@ -206,7 +199,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 #onbWelcomeDistrict { animation-delay: 0.15s; }
 @keyframes luxuryFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-/* 5. BUTTONS — tinggi & padding disatukan lewat --tap-height */
+/* 5. BUTTONS */
 .btn-gold, .btn-dark, .add-to-cart-btn {
   display: flex; align-items: center; justify-content: center; width: 100%;
   min-height: var(--tap-height);
@@ -218,7 +211,6 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .btn-gold:active, .add-to-cart-btn:active { transform: translateY(2px) scale(0.99); box-shadow: var(--shadow-deboss); }
 .btn-dark { background: var(--green); border: 1px solid var(--gold-soft); color: var(--ivory); box-shadow: var(--shadow-soft); }
 .btn-dark:active { opacity: 0.9; transform: scale(0.98); }
-/* Tombol teks — versi baru: tanpa uppercase, dengan underline */
 .btn-text-gold { 
   margin-top: 32px; 
   background: none; 
@@ -425,7 +417,6 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .chat-messages { flex: 1; overflow-y: auto; padding: var(--space-3) var(--space-2); display: flex; flex-direction: column; justify-content: flex-end; gap: var(--space-2); font-size: 0.9375rem; line-height: 1.6; overscroll-behavior-y: contain; }
 .msg-bot { position: relative; margin-top: var(--space-1); }
 .msg-bot::before { content: '✦'; position: absolute; top: -16px; left: -2px; font-size: 0.85rem; color: var(--gold-bright); text-shadow: 0 0 10px var(--gold); }
-/* Ekor bubble chat sengaja asimetris (2px di sudut sumber) — bahasa desain "chat bubble", bukan inkonsistensi */
 .msg-bot span { display: inline-block; max-width: 85%; padding: var(--space-2) var(--space-3); background: var(--gold-08); border: 1px solid var(--gold-25); border-radius: 2px var(--radius-md) var(--radius-md) var(--radius-md); font-weight: 400; color: var(--ivory); letter-spacing: 0.02em; box-shadow: 0 8px 24px var(--black-20); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .msg-user { text-align: right; }
 .msg-user span { display: inline-block; max-width: 85%; padding: var(--space-2) var(--space-3); background: var(--matte-gold); border-radius: var(--radius-md) 2px var(--radius-md) var(--radius-md); color: var(--white); box-shadow: inset 0 2px 0 var(--white-15), inset 0 -3px 0 var(--black-20), 0 8px 16px var(--black-30); text-shadow: 0 1px 2px var(--black-20); }
@@ -555,7 +546,6 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .receipt-tagline { margin-top: 3px; font-size: var(--text-caption); color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.15em; }
 .receipt-meta { display: flex; align-items: center; justify-content: space-between; margin: var(--space-2) var(--space-2) 0; padding-bottom: var(--space-2); border-bottom: 1px dashed var(--gold-45); font-family: var(--font-body); font-size: var(--text-label); color: var(--gray-500); }
 .receipt-meta .code { font-weight: 700; color: var(--gold-text); letter-spacing: 0.05em; }
-/* Border 4px "sobekan kertas struk" sengaja tajam untuk kesan nota — pertahankan, jangan disamakan ke skala radius umum */
 .receipt-section { padding: var(--space-2); border-bottom: 1px dashed var(--black-08); }
 .receipt-section:last-of-type { border-bottom: none; }
 .receipt-section-title { display: flex; align-items: center; margin-bottom: var(--space-1); gap: var(--space-1); font-size: var(--text-caption); font-weight: 700; color: var(--gold-text); text-transform: uppercase; letter-spacing: 0.18em; }
@@ -603,10 +593,10 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .spice-option { flex: 1; padding: var(--space-1) 0; background: transparent; border: none; border-radius: var(--radius-pill); font-family: var(--font-heading); font-size: 1.15rem; font-weight: 600; color: var(--ivory-35); cursor: pointer; transition: transform 0.4s var(--transition-heavy), background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease; }
 .spice-option.active { z-index: 2; background: var(--matte-gold); color: var(--white); box-shadow: inset 0 2px 0 var(--white-25), inset 0 -3px 0 var(--black-20), 0 6px 16px rgba(2, 10, 7, 0.5); text-shadow: 0 1px 2px var(--black-20); transform: scale(1.04); }
 
-/* 29. BADGE "GAUL" — aksen energik untuk info baru/promo, dipakai sangat terbatas agar tetap elegan */
+/* 29. BADGE "GAUL" */
 .badge-punch { display: inline-flex; align-items: center; gap: 4px; padding: 3px var(--space-1); background: var(--accent-punch-soft); border-radius: var(--radius-pill); font-size: var(--text-caption); font-weight: 800; color: var(--accent-punch); text-transform: uppercase; letter-spacing: 0.08em; }
 
-/* 30. PRODUCT PROGRESS DOTS & VIP PEEK (tambahan dari UX patch #5 & #6) */
+/* 30. FASE 1 ENHANCEMENTS – Product Dots, VIP Peek, GPS, Spinner, Valid Indicator */
 .product-progress-dots {
   position: fixed;
   top: calc(16px + env(safe-area-inset-top, 0px));
@@ -639,6 +629,55 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   50% { left: -10px; }
 }
 .wa-vip-side-tab.peek { animation: vipPeek 1.2s ease-in-out 2; }
+
+/* Utility class untuk visibilitas */
+.is-hidden { display: none !important; }
+.is-visible { display: inline-flex !important; align-items: center; gap: 4px; }
+
+/* Indikator valid */
+.valid-indicator {
+  font-size: var(--text-caption);
+  color: var(--green);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Wrapper input alamat */
+.district-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+.district-input-wrapper .input-minimal,
+.district-input-wrapper .onb-input {
+  flex: 1;
+}
+
+/* Tombol GPS */
+.gps-btn {
+  background: none;
+  border: none;
+  color: var(--gold-bright);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity var(--dur-fast) ease;
+}
+.gps-btn:hover, .gps-btn:active { opacity: 1; }
+.gps-btn:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* Spinner inline */
+.input-spinner {
+  margin-left: 4px;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.spin { animation: spin 1s linear infinite; }
 
 /* 31. RESPONSIVE MOBILE */
 @media (max-width: 480px) {
