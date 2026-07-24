@@ -67,6 +67,13 @@ export function isStorageAvailable() {
   return storageAvailable; 
 }
 
+// Diekspor supaya pemanggil lain (mis. app.js) tidak perlu mengakses
+// localStorage mentah saat butuh baca satu key secara langsung —
+// tetap lewat wrapper yang sudah aman dari in-app browser/incognito.
+export function readRaw(key) {
+  return safeGet(key);
+}
+
 export function loadState() {
   try {
     const cartData = safeGet('rj_crt_v7');
