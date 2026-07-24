@@ -1,22 +1,11 @@
-// utils/helpers.js
 import { searchAddressOSM } from '../modules/shipping.js';
 
 export function fmt(num) {
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(num || 0);
+  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(num || 0);
 }
 
 export function escapeHTML(str) {
-  return String(str || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+  return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 }
 
 let toastTimer = null;
@@ -34,10 +23,7 @@ export function showToast(msg) {
 
 export function debounce(fn, delay = 150) {
   let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn(...args), delay);
-  };
+  return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
 }
 
 let supabaseClient = null;
@@ -50,20 +36,15 @@ export function getSupabase() {
   return null;
 }
 
-// --- Rate limiter untuk Nominatim (mencegah 429) ---
-// Setiap panggilan menunggu panggilan sebelumnya SEPENUHNYA selesai
-// (delay + fetch), bukan cuma delay-nya saja — supaya request benar-benar
-// berjalan berurutan, bukan tumpang tindih saat fetch sebelumnya lambat.
 let nominatimQueue = Promise.resolve();
-export function queuedSearch(query) {
+
+export function queuedSearch(query, signal) {
   const result = nominatimQueue
     .then(() => new Promise(resolve => setTimeout(resolve, 1100)))
-    .then(() => searchAddressOSM(query));
-
-  // Simpan promise penuh (termasuk hasil fetch) sebagai antrean berikutnya.
-  // Tangkap error di sini supaya satu request gagal tidak membuat
-  // seluruh antrean berikutnya ikut ter-reject.
+    .then(() => {
+      if (signal?.aborted) return [];
+      return searchAddressOSM(query, signal);
+    });
   nominatimQueue = result.catch(() => {});
-
   return result;
 }
