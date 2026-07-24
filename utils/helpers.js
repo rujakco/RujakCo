@@ -51,10 +51,19 @@ export function getSupabase() {
 }
 
 // --- Rate limiter untuk Nominatim (mencegah 429) ---
+// Setiap panggilan menunggu panggilan sebelumnya SEPENUHNYA selesai
+// (delay + fetch), bukan cuma delay-nya saja — supaya request benar-benar
+// berjalan berurutan, bukan tumpang tindih saat fetch sebelumnya lambat.
 let nominatimQueue = Promise.resolve();
 export function queuedSearch(query) {
-  nominatimQueue = nominatimQueue.then(
-    () => new Promise(resolve => setTimeout(resolve, 1100))
-  );
-  return nominatimQueue.then(() => searchAddressOSM(query));
+  const result = nominatimQueue
+    .then(() => new Promise(resolve => setTimeout(resolve, 1100)))
+    .then(() => searchAddressOSM(query));
+
+  // Simpan promise penuh (termasuk hasil fetch) sebagai antrean berikutnya.
+  // Tangkap error di sini supaya satu request gagal tidak membuat
+  // seluruh antrean berikutnya ikut ter-reject.
+  nominatimQueue = result.catch(() => {});
+
+  return result;
 }
