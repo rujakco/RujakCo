@@ -1,4 +1,4 @@
-// app.js — FINAL FASE 1: Semua perbaikan UX, aksesibilitas, stabilitas, dan maintainability
+// app.js — FINAL FASE 1 + Paxel + GPS Otomatis Onboarding
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch } from './utils/helpers.js';
@@ -119,7 +119,7 @@ function requestLocation() {
       (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
       (err) => {
         if (err.code === PERMISSION_DENIED) {
-          showToast('📍 Lokasi tidak dapat diakses. Silakan pilih alamat secara manual.');
+          // Hanya untuk drawer, onboarding silent
         }
         reject(err);
       },
@@ -418,13 +418,15 @@ function updateShippingUI() {
     DOM.finalShipping.textContent = hasValidCost ? fmt(shipCost) : '...';
     DOM.finalTotal.textContent = hasValidCost ? fmt(subtotal + shipCost) : fmt(subtotal);
 
-    const estReguler = document.getElementById('estReguler');
-    const estPrioritas = document.getElementById('estPrioritas');
-    if (estReguler && estPrioritas) {
-      const reg = calculateShipping(dist, mainProductQty || 1, 'lalamove', 'reguler');
-      const pri = calculateShipping(dist, mainProductQty || 1, 'lalamove', 'prioritas');
-      estReguler.textContent = reg.cost != null ? fmt(reg.cost) : '—';
-      estPrioritas.textContent = pri.cost != null ? fmt(pri.cost) : '—';
+    if (state.shippingProvider === 'lalamove') {
+      const estReguler = document.getElementById('estReguler');
+      const estPrioritas = document.getElementById('estPrioritas');
+      if (estReguler && estPrioritas) {
+        const reg = calculateShipping(dist, mainProductQty || 1, 'lalamove', 'reguler');
+        const pri = calculateShipping(dist, mainProductQty || 1, 'lalamove', 'prioritas');
+        estReguler.textContent = reg.cost != null ? fmt(reg.cost) : '—';
+        estPrioritas.textContent = pri.cost != null ? fmt(pri.cost) : '—';
+      }
     }
   } else {
     section.style.display = 'none';
@@ -649,7 +651,38 @@ function initOnboarding() {
     if (!name) return showToast('Mohon isi nama Anda.');
     state.customerName = name;
     DOM.onbStep1.classList.remove('active');
-    setTimeout(() => { DOM.onbStep2.classList.add('active'); DOM.onbDistrict.focus(); }, 100);
+    setTimeout(() => {
+      DOM.onbStep2.classList.add('active');
+      DOM.onbDistrict.focus();
+      // 🛰️ GPS otomatis (tanpa toast jika ditolak)
+      if (!state.selectedDistrict) {
+        requestLocation().then(async ({ lat, lon }) => {
+          try {
+            const place = await reverseGeocode(lat, lon);
+            if (place?.display_name) {
+              const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, lat, lon);
+              state.userDistance = result.distance;
+              state.haversineUsed = result.isHaversine;
+              const displayName = place.display_name;
+              state.selectedDistrictFull = displayName;
+              state.selectedDistrict = extractShortLocation(displayName);
+              DOM.onbDistrict.value = displayName;
+              const indicator = document.getElementById('onbValidIndicator');
+              if (indicator) {
+                indicator.classList.remove('is-hidden');
+                indicator.classList.add('is-visible');
+              }
+              applyPersonalization();
+              saveCustomer(state.customerPhone, state.customerAddress, displayName, state.userDistance);
+            }
+          } catch (err) {
+            // fallthrough ke manual
+          }
+        }).catch(() => {
+          // izin ditolak, langsung manual
+        });
+      }
+    }, 400);
   });
 
   document.getElementById('onbGuestBtn')?.addEventListener('click', () => {
