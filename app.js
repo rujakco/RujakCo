@@ -1,4 +1,4 @@
-// app.js — FINAL V1.0 (Private Lobby + Paxel + Lalamove + GPS Button Label + Fixes)
+// app.js — FINAL V1.0 + ALL FIXES
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch } from './utils/helpers.js';
@@ -663,19 +663,21 @@ function initDrawerDistrictDropdown() {
 }
 
 // ---------------------------------------------------------------------------
-// ONBOARDING (Private Lobby)
+// ONBOARDING (Private Lobby) – Fix: returning user dikenali tanpa district
 // ---------------------------------------------------------------------------
 function initOnboarding() {
   const saved = loadState();
-  if (saved?.name && saved.district) {
+  if (saved?.name) {
     state.customerName = saved.name;
-    state.selectedDistrictFull = saved.district;
-    state.selectedDistrict = extractShortLocation(saved.district) || saved.district;
+    if (saved.district) {
+      state.selectedDistrictFull = saved.district;
+      state.selectedDistrict = extractShortLocation(saved.district) || saved.district;
+    }
     DOM.onbNewUser.style.display = 'none';
     DOM.onbReturningUser.style.display = 'block';
     DOM.onbWelcomeName.textContent = saved.name === 'Tamu' ? 'Pelanggan' : saved.name;
-    DOM.onbWelcomeDistrict.textContent = state.selectedDistrict;
-    resolveOnboardingDistance(state.selectedDistrict);
+    DOM.onbWelcomeDistrict.textContent = state.selectedDistrict || 'Pilih alamat tujuan';
+    if (state.selectedDistrict) resolveOnboardingDistance(state.selectedDistrict);
   } else {
     DOM.onbNewUser.style.display = 'block';
     DOM.onbStep1.classList.add('active');
@@ -848,13 +850,18 @@ async function sendReceiptToWhatsApp() {
 
   const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
   const newWindow = window.open(waUrl, '_blank', 'noopener');
-  if (!orderSaved) showToast('Catatan belum tersimpan.');
+
   if (newWindow) {
-    state.cart = {};
-    updateCartUI();
-    if (orderSaved) showToast('Pesanan terkirim.');
+    if (orderSaved) {
+      state.cart = {};
+      updateCartUI();
+      showToast('Pesanan terkirim.');
+    } else {
+      showToast('⚠️ Pesan WhatsApp terkirim, tapi catatan gagal tersimpan. Simpan bukti chat Anda.');
+    }
   } else {
     showWhatsAppFallback(SYSTEM.WA_NUMBER, msg);
+    if (!orderSaved) showToast('Catatan belum tersimpan.');
   }
 }
 
