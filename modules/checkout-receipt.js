@@ -51,6 +51,7 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
 
   contentEl.innerHTML = `
     <div class="receipt-wrap" style="padding: 4px;">
+      <div style="text-align:center;font-family:var(--font-heading);font-size:1rem;color:var(--green);margin-bottom:8px;">Struk Reservasi</div>
       <div class="receipt-stamp" style="z-index: 10;">NOTA RESERVASI</div>
       <div class="receipt-header">
         <img class="receipt-logo" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="RUJAK.Co" crossorigin="anonymous" />
@@ -78,7 +79,7 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
       <div class="receipt-section">
         <div class="receipt-section-title">Rincian Pembayaran</div>
         <div class="confirm-row"><span>Subtotal Produk</span><span>${fmt(summary.subtotal)}</span></div>
-        <div class="confirm-row"><span>Ongkos Kirim (${state.tier === 'prioritas' ? 'Prioritas' : 'Reguler'})</span><span>${fmt(ship.cost)}</span></div>
+        <div class="confirm-row"><span>Ongkos Kirim</span><span>${fmt(ship.cost)}</span></div>
         <div class="confirm-row" style="border-top: 1px dashed var(--gray-200); margin-top: 4px; padding-top: 4px;"><span>Metode Bayar</span><span>QRIS Otomatis</span></div>
         <div class="confirm-row total"><span>Total Tagihan</span><span>${fmt(calculatedTotal)}</span></div>
       </div>
