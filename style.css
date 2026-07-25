@@ -146,6 +146,7 @@ body {
   color: var(--ivory);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-x: clip;
 }
 #app {
   position: relative;
@@ -154,7 +155,7 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   margin: 0 auto;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 h1, h2, h3, h4, .brand-name, .font-fraunces {
@@ -176,7 +177,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   background: radial-gradient(circle at 50% 30%, var(--gold-08) 0%, transparent 60%), linear-gradient(180deg, var(--green) 0%, var(--dark-green-pitch) 100%);
   text-align: center; transition: opacity 0.8s var(--transition-spring), visibility 0.8s; will-change: opacity, visibility;
 }
-.onboarding-overlay.hidden { visibility: hidden; opacity: 0; }
+.onboarding-overlay.hidden { visibility: hidden; opacity: 0; pointer-events: none; }
 .onb-content { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 340px; gap: var(--space-1); }
 .onb-logo { width: 76px; height: 76px; margin-bottom: var(--space-2); padding: 6px; background: var(--black-15); border: 1px solid var(--gold-30); border-radius: 50%; box-shadow: 0 0 40px var(--gold-08); }
 .onb-title { margin-bottom: 2px; font-family: var(--font-heading); font-size: 2.1rem; font-weight: 350; line-height: 1.1; color: var(--ivory); letter-spacing: 0.02em; }
@@ -196,6 +197,15 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   border-color: var(--gold); background-color: rgba(2,10,7,0.5);
   border-bottom-color: var(--gold); color: var(--gold-bright);
   text-shadow: 0 0 12px var(--gold-40); box-shadow: none;
+}
+.onb-input:-webkit-autofill,
+.onb-input:-webkit-autofill:hover,
+.onb-input:-webkit-autofill:focus,
+.onb-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #051C14 inset !important;
+  -webkit-text-fill-color: var(--gold-bright) !important;
+  border-bottom: 2px solid var(--gold) !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 .onb-input::placeholder { font-family: var(--font-body); font-size: var(--text-label); font-weight: 400; color: var(--ivory-35); text-transform: uppercase; letter-spacing: 0.1em; transition: opacity 0.4s ease, letter-spacing 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
 .onb-input:focus::placeholder { opacity: 0; letter-spacing: 0.4em; }
@@ -250,14 +260,28 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .brand-logo img { width: 28px; height: 28px; border-radius: 50%; box-shadow: var(--shadow-soft); }
 .brand-name { font-size: 1rem; font-weight: 600; color: var(--white); letter-spacing: 0.01em; text-shadow: 0 1px 4px var(--black-40); transition: color var(--dur-normal) ease, text-shadow var(--dur-normal) ease; }
 .luxury-header.scrolled .brand-name { color: var(--green); text-shadow: none; }
-.header-right { max-width: 55%; display: flex; align-items: center; gap: 4px; }
-.user-name, .user-loc { 
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 160px; display: block;
+.header-right { 
+  flex: 1;
+  display: flex; 
+  align-items: center; 
+  min-width: 0;
+  justify-content: flex-end;
 }
-.user-name { font-size: var(--text-label); font-weight: 700; color: var(--white); text-shadow: 0 1px 4px var(--black-50); transition: color var(--dur-normal) ease, text-shadow var(--dur-normal) ease; }
-.user-loc { font-size: var(--text-caption); font-weight: 500; color: var(--white-90); text-shadow: 0 1px 4px var(--black-50); transition: color var(--dur-normal) ease, text-shadow var(--dur-normal) ease; }
-.user-loc::before { content: '•'; margin-right: 4px; opacity: 0.7; }
-.luxury-header.scrolled .user-name, .luxury-header.scrolled .user-loc { color: var(--green); text-shadow: none; }
+.user-name { 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  white-space: nowrap; 
+  width: 100%; 
+  display: block;
+  font-size: var(--text-label); 
+  font-weight: 700; 
+  color: var(--white); 
+  text-align: right;
+  text-shadow: 0 1px 4px var(--black-50);
+  transition: color var(--dur-normal) ease, text-shadow var(--dur-normal) ease;
+}
+.user-loc { display: none; }
+.luxury-header.scrolled .user-name { color: var(--green); text-shadow: none; }
 
 /* ---------- 7. HERO ---------- */
 .content-wrapper { padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)); overflow-x: hidden; }
