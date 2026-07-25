@@ -662,11 +662,19 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   cursor: pointer;
   opacity: 0.7;
   transition: opacity var(--dur-fast) ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
 }
 .gps-btn:hover, .gps-btn:active { opacity: 1; }
 .gps-btn:disabled {
   opacity: 0.4;
   pointer-events: none;
+}
+.gps-label {
+  font-size: var(--text-caption);
+  font-weight: 600;
 }
 
 /* Spinner inline */
