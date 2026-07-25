@@ -139,8 +139,11 @@ function applyPersonalization() {
   const name = state.customerName || 'Tamu';
   const districtLabel = state.selectedDistrict || 'Pilih alamat tujuan';
   const waktu = getWaktu();
-  DOM.headerName.textContent = `Selamat ${waktu}, ${name}`;
-  DOM.headerLoc.textContent = districtLabel;
+
+  // Gabungkan teks sapaan + lokasi
+  DOM.headerName.textContent = `Selamat ${waktu}, ${name} • ${districtLabel}`;
+  if (DOM.headerLoc) DOM.headerLoc.style.display = 'none'; // sembunyikan elemen lama
+
   if (DOM.customerNameInput) DOM.customerNameInput.value = name !== 'Tamu' ? name : '';
   if (DOM.customerPhoneInput) DOM.customerPhoneInput.value = state.customerPhone;
   if (DOM.customerAddressInput) DOM.customerAddressInput.value = state.customerAddress;
@@ -646,7 +649,7 @@ function initDrawerDistrictDropdown() {
 }
 
 // ---------------------------------------------------------------------------
-// ONBOARDING (Private Lobby) – perbaikan subtitle returning user
+// ONBOARDING (Private Lobby) – perbaikan subtitle returning user + blur fokus
 // ---------------------------------------------------------------------------
 function initOnboarding() {
   const saved = loadState();
@@ -681,7 +684,10 @@ function initOnboarding() {
     document.getElementById('onbGuestBtn').textContent = 'Lihat Koleksi';
   }
 
+  // Tombol "Masuk" + blur fokus
   document.getElementById('onbNextBtn').addEventListener('click', () => {
+    if (document.activeElement) document.activeElement.blur();
+
     const name = DOM.onbName.value.trim();
     if (!name) return showToast('Mohon isi nama.');
     state.customerName = name;
@@ -722,14 +728,18 @@ function initOnboarding() {
     initScrollReveal();
   });
 
+  // Tombol "Masuk Sekarang" + blur fokus
   document.getElementById('onbEnterBtn')?.addEventListener('click', () => {
+    if (document.activeElement) document.activeElement.blur();
     DOM.onboardingOverlay.classList.add('hidden');
     setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, 600);
     applyPersonalization();
     initScrollReveal();
   });
 
+  // Tombol "Ganti nama" + blur fokus
   document.getElementById('onbResetBtn')?.addEventListener('click', () => {
+    if (document.activeElement) document.activeElement.blur();
     clearUser();
     state.customerName = '';
     state.selectedDistrict = '';
@@ -953,7 +963,7 @@ function bindEvents() {
     state.customerName = DOM.customerNameInput.value;
     saveUser(state.customerName, state.selectedDistrict);
     const waktu = getWaktu();
-    DOM.headerName.textContent = `Selamat ${waktu}, ${state.customerName || 'Tamu'}`;
+    DOM.headerName.textContent = `Selamat ${waktu}, ${state.customerName || 'Tamu'} • ${state.selectedDistrict || 'Pilih alamat tujuan'}`;
     if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Selamat ${waktu}, ${state.customerName || 'Tamu'}. Ada yang bisa kami bantu?`;
   });
   DOM.customerPhoneInput?.addEventListener('input', () => {
