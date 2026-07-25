@@ -13,13 +13,8 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
   if (!insightEl) return;
 
   // CATATAN: renderMenu() (render.js) SUDAH men-triple-kan produk
-  // (LOOP_MULTIPLIER = 3) sebelum initCarousel() dipanggil. Jangan
-  // di-triple lagi di sini — cukup pakai DOM yang sudah ada, supaya
-  // hasil akhirnya tetap 3x (bukan 9x) elemen produk.
   const currentItems = track.children;
   if (currentItems.length === 0) return;
-  // totalItems = jumlah produk ASLI (bukan yang sudah di-triple),
-  // dipakai sebagai basis perhitungan recentering di bawah.
   const totalItems = currentItems.length / LOOP_MULTIPLIER;
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -123,6 +118,28 @@ export function initCarousel(trackId = 'menuList', insightId = 'productInsightTe
   };
   track.addEventListener('touchend', restartAuto, { passive: true });
   track.addEventListener('mouseup', restartAuto);
+
+  // Keyboard navigation untuk carousel
+  track.setAttribute('tabindex', '0');
+  track.setAttribute('role', 'region');
+  track.setAttribute('aria-label', 'Koleksi produk');
+
+  track.addEventListener('keydown', (e) => {
+    const items = track.querySelectorAll('.boutique-item');
+    const active = track.querySelector('.boutique-item.active-center');
+    let idx = Array.from(items).indexOf(active);
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      idx = (idx + 1) % items.length;
+      items[idx].focus({ preventScroll: true });
+      track.scrollTo({ left: items[idx].offsetLeft - track.clientWidth / 2 + items[idx].clientWidth / 2, behavior: 'smooth' });
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      idx = (idx - 1 + items.length) % items.length;
+      items[idx].focus({ preventScroll: true });
+      track.scrollTo({ left: items[idx].offsetLeft - track.clientWidth / 2 + items[idx].clientWidth / 2, behavior: 'smooth' });
+    }
+  });
 
   setTimeout(() => {
     track.style.scrollBehavior = 'auto';
