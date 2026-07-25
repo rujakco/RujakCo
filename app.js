@@ -1,10 +1,10 @@
-// app.js — FINAL V1.0 + ALL FIXES
+// app.js – FINAL V1.0 (Private Lobby + Paxel + Lalamove + GPS Button Label + All Fixes)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch } from './utils/helpers.js';
 import { loadState, saveCart, saveUser, clearUser, saveCustomer, loadCustomer, isStorageAvailable } from './modules/storage.js';
 import { calculateShipping, getDrivingDistance, reverseGeocode } from './modules/shipping.js';
-import { renderMenu, renderProductSwiper, renderCart, renderMiniCart, getProductGlobalIndex, updateProductDots } from './modules/render.js';
+import { renderMenu, renderProductSwiper, renderCart, renderMiniCart, getProductGlobalIndex } from './modules/render.js';
 import { initCarousel } from './modules/carousel.js';
 import { initAIChat } from './modules/chat.js';
 import { initAccessibility } from './modules/accessibility.js';
@@ -12,9 +12,6 @@ import { initTestimonials } from './modules/testimonials.js';
 import { validatePhone, validateAddress, getCartSummary, showWhatsAppFallback } from './modules/checkout.js';
 import { showOrderConfirmation as launchProReceipt } from './modules/checkout-receipt.js';
 
-// ---------------------------------------------------------------------------
-// STATE
-// ---------------------------------------------------------------------------
 const state = {
   cart: {},
   drafts: {},
@@ -40,9 +37,6 @@ const overlayStack = [];
 window.__overlayStack__ = overlayStack;
 let isProgrammaticBack = false;
 
-// ---------------------------------------------------------------------------
-// DOM CACHE
-// ---------------------------------------------------------------------------
 const DOM = {};
 const cacheDOM = () => {
   DOM.onboardingOverlay = document.getElementById('onboardingOverlay');
@@ -273,7 +267,7 @@ function showConfirmModal(title, message, onConfirm) {
 }
 
 // ---------------------------------------------------------------------------
-// PRODUCT PAGE
+// PRODUCT PAGE (dots & scroll listener dihapus, bottom nav muncul)
 // ---------------------------------------------------------------------------
 function openProductPage(globalIndex) {
   if (!DOM.productPage) return;
@@ -291,6 +285,7 @@ function openProductPage(globalIndex) {
   DOM.productPage.style.display = 'flex';
   void DOM.productPage.offsetWidth;
   DOM.productPage.classList.add('active');
+  DOM.bottomNav?.classList.add('nav-visible'); // ✅ tampilkan bottom nav di detail produk
   DOM.productPage.setAttribute('aria-hidden', 'false');
   DOM.productPage.removeAttribute('inert');
   document.body.style.overflow = 'hidden';
@@ -302,19 +297,6 @@ function openProductPage(globalIndex) {
     DOM.productSwiperTrack.style.scrollBehavior = 'auto';
     DOM.productSwiperTrack.scrollLeft = targetSlide.offsetLeft;
     DOM.productSwiperTrack.style.scrollBehavior = 'smooth';
-  }
-  updateProductDots(globalIndex);
-  if (!DOM._productDotsScrollBound) {
-    let dotsScrollTimer;
-    DOM.productSwiperTrack.addEventListener('scroll', () => {
-      clearTimeout(dotsScrollTimer);
-      dotsScrollTimer = setTimeout(() => {
-        const slideWidth = DOM.productSwiperTrack.querySelector('.product-slide')?.offsetWidth || DOM.productSwiperTrack.clientWidth;
-        const idx = Math.round(DOM.productSwiperTrack.scrollLeft / slideWidth);
-        updateProductDots(idx);
-      }, 100);
-    }, { passive: true });
-    DOM._productDotsScrollBound = true;
   }
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -337,6 +319,7 @@ function openProductPage(globalIndex) {
 
 function closeProductPage(fromPopState = false) {
   if (!DOM.productPage) return;
+  DOM.bottomNav?.classList.remove('nav-visible'); // ✅ sembunyikan kembali
   document.getElementById('navHomeBtn')?.focus();
   DOM.productPage.classList.remove('active');
   setTimeout(() => {
@@ -663,7 +646,7 @@ function initDrawerDistrictDropdown() {
 }
 
 // ---------------------------------------------------------------------------
-// ONBOARDING (Private Lobby) – Fix: returning user dikenali tanpa district
+// ONBOARDING (Private Lobby) – perbaikan subtitle returning user
 // ---------------------------------------------------------------------------
 function initOnboarding() {
   const saved = loadState();
@@ -676,7 +659,15 @@ function initOnboarding() {
     DOM.onbNewUser.style.display = 'none';
     DOM.onbReturningUser.style.display = 'block';
     DOM.onbWelcomeName.textContent = saved.name === 'Tamu' ? 'Pelanggan' : saved.name;
-    DOM.onbWelcomeDistrict.textContent = state.selectedDistrict || 'Pilih alamat tujuan';
+
+    const prefixEl = document.getElementById('onbDeliveryPrefix');
+    if (state.selectedDistrict) {
+      if (prefixEl) prefixEl.textContent = 'Diantar ke ';
+      DOM.onbWelcomeDistrict.textContent = state.selectedDistrict;
+    } else {
+      if (prefixEl) prefixEl.textContent = 'Yuk, pilih alamat tujuan Anda';
+      DOM.onbWelcomeDistrict.textContent = '';
+    }
     if (state.selectedDistrict) resolveOnboardingDistance(state.selectedDistrict);
   } else {
     DOM.onbNewUser.style.display = 'block';
