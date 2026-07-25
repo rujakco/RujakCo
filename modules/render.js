@@ -115,22 +115,7 @@ export function renderProductSwiper(drafts, trackId = 'productSwiperTrack') {
     });
   });
 
-  // Dots indikator: satu dot per produk ASLI (bukan per salinan loop)
-  const dotsContainer = document.getElementById('productProgressDots');
-  if (dotsContainer && products.length) {
-    dotsContainer.innerHTML = products.map(() => '<span class="dot"></span>').join('');
-  }
-
   if (window.lucide) window.lucide.createIcons();
-}
-
-export function updateProductDots(globalIndex) {
-  const dotsContainer = document.getElementById('productProgressDots');
-  if (!dotsContainer || !PRODUCTS.length) return;
-  const realIndex = globalIndex % PRODUCTS.length;
-  dotsContainer.querySelectorAll('.dot').forEach((dot, i) => {
-    dot.classList.toggle('active', i === realIndex);
-  });
 }
 
 export function renderCart(cart, badgeIds = ['cartBadgeNav']) {
