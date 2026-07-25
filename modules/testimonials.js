@@ -8,8 +8,8 @@ export function initTestimonials() {
   if (!cards.length) return;
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const AUTO_ADVANCE_INTERVAL = 6000; // interval auto-lanjut
-  let currentIndex = 0, prevIndex = 0; // prevIndex = 0, bukan cards.length - 1
+  const AUTO_ADVANCE_INTERVAL = 6000;
+  let currentIndex = 0;
   let interval = null, userPaused = prefersReducedMotion, tempPaused = false;
   let resumeTimer = null;
 
@@ -17,11 +17,12 @@ export function initTestimonials() {
 
   function showCard(index, announce) {
     if (index === currentIndex) return;
+    const leavingIndex = currentIndex;
     cards.forEach((card, i) => {
       if (i === index) {
         card.classList.add('is-active');
         card.classList.remove('is-prev');
-      } else if (i === prevIndex && i !== index) {
+      } else if (i === leavingIndex) {
         card.classList.remove('is-active');
         card.classList.add('is-prev');
       } else {
@@ -29,7 +30,6 @@ export function initTestimonials() {
       }
     });
     dots.forEach((dot, i) => dot.setAttribute('aria-current', i === index ? 'true' : 'false'));
-    prevIndex = currentIndex;
     currentIndex = index;
     if (announce && liveRegion) liveRegion.textContent = `Testimoni dari ${getAuthor(cards[index])}`;
   }
@@ -62,7 +62,6 @@ export function initTestimonials() {
     });
   });
 
-  // Inisialisasi: tidak perlu panggil showCard(0, true) karena sudah di index 0
   if (liveRegion) liveRegion.textContent = `Testimoni dari ${getAuthor(cards[0])}`;
   setPauseUI(userPaused);
   startFlip();
