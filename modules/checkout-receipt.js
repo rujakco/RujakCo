@@ -95,7 +95,7 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
           4. <strong>Konfirmasi WhatsApp:</strong> Kirim bukti transfer beserta foto struk ini ke WhatsApp kami untuk validasi instan.
         </div>
         <div class="receipt-qris-wrap" style="margin-top: 16px; margin-bottom: 16px;">
-          <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/qris-rujakco.webp" alt="Scan QRIS" class="receipt-qris-cropped" crossorigin="anonymous" />
+          <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/QrisCrop.webp" alt="Scan QRIS" crossorigin="anonymous" />
         </div>
         <div style="font-size: 0.6rem; color: var(--gray-400); margin-top: 20px; line-height: 1.4; border-top: 1px solid var(--gray-100); padding-top: 10px; font-family: 'DM Sans', sans-serif; text-align: center;">
           <strong>Kebijakan Kesegaran:</strong> Komplain kualitas buah wajib menyertakan video unboxing (maksimal 2 jam setelah diterima). Seluruh buah dipotong segar melalui sistem 15-Minute Fresh-Prep.
