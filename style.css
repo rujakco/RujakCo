@@ -195,16 +195,10 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .onb-input:focus {
   border-color: var(--gold); background-color: rgba(2,10,7,0.5);
   border-bottom-color: var(--gold); color: var(--gold-bright);
-  text-shadow: 0 0 12px var(--gold-40); box-shadow: 0 0 0 4px rgba(183,146,79,0.1);
-  animation: inputFlash 0.7s ease-out forwards;
+  text-shadow: 0 0 12px var(--gold-40); box-shadow: none;
 }
 .onb-input::placeholder { font-family: var(--font-body); font-size: var(--text-label); font-weight: 400; color: var(--ivory-35); text-transform: uppercase; letter-spacing: 0.1em; transition: opacity 0.4s ease, letter-spacing 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
 .onb-input:focus::placeholder { opacity: 0; letter-spacing: 0.4em; }
-@keyframes inputFlash {
-  0% { box-shadow: 0 0 0 4px rgba(183,146,79,0.1), 0 20px 20px -10px transparent; }
-  40% { box-shadow: 0 0 0 4px rgba(183,146,79,0.1), 0 20px 20px -10px var(--gold-25); }
-  100% { box-shadow: 0 0 0 4px rgba(183,146,79,0.1), 0 12px 20px -12px var(--gold-10); }
-}
 #onbDistrictDropdown { background: rgba(4, 18, 13, 0.90); border: 1px solid var(--gold-20); border-radius: var(--radius-md); box-shadow: 0 16px 40px var(--black-40); backdrop-filter: blur(12px); }
 #onbDistrictDropdown div { padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--white-04); font-family: var(--font-body); font-size: 0.95rem; font-weight: 400; color: var(--ivory); cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease, padding-left 0.2s ease; }
 #onbDistrictDropdown div:hover, #onbDistrictDropdown div[aria-selected="true"] { padding-left: calc(var(--space-3) + 4px); background: var(--gold-10); color: var(--gold); }
@@ -269,10 +263,10 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .content-wrapper { padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)); overflow-x: hidden; }
 .hero-editorial { position: relative; z-index: 1; width: 100%; max-width: 480px; margin: 0 auto; }
 .hero-gold-frame { position: relative; margin-top: calc(var(--space-6) + env(safe-area-inset-top, 0px)); margin-right: var(--space-3); margin-left: var(--space-3); border-radius: var(--radius-md); box-shadow: var(--shadow-soft); }
-.hero-img-wrap { position: relative; overflow: hidden; width: 100%; background-color: var(--dark-green-deep); border-radius: var(--radius-md); box-shadow: var(--shadow-hero-dark); aspect-ratio: 16 / 9; }
+.hero-img-wrap { position: relative; overflow: hidden; width: 100%; background-color: var(--dark-green-deep); border-radius: var(--radius-md); box-shadow: var(--shadow-hero-dark); aspect-ratio: 16 / 6.3; }
 .hero-img-wrap::after {
   content: ""; position: absolute; top: 0; right: 0; left: 0; z-index: 1;
-  height: 220px;
+  height: 154px;
   background: linear-gradient(180deg, rgba(2,10,7,0.75) 0%, rgba(2,10,7,0.45) 55%, transparent 100%);
   pointer-events: none;
 }
@@ -523,10 +517,10 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .boutique-item:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; border-radius: var(--radius-lg); }
 .carousel-dot:focus-visible, .nav-item:focus-visible, .spice-option:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; border-radius: 4px; }
 
-/* ---------- 20. CUSTOM SCROLLBAR ---------- */
+/* ---------- 20. SCROLLBAR TERSEMBUNYI ---------- */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--gold-soft); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: transparent; }
 
 /* ---------- 21. REDUCED MOTION & UTILITIES ---------- */
 .icon-sm { width: 18px; height: 18px; }
@@ -595,7 +589,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .receipt-code-text { font-family: 'DM Sans', monospace; font-size: var(--text-caption); font-weight: 600; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.25em; }
 .receipt-qris-wrap { position: relative; overflow: hidden; width: 160px; height: 160px; margin: var(--space-2) auto var(--space-1); background: var(--white); border: 1.5px dashed var(--gold); border-radius: var(--radius-sm); }
 .receipt-qris-wrap img { max-width: 100%; height: auto; }
-.receipt-qris-cropped { position: absolute; width: 230%; max-width: none; left: 50%; top: 52%; transform: translate(-50%, -50%); }
+.receipt-qris-cropped { position: absolute; width: 210%; max-width: none; left: 50%; top: 52%; transform: translate(-50%, -50%); }
 .receipt-barcode { display: none; }
 
 /* Animations */
@@ -752,3 +746,10 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .step-2-content { display: none; }
 .action-step-1 { display: block; }
 .detail-image-wrap img.lazy-detail { background: var(--bg-subtle); }
+
+/* Touch-action untuk area scroll */
+.drawer-body,
+.chat-messages {
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
