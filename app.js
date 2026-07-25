@@ -1,4 +1,4 @@
-// app.js — FINAL FASE 1 + Paxel + GPS Otomatis Onboarding
+// app.js – FINAL + THE PRIVATE LOBBY (Onboarding Baru)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch } from './utils/helpers.js';
@@ -119,7 +119,7 @@ function requestLocation() {
       (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
       (err) => {
         if (err.code === PERMISSION_DENIED) {
-          // Hanya untuk drawer, onboarding silent
+          // tidak ada toast di sini, biarkan UI yang menangani
         }
         reject(err);
       },
@@ -134,13 +134,15 @@ function requestLocation() {
 function applyPersonalization() {
   const name = state.customerName || 'Tamu';
   const districtLabel = state.selectedDistrict || 'Pilih alamat tujuan';
-  DOM.headerName.textContent = name;
+  // Header: "Selamat datang, [Nama]"
+  DOM.headerName.textContent = `Selamat datang, ${name}`;
   DOM.headerLoc.textContent = districtLabel;
   if (DOM.customerNameInput) DOM.customerNameInput.value = name !== 'Tamu' ? name : '';
   if (DOM.customerPhoneInput) DOM.customerPhoneInput.value = state.customerPhone;
   if (DOM.customerAddressInput) DOM.customerAddressInput.value = state.customerAddress;
   if (DOM.districtInput) DOM.districtInput.value = state.selectedDistrictFull || '';
-  if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Halo, ${name}! Ada yang bisa kami bantu untuk pesanan Anda?`;
+  // AI Chat: sapa personal
+  if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Selamat datang, ${name}. Saya siap membantu Anda memilih sajian terbaik hari ini.`;
 }
 
 function initScrollReveal() {
@@ -449,7 +451,7 @@ function updateCartUI() {
 }
 
 // ---------------------------------------------------------------------------
-// DRAWER DISTRICT DROPDOWN (dengan GPS, spinner terpisah, AbortController)
+// DRAWER DISTRICT DROPDOWN (GPS manual, spinner, AbortController)
 // ---------------------------------------------------------------------------
 function initDrawerDistrictDropdown() {
   const input = DOM.districtInput;
@@ -612,27 +614,12 @@ function initDrawerDistrictDropdown() {
 }
 
 // ---------------------------------------------------------------------------
-// ONBOARDING
+// ONBOARDING (The Private Lobby)
 // ---------------------------------------------------------------------------
-async function resolveOnboardingDistance(districtName) {
-  if (!districtName) return;
-  try {
-    const results = await queuedSearch(districtName);
-    if (results.length > 0) {
-      const place = results[0];
-      const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, parseFloat(place.lat), parseFloat(place.lon));
-      state.userDistance = result.distance;
-      state.haversineUsed = result.isHaversine;
-      state.selectedDistrict = extractShortLocation(place.display_name) || districtName;
-      state.selectedDistrictFull = place.display_name;
-      saveCustomer(state.customerPhone, state.customerAddress, place.display_name, state.userDistance);
-    }
-  } catch (e) { console.warn('Gagal menghitung jarak dari onboarding'); }
-}
-
 function initOnboarding() {
   const saved = loadState();
   if (saved?.name && saved.district) {
+    // Pengguna kembali — tampilkan welcome langsung
     state.customerName = saved.name;
     state.selectedDistrictFull = saved.district;
     state.selectedDistrict = extractShortLocation(saved.district) || saved.district;
@@ -642,49 +629,55 @@ function initOnboarding() {
     DOM.onbWelcomeDistrict.textContent = state.selectedDistrict;
     resolveOnboardingDistance(state.selectedDistrict);
   } else {
+    // Pengguna baru — The Private Lobby
     DOM.onbNewUser.style.display = 'block';
     DOM.onbStep1.classList.add('active');
+    DOM.onbStep2.style.display = 'none'; // step 2 tidak dipakai
+
+    // Ubah teks sesuai konsep
+    document.getElementById('onbTitle').textContent = 'Selamat datang di RUJAK.Co';
+    document.querySelector('.onb-subtitle').textContent = 'Pengalaman rasa Nusantara yang personal.';
+    document.querySelector('.onb-label').textContent = 'Bagaimana kami boleh memanggil Anda?';
+    DOM.onbName.placeholder = 'Nama panggilan Anda';
+    document.getElementById('onbNextBtn').textContent = 'Masuk ke Lounge';
+    document.getElementById('onbGuestBtn').textContent = 'Lihat Koleksi';
   }
 
+  // Tombol "Masuk ke Lounge"
   document.getElementById('onbNextBtn').addEventListener('click', () => {
     const name = DOM.onbName.value.trim();
-    if (!name) return showToast('Mohon isi nama Anda.');
+    if (!name) return showToast('Mohon isi nama panggilan Anda.');
     state.customerName = name;
-    DOM.onbStep1.classList.remove('active');
+
+    // Tampilkan animasi ucapan
+    const greeting = document.createElement('div');
+    greeting.className = 'lobby-welcome';
+    greeting.innerHTML = `
+      <h2 class="lobby-welcome-text">Senang menyambut Anda, ${escapeHTML(name)}.</h2>
+      <p class="lobby-welcome-sub">Silakan menikmati pengalaman RUJAK.Co.</p>
+    `;
+    document.body.appendChild(greeting);
+
+    requestAnimationFrame(() => {
+      greeting.classList.add('show');
+    });
+
     setTimeout(() => {
-      DOM.onbStep2.classList.add('active');
-      DOM.onbDistrict.focus();
-      // 🛰️ GPS otomatis (tanpa toast jika ditolak)
-      if (!state.selectedDistrict) {
-        requestLocation().then(async ({ lat, lon }) => {
-          try {
-            const place = await reverseGeocode(lat, lon);
-            if (place?.display_name) {
-              const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, lat, lon);
-              state.userDistance = result.distance;
-              state.haversineUsed = result.isHaversine;
-              const displayName = place.display_name;
-              state.selectedDistrictFull = displayName;
-              state.selectedDistrict = extractShortLocation(displayName);
-              DOM.onbDistrict.value = displayName;
-              const indicator = document.getElementById('onbValidIndicator');
-              if (indicator) {
-                indicator.classList.remove('is-hidden');
-                indicator.classList.add('is-visible');
-              }
-              applyPersonalization();
-              saveCustomer(state.customerPhone, state.customerAddress, displayName, state.userDistance);
-            }
-          } catch (err) {
-            // fallthrough ke manual
-          }
-        }).catch(() => {
-          // izin ditolak, langsung manual
-        });
-      }
-    }, 400);
+      greeting.classList.remove('show');
+      setTimeout(() => {
+        greeting.remove();
+        DOM.onboardingOverlay.classList.add('hidden');
+        setTimeout(() => {
+          DOM.onboardingOverlay.style.display = 'none';
+        }, 400);
+        applyPersonalization();
+        initScrollReveal();
+        saveUser(state.customerName, '');
+      }, 400);
+    }, 1200);
   });
 
+  // Tombol "Lihat Koleksi" (guest)
   document.getElementById('onbGuestBtn')?.addEventListener('click', () => {
     state.customerName = 'Tamu';
     state.selectedDistrict = '';
@@ -692,120 +685,6 @@ function initOnboarding() {
     setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, 600);
     applyPersonalization();
     initScrollReveal();
-  });
-
-  const input = DOM.onbDistrict;
-  const dropdown = DOM.onbDistrictDropdown;
-  if (!input || !dropdown) return;
-  input.placeholder = 'Ketik alamat tujuan (jalan, kelurahan, kota)';
-  input.setAttribute('role', 'combobox');
-  input.setAttribute('aria-autocomplete', 'list');
-  input.setAttribute('aria-expanded', 'false');
-  input.setAttribute('aria-controls', 'onbDistrictDropdown');
-  input.setAttribute('aria-haspopup', 'listbox');
-
-  let activeOptionIndex = -1;
-  const renderOnbDropdown = (results) => {
-    activeOptionIndex = -1;
-    if (!results.length) { dropdown.style.display = 'none'; input.setAttribute('aria-expanded', 'false'); return; }
-    dropdown.innerHTML = results.map((place, i) => {
-      const displayNameRaw = place.display_name.split(',').slice(0, 3).join(',');
-      const displayName = escapeHTML(displayNameRaw);
-      const mainLabel = escapeHTML(place.address.road || place.address.suburb || place.name);
-      return `
-        <div role="option" id="onbDistrictOpt-${i}" tabindex="0" data-lat="${place.lat}" data-lon="${place.lon}" data-name="${displayName}" aria-selected="false">
-          <strong>${mainLabel}</strong><br><span style="font-size:0.75rem;color:var(--gray-500);">${displayName}</span>
-        </div>`;
-    }).join('');
-    dropdown.style.display = 'block';
-    input.setAttribute('aria-expanded', 'true');
-  };
-  const setActiveOnbOption = (index) => {
-    const opts = dropdown.querySelectorAll('div[role="option"]');
-    opts.forEach(o => o.setAttribute('aria-selected', 'false'));
-    if (index >= 0 && index < opts.length) {
-      opts[index].setAttribute('aria-selected', 'true');
-      opts[index].scrollIntoView({ block: 'nearest' });
-      input.setAttribute('aria-activedescendant', opts[index].id);
-      activeOptionIndex = index;
-    } else input.removeAttribute('aria-activedescendant');
-  };
-  const selectOnbDistrict = async (lat, lon, displayName) => {
-    dropdown.style.display = 'none';
-    input.setAttribute('aria-expanded', 'false');
-    input.removeAttribute('aria-activedescendant');
-    input.value = 'Menghitung jarak...';
-    try {
-      const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, lat, lon);
-      state.userDistance = result.distance;
-      state.haversineUsed = result.isHaversine;
-      state.selectedDistrictFull = displayName;
-      state.selectedDistrict = extractShortLocation(displayName);
-      input.value = displayName;
-      applyPersonalization();
-      saveCustomer(state.customerPhone, state.customerAddress, displayName, state.userDistance);
-      const testShip = calculateShipping(result.distance, 1, 'lalamove', 'reguler');
-      if (testShip.cost === null) {
-        showToast('⚠️ Area Anda mungkin di luar jangkauan pengantaran kami. Anda tetap bisa lanjut, tim kami akan konfirmasi via Concierge.');
-      } else {
-        showToast('✅ Lokasi berhasil dipilih!');
-      }
-    } catch (err) {
-      showToast('⚠️ Gagal menghitung jarak. Coba lagi.');
-      input.value = displayName;
-      state.selectedDistrictFull = displayName;
-      state.selectedDistrict = extractShortLocation(displayName);
-    }
-  };
-  const handleOnbSearch = debounce(async (query) => {
-    if (query.length < 3) { dropdown.style.display = 'none'; input.setAttribute('aria-expanded', 'false'); return; }
-    dropdown.innerHTML = '<div style="padding:14px;text-align:center;color:var(--gray-500);">Mencari lokasi...</div>';
-    dropdown.style.display = 'block';
-    let results = [];
-    try { results = await queuedSearch(query); } catch (err) {
-      dropdown.innerHTML = '<div style="padding:16px;text-align:center;color:var(--danger);">Koneksi terputus.</div>';
-      return;
-    }
-    renderOnbDropdown(results);
-  }, 700);
-  input.addEventListener('input', (e) => handleOnbSearch(e.target.value.trim()));
-  input.addEventListener('focus', () => { if (input.value.length >= 3) handleOnbSearch(input.value.trim()); });
-  input.addEventListener('keydown', (e) => {
-    const opts = dropdown.querySelectorAll('div[role="option"]');
-    if (!opts.length || dropdown.style.display === 'none') {
-      if (e.key === 'Enter' && input.value.trim().length >= 3) { e.preventDefault(); handleOnbSearch(input.value.trim()); }
-      return;
-    }
-    if (e.key === 'ArrowDown') { e.preventDefault(); setActiveOnbOption(Math.min(activeOptionIndex+1, opts.length-1)); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); setActiveOnbOption(Math.max(activeOptionIndex-1, 0)); }
-    else if (e.key === 'Enter') { e.preventDefault(); if (activeOptionIndex >= 0 && activeOptionIndex < opts.length) selectOnbDistrict(parseFloat(opts[activeOptionIndex].dataset.lat), parseFloat(opts[activeOptionIndex].dataset.lon), opts[activeOptionIndex].dataset.name); }
-    else if (e.key === 'Escape') { dropdown.style.display = 'none'; input.setAttribute('aria-expanded', 'false'); input.focus(); }
-  });
-  dropdown.addEventListener('click', (e) => { const opt = e.target.closest('div[role="option"]'); if (opt) selectOnbDistrict(parseFloat(opt.dataset.lat), parseFloat(opt.dataset.lon), opt.dataset.name); });
-  document.addEventListener('click', (e) => { if (!input.contains(e.target) && !dropdown.contains(e.target)) { dropdown.style.display = 'none'; input.setAttribute('aria-expanded', 'false'); } });
-
-  document.getElementById('onbStartBtn').addEventListener('click', () => {
-    if (!state.selectedDistrict) return showToast('Mohon pilih alamat tujuan.');
-    saveUser(state.customerName, state.selectedDistrict);
-    DOM.onboardingOverlay.classList.add('hidden');
-    setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, 600);
-    applyPersonalization();
-    initScrollReveal();
-  });
-  document.getElementById('onbEnterBtn').addEventListener('click', () => {
-    DOM.onboardingOverlay.classList.add('hidden');
-    setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, 600);
-    applyPersonalization();
-    initScrollReveal();
-  });
-  document.getElementById('onbResetBtn').addEventListener('click', () => {
-    clearUser();
-    state.cart = {};
-    updateCartUI();
-    DOM.onbReturningUser.style.display = 'none';
-    DOM.onbNewUser.style.display = 'block';
-    DOM.onbStep2.classList.remove('active');
-    DOM.onbStep1.classList.add('active');
   });
 }
 
@@ -1007,7 +886,7 @@ function bindEvents() {
     state.customerName = DOM.customerNameInput.value;
     saveUser(state.customerName, state.selectedDistrict);
     DOM.headerName.textContent = state.customerName || 'Tamu';
-    if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Halo, ${state.customerName || 'Tamu'}! Ada yang bisa kami bantu?`;
+    if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Selamat datang, ${state.customerName || 'Tamu'}. Saya siap membantu Anda memilih sajian terbaik hari ini.`;
   });
   DOM.customerPhoneInput?.addEventListener('input', () => {
     DOM.customerPhoneInput.value = DOM.customerPhoneInput.value.replace(/\D/g, '');
