@@ -1,4 +1,4 @@
-// app.js – V1.0 FINAL (Private Lobby + Paxel + Lalamove + Bug Fixes)
+// app.js — FINAL V1.0 (Private Lobby + Paxel + Lalamove + GPS Button Label + Fixes)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch } from './utils/helpers.js';
@@ -490,10 +490,11 @@ function initDrawerDistrictDropdown() {
   const validIndicator = document.getElementById('districtValidIndicator');
   const wrapper = input.parentElement;
 
+  // Tombol GPS dengan teks "Lokasi"
   const gpsBtn = document.createElement('button');
   gpsBtn.type = 'button';
   gpsBtn.className = 'gps-btn';
-  gpsBtn.innerHTML = '<i data-lucide="map-pin" class="icon-sm"></i>';
+  gpsBtn.innerHTML = '<i data-lucide="map-pin" class="icon-sm"></i> <span class="gps-label">Lokasi</span>';
   gpsBtn.setAttribute('aria-label', 'Gunakan lokasi saya');
   wrapper.appendChild(gpsBtn);
 
@@ -678,7 +679,6 @@ function initOnboarding() {
   } else {
     DOM.onbNewUser.style.display = 'block';
     DOM.onbStep1.classList.add('active');
-    // DOM.onbStep2 sudah tidak digunakan (Private Lobby tanpa step 2)
 
     document.getElementById('onbTitle').textContent = 'Selamat datang di RUJAK.Co';
     document.querySelector('.onb-subtitle').textContent = 'Pengalaman rasa Nusantara.';
@@ -859,7 +859,6 @@ async function sendReceiptToWhatsApp() {
 }
 
 async function showOrderConfirmation() {
-  // ✅ Parameter disesuaikan (hapus DOM.finalTotal)
   return await launchProReceipt(state, DOM, overlayStack, openModal, closeModal, getCartSummaryLocal, downloadReceiptPNG, sendReceiptToTelegram);
 }
 
