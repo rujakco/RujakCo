@@ -1,4 +1,4 @@
-// app.js – FINAL + THE PRIVATE LOBBY (Onboarding Baru)
+// app.js – FINAL V1.0 (Private Lobby + Copywriting Premium + Micro‑interactions)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch } from './utils/helpers.js';
@@ -47,8 +47,6 @@ const cacheDOM = () => {
   DOM.onbStep1 = document.getElementById('onbStep1');
   DOM.onbStep2 = document.getElementById('onbStep2');
   DOM.onbName = document.getElementById('onbName');
-  DOM.onbDistrict = document.getElementById('onbDistrict');
-  DOM.onbDistrictDropdown = document.getElementById('onbDistrictDropdown');
   DOM.header = document.getElementById('mainHeader');
   DOM.headerName = document.getElementById('headerNameDisplay');
   DOM.headerLoc = document.getElementById('headerLocDisplay');
@@ -107,19 +105,26 @@ function loadScript(src) {
   });
 }
 
+function getWaktu() {
+  const jam = new Date().getHours();
+  if (jam >= 5 && jam < 12) return 'pagi';
+  if (jam >= 12 && jam < 17) return 'siang';
+  return 'sore';
+}
+
 const PERMISSION_DENIED = globalThis.GeolocationPositionError?.PERMISSION_DENIED ?? 1;
 
 function requestLocation() {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
-      showToast('Browser tidak mendukung geolokasi.');
+      showToast('Geolokasi tak didukung.');
       return reject(new Error('Geolocation not supported'));
     }
     navigator.geolocation.getCurrentPosition(
       (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
       (err) => {
         if (err.code === PERMISSION_DENIED) {
-          // tidak ada toast di sini, biarkan UI yang menangani
+          showToast('Izin lokasi ditolak.');
         }
         reject(err);
       },
@@ -134,15 +139,14 @@ function requestLocation() {
 function applyPersonalization() {
   const name = state.customerName || 'Tamu';
   const districtLabel = state.selectedDistrict || 'Pilih alamat tujuan';
-  // Header: "Selamat datang, [Nama]"
-  DOM.headerName.textContent = `Selamat datang, ${name}`;
+  const waktu = getWaktu();
+  DOM.headerName.textContent = `Selamat ${waktu}, ${name}`;
   DOM.headerLoc.textContent = districtLabel;
   if (DOM.customerNameInput) DOM.customerNameInput.value = name !== 'Tamu' ? name : '';
   if (DOM.customerPhoneInput) DOM.customerPhoneInput.value = state.customerPhone;
   if (DOM.customerAddressInput) DOM.customerAddressInput.value = state.customerAddress;
   if (DOM.districtInput) DOM.districtInput.value = state.selectedDistrictFull || '';
-  // AI Chat: sapa personal
-  if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Selamat datang, ${name}. Saya siap membantu Anda memilih sajian terbaik hari ini.`;
+  if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Selamat ${waktu}, ${name}. Ada yang bisa kami bantu?`;
 }
 
 function initScrollReveal() {
@@ -244,10 +248,11 @@ function showConfirmModal(title, message, onConfirm) {
       <p>${message}</p>
       <div class="confirm-buttons">
         <button id="confirmNo" class="btn-outline">Batal</button>
-        <button id="confirmYes" class="btn-danger">Hapus</button>
+        <button id="confirmYes" class="btn-danger">Keluarkan</button>
       </div>
     </div>`;
   document.body.appendChild(modal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(modal); });
   document.getElementById('confirmNo').onclick = () => closeModal(modal);
   document.getElementById('confirmYes').onclick = () => {
     closeModal(modal);
@@ -406,6 +411,24 @@ function getCartSummaryLocal() {
   return getCartSummary(state.cart);
 }
 
+async function resolveOnboardingDistance(districtLabel) {
+  if (state.userDistance != null) return;
+  const query = state.selectedDistrictFull || districtLabel;
+  if (!query) return;
+  try {
+    const results = await queuedSearch(query);
+    if (results.length > 0) {
+      const place = results[0];
+      const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, parseFloat(place.lat), parseFloat(place.lon));
+      state.userDistance = result.distance;
+      state.haversineUsed = result.isHaversine;
+      updateShippingUI();
+    }
+  } catch (err) {
+    console.warn('Gagal resolve jarak onboarding:', err);
+  }
+}
+
 function updateShippingUI() {
   const dist = state.userDistance;
   const section = DOM.shippingSection;
@@ -451,7 +474,7 @@ function updateCartUI() {
 }
 
 // ---------------------------------------------------------------------------
-// DRAWER DISTRICT DROPDOWN (GPS manual, spinner, AbortController)
+// DRAWER DISTRICT DROPDOWN
 // ---------------------------------------------------------------------------
 function initDrawerDistrictDropdown() {
   const input = DOM.districtInput;
@@ -497,6 +520,7 @@ function initDrawerDistrictDropdown() {
   }
 
   let searchAbortController = null;
+  let searchFailCount = 0;
 
   const handleSearch = debounce(async (query) => {
     if (query.length < 3) { dropdown.style.display = 'none'; return; }
@@ -525,9 +549,20 @@ function initDrawerDistrictDropdown() {
     if (signal.aborted) return;
 
     if (results.length === 0) {
-      dropdown.innerHTML = '<div style="padding:16px;text-align:center;color:var(--danger);">Lokasi tidak ditemukan. Coba lagi.</div>';
+      searchFailCount++;
+      if (searchFailCount >= 2) {
+        dropdown.innerHTML = `
+          <div style="padding:16px;text-align:center;color:var(--danger);">Lokasi tak ditemukan.</div>
+          <div role="option" tabindex="0" data-manual="true"
+               style="text-align:center;color:var(--gold-text);font-weight:600;cursor:pointer;">
+            Isi manual & konfirmasi via WhatsApp
+          </div>`;
+      } else {
+        dropdown.innerHTML = '<div style="padding:16px;text-align:center;color:var(--danger);">Lokasi tak ditemukan.</div>';
+      }
       return;
     }
+    searchFailCount = 0;
 
     dropdown.innerHTML = results.map((place) => {
       const displayNameRaw = place.display_name.split(',').slice(0, 3).join(',');
@@ -552,6 +587,12 @@ function initDrawerDistrictDropdown() {
   });
 
   dropdown.addEventListener('click', async (e) => {
+    const manualOption = e.target.closest('[data-manual="true"]');
+    if (manualOption) {
+      dropdown.style.display = 'none';
+      showToast('Isi alamat manual, tim kami konfirmasi ongkir.');
+      return;
+    }
     const option = e.target.closest('div[role="option"]');
     if (!option) return;
     input.value = 'Menghitung rute pengantaran...';
@@ -562,11 +603,12 @@ function initDrawerDistrictDropdown() {
       const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, lat, lon);
       state.userDistance = result.distance;
       state.haversineUsed = result.isHaversine;
-    } catch (err) { showToast('Gagal menghitung jarak, coba lagi.'); return; }
+    } catch (err) { showToast('Gagal menghitung jarak.'); return; }
     state.selectedDistrictFull = placeName;
     state.selectedDistrict = extractShortLocation(placeName);
     input.value = placeName;
     input.style.borderBottomColor = 'var(--green)';
+    validIndicator.innerHTML = `<i data-lucide="check" class="icon-sm"></i> Area layanan tersedia`;
     validIndicator.classList.remove('is-hidden');
     validIndicator.classList.add('is-visible');
     applyPersonalization();
@@ -583,7 +625,7 @@ function initDrawerDistrictDropdown() {
     setGpsLoading(true);
     try {
       const { lat, lon } = await requestLocation();
-      input.value = 'Mendapatkan alamat...';
+      input.value = 'Menyiapkan area layanan...';
       const place = await reverseGeocode(lat, lon);
       if (!place?.display_name) throw new Error('No result');
       const result = await getDrivingDistance(SYSTEM.STORE_LAT, SYSTEM.STORE_LNG, lat, lon);
@@ -594,6 +636,7 @@ function initDrawerDistrictDropdown() {
       state.selectedDistrict = extractShortLocation(displayName);
       input.value = displayName;
       input.style.borderBottomColor = 'var(--green)';
+      validIndicator.innerHTML = `<i data-lucide="check" class="icon-sm"></i> Area layanan tersedia`;
       validIndicator.classList.remove('is-hidden');
       validIndicator.classList.add('is-visible');
       applyPersonalization();
@@ -602,7 +645,7 @@ function initDrawerDistrictDropdown() {
       saveCustomer(state.customerPhone, state.customerAddress, displayName, state.userDistance);
     } catch (err) {
       if (err.message !== 'Geolocation not supported' && err.code !== PERMISSION_DENIED) {
-        showToast('⚠️ Gagal mendapatkan alamat. Silakan pilih manual.');
+        showToast('Gagal dapat lokasi.');
       }
       input.value = '';
     } finally {
@@ -632,24 +675,22 @@ function initOnboarding() {
     // Pengguna baru — The Private Lobby
     DOM.onbNewUser.style.display = 'block';
     DOM.onbStep1.classList.add('active');
-    DOM.onbStep2.style.display = 'none'; // step 2 tidak dipakai
+    DOM.onbStep2.style.display = 'none';
 
-    // Ubah teks sesuai konsep
     document.getElementById('onbTitle').textContent = 'Selamat datang di RUJAK.Co';
-    document.querySelector('.onb-subtitle').textContent = 'Pengalaman rasa Nusantara yang personal.';
+    document.querySelector('.onb-subtitle').textContent = 'Pengalaman rasa Nusantara.';
     document.querySelector('.onb-label').textContent = 'Bagaimana kami boleh memanggil Anda?';
     DOM.onbName.placeholder = 'Nama panggilan Anda';
-    document.getElementById('onbNextBtn').textContent = 'Masuk ke Lounge';
+    document.getElementById('onbNextBtn').textContent = 'Masuk';
     document.getElementById('onbGuestBtn').textContent = 'Lihat Koleksi';
   }
 
-  // Tombol "Masuk ke Lounge"
+  // Tombol "Masuk"
   document.getElementById('onbNextBtn').addEventListener('click', () => {
     const name = DOM.onbName.value.trim();
-    if (!name) return showToast('Mohon isi nama panggilan Anda.');
+    if (!name) return showToast('Mohon isi nama.');
     state.customerName = name;
 
-    // Tampilkan animasi ucapan
     const greeting = document.createElement('div');
     greeting.className = 'lobby-welcome';
     greeting.innerHTML = `
@@ -686,6 +727,26 @@ function initOnboarding() {
     applyPersonalization();
     initScrollReveal();
   });
+
+  // Listener untuk returning user
+  document.getElementById('onbEnterBtn')?.addEventListener('click', () => {
+    DOM.onboardingOverlay.classList.add('hidden');
+    setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, 600);
+    applyPersonalization();
+    initScrollReveal();
+  });
+
+  document.getElementById('onbResetBtn')?.addEventListener('click', () => {
+    clearUser();
+    state.customerName = '';
+    state.selectedDistrict = '';
+    state.selectedDistrictFull = '';
+    state.userDistance = null;
+    DOM.onbReturningUser.style.display = 'none';
+    DOM.onbNewUser.style.display = 'block';
+    DOM.onbName.value = '';
+    DOM.onbName.focus();
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -694,11 +755,15 @@ function initOnboarding() {
 async function downloadReceiptPNG() {
   const element = document.getElementById('orderConfirmContent');
   if (!element) return null;
-  if (typeof html2canvas === 'undefined') {
-    try { await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'); }
-    catch { showToast('⚠️ Gagal memuat pustaka struk.'); return null; }
-  }
+  // Tampilkan overlay loading
+  const loadingOverlay = document.createElement('div');
+  loadingOverlay.className = 'receipt-loading';
+  loadingOverlay.innerHTML = '<div class="receipt-loading-text">Menyiapkan struk...</div>';
+  document.body.appendChild(loadingOverlay);
   try {
+    if (typeof html2canvas === 'undefined') {
+      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+    }
     const footer = document.querySelector('#orderConfirmModal .drawer-footer');
     if (footer) footer.style.display = 'none';
     const canvas = await html2canvas(element, { backgroundColor: '#ffffff', scale: 2, useCORS: true, allowTaint: false, logging: false });
@@ -709,11 +774,16 @@ async function downloadReceiptPNG() {
     const safeCode = state.currentOrderCode || `RJ-${new Date().getTime()}`;
     const fileName = `${safeCode.replace(/[^a-zA-Z0-9]/g, '-')}.png`;
     const { error } = await sb.storage.from('receipts').upload(fileName, blob, { contentType: 'image/png', upsert: true });
-    if (error) { showToast('⚠️ Gagal menyimpan struk.'); return null; }
+    if (error) { showToast('Gagal simpan struk.'); return null; }
     const { data: { publicUrl } } = sb.storage.from('receipts').getPublicUrl(fileName);
     state.receiptUrl = publicUrl;
     return publicUrl;
-  } catch (err) { showToast('⚠️ Gagal membuat struk.'); return null; }
+  } catch (err) {
+    showToast('Gagal buat struk.');
+    return null;
+  } finally {
+    loadingOverlay.remove();
+  }
 }
 
 async function sendReceiptToTelegram() {
@@ -728,7 +798,7 @@ async function sendReceiptToTelegram() {
 
 async function sendReceiptToWhatsApp() {
   const summary = getCartSummaryLocal();
-  if (summary.items.length === 0) { showToast('❌ Keranjang kosong.'); return; }
+  if (summary.items.length === 0) { showToast('Reservasi kosong.'); return; }
   const name = DOM.customerNameInput?.value || state.customerName || 'Tamu';
   const phone = DOM.customerPhoneInput?.value || state.customerPhone || '—';
   const address = DOM.customerAddressInput?.value || state.customerAddress || '—';
@@ -749,7 +819,7 @@ async function sendReceiptToWhatsApp() {
     msg += `• ${item.name}${spiceText} x${item.qty} = ${fmt(item.price * item.qty)}\n`;
   });
   msg += `\n💵 *Subtotal:* ${fmt(summary.subtotal)}\n🛵 *Ongkir:* ${shipCost}\n💰 *TOTAL TRANSFER:* *${totalCost}*\n\n`;
-  msg += `📎 _Mohon lampirkan *gambar bukti transfer (QRIS)* dan *struk pesanan yang tersimpan di galeri Anda* di sini agar reservasi dapat segera kami proses._`;
+  msg += `📎 _Mohon lampirkan bukti transfer dan struk reservasi Anda._`;
 
   const sb = getSupabase(); let orderSaved = false;
   if (sb) {
@@ -779,11 +849,11 @@ async function sendReceiptToWhatsApp() {
 
   const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
   const newWindow = window.open(waUrl, '_blank', 'noopener');
-  if (!orderSaved) showToast('Pesanan diteruskan, namun catatan kami belum tersimpan. Mohon simpan tangkapan layar struk Anda.');
+  if (!orderSaved) showToast('Catatan belum tersimpan.');
   if (newWindow) {
     state.cart = {};
     updateCartUI();
-    if (orderSaved) showToast('Pesanan berhasil dikirim. Lanjutkan pembayaran di WhatsApp.');
+    if (orderSaved) showToast('Pesanan terkirim.');
   } else {
     showWhatsAppFallback(SYSTEM.WA_NUMBER, msg);
   }
@@ -809,9 +879,9 @@ function bindEvents() {
     const product = PRODUCTS.find(p => p.id === productId);
     if (!product) return;
     const shareUrl = window.location.origin + window.location.pathname + '?product=' + productId;
-    const shareText = `🍜 ${product.name} — ${product.desc}\nPesan sekarang di Rujak.Co!`;
+    const shareText = `${product.name} — ${product.desc}\nPesan sekarang di Rujak.Co!`;
     if (navigator.share) navigator.share({ title: product.name, text: shareText, url: shareUrl }).catch(() => {});
-    else navigator.clipboard.writeText(shareUrl + '\n' + shareText).then(() => showToast('📋 Link produk disalin!')).catch(() => showToast('📋 Gagal menyalin link'));
+    else navigator.clipboard.writeText(shareUrl + '\n' + shareText).then(() => showToast('Link disalin.')).catch(() => showToast('Gagal salin.'));
   });
 
   document.getElementById('btnVipConcierge')?.addEventListener('click', (e) => {
@@ -885,8 +955,9 @@ function bindEvents() {
   DOM.customerNameInput?.addEventListener('input', () => {
     state.customerName = DOM.customerNameInput.value;
     saveUser(state.customerName, state.selectedDistrict);
-    DOM.headerName.textContent = state.customerName || 'Tamu';
-    if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Selamat datang, ${state.customerName || 'Tamu'}. Saya siap membantu Anda memilih sajian terbaik hari ini.`;
+    const waktu = getWaktu();
+    DOM.headerName.textContent = `Selamat ${waktu}, ${state.customerName || 'Tamu'}`;
+    if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Selamat ${waktu}, ${state.customerName || 'Tamu'}. Ada yang bisa kami bantu?`;
   });
   DOM.customerPhoneInput?.addEventListener('input', () => {
     DOM.customerPhoneInput.value = DOM.customerPhoneInput.value.replace(/\D/g, '');
@@ -900,7 +971,6 @@ function bindEvents() {
 
   // Global click handler
   document.addEventListener('click', async (e) => {
-    // Tutup dropdown alamat (drawer) jika klik di luar
     const drawerInput = DOM.districtInput;
     const drawerDropdown = DOM.drawerDistrictDropdown;
     if (drawerInput && drawerDropdown && !drawerInput.contains(e.target) && !drawerDropdown.contains(e.target)) {
@@ -940,6 +1010,8 @@ function bindEvents() {
     }
     const addBtn = e.target.closest('.add-to-cart-btn');
     if (addBtn) {
+      if (addBtn.dataset.processing === 'true') return;
+      addBtn.dataset.processing = 'true';
       if (window.navigator.vibrate) window.navigator.vibrate(10);
       const pid = addBtn.dataset.pid, idx = addBtn.dataset.idx, draft = state.drafts[pid];
       const cartKey = pid + '_spice' + draft.spice;
@@ -948,17 +1020,18 @@ function bindEvents() {
       state.drafts[pid].qty = 1;
       document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = 1);
       updateCartUI();
-      showToast('Sajian Anda sudah dicatat di reservasi.');
+      showToast('Sajian ditambahkan.');
       const cartNav = document.querySelector('.nav-cart-wrapper');
       if (cartNav) { cartNav.classList.remove('bump'); void cartNav.offsetWidth; cartNav.classList.add('bump'); }
       addBtn.classList.add('success-flash');
-      const originalLabel = addBtn.textContent;
+      addBtn.dataset.originalLabel = addBtn.dataset.originalLabel || addBtn.textContent;
       addBtn.textContent = '✓ Ditambahkan';
       setTimeout(() => addBtn.classList.remove('success-flash'), 400);
       setTimeout(() => {
-        addBtn.textContent = originalLabel;
+        addBtn.textContent = addBtn.dataset.originalLabel;
         const step1 = document.getElementById(`step1_${idx}_${pid}`), step2 = document.getElementById(`step2_${idx}_${pid}`);
         if (step1 && step2) { step1.style.display = 'block'; step2.style.display = 'none'; step1.style.opacity = '1'; }
+        addBtn.dataset.processing = 'false';
       }, 900);
       return;
     }
@@ -976,7 +1049,7 @@ function bindEvents() {
         await sendReceiptToWhatsApp();
       } finally {
         closeModal(DOM.paymentModal);
-        btn.textContent = 'Validasi Reservasi via WhatsApp';
+        btn.textContent = 'Validasi Reservasi';
         btn.dataset.processing = 'false';
       }
       return;
@@ -987,10 +1060,10 @@ function bindEvents() {
       if (type === 'increase') state.cart[id].qty++;
       else if (type === 'decrease') {
         if (state.cart[id].qty === 1) {
-          showConfirmModal('Hapus Sajian?', 'Sajian ini akan dihapus dari reservasi Anda.', () => {
+          showConfirmModal('Keluarkan Sajian?', 'Keluarkan sajian ini dari reservasi Anda?', () => {
             delete state.cart[id]; updateCartUI();
             if (DOM.miniCartModal.classList.contains('active')) renderMiniCart(state.cart);
-            showToast('Sajian dihapus dari reservasi.');
+            showToast('Sajian dikeluarkan.');
           });
           return;
         }
@@ -1021,12 +1094,12 @@ function bindEvents() {
     if (e.target.id === 'btnOpenPayment') {
       if (e.target.dataset.processing === 'true') return;
       e.target.dataset.processing = 'true';
-      if (!Object.keys(state.cart).length) { showToast('Keranjang masih kosong.'); e.target.dataset.processing = 'false'; return; }
+      if (!Object.keys(state.cart).length) { showToast('Reservasi kosong.'); e.target.dataset.processing = 'false'; return; }
       const phone = DOM.customerPhoneInput?.value.trim() || '';
       const address = DOM.customerAddressInput?.value.trim() || '';
       if (!validatePhone(phone)) { showToast('Nomor HP tidak valid.'); e.target.dataset.processing = 'false'; return; }
-      if (!validateAddress(address)) { showToast('Mohon lengkapi alamat pengantaran.'); e.target.dataset.processing = 'false'; return; }
-      if (!state.selectedDistrict && !state.selectedDistrictFull) { showToast('Mohon pilih alamat tujuan terlebih dahulu.'); e.target.dataset.processing = 'false'; return; }
+      if (!validateAddress(address)) { showToast('Lengkapi alamat.'); e.target.dataset.processing = 'false'; return; }
+      if (!state.selectedDistrict && !state.selectedDistrictFull) { showToast('Pilih alamat tujuan.'); e.target.dataset.processing = 'false'; return; }
       if (state.userDistance == null) {
         let recovered = false;
         const addressToSearch = state.selectedDistrictFull
@@ -1050,7 +1123,7 @@ function bindEvents() {
             }
           } catch (err) { console.warn('Auto-recover gagal:', err); }
         }
-        if (!recovered) { showToast('Gagal menghitung jarak. Silakan pilih alamat dari pencarian di atas.'); e.target.dataset.processing = 'false'; return; }
+        if (!recovered) { showToast('Gagal hitung jarak.'); e.target.dataset.processing = 'false'; return; }
       }
       const receiptOk = await showOrderConfirmation();
       if (!receiptOk) { e.target.dataset.processing = 'false'; return; }
@@ -1096,7 +1169,7 @@ function initHeroParallax() {
 function init() {
   cacheDOM();
   try {
-    if (!isStorageAvailable()) showToast('⚠️ Penyimpanan browser tidak tersedia.');
+    if (!isStorageAvailable()) showToast('Penyimpanan tak tersedia.');
     const saved = loadState();
     state.cart = saved?.cart || {};
     if (saved?.name) state.customerName = saved.name;
@@ -1159,7 +1232,7 @@ function init() {
     console.log('✅ RUJAK.Co siap.');
   } catch (err) {
     console.error('❌ Gagal inisialisasi:', err);
-    showToast('⚠️ Terjadi kesalahan. Muat ulang halaman.');
+    showToast('Terjadi kesalahan.');
   }
 }
 
