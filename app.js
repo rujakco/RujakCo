@@ -1,4 +1,4 @@
-// app.js – FINAL V1.0 (Private Lobby + Copywriting Premium + Micro‑interactions)
+// app.js – V1.0 FINAL (Private Lobby + Paxel + Lalamove + Fixes)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch } from './utils/helpers.js';
@@ -12,6 +12,9 @@ import { initTestimonials } from './modules/testimonials.js';
 import { validatePhone, validateAddress, getCartSummary, showWhatsAppFallback } from './modules/checkout.js';
 import { showOrderConfirmation as launchProReceipt } from './modules/checkout-receipt.js';
 
+// ---------------------------------------------------------------------------
+// STATE
+// ---------------------------------------------------------------------------
 const state = {
   cart: {},
   drafts: {},
@@ -37,6 +40,9 @@ const overlayStack = [];
 window.__overlayStack__ = overlayStack;
 let isProgrammaticBack = false;
 
+// ---------------------------------------------------------------------------
+// DOM CACHE
+// ---------------------------------------------------------------------------
 const DOM = {};
 const cacheDOM = () => {
   DOM.onboardingOverlay = document.getElementById('onboardingOverlay');
@@ -657,12 +663,11 @@ function initDrawerDistrictDropdown() {
 }
 
 // ---------------------------------------------------------------------------
-// ONBOARDING (The Private Lobby)
+// ONBOARDING (Private Lobby)
 // ---------------------------------------------------------------------------
 function initOnboarding() {
   const saved = loadState();
   if (saved?.name && saved.district) {
-    // Pengguna kembali — tampilkan welcome langsung
     state.customerName = saved.name;
     state.selectedDistrictFull = saved.district;
     state.selectedDistrict = extractShortLocation(saved.district) || saved.district;
@@ -672,7 +677,6 @@ function initOnboarding() {
     DOM.onbWelcomeDistrict.textContent = state.selectedDistrict;
     resolveOnboardingDistance(state.selectedDistrict);
   } else {
-    // Pengguna baru — The Private Lobby
     DOM.onbNewUser.style.display = 'block';
     DOM.onbStep1.classList.add('active');
     DOM.onbStep2.style.display = 'none';
@@ -685,7 +689,6 @@ function initOnboarding() {
     document.getElementById('onbGuestBtn').textContent = 'Lihat Koleksi';
   }
 
-  // Tombol "Masuk"
   document.getElementById('onbNextBtn').addEventListener('click', () => {
     const name = DOM.onbName.value.trim();
     if (!name) return showToast('Mohon isi nama.');
@@ -718,7 +721,6 @@ function initOnboarding() {
     }, 1200);
   });
 
-  // Tombol "Lihat Koleksi" (guest)
   document.getElementById('onbGuestBtn')?.addEventListener('click', () => {
     state.customerName = 'Tamu';
     state.selectedDistrict = '';
@@ -728,7 +730,6 @@ function initOnboarding() {
     initScrollReveal();
   });
 
-  // Listener untuk returning user
   document.getElementById('onbEnterBtn')?.addEventListener('click', () => {
     DOM.onboardingOverlay.classList.add('hidden');
     setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, 600);
@@ -755,7 +756,6 @@ function initOnboarding() {
 async function downloadReceiptPNG() {
   const element = document.getElementById('orderConfirmContent');
   if (!element) return null;
-  // Tampilkan overlay loading
   const loadingOverlay = document.createElement('div');
   loadingOverlay.className = 'receipt-loading';
   loadingOverlay.innerHTML = '<div class="receipt-loading-text">Menyiapkan struk...</div>';
