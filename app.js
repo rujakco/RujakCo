@@ -1,4 +1,4 @@
-// app.js – FINAL V3.0 (Clean Architecture Bootstrap)
+// app.js – FINAL V3.0 (Clean Architecture Bootstrap + All Functions)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM } from './data/config.js';
 import { fmt, showToast, getSupabase, escapeHTML } from './utils/helpers.js';
@@ -97,7 +97,7 @@ const cacheDOM = () => {
 };
 
 // ---------------------------------------------------------------------------
-// FUNGSI PENDUKUNG (loadScript, downloadReceiptPNG, sendReceiptToTelegram)
+// FUNGSI PEMBANTU (loadScript, downloadReceiptPNG, sendReceiptToTelegram)
 // ---------------------------------------------------------------------------
 function loadScript(src) {
   return new Promise((resolve, reject) => {
