@@ -1,9 +1,13 @@
 // data/products.js
 export const PRODUCTS = [
+  // ============================================
+  // LINI RUJAK (6 PRODUK LAMA + category)
+  // ============================================
   {
     id: 'p_m1',
     name: 'Rujak Segar',
     badge: 'Best Seller',
+    category: 'rujak',
     story: 'Terinspirasi dari rujak tradisional Jawa Timur dengan interpretasi modern.',
     desc: 'Kombinasi buah pilihan dengan sambal original Rujak.Co. Disiapkan seketika sesaat sebelum pengantaran untuk menjaga tekstur renyah alami.',
     insight: 'Kesegaran otentik buah tropis pilihan.',
@@ -20,6 +24,7 @@ export const PRODUCTS = [
     id: 'p_m2',
     name: 'Rujak Serut',
     badge: 'Signature',
+    category: 'rujak',
     story: 'Resep turun-temurun dari keluarga kami, disempurnakan dengan teknik serut presisi.',
     desc: 'Buah diserut halus untuk tekstur yang lebih menyatu dengan saus karamelisasi mete.',
     insight: 'Harmoni rasa dalam serutan presisi yang lembut.',
@@ -36,6 +41,7 @@ export const PRODUCTS = [
     id: 'p_m3',
     name: 'Rujak Gaco',
     badge: 'Chef Choice',
+    category: 'rujak',
     story: 'Dipilih langsung oleh chef kami sebagai representasi rasa Nusantara yang paling seimbang.',
     desc: 'Enam buah eksklusif pilihan dengan sambal mete premium. Sebuah mahakarya harmoni rasa gurih, pedas, dan manis.',
     insight: 'Mahakarya rasa gurih, pedas, dan manis.',
@@ -52,6 +58,7 @@ export const PRODUCTS = [
     id: 'p_m4',
     name: 'Rujak Rama',
     badge: 'Sharing',
+    category: 'rujak',
     story: 'Diciptakan untuk merayakan kebersamaan. Satu porsi, banyak cerita.',
     desc: 'Porsi melimpah yang dirancang khusus untuk momen kebersamaan atau perjamuan bersama kerabat terdekat.',
     insight: 'Porsi melimpah untuk momen kebersamaan.',
@@ -68,6 +75,7 @@ export const PRODUCTS = [
     id: 'p_m5',
     name: 'Rujak Mahkota',
     badge: 'Limited',
+    category: 'rujak',
     story: 'Koleksi terbatas dengan anggur Shine Muscat impor. Hanya tersedia musiman.',
     desc: 'Koleksi premium dengan anggur Shine Muscat impor pilihan, memadukan kemewahan tekstur tanpa biji dengan buah tropis terbaik.',
     insight: 'Kemewahan Shine Muscat berpadu buah tropis.',
@@ -84,6 +92,7 @@ export const PRODUCTS = [
     id: 'p_m6',
     name: 'Tampah Nusantara',
     badge: 'Exclusive',
+    category: 'rujak',
     story: 'Perayaan rasa Indonesia dalam wadah anyaman bambu. Untuk momen terbesar Anda.',
     desc: 'Representasi kemegahan tradisi rasa Indonesia dalam wadah tampah bambu anyaman tangan untuk perjamuan istimewa Anda.',
     insight: 'Kemegahan tradisi rasa dalam anyaman bambu.',
@@ -95,5 +104,60 @@ export const PRODUCTS = [
     defaultSpice: 3,
     thumbnail: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-thumb.webp',
     image: 'https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/tampah-nusantara-hd.webp'
+  },
+
+  // ============================================
+  // LINI ASINAN (3 PRODUK BARU)
+  // ============================================
+  {
+    id: "asinan-segar",
+    name: "Asinan Segar",
+    badge: "New",
+    category: "asinan",
+    price: 42000,
+    container: "Jar",
+    size: "500ml",
+    kuah: "Kuah Asinan Klasik (gula, garam, cabai rawit, jeruk sonkit)",
+    buah: ["Mangga Muda", "Kedondong", "Bengkoang", "Nanas", "Jambu Citra"],
+    defaultSpice: 3,
+    desc: "Perpaduan buah segar dengan kuah asinan otentik — asam, asin, pedas dalam satu tegukan.",
+    story: "Versi RUJAK.Co dari camilan asinan yang sedang digandrungi Nusantara, dengan sentuhan Fresh-Prep khas kami.",
+    insight: "Asam, asin, pedas — tiga rasa, satu sensasi.",
+    thumbnail: "https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/asinan-segar-thumb.webp",
+    image: "https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/asinan-segar-hd.webp"
+  },
+  {
+    id: "asinan-kiamboy",
+    name: "Asinan Kiamboy",
+    badge: "Trending",
+    category: "asinan",
+    price: 58000,
+    container: "Jar",
+    size: "500ml",
+    kuah: "Kuah Kiamboy Spesial (kiamboy, jeruk sonkit, racikan gula-garam RUJAK.Co)",
+    buah: ["Mangga Muda", "Kelengkeng", "Anggur Merah", "Rambutan", "Nanas", "Salak"],
+    defaultSpice: 3,
+    desc: "Kiamboy autentik berpadu buah musiman pilihan — sensasi asam-manis-asin yang bikin nagih.",
+    story: "Terinspirasi tren nasional yang sedang viral, dihadirkan dengan standar Fresh-Lock khas RUJAK.Co agar buah tetap renyah sampai ke tangan Anda.",
+    insight: "Kiamboy asli, buah pilihan musim ini. Yang lagi viral, sekarang ada di RUJAK.Co.",
+    thumbnail: "https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/asinan-kiamboy-thumb.webp",
+    image: "https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/asinan-kiamboy-hd.webp"
+  },
+  {
+    id: "asinan-mahkota",
+    name: "Asinan Mahkota",
+    badge: "Limited",
+    category: "asinan",
+    price: 135000,
+    container: "Vault Jar",
+    size: "500ml",
+    kuah: "Kuah Ceri-Delima Premium (jus ceri, delima, jeruk sonkit, kiamboy, madu)",
+    buah: ["Shine Muscat", "Anggur Moondrop", "Leci", "Kelengkeng", "Ceri Impor", "Delima"],
+    defaultSpice: 3,
+    desc: "Kombinasi buah impor eksklusif dengan kuah premium beraroma ceri dan delima — level tertinggi dari kesegaran asinan.",
+    story: "Koleksi limited yang hanya hadir saat buah impor sedang prima kualitasnya. Rasa 'sultan' tanpa harus bayar setengah juta.",
+    insight: "Shine Muscat, ceri impor, delima. Rasa \"sultan\" tanpa harus bayar setengah juta.",
+    thumbnail: "https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/asinan-mahkota-thumb.webp",
+    image: "https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/asinan-mahkota-hd.webp"
   }
 ];
