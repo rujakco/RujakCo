@@ -1,3 +1,4 @@
+// modules/checkout.js – FINAL V1.1
 import { SYSTEM } from '../data/config.js';
 import { PRODUCTS } from '../data/products.js';
 import { fmt, showToast, getSupabase } from '../utils/helpers.js';
@@ -36,18 +37,47 @@ export function validateAddress(address) {
 export function showWhatsAppFallback(phone, message) {
   const old = document.getElementById('waFallbackModal');
   if (old) old.remove();
+
   const modal = document.createElement('div');
   modal.id = 'waFallbackModal';
-  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:100000;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;';
+  modal.className = 'modal-overlay active';   // langsung aktif
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-modal', 'true');
   modal.innerHTML = `
-    <div style="background:white;border-radius:20px;padding:24px;max-width:360px;width:90%;text-align:center;">
-      <div style="font-size:40px;margin-bottom:8px;">📲</div>
-      <h3>Buka WhatsApp</h3>
-      <p style="font-size:13px;color:#666;">Browser memblokir pembukaan otomatis. Klik tombol di bawah untuk mengirim pesanan.</p>
-      <button id="openWaManual" style="background:#25D366;color:white;border:none;padding:12px 24px;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;width:100%;">Buka WhatsApp</button>
-      <button id="closeWaFallback" style="background:none;border:1px solid #ddd;color:#666;padding:10px;border-radius:8px;margin-top:8px;width:100%;">Tutup</button>
+    <div class="drawer-content" style="height:auto; max-height:80vh; margin:auto; transform:none;">
+      <div class="drawer-header">
+        <h3>Buka WhatsApp</h3>
+        <button type="button" id="closeWaFallback" class="glass-btn-dark" aria-label="Tutup"><i data-lucide="x" class="icon-sm"></i></button>
+      </div>
+      <div class="drawer-body" style="text-align:center; padding-bottom:40px;">
+        <p style="font-size:14px;color:var(--gray-600);margin-bottom:20px;">Browser memblokir pembukaan otomatis. Klik tombol di bawah untuk mengirim pesanan.</p>
+        <button id="openWaManual" class="btn-gold" style="width:100%;">Buka WhatsApp</button>
+      </div>
     </div>`;
+
   document.body.appendChild(modal);
-  document.getElementById('openWaManual').addEventListener('click', () => { window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank'); modal.remove(); });
-  document.getElementById('closeWaFallback').addEventListener('click', () => modal.remove());
+
+  const closeFallback = () => {
+    modal.classList.remove('active');
+    setTimeout(() => modal.remove(), 400);
+  };
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeFallback();
+  });
+  document.getElementById('openWaManual').addEventListener('click', () => {
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+    closeFallback();
+  });
+  document.getElementById('closeWaFallback').addEventListener('click', closeFallback);
+
+  const escHandler = (e) => {
+    if (e.key === 'Escape') {
+      closeFallback();
+      document.removeEventListener('keydown', escHandler);
+    }
+  };
+  document.addEventListener('keydown', escHandler);
+
+  if (window.lucide) window.lucide.createIcons();
 }
