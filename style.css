@@ -90,7 +90,7 @@
   --shadow-hero-dark: 0 12px 24px -6px rgba(2,10,7,0.40), inset 0 0 0 1px var(--gold-15);
 
   --z-header: 100;
-  --z-nav: 600;
+  --z-nav: 1050;                    /* dinaikkan agar nav selalu di atas modal */
   --z-product: 700;
   --z-fab: 510;
   --z-modal: 1000;
@@ -340,7 +340,7 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
   display: flex;
   align-items: center;
   justify-content: center;
-  height: calc(1rem * 1.9 * 2); /* Mengunci tinggi tepat 2 baris */
+  height: calc(1rem * 1.9 * 2);
   overflow: hidden;
   margin-top: 1px;
   margin-bottom: var(--space-3);
@@ -379,17 +379,58 @@ p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
 .meta-dot { color: var(--gold-soft); }
 
 /* ---------- 11. BOTTOM NAV ---------- */
-.bottom-nav { position: fixed; right: 0; bottom: 0; left: 0; z-index: var(--z-nav); display: flex; align-items: center; justify-content: space-around; width: 100%; max-width: 480px; margin: 0 auto; padding: 5px 0 calc(6px + env(safe-area-inset-bottom)); background: rgba(5,28,20,0.92); border-top: 1px solid var(--gold-20); border-radius: 16px 16px 0 0; box-shadow: 0 -10px 40px var(--black-50); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
-.nav-item { position: relative; display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: center; min-height: var(--tap-height); padding: 6px 0; gap: 2px; background: none; border: none; font-family: inherit; font-size: var(--text-caption); font-weight: 600; color: var(--ivory-35); cursor: pointer; transition: color var(--dur-fast) ease, transform var(--dur-fast) ease; }
-.nav-item.active { color: var(--matte-gold); text-shadow: 0 0 12px var(--gold-40); transform: translateY(-2px); }
-.nav-item.active::after { content: ''; position: absolute; bottom: -2px; left: 50%; width: 20px; height: 2px; background: var(--matte-gold); border-radius: 2px; box-shadow: 0 0 8px var(--gold-60); transform: translateX(-50%); }
-.nav-icon { width: 20px; height: 20px; }
-.nav-cart-wrapper { position: relative; display: inline-block; }
-.nav-badge { position: absolute; top: -6px; right: -8px; display: flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: var(--badge-red); border: 2px solid var(--matte-gold); border-radius: 50%; font-size: var(--text-caption); font-weight: 700; color: var(--white); box-shadow: var(--shadow-soft); }
+.bottom-nav {
+  position: fixed; right: 0; bottom: 0; left: 0;
+  z-index: var(--z-nav);                       /* 1050, di atas modal (1000) */
+  display: flex; align-items: center; justify-content: space-around;
+  width: 100%; max-width: 480px; margin: 0 auto;
+  padding: 5px 0 calc(6px + env(safe-area-inset-bottom));
+  background: rgba(5,28,20,0.92);
+  border-top: 1px solid var(--gold-20);
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -10px 40px var(--black-50);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Sembunyikan nav saat checkout (order confirm / payment) */
+.bottom-nav.nav-hidden {
+  display: none !important;
+}
 
 /* Bottom nav muncul di atas product overlay */
 .bottom-nav.nav-visible {
-  z-index: 710 !important;
+  z-index: 710 !important;      /* tidak diperlukan lagi karena z-nav sudah tinggi, tetap aman */
+}
+
+.nav-item {
+  position: relative; display: flex; flex: 1; flex-direction: column;
+  align-items: center; justify-content: center; min-height: var(--tap-height);
+  padding: 6px 0; gap: 2px; background: none; border: none;
+  font-family: inherit; font-size: var(--text-caption); font-weight: 600;
+  color: var(--ivory-35); cursor: pointer;
+  transition: color var(--dur-fast) ease, transform var(--dur-fast) ease;
+}
+.nav-item.active {
+  color: var(--matte-gold);
+  text-shadow: 0 0 12px var(--gold-40);
+  transform: translateY(-2px);
+}
+.nav-item.active::after {
+  content: ''; position: absolute; bottom: -2px; left: 50%;
+  width: 20px; height: 2px; background: var(--matte-gold);
+  border-radius: 2px; box-shadow: 0 0 8px var(--gold-60);
+  transform: translateX(-50%);
+}
+.nav-icon { width: 20px; height: 20px; }
+.nav-cart-wrapper { position: relative; display: inline-block; }
+.nav-badge {
+  position: absolute; top: -6px; right: -8px;
+  display: flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; background: var(--badge-red);
+  border: 2px solid var(--matte-gold); border-radius: 50%;
+  font-size: var(--text-caption); font-weight: 700; color: var(--white);
+  box-shadow: var(--shadow-soft);
 }
 
 /* ---------- 12. MODALS & DRAWER ---------- */
