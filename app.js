@@ -1,4 +1,4 @@
-// app.js – FINAL V1.0 (Private Lobby + Paxel + Lalamove + GPS Button Label + All Fixes)
+// app.js – FINAL V1.1 (Private Lobby + Paxel + Lalamove + GPS Button Label + All Fixes)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch } from './utils/helpers.js';
@@ -140,9 +140,8 @@ function applyPersonalization() {
   const districtLabel = state.selectedDistrict || 'Pilih alamat tujuan';
   const waktu = getWaktu();
 
-  // Gabungkan teks sapaan + lokasi
   DOM.headerName.textContent = `Selamat ${waktu}, ${name} • ${districtLabel}`;
-  if (DOM.headerLoc) DOM.headerLoc.style.display = 'none'; // sembunyikan elemen lama
+  if (DOM.headerLoc) DOM.headerLoc.style.display = 'none';
 
   if (DOM.customerNameInput) DOM.customerNameInput.value = name !== 'Tamu' ? name : '';
   if (DOM.customerPhoneInput) DOM.customerPhoneInput.value = state.customerPhone;
@@ -292,6 +291,9 @@ function openProductPage(globalIndex) {
   DOM.productPage.setAttribute('aria-hidden', 'false');
   DOM.productPage.removeAttribute('inert');
   document.body.style.overflow = 'hidden';
+  // Inert pada konten utama & bottom nav agar tidak bisa diinteraksi
+  DOM.mainContent?.setAttribute('inert', '');
+  DOM.bottomNav?.setAttribute('inert', '');
   state.lastViewedProductIndex = globalIndex;
   overlayStack.push(DOM.productPage);
   history.pushState({ isOverlay: true, id: 'productPage' }, '');
@@ -331,7 +333,11 @@ function closeProductPage(fromPopState = false) {
     DOM.productPage.setAttribute('inert', '');
     const index = overlayStack.indexOf(DOM.productPage);
     if (index > -1) overlayStack.splice(index, 1);
-    if (overlayStack.length === 0) document.body.style.overflow = '';
+    if (overlayStack.length === 0) {
+      document.body.style.overflow = '';
+      DOM.mainContent?.removeAttribute('inert');
+      DOM.bottomNav?.removeAttribute('inert');
+    }
     document.getElementById('waVipSideTab')?.classList.remove('open');
     if (DOM._productObserver) {
       DOM._productObserver.disconnect();
@@ -685,11 +691,17 @@ function initOnboarding() {
   }
 
   // Tombol "Masuk" + blur fokus
-  document.getElementById('onbNextBtn').addEventListener('click', () => {
+  document.getElementById('onbNextBtn').addEventListener('click', function handler() {
+    if (this.disabled) return;
+    this.disabled = true;
     if (document.activeElement) document.activeElement.blur();
 
     const name = DOM.onbName.value.trim();
-    if (!name) return showToast('Mohon isi nama.');
+    if (!name) {
+      showToast('Mohon isi nama.');
+      this.disabled = false;
+      return;
+    }
     state.customerName = name;
 
     const greeting = document.createElement('div');
@@ -737,10 +749,12 @@ function initOnboarding() {
     initScrollReveal();
   });
 
-  // Tombol "Ganti nama" + blur fokus
+  // Tombol "Ganti nama" + blur fokus + reset cart
   document.getElementById('onbResetBtn')?.addEventListener('click', () => {
     if (document.activeElement) document.activeElement.blur();
     clearUser();
+    state.cart = {};
+    updateCartUI();
     state.customerName = '';
     state.selectedDistrict = '';
     state.selectedDistrictFull = '';
@@ -1130,7 +1144,11 @@ function bindEvents() {
             }
           } catch (err) { console.warn('Auto-recover gagal:', err); }
         }
-        if (!recovered) { showToast('Gagal hitung jarak.'); e.target.dataset.processing = 'false'; return; }
+        if (!recovered) {
+          showToast('Silakan pilih alamat pengantaran dari hasil pencarian di atas.');
+          e.target.dataset.processing = 'false';
+          return;
+        }
       }
       const receiptOk = await showOrderConfirmation();
       if (!receiptOk) { e.target.dataset.processing = 'false'; return; }
