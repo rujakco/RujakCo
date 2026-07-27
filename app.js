@@ -1,4 +1,4 @@
-// app.js – FINAL V1.1 (Private Lobby + Paxel + Lalamove + GPS Button Label + All Fixes)
+// app.js – FINAL V1.2 (Private Lobby + Paxel + Lalamove + GPS Button Label + All Fixes)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch } from './utils/helpers.js';
@@ -269,7 +269,7 @@ function showConfirmModal(title, message, onConfirm) {
 }
 
 // ---------------------------------------------------------------------------
-// PRODUCT PAGE (dots & scroll listener dihapus, bottom nav muncul)
+// PRODUCT PAGE – bottom nav tetap aktif, tidak diberi inert
 // ---------------------------------------------------------------------------
 function openProductPage(globalIndex) {
   if (!DOM.productPage) return;
@@ -287,13 +287,11 @@ function openProductPage(globalIndex) {
   DOM.productPage.style.display = 'flex';
   void DOM.productPage.offsetWidth;
   DOM.productPage.classList.add('active');
-  DOM.bottomNav?.classList.add('nav-visible'); // ✅ tampilkan bottom nav di detail produk
+  DOM.bottomNav?.classList.add('nav-visible');
   DOM.productPage.setAttribute('aria-hidden', 'false');
   DOM.productPage.removeAttribute('inert');
   document.body.style.overflow = 'hidden';
-  // Inert pada konten utama & bottom nav agar tidak bisa diinteraksi
-  DOM.mainContent?.setAttribute('inert', '');
-  DOM.bottomNav?.setAttribute('inert', '');
+  // Tidak memasang inert pada mainContent dan bottomNav agar nav tetap berfungsi
   state.lastViewedProductIndex = globalIndex;
   overlayStack.push(DOM.productPage);
   history.pushState({ isOverlay: true, id: 'productPage' }, '');
@@ -324,7 +322,7 @@ function openProductPage(globalIndex) {
 
 function closeProductPage(fromPopState = false) {
   if (!DOM.productPage) return;
-  DOM.bottomNav?.classList.remove('nav-visible'); // ✅ sembunyikan kembali
+  DOM.bottomNav?.classList.remove('nav-visible');
   document.getElementById('navHomeBtn')?.focus();
   DOM.productPage.classList.remove('active');
   setTimeout(() => {
@@ -335,8 +333,6 @@ function closeProductPage(fromPopState = false) {
     if (index > -1) overlayStack.splice(index, 1);
     if (overlayStack.length === 0) {
       document.body.style.overflow = '';
-      DOM.mainContent?.removeAttribute('inert');
-      DOM.bottomNav?.removeAttribute('inert');
     }
     document.getElementById('waVipSideTab')?.classList.remove('open');
     if (DOM._productObserver) {
@@ -482,7 +478,6 @@ function initDrawerDistrictDropdown() {
   const validIndicator = document.getElementById('districtValidIndicator');
   const wrapper = input.parentElement;
 
-  // Tombol GPS dengan teks "Lokasi"
   const gpsBtn = document.createElement('button');
   gpsBtn.type = 'button';
   gpsBtn.className = 'gps-btn';
@@ -615,7 +610,6 @@ function initDrawerDistrictDropdown() {
     saveCustomer(state.customerPhone, state.customerAddress, placeName, state.userDistance);
   });
 
-  // GPS handler
   gpsBtn.addEventListener('click', async () => {
     if (gpsBtn.disabled) return;
     gpsBtn.disabled = true;
@@ -655,7 +649,7 @@ function initDrawerDistrictDropdown() {
 }
 
 // ---------------------------------------------------------------------------
-// ONBOARDING (Private Lobby) – perbaikan subtitle returning user + blur fokus
+// ONBOARDING (Private Lobby)
 // ---------------------------------------------------------------------------
 function initOnboarding() {
   const saved = loadState();
@@ -690,7 +684,6 @@ function initOnboarding() {
     document.getElementById('onbGuestBtn').textContent = 'Lihat Koleksi';
   }
 
-  // Tombol "Masuk" + blur fokus
   document.getElementById('onbNextBtn').addEventListener('click', function handler() {
     if (this.disabled) return;
     this.disabled = true;
@@ -740,7 +733,6 @@ function initOnboarding() {
     initScrollReveal();
   });
 
-  // Tombol "Masuk Sekarang" + blur fokus
   document.getElementById('onbEnterBtn')?.addEventListener('click', () => {
     if (document.activeElement) document.activeElement.blur();
     DOM.onboardingOverlay.classList.add('hidden');
@@ -749,7 +741,6 @@ function initOnboarding() {
     initScrollReveal();
   });
 
-  // Tombol "Ganti nama" + blur fokus + reset cart
   document.getElementById('onbResetBtn')?.addEventListener('click', () => {
     if (document.activeElement) document.activeElement.blur();
     clearUser();
