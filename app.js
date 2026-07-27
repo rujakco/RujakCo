@@ -1,4 +1,4 @@
-// app.js – FINAL V1.5 (Nav sesuai standar UX, tidak stuck)
+// app.js – FINAL V1.2 (Private Lobby + Paxel + Lalamove + GPS Button Label + All Fixes)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch } from './utils/helpers.js';
@@ -188,6 +188,7 @@ function releaseInert() {
   if (!anyModalOpen && !productPageOpen) {
     document.body.style.overflow = '';
     DOM.mainContent?.removeAttribute('inert');
+    DOM.bottomNav?.removeAttribute('inert');
   }
 }
 
@@ -201,6 +202,7 @@ function openModal(modalEl) {
   overlayStack.push(modalEl);
   history.pushState({ isOverlay: true, id: modalEl.id }, '');
   DOM.mainContent?.setAttribute('inert', '');
+  DOM.bottomNav?.setAttribute('inert', '');
   const firstInput = modalEl.querySelector('button, input, textarea, select');
   if (firstInput) firstInput.focus();
   syncBottomNav();
@@ -222,6 +224,7 @@ function closeModal(modalEl, fromPopState = false) {
   if (overlayStack.length === 0 && !DOM.productPage.classList.contains('active')) {
     document.body.style.overflow = '';
     DOM.mainContent?.removeAttribute('inert');
+    DOM.bottomNav?.removeAttribute('inert');
   }
   releaseInert();
   if (!fromPopState) {
@@ -266,7 +269,7 @@ function showConfirmModal(title, message, onConfirm) {
 }
 
 // ---------------------------------------------------------------------------
-// PRODUCT PAGE
+// PRODUCT PAGE – bottom nav tetap aktif, tidak diberi inert
 // ---------------------------------------------------------------------------
 function openProductPage(globalIndex) {
   if (!DOM.productPage) return;
@@ -288,6 +291,7 @@ function openProductPage(globalIndex) {
   DOM.productPage.setAttribute('aria-hidden', 'false');
   DOM.productPage.removeAttribute('inert');
   document.body.style.overflow = 'hidden';
+  // Tidak memasang inert pada mainContent dan bottomNav agar nav tetap berfungsi
   state.lastViewedProductIndex = globalIndex;
   overlayStack.push(DOM.productPage);
   history.pushState({ isOverlay: true, id: 'productPage' }, '');
@@ -648,8 +652,6 @@ function initDrawerDistrictDropdown() {
 // ONBOARDING (Private Lobby)
 // ---------------------------------------------------------------------------
 function initOnboarding() {
-  DOM.bottomNav?.setAttribute('inert', '');
-
   const saved = loadState();
   if (saved?.name) {
     state.customerName = saved.name;
@@ -682,10 +684,6 @@ function initOnboarding() {
     document.getElementById('onbGuestBtn').textContent = 'Lihat Koleksi';
   }
 
-  const enableBottomNav = () => {
-    DOM.bottomNav?.removeAttribute('inert');
-  };
-
   document.getElementById('onbNextBtn').addEventListener('click', function handler() {
     if (this.disabled) return;
     this.disabled = true;
@@ -716,7 +714,6 @@ function initOnboarding() {
       setTimeout(() => {
         greeting.remove();
         DOM.onboardingOverlay.classList.add('hidden');
-        enableBottomNav();
         setTimeout(() => {
           DOM.onboardingOverlay.style.display = 'none';
         }, 400);
@@ -731,7 +728,6 @@ function initOnboarding() {
     state.customerName = 'Tamu';
     state.selectedDistrict = '';
     DOM.onboardingOverlay.classList.add('hidden');
-    enableBottomNav();
     setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, 600);
     applyPersonalization();
     initScrollReveal();
@@ -740,7 +736,6 @@ function initOnboarding() {
   document.getElementById('onbEnterBtn')?.addEventListener('click', () => {
     if (document.activeElement) document.activeElement.blur();
     DOM.onboardingOverlay.classList.add('hidden');
-    enableBottomNav();
     setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, 600);
     applyPersonalization();
     initScrollReveal();
@@ -757,7 +752,6 @@ function initOnboarding() {
     state.userDistance = null;
     DOM.onbReturningUser.style.display = 'none';
     DOM.onbNewUser.style.display = 'block';
-    document.getElementById('onbNextBtn').disabled = false;
     DOM.onbName.value = '';
     DOM.onbName.focus();
   });
@@ -912,87 +906,24 @@ function bindEvents() {
     document.getElementById('waVipSideTab')?.classList.toggle('open');
   });
 
-  // ==========================================================
-  // FUNGSI PEMBERSIH OVERLAY (digunakan oleh semua tombol nav)
-  // ==========================================================
-  const resetOverlays = () => {
-    if (DOM.productPage?.classList.contains('active')) {
-      DOM.productPage.classList.remove('active');
-      DOM.productPage.style.display = 'none';
-      DOM.productPage.setAttribute('aria-hidden', 'true');
-      DOM.productPage.setAttribute('inert', '');
-      DOM.bottomNav?.classList.remove('nav-visible');
-      if (DOM._productObserver) {
-        DOM._productObserver.disconnect();
-        DOM._productObserver = null;
-      }
-    }
-
-    document.querySelectorAll('.modal-overlay.active').forEach(modal => {
-      modal.classList.remove('active');
-      modal.setAttribute('aria-hidden', 'true');
-      modal.setAttribute('inert', '');
-    });
-
-    overlayStack.length = 0;
-    document.body.style.overflow = '';
-    DOM.mainContent?.removeAttribute('inert');
-  };
-
-  // ==========================================================
-  // HANDLER EMPAT TOMBOL NAV
-  // ==========================================================
   document.getElementById('navHomeBtn')?.addEventListener('click', () => {
-    resetOverlays();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (DOM.productPage?.classList.contains('active')) { closeProductPage(false); setTimeout(releaseInert, 500); setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 200); }
+    else window.scrollTo({ top: 0, behavior: 'smooth' });
     setActiveNav('navHomeBtn');
   });
-
   document.getElementById('navProductBtn')?.addEventListener('click', () => {
     if (DOM.productPage?.classList.contains('active')) return;
-    resetOverlays();
     openProductPage(state.lastViewedProductIndex >= 0 ? state.lastViewedProductIndex : 0);
   });
-
   document.getElementById('navCartBtn')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    resetOverlays();
-    openModal(DOM.miniCartModal);
-    renderMiniCart(state.cart);
-    updateShippingUI();
+    e.preventDefault(); e.stopPropagation();
+    if (DOM.productPage?.classList.contains('active')) {
+      closeProductPage(false);
+      setTimeout(() => { openModal(DOM.miniCartModal); renderMiniCart(state.cart); updateShippingUI(); }, 400);
+    } else { openModal(DOM.miniCartModal); renderMiniCart(state.cart); updateShippingUI(); }
   });
 
-  document.getElementById('aiChatToggle')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    resetOverlays();
-    openModal(DOM.aiChatBox);
-  });
-
-  // ==========================================================
-  // OVERRIDE openModal & closeModal UNTUK NAV HILANG DI CHECKOUT
-  // ==========================================================
-  const _openModal = openModal;
-  const _closeModal = closeModal;
-
-  openModal = function(modalEl) {
-    _openModal(modalEl);
-    if (modalEl?.id === 'orderConfirmModal' || modalEl?.id === 'paymentModal') {
-      DOM.bottomNav?.classList.add('nav-hidden');
-    }
-  };
-
-  closeModal = function(modalEl, fromPopState) {
-    _closeModal(modalEl, fromPopState);
-    if (modalEl?.id === 'orderConfirmModal' || modalEl?.id === 'paymentModal') {
-      if (!document.getElementById('orderConfirmModal')?.classList.contains('active') &&
-          !document.getElementById('paymentModal')?.classList.contains('active')) {
-        DOM.bottomNav?.classList.remove('nav-hidden');
-      }
-    }
-  };
-
-  // delivery time dropdown (tidak berubah)
+  // delivery time dropdown
   const deliveryTrigger = document.getElementById('deliveryTimeTrigger');
   const deliveryDropdown = document.getElementById('deliveryTimeDropdown');
   const deliveryHidden = document.getElementById('deliveryTime');
