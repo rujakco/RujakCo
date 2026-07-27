@@ -1,4 +1,4 @@
-// modules/render.js – FINAL V1.2 (perbaikan duplikasi fallback gambar)
+// modules/render.js – FINAL V1.2
 import { PRODUCTS } from '../data/products.js';
 import { SPICE_LABELS } from '../data/config.js';
 import { fmt, escapeHTML } from '../utils/helpers.js';
@@ -28,7 +28,6 @@ export function renderMenu(containerId = 'menuList') {
       </div>
     </div>`).join('');
 
-  // Hanya satu loop untuk semua gambar carousel (hindari duplikasi)
   container.querySelectorAll('img.btq-img').forEach(img => {
     if (img.complete && img.naturalWidth > 0) {
       img.classList.add('loaded');
