@@ -48,3 +48,23 @@ export function queuedSearch(query, signal) {
   nominatimQueue = result.catch(() => {});
   return result;
 }
+
+/**
+ * Animasi tekan mikro untuk tombol sederhana (Tutup, Kembali, Share, About).
+ * Tidak digunakan untuk tombol Add to Cart yang sudah memiliki animasi sendiri.
+ * @param {HTMLElement} el
+ */
+export function animatePress(el) {
+  if (!el) return;
+  el.animate(
+    [
+      { transform: 'scale(1)' },
+      { transform: 'scale(.96)' },
+      { transform: 'scale(1)' }
+    ],
+    {
+      duration: 180,
+      easing: 'cubic-bezier(.22,1,.36,1)'
+    }
+  );
+}
