@@ -12,7 +12,7 @@ export function setProgrammaticBack(value) {
 
 export function initModalManager(domConfig) {
   DOM = domConfig;
-  window.__overlayStack__ = overlayStack; // Terekspos global untuk debugging (opsional)
+  window.__overlayStack__ = overlayStack;
 }
 
 export function releaseInert() {
@@ -127,4 +127,35 @@ export function showConfirmModal(title, message, onConfirm) {
   });
   
   openModal(modal);
+}
+
+// ✅ Fungsi baru: membersihkan semua overlay (digunakan oleh navigasi bawah)
+export function resetOverlays() {
+  // Tutup halaman detail produk jika terbuka
+  if (DOM.productPage?.classList.contains('active')) {
+    DOM.productPage.classList.remove('active');
+    DOM.productPage.style.display = 'none';
+    DOM.productPage.setAttribute('aria-hidden', 'true');
+    DOM.productPage.setAttribute('inert', '');
+    DOM.bottomNav?.classList.remove('nav-visible');
+    if (DOM._productObserver) {
+      DOM._productObserver.disconnect();
+      DOM._productObserver = null;
+    }
+  }
+
+  // Tutup SEMUA modal yang sedang aktif
+  document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    modal.setAttribute('inert', '');
+  });
+
+  // Kosongkan overlay stack
+  overlayStack.length = 0;
+
+  // Kembalikan scroll dan bebaskan inert pada konten utama
+  document.body.style.overflow = '';
+  DOM.mainContent?.removeAttribute('inert');
+  DOM.bottomNav?.classList.remove('nav-hidden');
 }
