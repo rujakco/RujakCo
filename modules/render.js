@@ -1,4 +1,4 @@
-// modules/render.js – FINAL V1.0
+// modules/render.js – FINAL V1.1
 import { PRODUCTS } from '../data/products.js';
 import { SPICE_LABELS } from '../data/config.js';
 import { fmt, escapeHTML } from '../utils/helpers.js';
@@ -33,7 +33,14 @@ export function renderMenu(containerId = 'menuList') {
       img.classList.add('loaded');
     } else {
       img.addEventListener('load', () => img.classList.add('loaded'));
-      img.addEventListener('error', () => img.classList.add('loaded'));
+      img.addEventListener('error', () => {
+        img.classList.add('loaded');
+        img.style.display = 'none';
+        const fb = document.createElement('div');
+        fb.style.cssText = 'width:100%; aspect-ratio: 1 / 1; display:flex; align-items:center; justify-content:center; background:#e8efeb; color:#6B7280; font-size:12px; font-weight:600; text-align:center; padding:8px;';
+        fb.textContent = img.alt.substring(0, 30);
+        img.parentElement.appendChild(fb);
+      });
     }
   });
 
@@ -41,7 +48,7 @@ export function renderMenu(containerId = 'menuList') {
     img.addEventListener('error', () => {
       img.style.display = 'none';
       const fb = document.createElement('div');
-      fb.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e8efeb;color:#6B7280;font-size:12px;font-weight:600;text-align:center;padding:8px;';
+      fb.style.cssText = 'width:100%; aspect-ratio: 1 / 1; display:flex; align-items:center; justify-content:center; background:#e8efeb; color:#6B7280; font-size:12px; font-weight:600; text-align:center; padding:8px;';
       fb.textContent = img.alt.substring(0, 30);
       img.parentElement.appendChild(fb);
     });
@@ -109,7 +116,7 @@ export function renderProductSwiper(drafts, trackId = 'productSwiperTrack') {
     img.addEventListener('error', () => {
       img.style.display = 'none';
       const fb = document.createElement('div');
-      fb.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e8efeb;color:#6B7280;font-size:12px;font-weight:600;text-align:center;padding:8px;';
+      fb.style.cssText = 'width:100%; aspect-ratio: 1 / 1; display:flex; align-items:center; justify-content:center; background:#e8efeb; color:#6B7280; font-size:12px; font-weight:600; text-align:center; padding:8px;';
       fb.textContent = img.alt.substring(0, 30);
       img.parentElement.appendChild(fb);
     });
