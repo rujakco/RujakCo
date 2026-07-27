@@ -1,7 +1,8 @@
 // app.js – FINAL V1.2 (Private Lobby + Paxel + Lalamove + GPS Button Label + All Fixes)
+// (Dengan penyempurnaan aksesibilitas closeModal, pencegahan double‑tap add‑to‑cart, dan animatePress)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
-import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch } from './utils/helpers.js';
+import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch, animatePress } from './utils/helpers.js';
 import { loadState, saveCart, saveUser, clearUser, saveCustomer, loadCustomer, isStorageAvailable } from './modules/storage.js';
 import { calculateShipping, getDrivingDistance, reverseGeocode } from './modules/shipping.js';
 import { renderMenu, renderProductSwiper, renderCart, renderMiniCart, getProductGlobalIndex } from './modules/render.js';
@@ -208,6 +209,7 @@ function openModal(modalEl) {
   syncBottomNav();
 }
 
+// closeModal DIPERBARUI (aksesibilitas fallback fokus)
 function closeModal(modalEl, fromPopState = false) {
   if (!modalEl) return;
   if (previousFocusedElement && document.body.contains(previousFocusedElement)) {
@@ -216,16 +218,20 @@ function closeModal(modalEl, fromPopState = false) {
     document.getElementById('navHomeBtn')?.focus();
   }
   previousFocusedElement = null;
+  
   modalEl.classList.remove('active');
   modalEl.setAttribute('aria-hidden', 'true');
   modalEl.setAttribute('inert', '');
+  
   const index = overlayStack.indexOf(modalEl);
   if (index > -1) overlayStack.splice(index, 1);
+  
   if (overlayStack.length === 0 && !DOM.productPage.classList.contains('active')) {
     document.body.style.overflow = '';
     DOM.mainContent?.removeAttribute('inert');
     DOM.bottomNav?.removeAttribute('inert');
   }
+  
   releaseInert();
   if (!fromPopState) {
     isProgrammaticBack = true;
@@ -649,7 +655,7 @@ function initDrawerDistrictDropdown() {
 }
 
 // ---------------------------------------------------------------------------
-// ONBOARDING (Private Lobby)
+// ONBOARDING (Private Lobby) – bottom nav inert hanya saat onboarding
 // ---------------------------------------------------------------------------
 function initOnboarding() {
   const saved = loadState();
@@ -684,6 +690,10 @@ function initOnboarding() {
     document.getElementById('onbGuestBtn').textContent = 'Lihat Koleksi';
   }
 
+  const enableBottomNav = () => {
+    DOM.bottomNav?.removeAttribute('inert');
+  };
+
   document.getElementById('onbNextBtn').addEventListener('click', function handler() {
     if (this.disabled) return;
     this.disabled = true;
@@ -714,6 +724,7 @@ function initOnboarding() {
       setTimeout(() => {
         greeting.remove();
         DOM.onboardingOverlay.classList.add('hidden');
+        enableBottomNav();
         setTimeout(() => {
           DOM.onboardingOverlay.style.display = 'none';
         }, 400);
@@ -728,6 +739,7 @@ function initOnboarding() {
     state.customerName = 'Tamu';
     state.selectedDistrict = '';
     DOM.onboardingOverlay.classList.add('hidden');
+    enableBottomNav();
     setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, 600);
     applyPersonalization();
     initScrollReveal();
@@ -736,6 +748,7 @@ function initOnboarding() {
   document.getElementById('onbEnterBtn')?.addEventListener('click', () => {
     if (document.activeElement) document.activeElement.blur();
     DOM.onboardingOverlay.classList.add('hidden');
+    enableBottomNav();
     setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, 600);
     applyPersonalization();
     initScrollReveal();
@@ -752,6 +765,7 @@ function initOnboarding() {
     state.userDistance = null;
     DOM.onbReturningUser.style.display = 'none';
     DOM.onbNewUser.style.display = 'block';
+    document.getElementById('onbNextBtn').disabled = false;
     DOM.onbName.value = '';
     DOM.onbName.focus();
   });
@@ -880,7 +894,10 @@ async function showOrderConfirmation() {
 // ---------------------------------------------------------------------------
 function bindEvents() {
   document.getElementById('aboutTrigger')?.addEventListener('click', () => openModal(DOM.aboutModal));
-  document.getElementById('aboutClose')?.addEventListener('click', () => closeModal(DOM.aboutModal));
+  document.getElementById('aboutClose')?.addEventListener('click', () => {
+    animatePress(document.getElementById('aboutClose'));
+    closeModal(DOM.aboutModal);
+  });
 
   document.getElementById('shareProductBtn')?.addEventListener('click', () => {
     const track = DOM.productSwiperTrack; if (!track) return;
@@ -959,10 +976,22 @@ function bindEvents() {
   });
   document.addEventListener('click', (e) => { if (!deliveryTrigger?.contains(e.target) && !deliveryDropdown?.contains(e.target)) closeDeliveryDropdown(); });
 
-  document.getElementById('miniCartClose')?.addEventListener('click', () => closeModal(DOM.miniCartModal));
-  document.getElementById('paymentClose')?.addEventListener('click', () => closeModal(DOM.paymentModal));
-  document.getElementById('aiChatClose')?.addEventListener('click', () => closeModal(DOM.aiChatBox));
-  document.getElementById('orderConfirmClose')?.addEventListener('click', () => closeModal(document.getElementById('orderConfirmModal')));
+  document.getElementById('miniCartClose')?.addEventListener('click', () => {
+    animatePress(document.getElementById('miniCartClose'));
+    closeModal(DOM.miniCartModal);
+  });
+  document.getElementById('paymentClose')?.addEventListener('click', () => {
+    animatePress(document.getElementById('paymentClose'));
+    closeModal(DOM.paymentModal);
+  });
+  document.getElementById('aiChatClose')?.addEventListener('click', () => {
+    animatePress(document.getElementById('aiChatClose'));
+    closeModal(DOM.aiChatBox);
+  });
+  document.getElementById('orderConfirmClose')?.addEventListener('click', () => {
+    animatePress(document.getElementById('orderConfirmClose'));
+    closeModal(document.getElementById('orderConfirmModal'));
+  });
 
   DOM.customerNameInput?.addEventListener('input', () => {
     state.customerName = DOM.customerNameInput.value;
@@ -1020,11 +1049,12 @@ function bindEvents() {
       document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = state.drafts[pid].qty);
       return;
     }
+    // Handler add-to-cart DIPERBARUI (double‑tap prevention + haptic)
     const addBtn = e.target.closest('.add-to-cart-btn');
     if (addBtn) {
       if (addBtn.dataset.processing === 'true') return;
       addBtn.dataset.processing = 'true';
-      if (window.navigator.vibrate) window.navigator.vibrate(10);
+      if (window.navigator?.vibrate) window.navigator.vibrate(12);
       const pid = addBtn.dataset.pid, idx = addBtn.dataset.idx, draft = state.drafts[pid];
       const cartKey = pid + '_spice' + draft.spice;
       if (!state.cart[cartKey]) state.cart[cartKey] = { id: pid, qty: 0, spice: draft.spice };
@@ -1032,19 +1062,24 @@ function bindEvents() {
       state.drafts[pid].qty = 1;
       document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = 1);
       updateCartUI();
-      showToast('Sajian ditambahkan.');
+      showToast('Sajian berhasil ditambahkan.');
       const cartNav = document.querySelector('.nav-cart-wrapper');
       if (cartNav) { cartNav.classList.remove('bump'); void cartNav.offsetWidth; cartNav.classList.add('bump'); }
       addBtn.classList.add('success-flash');
       addBtn.dataset.originalLabel = addBtn.dataset.originalLabel || addBtn.textContent;
-      addBtn.textContent = '✓ Ditambahkan';
+      addBtn.textContent = '✓ Berhasil Ditambahkan';
       setTimeout(() => addBtn.classList.remove('success-flash'), 400);
       setTimeout(() => {
         addBtn.textContent = addBtn.dataset.originalLabel;
         const step1 = document.getElementById(`step1_${idx}_${pid}`), step2 = document.getElementById(`step2_${idx}_${pid}`);
-        if (step1 && step2) { step1.style.display = 'block'; step2.style.display = 'none'; step1.style.opacity = '1'; }
+        if (step1 && step2) {
+          step1.style.opacity = '0';
+          step1.style.display = 'block';
+          step2.style.display = 'none';
+          requestAnimationFrame(() => { step1.style.opacity = '1'; });
+        }
         addBtn.dataset.processing = 'false';
-      }, 900);
+      }, 1000);
       return;
     }
     if (e.target.id === 'emptyCartBrowse') {
@@ -1147,7 +1182,11 @@ function bindEvents() {
       return;
     }
     if (e.target.closest('#aiChatToggle')) { e.preventDefault(); openModal(DOM.aiChatBox); return; }
-    if (e.target.closest('#backFromProduct')) { closeProductPage(false); return; }
+    if (e.target.closest('#backFromProduct')) {
+      animatePress(e.target.closest('#backFromProduct'));
+      closeProductPage(false);
+      return;
+    }
     const faqToggle = e.target.closest('[data-toggle="faq"]');
     if (faqToggle) { const item = faqToggle.closest('.faq-item'); const isOpen = item.classList.toggle('open'); faqToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false'); return; }
   });
