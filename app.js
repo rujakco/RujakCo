@@ -1,5 +1,4 @@
-// app.js – FINAL V1.2 (Private Lobby + Paxel + Lalamove + GPS Button Label + All Fixes)
-// (Dengan penyempurnaan aksesibilitas closeModal, pencegahan double‑tap add‑to‑cart, dan animatePress)
+// app.js – FINAL V2.1 (Code Quality: DRY, Guard Safety, Focus Stack, No Override)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch, animatePress } from './utils/helpers.js';
@@ -30,11 +29,30 @@ const state = {
   receiptUrl: null,
 };
 
+// --- KONFIGURASI APLIKASI (MAGIC NUMBERS) ---
+const APP_CONFIG = {
+  TIMING: {
+    MODAL_TRANSITION: 400,
+    STEP_TRANSITION: 300,
+    VIP_PEEK: 800,
+    ONBOARDING_DELAY: 1200,
+    ONBOARDING_GREETING: 400,
+    SUCCESS_FLASH: 1000,
+    DEBOUNCE_SEARCH: 500,
+  },
+  HAPTIC: {
+    LIGHT: 10,
+    HEAVY: 12
+  }
+};
+
 PRODUCTS.forEach(p => {
   state.drafts[p.id] = { spice: p.defaultSpice ?? 3, qty: 1 };
 });
 
+// ---------- Overlay & Focus Stack ----------
 const overlayStack = [];
+const focusStack = [];
 window.__overlayStack__ = overlayStack;
 let isProgrammaticBack = false;
 
@@ -77,7 +95,7 @@ const cacheDOM = () => {
 };
 
 // ---------------------------------------------------------------------------
-// UTILITY
+// UTILITY (tidak berubah)
 // ---------------------------------------------------------------------------
 function extractShortLocation(fullAddress) {
   if (!fullAddress) return '';
@@ -123,9 +141,7 @@ function requestLocation() {
     navigator.geolocation.getCurrentPosition(
       (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
       (err) => {
-        if (err.code === PERMISSION_DENIED) {
-          showToast('Izin lokasi ditolak.');
-        }
+        if (err.code === PERMISSION_DENIED) showToast('Izin lokasi ditolak.');
         reject(err);
       },
       { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
@@ -134,16 +150,14 @@ function requestLocation() {
 }
 
 // ---------------------------------------------------------------------------
-// PERSONALISASI
+// PERSONALISASI (tidak berubah)
 // ---------------------------------------------------------------------------
 function applyPersonalization() {
   const name = state.customerName || 'Tamu';
   const districtLabel = state.selectedDistrict || 'Pilih alamat tujuan';
   const waktu = getWaktu();
-
   DOM.headerName.textContent = `Selamat ${waktu}, ${name} • ${districtLabel}`;
   if (DOM.headerLoc) DOM.headerLoc.style.display = 'none';
-
   if (DOM.customerNameInput) DOM.customerNameInput.value = name !== 'Tamu' ? name : '';
   if (DOM.customerPhoneInput) DOM.customerPhoneInput.value = state.customerPhone;
   if (DOM.customerAddressInput) DOM.customerAddressInput.value = state.customerAddress;
@@ -155,7 +169,7 @@ function initScrollReveal() {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry, index) => {
       if (entry.isIntersecting) {
-        setTimeout(() => { entry.target.classList.add('visible'); }, index * 100);
+        setTimeout(() => entry.target.classList.add('visible'), index * 100);
         observer.unobserve(entry.target);
       }
     });
@@ -164,7 +178,7 @@ function initScrollReveal() {
 }
 
 // ---------------------------------------------------------------------------
-// NAV & OVERLAY
+// NAV & OVERLAY (FOCUS STACK, TANPA OVERRIDE)
 // ---------------------------------------------------------------------------
 function setActiveNav(activeId) {
   document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.id === activeId));
@@ -181,8 +195,6 @@ function syncBottomNav() {
   }, 50);
 }
 
-let previousFocusedElement = null;
-
 function releaseInert() {
   const anyModalOpen = document.querySelector('.modal-overlay.active');
   const productPageOpen = DOM.productPage?.classList.contains('active');
@@ -195,28 +207,41 @@ function releaseInert() {
 
 function openModal(modalEl) {
   if (!modalEl) return;
-  previousFocusedElement = document.activeElement;
+
+  if (document.activeElement) {
+    focusStack.push(document.activeElement);
+  }
+
   modalEl.classList.add('active');
   modalEl.setAttribute('aria-hidden', 'false');
   modalEl.removeAttribute('inert');
   document.body.style.overflow = 'hidden';
+
   overlayStack.push(modalEl);
   history.pushState({ isOverlay: true, id: modalEl.id }, '');
+
   DOM.mainContent?.setAttribute('inert', '');
   DOM.bottomNav?.setAttribute('inert', '');
+
+  if (['miniCartModal', 'orderConfirmModal', 'paymentModal'].includes(modalEl.id)) {
+    DOM.bottomNav?.classList.add('nav-hidden');
+  }
+
   const firstInput = modalEl.querySelector('button, input, textarea, select');
   if (firstInput) firstInput.focus();
+
   syncBottomNav();
 }
 
 function closeModal(modalEl, fromPopState = false) {
   if (!modalEl) return;
-  if (previousFocusedElement && document.body.contains(previousFocusedElement)) {
-    previousFocusedElement.focus();
+
+  const previousFocus = focusStack.pop();
+  if (previousFocus && document.body.contains(previousFocus)) {
+    previousFocus.focus();
   } else {
     document.getElementById('navHomeBtn')?.focus();
   }
-  previousFocusedElement = null;
 
   modalEl.classList.remove('active');
   modalEl.setAttribute('aria-hidden', 'true');
@@ -225,17 +250,27 @@ function closeModal(modalEl, fromPopState = false) {
   const index = overlayStack.indexOf(modalEl);
   if (index > -1) overlayStack.splice(index, 1);
 
-  if (overlayStack.length === 0 && !DOM.productPage.classList.contains('active')) {
+  if (['miniCartModal', 'orderConfirmModal', 'paymentModal'].includes(modalEl.id)) {
+    const isAnyTransactionOpen = ['miniCartModal', 'orderConfirmModal', 'paymentModal']
+      .some(id => document.getElementById(id)?.classList.contains('active'));
+    if (!isAnyTransactionOpen) {
+      DOM.bottomNav?.classList.remove('nav-hidden');
+    }
+  }
+
+  if (overlayStack.length === 0 && !DOM.productPage?.classList.contains('active')) {
     document.body.style.overflow = '';
     DOM.mainContent?.removeAttribute('inert');
     DOM.bottomNav?.removeAttribute('inert');
   }
 
   releaseInert();
+
   if (!fromPopState) {
     isProgrammaticBack = true;
     history.back();
   }
+
   syncBottomNav();
 }
 
@@ -274,14 +309,14 @@ function showConfirmModal(title, message, onConfirm) {
 }
 
 // ---------------------------------------------------------------------------
-// PRODUCT PAGE – bottom nav tetap aktif, tidak diberi inert
+// PRODUCT PAGE – bottom nav tetap aktif
 // ---------------------------------------------------------------------------
 function openProductPage(globalIndex) {
   if (!DOM.productPage) return;
   if (!state._vipPeeked) {
     setTimeout(() => {
       document.getElementById('waVipSideTab')?.classList.add('peek');
-    }, 800);
+    }, APP_CONFIG.TIMING.VIP_PEEK);
     state._vipPeeked = true;
   }
   if (DOM._productObserver) {
@@ -296,7 +331,6 @@ function openProductPage(globalIndex) {
   DOM.productPage.setAttribute('aria-hidden', 'false');
   DOM.productPage.removeAttribute('inert');
   document.body.style.overflow = 'hidden';
-  // Tidak memasang inert pada mainContent dan bottomNav agar nav tetap berfungsi
   state.lastViewedProductIndex = globalIndex;
   overlayStack.push(DOM.productPage);
   history.pushState({ isOverlay: true, id: 'productPage' }, '');
@@ -350,12 +384,10 @@ function closeProductPage(fromPopState = false) {
       history.back();
     }
     syncBottomNav();
-  }, 400);
+  }, APP_CONFIG.TIMING.MODAL_TRANSITION);
 }
 
-// ---------------------------------------------------------------------------
-// GESTURES
-// ---------------------------------------------------------------------------
+// ---------- GESTURES ----------
 function initDetailGestures() {
   const track = DOM.productSwiperTrack;
   if (!track) return;
@@ -402,12 +434,8 @@ function initDetailGestures() {
   }, { passive: true });
 }
 
-// ---------------------------------------------------------------------------
-// CART & SHIPPING
-// ---------------------------------------------------------------------------
-function getCartSummaryLocal() {
-  return getCartSummary(state.cart);
-}
+// ---------- CART & SHIPPING ----------
+function getCartSummaryLocal() { return getCartSummary(state.cart); }
 
 async function resolveOnboardingDistance(districtLabel) {
   if (state.userDistance != null) return;
@@ -422,9 +450,7 @@ async function resolveOnboardingDistance(districtLabel) {
       state.haversineUsed = result.isHaversine;
       updateShippingUI();
     }
-  } catch (err) {
-    console.warn('Gagal resolve jarak onboarding:', err);
-  }
+  } catch (err) { console.warn('Gagal resolve jarak onboarding:', err); }
 }
 
 function updateShippingUI() {
@@ -440,7 +466,6 @@ function updateShippingUI() {
     document.getElementById('shippingDistance').textContent = `${dist} km`;
     DOM.finalShipping.textContent = hasValidCost ? fmt(shipCost) : '...';
     DOM.finalTotal.textContent = hasValidCost ? fmt(subtotal + shipCost) : fmt(subtotal);
-
     if (state.shippingProvider === 'lalamove') {
       const estReguler = document.getElementById('estReguler');
       const estPrioritas = document.getElementById('estPrioritas');
@@ -471,9 +496,26 @@ function updateCartUI() {
   if (window.lucide) lucide.createIcons();
 }
 
-// ---------------------------------------------------------------------------
-// DRAWER DISTRICT DROPDOWN
-// ---------------------------------------------------------------------------
+// ✅ Fungsi utilitas baru: updateDraftUI
+function updateDraftUI(pid) {
+  const draft = state.drafts[pid];
+  if (!draft) return;
+
+  // Update angka qty
+  document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = draft.qty);
+
+  // Update status tombol spice (level pedas)
+  document.querySelectorAll(`.spice-option[data-pid="${pid}"]`).forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.spice) === draft.spice);
+  });
+
+  // Update label spice
+  document.querySelectorAll(`[id^="spiceLabel_"][id$="_${pid}"]`).forEach(el => {
+    el.textContent = SPICE_LABELS[draft.spice];
+  });
+}
+
+// ---------- DRAWER DISTRICT DROPDOWN ----------
 function initDrawerDistrictDropdown() {
   const input = DOM.districtInput;
   const dropdown = DOM.drawerDistrictDropdown;
@@ -508,14 +550,8 @@ function initDrawerDistrictDropdown() {
       gpsBtn.classList.remove('is-hidden');
     }
   }
-  function setGpsLoading(v) {
-    gpsLoading = v;
-    updateSpinner();
-  }
-  function setSearchLoading(v) {
-    searchLoading = v;
-    updateSpinner();
-  }
+  function setGpsLoading(v) { gpsLoading = v; updateSpinner(); }
+  function setSearchLoading(v) { searchLoading = v; updateSpinner(); }
 
   let searchAbortController = null;
   let searchFailCount = 0;
@@ -573,7 +609,7 @@ function initDrawerDistrictDropdown() {
         </div>`;
     }).join('');
     input.setAttribute('aria-expanded', 'true');
-  }, 500);
+  }, APP_CONFIG.TIMING.DEBOUNCE_SEARCH);
 
   input.addEventListener('input', (e) => {
     state.selectedDistrict = ''; state.selectedDistrictFull = ''; state.userDistance = null;
@@ -654,7 +690,7 @@ function initDrawerDistrictDropdown() {
 }
 
 // ---------------------------------------------------------------------------
-// ONBOARDING (Private Lobby) – bottom nav inert hanya saat onboarding
+// ONBOARDING
 // ---------------------------------------------------------------------------
 function initOnboarding() {
   const saved = loadState();
@@ -726,12 +762,12 @@ function initOnboarding() {
         enableBottomNav();
         setTimeout(() => {
           DOM.onboardingOverlay.style.display = 'none';
-        }, 400);
+        }, APP_CONFIG.TIMING.ONBOARDING_GREETING);
         applyPersonalization();
         initScrollReveal();
         saveUser(state.customerName, '');
-      }, 400);
-    }, 1200);
+      }, APP_CONFIG.TIMING.ONBOARDING_GREETING);
+    }, APP_CONFIG.TIMING.ONBOARDING_DELAY);
   });
 
   document.getElementById('onbGuestBtn')?.addEventListener('click', () => {
@@ -935,7 +971,7 @@ function bindEvents() {
     e.preventDefault(); e.stopPropagation();
     if (DOM.productPage?.classList.contains('active')) {
       closeProductPage(false);
-      setTimeout(() => { openModal(DOM.miniCartModal); renderMiniCart(state.cart); updateShippingUI(); }, 400);
+      setTimeout(() => { openModal(DOM.miniCartModal); renderMiniCart(state.cart); updateShippingUI(); }, APP_CONFIG.TIMING.MODAL_TRANSITION);
     } else { openModal(DOM.miniCartModal); renderMiniCart(state.cart); updateShippingUI(); }
   });
 
@@ -1009,7 +1045,7 @@ function bindEvents() {
     saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict, state.userDistance);
   });
 
-  // Global click handler
+  // Global click handler (DRY + Guards)
   document.addEventListener('click', async (e) => {
     const drawerInput = DOM.districtInput;
     const drawerDropdown = DOM.drawerDistrictDropdown;
@@ -1023,51 +1059,76 @@ function bindEvents() {
 
     const step1Btn = e.target.closest('.step-1-btn');
     if (step1Btn) {
-      if (window.navigator.vibrate) window.navigator.vibrate(10);
+      if (window.navigator.vibrate) window.navigator.vibrate(APP_CONFIG.HAPTIC.LIGHT);
       const idx = step1Btn.dataset.idx, pid = step1Btn.dataset.pid;
       const step1 = document.getElementById(`step1_${idx}_${pid}`), step2 = document.getElementById(`step2_${idx}_${pid}`);
       if (step1 && step2) {
         step1.style.transition = 'opacity 0.3s ease'; step1.style.opacity = '0';
-        setTimeout(() => { step1.style.display = 'none'; step2.style.display = 'block'; const firstOption = step2.querySelector('.spice-option'); if (firstOption) firstOption.focus(); }, 300);
+        setTimeout(() => { step1.style.display = 'none'; step2.style.display = 'block'; const firstOption = step2.querySelector('.spice-option'); if (firstOption) firstOption.focus(); }, APP_CONFIG.TIMING.STEP_TRANSITION);
       }
       return;
     }
+
+    // --- 1. Handler Level Pedas (DRY & Guard) ---
     const spiceOption = e.target.closest('.spice-option');
     if (spiceOption) {
-      const pid = spiceOption.dataset.pid, val = parseInt(spiceOption.dataset.spice);
-      state.drafts[pid].spice = val;
-      document.querySelectorAll(`.spice-option[data-pid="${pid}"]`).forEach(b => b.classList.toggle('active', parseInt(b.dataset.spice) === val));
-      document.querySelectorAll(`[id^="spiceLabel_"][id$="_${pid}"]`).forEach(el => el.textContent = SPICE_LABELS[val]);
+      const pid = spiceOption.dataset.pid;
+      if (state.drafts[pid]) {
+        state.drafts[pid].spice = parseInt(spiceOption.dataset.spice);
+        updateDraftUI(pid);
+      }
       return;
     }
-    const qtyPlus = e.target.closest('.qty-plus'), qtyMinus = e.target.closest('.qty-minus');
+
+    // --- 2. Handler Qty Draft (DRY & Guard) ---
+    const qtyPlus = e.target.closest('.qty-plus');
+    const qtyMinus = e.target.closest('.qty-minus');
     if (qtyPlus || qtyMinus) {
       const pid = (qtyPlus || qtyMinus).dataset.pid;
-      if (qtyPlus) state.drafts[pid].qty++;
-      else if (state.drafts[pid].qty > 1) state.drafts[pid].qty--;
-      document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = state.drafts[pid].qty);
+      if (!state.drafts[pid]) return; // Guard
+
+      if (qtyPlus) {
+        state.drafts[pid].qty++;
+      } else if (state.drafts[pid].qty > 1) {
+        state.drafts[pid].qty--;
+      }
+
+      updateDraftUI(pid);
       return;
     }
-    // Handler add-to-cart DIPERBARUI (double‑tap prevention + haptic)
+
+    // --- 3. Handler Add-to-Cart (DRY) ---
     const addBtn = e.target.closest('.add-to-cart-btn');
     if (addBtn) {
       if (addBtn.dataset.processing === 'true') return;
       addBtn.dataset.processing = 'true';
-      if (window.navigator?.vibrate) window.navigator.vibrate(12);
+      if (window.navigator?.vibrate) window.navigator.vibrate(APP_CONFIG.HAPTIC.HEAVY);
+
       const pid = addBtn.dataset.pid, idx = addBtn.dataset.idx, draft = state.drafts[pid];
-      const cartKey = pid + '_spice' + draft.spice;
+      const cartKey = `${pid}_spice${draft.spice}`;
+
       if (!state.cart[cartKey]) state.cart[cartKey] = { id: pid, qty: 0, spice: draft.spice };
       state.cart[cartKey].qty += draft.qty;
+
+      // Kembalikan draft ke default (1) dan update UI secara terpusat
       state.drafts[pid].qty = 1;
-      document.querySelectorAll(`.qty-num[data-valpid="${pid}"]`).forEach(el => el.textContent = 1);
-      updateCartUI();
+      updateDraftUI(pid);
+
+      updateCartUI(); // Merender cart badge & live region
+
       showToast('Sajian berhasil ditambahkan.');
       const cartNav = document.querySelector('.nav-cart-wrapper');
-      if (cartNav) { cartNav.classList.remove('bump'); void cartNav.offsetWidth; cartNav.classList.add('bump'); }
+      if (cartNav) {
+        cartNav.classList.remove('bump');
+        void cartNav.offsetWidth;
+        cartNav.classList.add('bump');
+      }
+
       addBtn.classList.add('success-flash');
       addBtn.dataset.originalLabel = addBtn.dataset.originalLabel || addBtn.textContent;
       addBtn.textContent = '✓ Berhasil Ditambahkan';
-      setTimeout(() => addBtn.classList.remove('success-flash'), 400);
+
+      setTimeout(() => addBtn.classList.remove('success-flash'), APP_CONFIG.TIMING.MODAL_TRANSITION);
       setTimeout(() => {
         addBtn.textContent = addBtn.dataset.originalLabel;
         const step1 = document.getElementById(`step1_${idx}_${pid}`), step2 = document.getElementById(`step2_${idx}_${pid}`);
@@ -1078,9 +1139,10 @@ function bindEvents() {
           requestAnimationFrame(() => { step1.style.opacity = '1'; });
         }
         addBtn.dataset.processing = 'false';
-      }, 1000);
+      }, APP_CONFIG.TIMING.SUCCESS_FLASH);
       return;
     }
+
     if (e.target.id === 'emptyCartBrowse') {
       closeModal(DOM.miniCartModal);
       openProductPage(0);
@@ -1100,25 +1162,32 @@ function bindEvents() {
       }
       return;
     }
+
+    // --- 4. Handler +/- di Mini Cart (DRY & Guard) ---
     const actionBtn = e.target.closest('[data-action]');
     if (actionBtn && !actionBtn.classList.contains('add-to-cart-btn') && !actionBtn.classList.contains('step-1-btn')) {
       const id = actionBtn.dataset.id, type = actionBtn.dataset.action;
-      if (type === 'increase') state.cart[id].qty++;
-      else if (type === 'decrease') {
+
+      // Guard: Pastikan item ada di keranjang
+      if (!state.cart[id]) return;
+
+      if (type === 'increase') {
+        state.cart[id].qty++;
+      } else if (type === 'decrease') {
         if (state.cart[id].qty === 1) {
           showConfirmModal('Keluarkan Sajian?', 'Keluarkan sajian ini dari reservasi Anda?', () => {
-            delete state.cart[id]; updateCartUI();
-            if (DOM.miniCartModal.classList.contains('active')) renderMiniCart(state.cart);
+            delete state.cart[id];
+            updateCartUI(); // Cukup 1 kali panggil
             showToast('Sajian dikeluarkan.');
           });
           return;
         }
         state.cart[id].qty--;
       }
-      updateCartUI();
-      if (DOM.miniCartModal.classList.contains('active')) renderMiniCart(state.cart);
+      updateCartUI(); // Cukup 1 kali panggil
       return;
     }
+
     const logBtn = e.target.closest('.log-btn');
     if (logBtn) {
       document.querySelectorAll('.log-btn').forEach(b => b.classList.remove('active'));
@@ -1193,32 +1262,6 @@ function bindEvents() {
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(overlay); });
   });
-
-  // Override openModal/closeModal untuk menyembunyikan nav pada transaksi & keranjang
-  const _openModal = openModal;
-  const _closeModal = closeModal;
-
-  openModal = function(modalEl) {
-    _openModal(modalEl);
-    if (modalEl?.id === 'miniCartModal' ||
-        modalEl?.id === 'orderConfirmModal' ||
-        modalEl?.id === 'paymentModal') {
-      DOM.bottomNav?.classList.add('nav-hidden');
-    }
-  };
-
-  closeModal = function(modalEl, fromPopState) {
-    _closeModal(modalEl, fromPopState);
-    if (modalEl?.id === 'miniCartModal' ||
-        modalEl?.id === 'orderConfirmModal' ||
-        modalEl?.id === 'paymentModal') {
-      if (!document.getElementById('miniCartModal')?.classList.contains('active') &&
-          !document.getElementById('orderConfirmModal')?.classList.contains('active') &&
-          !document.getElementById('paymentModal')?.classList.contains('active')) {
-        DOM.bottomNav?.classList.remove('nav-hidden');
-      }
-    }
-  };
 }
 
 function initHeroParallax() {
@@ -1289,7 +1332,7 @@ function init() {
     const productId = urlParams.get('product');
     if (productId) {
       const idx = getProductGlobalIndex(productId);
-      if (idx !== -1) setTimeout(() => openProductPage(idx), 400);
+      if (idx !== -1) setTimeout(() => openProductPage(idx), APP_CONFIG.TIMING.MODAL_TRANSITION);
     }
 
     window.addEventListener('popstate', (e) => {
