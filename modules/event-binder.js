@@ -1,13 +1,13 @@
 // modules/event-binder.js
-import { PRODUCTS } from '../data/config.js'; // atau sesuaikan path dari file config/products
-import { fmt, showToast, animatePress, queuedSearch } from '../utils/helpers.js';
+import { PRODUCTS } from '../data/products.js';
+import { SYSTEM } from '../data/config.js';
+import { fmt, showToast, animatePress, queuedSearch, escapeHTML } from '../utils/helpers.js';
 import { saveUser, saveCustomer } from './storage.js';
 import { getDrivingDistance } from './shipping.js';
 import { getCartSummary, validatePhone, validateAddress } from './checkout.js';
-import { renderMiniCart } from './render.js';
 import { setActiveNav, syncBottomNav } from './navigation.js';
-import { openModal, closeModal, showConfirmModal, releaseInert, overlayStack } from './modal-manager.js';
-import { getWaktu, applyPersonalization } from './personalization.js';
+import { openModal, closeModal, showConfirmModal, releaseInert } from './modal-manager.js';
+import { getWaktu } from './personalization.js';
 import { extractShortLocation, updateShippingUI } from './shipping-controller.js';
 import { updateCartUI, updateDraftUI } from './cart-controller.js';
 
@@ -61,12 +61,12 @@ export function bindEvents() {
   });
 
   document.getElementById('navHomeBtn')?.addEventListener('click', () => {
-    if (DOM.productPage?.classList.contains('active')) { 
-      closeProductPageFn(false); 
-      setTimeout(releaseInert, 500); 
-      setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 200); 
-    } else { 
-      window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    if (DOM.productPage?.classList.contains('active')) {
+      closeProductPageFn(false);
+      setTimeout(releaseInert, 500);
+      setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 200);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     setActiveNav('navHomeBtn');
   });
@@ -81,13 +81,13 @@ export function bindEvents() {
     if (DOM.productPage?.classList.contains('active')) {
       closeProductPageFn(false);
       setTimeout(() => { openModal(DOM.miniCartModal); updateCartUI(); }, APP_CONFIG.TIMING.MODAL_TRANSITION);
-    } else { 
-      openModal(DOM.miniCartModal); 
-      updateCartUI(); 
+    } else {
+      openModal(DOM.miniCartModal);
+      updateCartUI();
     }
   });
 
-  // delivery time dropdown logic
+  // delivery time dropdown
   const deliveryTrigger = document.getElementById('deliveryTimeTrigger');
   const deliveryDropdown = document.getElementById('deliveryTimeDropdown');
   const deliveryHidden = document.getElementById('deliveryTime');
