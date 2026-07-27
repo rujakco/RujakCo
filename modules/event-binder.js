@@ -1,12 +1,12 @@
 // modules/event-binder.js
 import { PRODUCTS } from '../data/products.js';
-import { SYSTEM } from '../data/config.js';   // ✅ DIPERBAIKI: SYSTEM wajib diimpor untuk WA & VIP
+import { SYSTEM } from '../data/config.js';   // ✅ wajib untuk WA & VIP
 import { fmt, showToast, animatePress, queuedSearch, escapeHTML } from '../utils/helpers.js';
 import { saveUser, saveCustomer } from './storage.js';
 import { getDrivingDistance } from './shipping.js';
 import { getCartSummary, validatePhone, validateAddress } from './checkout.js';
 import { setActiveNav, syncBottomNav } from './navigation.js';
-import { openModal, closeModal, showConfirmModal, releaseInert } from './modal-manager.js';
+import { openModal, closeModal, showConfirmModal, releaseInert, resetOverlays } from './modal-manager.js';
 import { getWaktu } from './personalization.js';
 import { extractShortLocation, updateShippingUI } from './shipping-controller.js';
 import { updateCartUI, updateDraftUI } from './cart-controller.js';
@@ -60,31 +60,31 @@ export function bindEvents() {
     document.getElementById('waVipSideTab')?.classList.toggle('open');
   });
 
+  // ✅ NAVIGASI BAWAH – SELALU PANGGIL resetOverlays() TERLEBIH DAHULU
   document.getElementById('navHomeBtn')?.addEventListener('click', () => {
-    if (DOM.productPage?.classList.contains('active')) {
-      closeProductPageFn(false);
-      setTimeout(releaseInert, 500);
-      setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 200);
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    resetOverlays();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     setActiveNav('navHomeBtn');
   });
 
   document.getElementById('navProductBtn')?.addEventListener('click', () => {
-    if (DOM.productPage?.classList.contains('active')) return;
+    if (DOM.productPage?.classList.contains('active')) return; // sudah di produk
+    resetOverlays();
     if (openProductPageFn) openProductPageFn(state.lastViewedProductIndex >= 0 ? state.lastViewedProductIndex : 0);
   });
 
   document.getElementById('navCartBtn')?.addEventListener('click', (e) => {
     e.preventDefault(); e.stopPropagation();
-    if (DOM.productPage?.classList.contains('active')) {
-      closeProductPageFn(false);
-      setTimeout(() => { openModal(DOM.miniCartModal); updateCartUI(); }, APP_CONFIG.TIMING.MODAL_TRANSITION);
-    } else {
-      openModal(DOM.miniCartModal);
-      updateCartUI();
-    }
+    resetOverlays();
+    openModal(DOM.miniCartModal);
+    updateCartUI();
+  });
+
+  // Handler untuk tombol Concierge (AI Chat)
+  document.getElementById('aiChatToggle')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    resetOverlays();
+    openModal(DOM.aiChatBox);
   });
 
   // delivery time dropdown
