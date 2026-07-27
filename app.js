@@ -1,4 +1,4 @@
-// app.js – FINAL V2.0 (lengkap, semua fungsi utuh)
+// app.js – FINAL V2.0 (lengkap, async fix)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM, SPICE_LABELS } from './data/config.js';
 import { fmt, showToast, debounce, escapeHTML, getSupabase, queuedSearch, animatePress, createCartKey } from './utils/helpers.js';
@@ -955,7 +955,8 @@ function handleAddToCart(e) {
   return false;
 }
 
-function handleCartActions(e) {
+// PERBAIKAN: async ditambahkan
+async function handleCartActions(e) {
   if (e.target.id === 'emptyCartBrowse') {
     closeModal(DOM.miniCartModal);
     openProductPage(0);
@@ -1010,7 +1011,8 @@ function handleCartActions(e) {
   return false;
 }
 
-function handleCheckoutAction(e) {
+// PERBAIKAN: async ditambahkan
+async function handleCheckoutAction(e) {
   if (e.target.id === 'btnOpenPayment') {
     if (e.target.dataset.processing === 'true') return true;
     e.target.dataset.processing = 'true';
