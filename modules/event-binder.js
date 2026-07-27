@@ -1,6 +1,6 @@
 // modules/event-binder.js
 import { PRODUCTS } from '../data/products.js';
-import { SYSTEM } from '../data/config.js';
+import { SYSTEM } from '../data/config.js';   // ✅ DIPERBAIKI: SYSTEM wajib diimpor untuk WA & VIP
 import { fmt, showToast, animatePress, queuedSearch, escapeHTML } from '../utils/helpers.js';
 import { saveUser, saveCustomer } from './storage.js';
 import { getDrivingDistance } from './shipping.js';
