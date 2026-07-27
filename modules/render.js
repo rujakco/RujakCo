@@ -1,4 +1,4 @@
-// modules/render.js – FINAL V1.2
+// modules/render.js – FINAL (dengan dukungan lini asinan)
 import { PRODUCTS } from '../data/products.js';
 import { SPICE_LABELS } from '../data/config.js';
 import { fmt, escapeHTML } from '../utils/helpers.js';
@@ -9,6 +9,15 @@ const products = PRODUCTS || [];
 let loopedProducts = [];
 for (let i = 0; i < LOOP_MULTIPLIER; i++) {
   loopedProducts = loopedProducts.concat(products);
+}
+
+// Fungsi penentu label berdasarkan kategori produk
+function getFlavorLabel(product) {
+  if (product.category === 'asinan') {
+    return { label: 'Kuah', value: product.kuah };
+  }
+  // Default: rujak
+  return { label: 'Sambal', value: product.sambal };
 }
 
 export function renderMenu(containerId = 'menuList') {
@@ -55,6 +64,7 @@ export function renderProductSwiper(drafts, trackId = 'productSwiperTrack') {
   track.innerHTML = loopedProducts.map((p, index) => {
     const draft = drafts?.[p.id] || { spice: p.defaultSpice || 3, qty: 1 };
     const spiceLabel = SPICE_LABELS?.[draft.spice] ?? 'Sedang';
+    const flavor = getFlavorLabel(p); // label dinamis
     return `
     <div class="product-slide" data-id="${p.id}" data-idx="${index}">
       <div class="detail-image-wrap">
@@ -92,7 +102,7 @@ export function renderProductSwiper(drafts, trackId = 'productSwiperTrack') {
         <label class="section-label">Komposisi ${(p.buah || []).length} Buah</label>
         <p class="fruit-list-inline">${(p.buah || []).map(b => escapeHTML(b)).join(' <span class="fruit-bullet">•</span> ')}</p>
         <label class="section-label">Spesifikasi Sajian</label>
-        <p class="fruit-list-inline" style="margin-bottom:40px;">${escapeHTML(p.container)} <span class="fruit-bullet">•</span> ${escapeHTML(p.size)} <span class="fruit-bullet">•</span> ${escapeHTML(p.sambal)}</p>
+        <p class="fruit-list-inline" style="margin-bottom:40px;">${escapeHTML(p.container)} <span class="fruit-bullet">•</span> ${escapeHTML(p.size)} <span class="fruit-bullet">•</span> ${escapeHTML(flavor.value)}</p>
         ${p.story ? `<label class="section-label">Cerita di Baliknya</label><p style="font-family:'Fraunces',serif;font-style:italic;text-align:center;color:var(--gray-500);padding:0 16px;margin-bottom:40px;line-height:1.8;">${escapeHTML(p.story)}</p>` : ''}
         <div class="detail-manifesto">
           <h4><i data-lucide="shield-check" class="icon-sm inline" style="margin-bottom:-2px;"></i> Komitmen Kesegaran</h4>
