@@ -77,7 +77,7 @@ const cacheDOM = () => {
 };
 
 // ---------------------------------------------------------------------------
-// UTILITY
+// UTILITY (tidak berubah)
 // ---------------------------------------------------------------------------
 function extractShortLocation(fullAddress) {
   if (!fullAddress) return '';
@@ -134,7 +134,7 @@ function requestLocation() {
 }
 
 // ---------------------------------------------------------------------------
-// PERSONALISASI
+// PERSONALISASI (tidak berubah)
 // ---------------------------------------------------------------------------
 function applyPersonalization() {
   const name = state.customerName || 'Tamu';
@@ -164,7 +164,7 @@ function initScrollReveal() {
 }
 
 // ---------------------------------------------------------------------------
-// NAV & OVERLAY
+// NAV & OVERLAY (tidak berubah, kecuali closeModal yang sudah diperbarui)
 // ---------------------------------------------------------------------------
 function setActiveNav(activeId) {
   document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.id === activeId));
@@ -209,7 +209,6 @@ function openModal(modalEl) {
   syncBottomNav();
 }
 
-// closeModal DIPERBARUI (aksesibilitas fallback fokus)
 function closeModal(modalEl, fromPopState = false) {
   if (!modalEl) return;
   if (previousFocusedElement && document.body.contains(previousFocusedElement)) {
@@ -1194,6 +1193,32 @@ function bindEvents() {
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(overlay); });
   });
+
+  // Override openModal/closeModal untuk menyembunyikan nav pada transaksi & keranjang
+  const _openModal = openModal;
+  const _closeModal = closeModal;
+
+  openModal = function(modalEl) {
+    _openModal(modalEl);
+    if (modalEl?.id === 'miniCartModal' ||
+        modalEl?.id === 'orderConfirmModal' ||
+        modalEl?.id === 'paymentModal') {
+      DOM.bottomNav?.classList.add('nav-hidden');
+    }
+  };
+
+  closeModal = function(modalEl, fromPopState) {
+    _closeModal(modalEl, fromPopState);
+    if (modalEl?.id === 'miniCartModal' ||
+        modalEl?.id === 'orderConfirmModal' ||
+        modalEl?.id === 'paymentModal') {
+      if (!document.getElementById('miniCartModal')?.classList.contains('active') &&
+          !document.getElementById('orderConfirmModal')?.classList.contains('active') &&
+          !document.getElementById('paymentModal')?.classList.contains('active')) {
+        DOM.bottomNav?.classList.remove('nav-hidden');
+      }
+    }
+  };
 }
 
 function initHeroParallax() {
