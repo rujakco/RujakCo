@@ -1,14 +1,14 @@
 // app.js – FINAL V3.0 (Clean Architecture Bootstrap)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM } from './data/config.js';
-import { showToast, getSupabase } from './utils/helpers.js';
+import { fmt, showToast, getSupabase, escapeHTML } from './utils/helpers.js';
 import { loadState, loadCustomer, isStorageAvailable } from './modules/storage.js';
 import { renderMenu, renderProductSwiper, getProductGlobalIndex } from './modules/render.js';
 import { initCarousel } from './modules/carousel.js';
 import { initAIChat } from './modules/chat.js';
 import { initAccessibility } from './modules/accessibility.js';
 import { initTestimonials } from './modules/testimonials.js';
-import { getCartSummary } from './modules/checkout.js';
+import { getCartSummary, showWhatsAppFallback } from './modules/checkout.js';
 import { showOrderConfirmation as launchProReceipt } from './modules/checkout-receipt.js';
 
 // --- Modul Eksternal ---
@@ -95,6 +95,63 @@ const cacheDOM = () => {
   DOM.bottomNav = document.getElementById('bottomNav');
   DOM.liveCartRegion = document.getElementById('cartLiveRegion');
 };
+
+// ---------------------------------------------------------------------------
+// FUNGSI PENDUKUNG (loadScript, downloadReceiptPNG, sendReceiptToTelegram)
+// ---------------------------------------------------------------------------
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)) return resolve();
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error(`Gagal memuat script: ${src}`));
+    document.head.appendChild(script);
+  });
+}
+
+async function downloadReceiptPNG() {
+  const element = document.getElementById('orderConfirmContent');
+  if (!element) return null;
+  const loadingOverlay = document.createElement('div');
+  loadingOverlay.className = 'receipt-loading';
+  loadingOverlay.innerHTML = '<div class="receipt-loading-text">Menyiapkan struk...</div>';
+  document.body.appendChild(loadingOverlay);
+  try {
+    if (typeof html2canvas === 'undefined') {
+      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+    }
+    const footer = document.querySelector('#orderConfirmModal .drawer-footer');
+    if (footer) footer.style.display = 'none';
+    const canvas = await html2canvas(element, { backgroundColor: '#ffffff', scale: 2, useCORS: true, allowTaint: false, logging: false });
+    if (footer) footer.style.display = '';
+    const sb = getSupabase(); if (!sb) return null;
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    if (!blob) return null;
+    const safeCode = state.currentOrderCode || `RJ-${new Date().getTime()}`;
+    const fileName = `${safeCode.replace(/[^a-zA-Z0-9]/g, '-')}.png`;
+    const { error } = await sb.storage.from('receipts').upload(fileName, blob, { contentType: 'image/png', upsert: true });
+    if (error) { showToast('Gagal simpan struk.'); return null; }
+    const { data: { publicUrl } } = sb.storage.from('receipts').getPublicUrl(fileName);
+    state.receiptUrl = publicUrl;
+    return publicUrl;
+  } catch (err) {
+    showToast('Gagal buat struk.');
+    return null;
+  } finally {
+    loadingOverlay.remove();
+  }
+}
+
+async function sendReceiptToTelegram() {
+  if (!state.receiptUrl || !state.currentOrderCode) return;
+  const supabase = getSupabase(); if (!supabase) return;
+  const caption = `🧾 *Order Baru:* ${state.currentOrderCode}\n👤 ${state.customerName}\n📞 ${state.customerPhone}\n💰 Total: ${DOM.finalTotal?.textContent}`;
+  try {
+    await supabase.functions.invoke('send-telegram', { body: { order_code: state.currentOrderCode, receipt_url: state.receiptUrl, caption } });
+    console.log('✅ Telegram terkirim');
+  } catch (err) { console.error('Gagal kirim Telegram:', err); }
+}
 
 // ---------------------------------------------------------------------------
 // PRODUCT PAGE LOGIC
@@ -238,11 +295,14 @@ async function sendReceiptToWhatsApp() {
     } else {
       showToast('⚠️ Pesan WhatsApp terkirim, tapi catatan gagal tersimpan.');
     }
+  } else {
+    showWhatsAppFallback(SYSTEM.WA_NUMBER, msg);
+    if (!orderSaved) showToast('Catatan belum tersimpan.');
   }
 }
 
 async function showOrderConfirmation() {
-  return await launchProReceipt(state, DOM, overlayStack, openModal, closeModal, () => getCartSummary(state.cart), null, null);
+  return await launchProReceipt(state, DOM, overlayStack, openModal, closeModal, () => getCartSummary(state.cart), downloadReceiptPNG, sendReceiptToTelegram);
 }
 
 // ---------------------------------------------------------------------------
