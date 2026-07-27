@@ -1,3 +1,4 @@
+// modules/checkout-receipt.js – FINAL V1.1
 import { SYSTEM } from '../data/config.js';
 import { fmt, showToast, escapeHTML, getSupabase } from '../utils/helpers.js';
 import { saveCustomer } from './storage.js';
@@ -103,7 +104,7 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
       </div>
     </div>`;
 
-  if (window.lucide) lucide.createIcons();
+  if (window.lucide) window.lucide.createIcons();
 
   const modal = document.getElementById('orderConfirmModal');
   if (modal) {
@@ -115,7 +116,7 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
       btnLanjut.dataset.processing = 'true';
       btnLanjut.innerHTML = '<i data-lucide="loader-2" class="icon-sm" style="animation:spin 1s linear infinite;"></i> Memproses...';
       btnLanjut.style.pointerEvents = 'none';
-      if (window.lucide) lucide.createIcons();
+      if (window.lucide) window.lucide.createIcons();
 
       const imageUrl = await downloadReceiptPNG();
       if (imageUrl) {
