@@ -1,4 +1,4 @@
-// modules/checkout-receipt.js – FINAL V1.1
+// modules/checkout-receipt.js – FINAL V1.3 (Pro Receipt + Trust Badge)
 import { SYSTEM } from '../data/config.js';
 import { fmt, showToast, escapeHTML, getSupabase } from '../utils/helpers.js';
 import { saveCustomer } from './storage.js';
@@ -8,26 +8,27 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
   const dist = state.userDistance;
   const summary = getCartSummaryLocal();
   const ship = dist != null ? calculateShipping(dist, summary.mainProductQty || 1, state.shippingProvider, state.tier) : { cost: null };
+  
   if (ship.cost === null) {
     showToast('Maaf, jarak terlalu jauh. Silakan hubungi Concierge.');
     return false;
   }
-
+  
   const currentPhone = DOM.customerPhoneInput?.value || state.customerPhone;
   const currentAddress = DOM.customerAddressInput?.value || state.customerAddress;
   saveCustomer(currentPhone, currentAddress, state.selectedDistrict, state.userDistance);
-
+  
   const calculatedTotal = summary.subtotal + (ship.cost || 0);
   const name = escapeHTML(DOM.customerNameInput?.value || state.customerName || '—');
   const phone = escapeHTML(currentPhone);
   const address = escapeHTML(currentAddress);
   const deliveryTime = escapeHTML(document.getElementById('deliveryTimeLabel')?.textContent || '—');
-
+  
   let kurirDetail = state.shippingProvider === 'paxel' ? 'Paxel Ekspres (Next-Day)' : 'Kurir Lalamove';
   if (state.shippingProvider === 'lalamove') {
     kurirDetail += ` (${state.tier === 'prioritas' ? 'Prioritas' : 'Reguler'})`;
   }
-
+  
   let itemsHtml = '';
   summary.items.forEach(item => {
     const spiceText = item.spice ? ` [Lv ${item.spice}]` : '';
@@ -42,14 +43,15 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
         </div>
       </div>`;
   });
-
+  
   const contentEl = document.getElementById('orderConfirmContent');
   if (!contentEl) return false;
+  
   const now = new Date();
   const dateStr = now.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
   const timeStr = now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' }) + ' WIB';
   state.currentOrderCode = `RJK-${now.toISOString().slice(2,10).replace(/-/g,'')}-${Math.floor(1000+Math.random()*9000)}`;
-
+  
   contentEl.innerHTML = `
     <div class="receipt-wrap" style="padding: 4px;">
       <div style="text-align:center;font-family:var(--font-heading);font-size:1rem;color:var(--green);margin-bottom:8px;">Struk Reservasi</div>
@@ -85,46 +87,56 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
         <div class="confirm-row total"><span>Total Tagihan</span><span>${fmt(calculatedTotal)}</span></div>
       </div>
       <div class="receipt-footer">
+        
+        <!-- TRUST BADGE RUJAK.CO -->
+        <div style="background: var(--bg-subtle); border: 1px solid var(--gold-20); border-radius: 12px; padding: 14px; margin: 12px 0 16px; text-align: left;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; color: var(--green); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
+            <i data-lucide="shield-check" class="icon-sm"></i> Jaminan Kualitas Rujak.Co
+          </div>
+          <p style="margin: 0; font-size: 0.72rem; color: var(--gray-600); line-height: 1.5; font-family: 'DM Sans', sans-serif;">
+            Buah dipotong segar tepat 15 menit sebelum kurir berangkat. Sambal dikemas terpisah untuk menjaga kerenyahan maksimal.
+          </p>
+        </div>
+
         <p style="font-family: 'Fraunces', serif; font-style: italic; color: var(--gray-600); font-size: 0.85rem; margin-bottom: 16px;">
           "Asam, pedas, manis, segar — terima kasih telah memilih RUJAK.Co."
         </p>
         <div style="background: var(--bg-subtle); border: 1px solid var(--gray-200); border-radius: 8px; padding: 12px; margin: 8px 0 20px; text-align: left; font-size: 0.72rem; color: var(--gray-600); line-height: 1.5; font-family: 'DM Sans', sans-serif;">
           <strong style="color: var(--green); display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.68rem; font-weight: 700;">💡 PANDUAN TRANSAKSI INSTAN VIA PONSEL:</strong>
-          1. <strong>Simpan Nota:</strong> Gambar struk ini otomatis tersimpan — cek folder "Download" atau aplikasi Galeri/Foto di HP Anda.<br>
-          2. <strong>Buka Aplikasi:</strong> Buka m-Banking (BCA, Mandiri, dll) atau E-Wallet pilihan Anda (GoPay, OVO, Dana).<br>
-          3. <strong>Pindai via Galeri:</strong> Pilih menu QRIS/Scan, tekan <strong>Ikon Galeri/Unggah Gambar</strong>, lalu pilih foto struk ini untuk membayar.<br>
+          1. <strong>Simpan Nota:</strong> Gambar struk ini otomatis tersimpan.<br>
+          2. <strong>Buka Aplikasi:</strong> Buka m-Banking / E-Wallet pilihan Anda.<br>
+          3. <strong>Pindai via Galeri:</strong> Pilih menu QRIS/Scan, tekan <strong>Ikon Galeri</strong>, lalu pilih foto struk ini untuk membayar.<br>
           4. <strong>Konfirmasi WhatsApp:</strong> Kirim bukti transfer beserta foto struk ini ke WhatsApp kami untuk validasi instan.
         </div>
         <div class="receipt-qris-wrap" style="margin-top: 16px; margin-bottom: 16px;">
           <img src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/QrisCrop.webp" alt="Scan QRIS" crossorigin="anonymous" />
         </div>
-        <div style="font-size: 0.6rem; color: var(--gray-400); margin-top: 20px; line-height: 1.4; border-top: 1px solid var(--gray-100); padding-top: 10px; font-family: 'DM Sans', sans-serif; text-align: center;">
-          <strong>Kebijakan Kesegaran:</strong> Komplain kualitas buah wajib menyertakan video unboxing (maksimal 2 jam setelah diterima). Seluruh buah dipotong segar melalui sistem 15-Minute Fresh-Prep.
-        </div>
       </div>
     </div>`;
-
+    
   if (window.lucide) window.lucide.createIcons();
-
+  
   const modal = document.getElementById('orderConfirmModal');
   if (modal) {
     openModal(modal);
     document.getElementById('orderConfirmBack').onclick = () => closeModal(modal);
+    
     document.getElementById('orderConfirmLanjut').onclick = async () => {
       const btnLanjut = document.getElementById('orderConfirmLanjut');
       if (btnLanjut.dataset.processing === 'true') return;
+      
       btnLanjut.dataset.processing = 'true';
       btnLanjut.innerHTML = '<i data-lucide="loader-2" class="icon-sm" style="animation:spin 1s linear infinite;"></i> Memproses...';
       btnLanjut.style.pointerEvents = 'none';
       if (window.lucide) window.lucide.createIcons();
-
+      
       const imageUrl = await downloadReceiptPNG();
       if (imageUrl) {
         await sendReceiptToTelegram();
       } else {
         showToast('⚠️ Gagal memproses struk, namun pesanan tetap tercatat.');
       }
-
+      
       try {
         const receiptElement = document.getElementById('orderConfirmContent');
         if (receiptElement && typeof html2canvas !== 'undefined') {
@@ -145,11 +157,11 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
           }, 'image/png');
         }
       } catch (e) { console.warn('Gagal mengunduh struk otomatis:', e); }
-
+      
       btnLanjut.textContent = 'Lanjutkan';
       btnLanjut.style.pointerEvents = 'auto';
       btnLanjut.dataset.processing = 'false';
-
+      
       closeModal(document.getElementById('orderConfirmModal'));
       setTimeout(() => {
         if (DOM.paymentTotal) DOM.paymentTotal.textContent = fmt(calculatedTotal);
