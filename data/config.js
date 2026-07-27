@@ -1,3 +1,4 @@
+// data/config.js
 export const SYSTEM = {
   WA_NUMBER: '6289677161680',
   STORE_LAT: -6.2164777,
