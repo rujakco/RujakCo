@@ -13,7 +13,11 @@ import { updateCartUI, updateDraftUI } from './cart-controller.js';
 let DOM = {}; let state = {}; let APP_CONFIG = {};
 let openProductPageFn = null; let closeProductPageFn = null; let showOrderConfirmationFn = null; let sendReceiptToWhatsAppFn = null;
 
-export function initEventBinderConfig(domConfig, appState, config, callbacks) { DOM = domConfig; state = appState; APP_CONFIG = config; openProductPageFn = callbacks.openProductPage; closeProductPageFn = callbacks.closeProductPage; showOrderConfirmationFn = callbacks.showOrderConfirmation; sendReceiptToWhatsAppFn = callbacks.sendReceiptToWhatsApp; }
+export function initEventBinderConfig(domConfig, appState, config, callbacks) {
+  DOM = domConfig; state = appState; APP_CONFIG = config;
+  openProductPageFn = callbacks.openProductPage; closeProductPageFn = callbacks.closeProductPage;
+  showOrderConfirmationFn = callbacks.showOrderConfirmation; sendReceiptToWhatsAppFn = callbacks.sendReceiptToWhatsApp;
+}
 
 export function bindEvents() {
   document.getElementById('aboutTrigger')?.addEventListener('click', () => openModal(DOM.aboutModal));
@@ -21,19 +25,52 @@ export function bindEvents() {
   document.getElementById('shareProductBtn')?.addEventListener('click', () => { const track = DOM.productSwiperTrack; if (!track) return; const slideWidth = track.querySelector('.product-slide')?.offsetWidth || track.clientWidth; const currentIndex = Math.round(track.scrollLeft / slideWidth); const productId = PRODUCTS[currentIndex % PRODUCTS.length]?.id; if (!productId) return; const product = PRODUCTS.find(p => p.id === productId); if (!product) return; const shareUrl = window.location.origin + window.location.pathname + '?product=' + productId; const shareText = `${product.name} — ${product.desc}\nPesan sekarang di Rujak.Co!`; if (navigator.share) navigator.share({ title: product.name, text: shareText, url: shareUrl }).catch(() => {}); else navigator.clipboard.writeText(shareUrl + '\n' + shareText).then(() => showToast('Link disalin.')).catch(() => showToast('Gagal salin.')); });
   document.getElementById('btnVipConcierge')?.addEventListener('click', (e) => { e.preventDefault(); window.open(`https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent("Halo RUJAK.Co, saya tertarik dengan layanan VIP Concierge.")}`, '_blank', 'noopener'); });
   document.getElementById('waVipHandle')?.addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('waVipSideTab')?.classList.toggle('open'); });
+
   document.getElementById('navHomeBtn')?.addEventListener('click', () => { if (DOM.productPage?.classList.contains('active')) { closeProductPageFn(false); setTimeout(releaseInert, 500); setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 200); } else window.scrollTo({ top: 0, behavior: 'smooth' }); setActiveNav('navHomeBtn'); });
   document.getElementById('navProductBtn')?.addEventListener('click', () => { if (DOM.productPage?.classList.contains('active')) return; if (openProductPageFn) openProductPageFn(state.lastViewedProductIndex >= 0 ? state.lastViewedProductIndex : 0); });
   document.getElementById('navCartBtn')?.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); if (DOM.productPage?.classList.contains('active')) { closeProductPageFn(false); setTimeout(() => { openModal(DOM.miniCartModal); updateCartUI(); }, APP_CONFIG.TIMING.MODAL_TRANSITION); } else { openModal(DOM.miniCartModal); updateCartUI(); } });
-  const deliveryTrigger = document.getElementById('deliveryTimeTrigger'); const deliveryDropdown = document.getElementById('deliveryTimeDropdown'); const deliveryHidden = document.getElementById('deliveryTime'); const deliveryLabel = document.getElementById('deliveryTimeLabel'); let deliveryActiveIndex = 0; const preselected = deliveryDropdown?.querySelector('[aria-selected="true"]'); if (preselected) { deliveryLabel.textContent = preselected.textContent; deliveryHidden.value = preselected.dataset.value; } function setDeliveryOption(option) { deliveryDropdown.querySelectorAll('[role="option"]').forEach(o => o.setAttribute('aria-selected', 'false')); option.setAttribute('aria-selected', 'true'); deliveryLabel.textContent = option.textContent; deliveryHidden.value = option.dataset.value; closeDeliveryDropdown(); } function closeDeliveryDropdown() { deliveryDropdown.style.display = 'none'; deliveryTrigger.setAttribute('aria-expanded', 'false'); } function openDeliveryDropdown() { deliveryDropdown.style.display = 'block'; deliveryTrigger.setAttribute('aria-expanded', 'true'); const opts = deliveryDropdown.querySelectorAll('[role="option"]'); deliveryActiveIndex = [...opts].findIndex(o => o.getAttribute('aria-selected') === 'true'); if (deliveryActiveIndex === -1) deliveryActiveIndex = 0; opts[deliveryActiveIndex]?.focus(); } deliveryTrigger?.addEventListener('click', () => deliveryDropdown.style.display === 'block' ? closeDeliveryDropdown() : openDeliveryDropdown()); deliveryTrigger?.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDeliveryDropdown(); } }); deliveryDropdown?.addEventListener('click', (e) => { const option = e.target.closest('[role="option"]'); if (option) setDeliveryOption(option); }); deliveryDropdown?.addEventListener('keydown', (e) => { const opts = [...deliveryDropdown.querySelectorAll('[role="option"]')]; if (!opts.length) return; if (e.key === 'ArrowDown') { e.preventDefault(); deliveryActiveIndex = Math.min(deliveryActiveIndex+1, opts.length-1); opts.forEach((o,i) => o.setAttribute('aria-selected', i===deliveryActiveIndex?'true':'false')); opts[deliveryActiveIndex].focus(); } else if (e.key === 'ArrowUp') { e.preventDefault(); deliveryActiveIndex = Math.max(deliveryActiveIndex-1, 0); opts.forEach((o,i) => o.setAttribute('aria-selected', i===deliveryActiveIndex?'true':'false')); opts[deliveryActiveIndex].focus(); } else if (e.key === 'Enter') { e.preventDefault(); setDeliveryOption(opts[deliveryActiveIndex]); } else if (e.key === 'Escape') { closeDeliveryDropdown(); deliveryTrigger.focus(); } }); document.addEventListener('click', (e) => { if (!deliveryTrigger?.contains(e.target) && !deliveryDropdown?.contains(e.target)) closeDeliveryDropdown(); });
+
+  // delivery time dropdown
+  const deliveryTrigger = document.getElementById('deliveryTimeTrigger');
+  const deliveryDropdown = document.getElementById('deliveryTimeDropdown');
+  const deliveryHidden = document.getElementById('deliveryTime');
+  const deliveryLabel = document.getElementById('deliveryTimeLabel');
+  let deliveryActiveIndex = 0;
+  const preselected = deliveryDropdown?.querySelector('[aria-selected="true"]');
+  if (preselected) { deliveryLabel.textContent = preselected.textContent; deliveryHidden.value = preselected.dataset.value; }
+  function setDeliveryOption(option) {
+    deliveryDropdown.querySelectorAll('[role="option"]').forEach(o => o.setAttribute('aria-selected', 'false'));
+    option.setAttribute('aria-selected', 'true');
+    deliveryLabel.textContent = option.textContent;
+    deliveryHidden.value = option.dataset.value;
+    closeDeliveryDropdown();
+  }
+  function closeDeliveryDropdown() { deliveryDropdown.style.display = 'none'; deliveryTrigger.setAttribute('aria-expanded', 'false'); }
+  function openDeliveryDropdown() { deliveryDropdown.style.display = 'block'; deliveryTrigger.setAttribute('aria-expanded', 'true'); const opts = deliveryDropdown.querySelectorAll('[role="option"]'); deliveryActiveIndex = [...opts].findIndex(o => o.getAttribute('aria-selected') === 'true'); if (deliveryActiveIndex === -1) deliveryActiveIndex = 0; opts[deliveryActiveIndex]?.focus(); }
+  deliveryTrigger?.addEventListener('click', () => deliveryDropdown.style.display === 'block' ? closeDeliveryDropdown() : openDeliveryDropdown());
+  deliveryTrigger?.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDeliveryDropdown(); } });
+  deliveryDropdown?.addEventListener('click', (e) => { const option = e.target.closest('[role="option"]'); if (option) setDeliveryOption(option); });
+  deliveryDropdown?.addEventListener('keydown', (e) => {
+    const opts = [...deliveryDropdown.querySelectorAll('[role="option"]')]; if (!opts.length) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); deliveryActiveIndex = Math.min(deliveryActiveIndex + 1, opts.length - 1); opts[deliveryActiveIndex]?.focus(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); deliveryActiveIndex = Math.max(deliveryActiveIndex - 1, 0); opts[deliveryActiveIndex]?.focus(); }
+    else if (e.key === 'Enter') { e.preventDefault(); setDeliveryOption(opts[deliveryActiveIndex]); }
+    else if (e.key === 'Escape') { closeDeliveryDropdown(); deliveryTrigger.focus(); }
+  });
+  document.addEventListener('click', (e) => { if (!deliveryTrigger?.contains(e.target) && !deliveryDropdown?.contains(e.target)) closeDeliveryDropdown(); });
+
   document.getElementById('miniCartClose')?.addEventListener('click', () => { animatePress(document.getElementById('miniCartClose')); closeModal(DOM.miniCartModal); });
   document.getElementById('paymentClose')?.addEventListener('click', () => { animatePress(document.getElementById('paymentClose')); closeModal(DOM.paymentModal); });
   document.getElementById('aiChatClose')?.addEventListener('click', () => { animatePress(document.getElementById('aiChatClose')); closeModal(DOM.aiChatBox); });
   document.getElementById('orderConfirmClose')?.addEventListener('click', () => { animatePress(document.getElementById('orderConfirmClose')); closeModal(document.getElementById('orderConfirmModal')); });
+
   DOM.customerNameInput?.addEventListener('input', () => { state.customerName = DOM.customerNameInput.value; saveUser(state.customerName, state.selectedDistrict); const waktu = getWaktu(); DOM.headerName.textContent = `Selamat ${waktu}, ${state.customerName || 'Tamu'} • ${state.selectedDistrict || 'Pilih alamat tujuan'}`; if (DOM.aiWelcome) DOM.aiWelcome.textContent = `Selamat ${waktu}, ${state.customerName || 'Tamu'}. Ada yang bisa kami bantu?`; });
   DOM.customerPhoneInput?.addEventListener('input', () => { DOM.customerPhoneInput.value = DOM.customerPhoneInput.value.replace(/\D/g, ''); state.customerPhone = DOM.customerPhoneInput.value; saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict, state.userDistance); });
   DOM.customerAddressInput?.addEventListener('input', () => { state.customerAddress = DOM.customerAddressInput.value; saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict, state.userDistance); });
+
   document.addEventListener('click', async (e) => {
-    const drawerInput = DOM.districtInput; const drawerDropdown = DOM.drawerDistrictDropdown; if (drawerInput && drawerDropdown && !drawerInput.contains(e.target) && !drawerDropdown.contains(e.target)) { drawerDropdown.style.display = 'none'; drawerInput.setAttribute('aria-expanded', 'false'); }
+    const drawerInput = DOM.districtInput; const drawerDropdown = DOM.drawerDistrictDropdown;
+    if (drawerInput && drawerDropdown && !drawerInput.contains(e.target) && !drawerDropdown.contains(e.target)) { drawerDropdown.style.display = 'none'; drawerInput.setAttribute('aria-expanded', 'false'); }
     const boutique = e.target.closest('.boutique-item'); if (boutique) { const idx = parseInt(boutique.dataset.idx); if (!isNaN(idx) && openProductPageFn) openProductPageFn(idx); return; }
     const step1Btn = e.target.closest('.step-1-btn'); if (step1Btn) { if (window.navigator.vibrate) window.navigator.vibrate(APP_CONFIG.HAPTIC.LIGHT); const idx = step1Btn.dataset.idx, pid = step1Btn.dataset.pid; const step1 = document.getElementById(`step1_${idx}_${pid}`), step2 = document.getElementById(`step2_${idx}_${pid}`); if (step1 && step2) { step1.style.transition = 'opacity 0.3s ease'; step1.style.opacity = '0'; setTimeout(() => { step1.style.display = 'none'; step2.style.display = 'block'; const firstOption = step2.querySelector('.spice-option'); if (firstOption) firstOption.focus(); }, APP_CONFIG.TIMING.STEP_TRANSITION); } return; }
     const spiceOption = e.target.closest('.spice-option'); if (spiceOption) { const pid = spiceOption.dataset.pid; if (state.drafts[pid]) { state.drafts[pid].spice = parseInt(spiceOption.dataset.spice); updateDraftUI(pid); } return; }
@@ -49,5 +86,6 @@ export function bindEvents() {
     if (e.target.closest('#backFromProduct')) { animatePress(e.target.closest('#backFromProduct')); if (closeProductPageFn) closeProductPageFn(false); return; }
     const faqToggle = e.target.closest('[data-toggle="faq"]'); if (faqToggle) { const item = faqToggle.closest('.faq-item'); const isOpen = item.classList.toggle('open'); faqToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false'); return; }
   });
+
   document.querySelectorAll('.modal-overlay').forEach(overlay => { overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(overlay); }); });
 }
