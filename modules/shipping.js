@@ -5,19 +5,9 @@ export function calculateShipping(distance, mainQty, provider = 'lalamove', tier
   if (dist < 0) return { cost: null, label: 'Jarak tidak valid' };
   if (dist > 70) return { cost: null, label: 'Konfirmasi via Concierge' };
   const qty = Math.max(1, mainQty || 1);
-  if (provider === 'paxel') {
-    const large = Math.floor(qty / 2);
-    const med = qty % 2;
-    return { cost: (large * 25000) + (med * 20000) + ((large + med) * 3000), label: 'Paxel Ekspres' };
-  }
-  let cost = dist <= 3 ? 8000 :
-             dist <= 10 ? 8000 + (dist - 3) * 1800 :
-             dist <= 20 ? 20600 + (dist - 10) * 1600 :
-             dist <= 30 ? 36600 + (dist - 20) * 1400 :
-             50600 + (dist - 30) * 1150;
-  if (tier === 'prioritas') {
-    cost = Math.round(cost * 1.25);
-  }
+  if (provider === 'paxel') { const large = Math.floor(qty / 2); const med = qty % 2; return { cost: (large * 25000) + (med * 20000) + ((large + med) * 3000), label: 'Paxel Ekspres' }; }
+  let cost = dist <= 3 ? 8000 : dist <= 10 ? 8000 + (dist - 3) * 1800 : dist <= 20 ? 20600 + (dist - 10) * 1600 : dist <= 30 ? 36600 + (dist - 20) * 1400 : 50600 + (dist - 30) * 1150;
+  if (tier === 'prioritas') cost = Math.round(cost * 1.25);
   return { cost, label: tier === 'prioritas' ? 'Prioritas' : 'Reguler' };
 }
 
@@ -54,14 +44,9 @@ export async function searchAddressOSM(query, externalSignal) {
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&countrycodes=id&viewbox=${viewbox}&bounded=1&limit=5`;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 6000);
-  if (externalSignal) {
-    externalSignal.addEventListener('abort', () => controller.abort());
-  }
+  if (externalSignal) externalSignal.addEventListener('abort', () => controller.abort());
   try {
-    const response = await fetch(url, {
-      headers: { 'User-Agent': 'RujakCo-DeliveryApp/1.0 (halo@rujakco.biz.id)' },
-      signal: controller.signal
-    });
+    const response = await fetch(url, { headers: { 'User-Agent': 'RujakCo-DeliveryApp/1.0 (halo@rujakco.biz.id)' }, signal: controller.signal });
     clearTimeout(timeout);
     if (!response.ok) return [];
     return await response.json();
@@ -78,10 +63,7 @@ export async function reverseGeocode(lat, lon) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 6000);
   try {
-    const response = await fetch(url, {
-      headers: { 'User-Agent': 'RujakCo-DeliveryApp/1.0 (halo@rujakco.biz.id)' },
-      signal: controller.signal
-    });
+    const response = await fetch(url, { headers: { 'User-Agent': 'RujakCo-DeliveryApp/1.0 (halo@rujakco.biz.id)' }, signal: controller.signal });
     clearTimeout(timeout);
     if (!response.ok) return null;
     return await response.json();
