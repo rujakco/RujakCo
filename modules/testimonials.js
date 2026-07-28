@@ -19,15 +19,9 @@ export function initTestimonials() {
     if (index === currentIndex) return;
     const leavingIndex = currentIndex;
     cards.forEach((card, i) => {
-      if (i === index) {
-        card.classList.add('is-active');
-        card.classList.remove('is-prev');
-      } else if (i === leavingIndex) {
-        card.classList.remove('is-active');
-        card.classList.add('is-prev');
-      } else {
-        card.classList.remove('is-active', 'is-prev');
-      }
+      if (i === index) { card.classList.add('is-active'); card.classList.remove('is-prev'); }
+      else if (i === leavingIndex) { card.classList.remove('is-active'); card.classList.add('is-prev'); }
+      else { card.classList.remove('is-active', 'is-prev'); }
     });
     dots.forEach((dot, i) => dot.setAttribute('aria-current', i === index ? 'true' : 'false'));
     currentIndex = index;
@@ -36,7 +30,9 @@ export function initTestimonials() {
 
   function nextCard() { if (userPaused || tempPaused) return; showCard((currentIndex + 1) % cards.length, true); }
   function startFlip() { if (interval) clearInterval(interval); if (!userPaused) interval = setInterval(nextCard, AUTO_ADVANCE_INTERVAL); }
+
   function setPauseUI(paused) {
+    if (!pauseBtn) return;
     pauseBtn.setAttribute('aria-pressed', paused);
     pauseBtn.setAttribute('aria-label', paused ? 'Lanjutkan testimoni otomatis' : 'Jeda testimoni otomatis');
     pauseBtn.innerHTML = `<i data-lucide="${paused ? 'play' : 'pause'}" style="width:14px;height:14px;"></i>`;
@@ -44,7 +40,6 @@ export function initTestimonials() {
   }
 
   pauseBtn?.addEventListener('click', () => { userPaused = !userPaused; setPauseUI(userPaused); userPaused ? clearInterval(interval) : startFlip(); });
-
   const stopTemp = () => { tempPaused = true; clearTimeout(resumeTimer); };
   const resumeTemp = () => { tempPaused = false; if (!userPaused) startFlip(); };
   container.addEventListener('touchstart', stopTemp);
@@ -52,15 +47,7 @@ export function initTestimonials() {
   container.addEventListener('mouseenter', stopTemp);
   container.addEventListener('mouseleave', () => { if (tempPaused) { clearTimeout(resumeTimer); resumeTimer = setTimeout(resumeTemp, 1000); } });
 
-  dots.forEach(dot => {
-    dot.addEventListener('click', (e) => {
-      e.stopPropagation();
-      showCard(parseInt(dot.dataset.dot), true);
-      stopTemp();
-      clearTimeout(resumeTimer);
-      resumeTimer = setTimeout(resumeTemp, 3000);
-    });
-  });
+  dots.forEach(dot => { dot.addEventListener('click', (e) => { e.stopPropagation(); showCard(parseInt(dot.dataset.dot), true); stopTemp(); clearTimeout(resumeTimer); resumeTimer = setTimeout(resumeTemp, 3000); }); });
 
   if (liveRegion) liveRegion.textContent = `Testimoni dari ${getAuthor(cards[0])}`;
   setPauseUI(userPaused);
