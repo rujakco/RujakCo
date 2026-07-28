@@ -1,4 +1,4 @@
-// app.js – FINAL V3.0 + Offline Handler, Retry & Logger
+// app.js – FINAL V3.0 (Logger + Retry + Offline Handler + Modular Architecture)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM } from './data/config.js';
 import { fmt, showToast, getSupabase, escapeHTML } from './utils/helpers.js';
@@ -11,11 +11,13 @@ import { initTestimonials } from './modules/testimonials.js';
 import { getCartSummary, showWhatsAppFallback } from './modules/checkout.js';
 import { showOrderConfirmation as launchProReceipt } from './modules/checkout-receipt.js';
 
-// --- Modul Eksternal ---
+// --- Modul UI & Manager ---
 import { initNavigation, syncBottomNav } from './modules/navigation.js';
 import { initModalManager, openModal, closeModal, releaseInert, overlayStack, isProgrammaticBack, setProgrammaticBack } from './modules/modal-manager.js';
 import { initGesturesConfig, initDetailGestures } from './modules/gesture.js';
 import { initPersonalizationConfig, applyPersonalization, initHeroParallax } from './modules/personalization.js';
+
+// --- Modul Bisnis ---
 import { initShippingController, extractShortLocation, updateShippingUI, initDrawerDistrictDropdown } from './modules/shipping-controller.js';
 import { initCartController, updateCartUI } from './modules/cart-controller.js';
 import { initOnboardingConfig, initOnboarding } from './modules/onboarding.js';
@@ -102,7 +104,7 @@ const cacheDOM = () => {
 };
 
 // ---------------------------------------------------------------------------
-// FUNGSI PEMBANTU
+// FUNGSI PEMBANTU (loadScript, downloadReceiptPNG, sendReceiptToTelegram)
 // ---------------------------------------------------------------------------
 function loadScript(src) {
   return new Promise((resolve, reject) => {
@@ -115,9 +117,6 @@ function loadScript(src) {
   });
 }
 
-// ---------------------------------------------------------------------------
-// DOWNLOAD STRUK & TELEGRAM (DENGAN RETRY & LOGGING)
-// ---------------------------------------------------------------------------
 async function downloadReceiptPNG() {
   const element = document.getElementById('orderConfirmContent');
   if (!element) return null;
@@ -138,8 +137,6 @@ async function downloadReceiptPNG() {
     if (!blob) return null;
     const safeCode = state.currentOrderCode || `RJ-${new Date().getTime()}`;
     const fileName = `${safeCode.replace(/[^a-zA-Z0-9]/g, '-')}.png`;
-
-    // Upload dengan retry
     const uploadResult = await supabaseQueryWithRetry(
       () => sb.storage.from('receipts').upload(fileName, blob, { contentType: 'image/png', upsert: true }),
       'supabase-upload',
@@ -150,7 +147,6 @@ async function downloadReceiptPNG() {
       showToast('Gagal simpan struk.');
       return null;
     }
-
     const { data: { publicUrl } } = sb.storage.from('receipts').getPublicUrl(fileName);
     state.receiptUrl = publicUrl;
     return publicUrl;
@@ -257,7 +253,7 @@ async function showOrderConfirmation() {
 }
 
 // ---------------------------------------------------------------------------
-// PRODUCT PAGE LOGIC (TIDAK BERUBAH)
+// PRODUCT PAGE LOGIC
 // ---------------------------------------------------------------------------
 function openProductPage(globalIndex) {
   if (!DOM.productPage) return;
@@ -360,7 +356,6 @@ function init() {
   initOfflineHandler({
     syncCallback: async (action) => {
       console.log('Memproses aksi offline:', action);
-      // Di sini nanti bisa diisi logika sinkronisasi cart, dll.
       return true;
     }
   });
