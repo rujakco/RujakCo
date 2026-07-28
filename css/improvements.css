@@ -8,10 +8,11 @@
 .skeleton-card {
   flex: 0 0 100%;
   max-width: 440px;
-  margin: 0 -12px;
-  padding: var(--space-4) calc(var(--space-3) + 4px);
+  margin: 0;                      /* ← diubah: menghilangkan margin negatif */
+  padding: var(--space-4) var(--space-3);
   background: var(--white);
   border-radius: var(--radius-lg);
+  box-shadow: 0 10px 20px -10px var(--black-05); /* konsisten dengan style.css */
   text-align: center;
   min-height: 440px;
 }
@@ -59,7 +60,7 @@
 /* ─── 2. Offline Banner ─── */
 .offline-banner {
   position: fixed;
-  top: 56px;
+  top: var(--header-height, 56px);   /* ← diubah: pakai variabel */
   left: 50%;
   transform: translateX(-50%) translateY(-120%);
   z-index: 2000;
@@ -81,6 +82,7 @@
 .is-offline .offline-banner {
   transform: translateX(-50%) translateY(0);
   opacity: 1;
+  pointer-events: auto;            /* ← ditambahkan: agar bisa diklik */
 }
 
 .offline-dot {
