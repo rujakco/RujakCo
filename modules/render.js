@@ -1,4 +1,3 @@
-// modules/render.js – FINAL (dengan dukungan lini asinan)
 import { PRODUCTS } from '../data/products.js';
 import { SPICE_LABELS } from '../data/config.js';
 import { fmt, escapeHTML } from '../utils/helpers.js';
@@ -7,26 +6,17 @@ import { getCartSummary } from './checkout.js';
 const LOOP_MULTIPLIER = 3;
 const products = PRODUCTS || [];
 let loopedProducts = [];
-for (let i = 0; i < LOOP_MULTIPLIER; i++) {
-  loopedProducts = loopedProducts.concat(products);
-}
+for (let i = 0; i < LOOP_MULTIPLIER; i++) { loopedProducts = loopedProducts.concat(products); }
 
-// Fungsi penentu label berdasarkan kategori produk
 function getFlavorLabel(product) {
-  if (product.category === 'asinan') {
-    return { label: 'Kuah', value: product.kuah };
-  }
-  // Default: rujak
+  if (product.category === 'asinan') return { label: 'Kuah', value: product.kuah };
   return { label: 'Sambal', value: product.sambal };
 }
 
 export function renderMenu(containerId = 'menuList') {
   const container = document.getElementById(containerId);
   if (!container) return;
-  if (!loopedProducts.length) {
-    container.innerHTML = '<p style="text-align:center;padding:40px 20px;color:var(--gray-500);">Belum ada produk tersedia.</p>';
-    return;
-  }
+  if (!loopedProducts.length) { container.innerHTML = '<p style="text-align:center;padding:40px 20px;color:var(--gray-500);">Belum ada produk tersedia.</p>'; return; }
   container.innerHTML = loopedProducts.map((p, index) => `
     <div class="boutique-item" data-id="${p.id}" data-idx="${index}">
       <img class="btq-img" src="${p.thumbnail}" loading="lazy" alt="${escapeHTML(p.name)}" />
@@ -38,9 +28,8 @@ export function renderMenu(containerId = 'menuList') {
     </div>`).join('');
 
   container.querySelectorAll('img.btq-img').forEach(img => {
-    if (img.complete && img.naturalWidth > 0) {
-      img.classList.add('loaded');
-    } else {
+    if (img.complete && img.naturalWidth > 0) img.classList.add('loaded');
+    else {
       img.addEventListener('load', () => img.classList.add('loaded'));
       img.addEventListener('error', () => {
         img.classList.add('loaded');
@@ -57,37 +46,25 @@ export function renderMenu(containerId = 'menuList') {
 export function renderProductSwiper(drafts, trackId = 'productSwiperTrack') {
   const track = document.getElementById(trackId);
   if (!track) return;
-  if (!loopedProducts.length) {
-    track.innerHTML = '<p style="text-align:center;padding:40px 20px;color:var(--gray-500);">Belum ada produk tersedia.</p>';
-    return;
-  }
+  if (!loopedProducts.length) { track.innerHTML = '<p style="text-align:center;padding:40px 20px;color:var(--gray-500);">Belum ada produk tersedia.</p>'; return; }
   track.innerHTML = loopedProducts.map((p, index) => {
     const draft = drafts?.[p.id] || { spice: p.defaultSpice || 3, qty: 1 };
     const spiceLabel = SPICE_LABELS?.[draft.spice] ?? 'Sedang';
-    const flavor = getFlavorLabel(p); // label dinamis
+    const flavor = getFlavorLabel(p);
     return `
     <div class="product-slide" data-id="${p.id}" data-idx="${index}">
-      <div class="detail-image-wrap">
-        <img class="lazy-detail" data-src="${p.image}" alt="${escapeHTML(p.name)}" loading="lazy" />
-      </div>
+      <div class="detail-image-wrap"><img class="lazy-detail" data-src="${p.image}" alt="${escapeHTML(p.name)}" loading="lazy" /></div>
       <div class="detail-content">
         <h2>${escapeHTML(p.name)}</h2>
         ${p.badge ? `<span class="btq-badge" style="display:inline-block;margin-bottom:4px;">${escapeHTML(p.badge)}</span>` : ''}
         <div class="detail-price-row"><span class="detail-price">${fmt(p.price)}</span><span class="price-line"></span></div>
         <p class="detail-desc">${escapeHTML(p.desc)}</p>
         <div class="action-area">
-          <div id="step1_${index}_${p.id}" class="action-step-1">
-            <button class="step-1-btn btn-gold" data-idx="${index}" data-pid="${p.id}">Sesuaikan &amp; Pesan</button>
-          </div>
+          <div id="step1_${index}_${p.id}" class="action-step-1"><button class="step-1-btn btn-gold" data-idx="${index}" data-pid="${p.id}">Sesuaikan &amp; Pesan</button></div>
           <div id="step2_${index}_${p.id}" class="step-2-content">
             <div class="spice-level-container">
-              <div class="spice-header">
-                <span class="spice-title">Tingkat Pedas</span>
-                <span class="spice-status" id="spiceLabel_${index}_${p.id}">${spiceLabel}</span>
-              </div>
-              <div class="spice-selector">
-                ${[1,2,3,4,5].map(i => `<button class="spice-option ${i === draft.spice ? 'active' : ''}" data-spice="${i}" data-pid="${p.id}">${i}</button>`).join('')}
-              </div>
+              <div class="spice-header"><span class="spice-title">Tingkat Pedas</span><span class="spice-status" id="spiceLabel_${index}_${p.id}">${spiceLabel}</span></div>
+              <div class="spice-selector">${[1,2,3,4,5].map(i => `<button class="spice-option ${i === draft.spice ? 'active' : ''}" data-spice="${i}" data-pid="${p.id}">${i}</button>`).join('')}</div>
             </div>
             <div class="detail-actions" style="margin-bottom:0;">
               <div class="qty-minimal">
@@ -104,10 +81,7 @@ export function renderProductSwiper(drafts, trackId = 'productSwiperTrack') {
         <label class="section-label">Spesifikasi Sajian</label>
         <p class="fruit-list-inline" style="margin-bottom:40px;">${escapeHTML(p.container)} <span class="fruit-bullet">•</span> ${escapeHTML(p.size)} <span class="fruit-bullet">•</span> ${escapeHTML(flavor.value)}</p>
         ${p.story ? `<label class="section-label">Cerita di Baliknya</label><p style="font-family:'Fraunces',serif;font-style:italic;text-align:center;color:var(--gray-500);padding:0 16px;margin-bottom:40px;line-height:1.8;">${escapeHTML(p.story)}</p>` : ''}
-        <div class="detail-manifesto">
-          <h4><i data-lucide="shield-check" class="icon-sm inline" style="margin-bottom:-2px;"></i> Komitmen Kesegaran</h4>
-          <p>Kerenyahan adalah prioritas kami. Buah dipotong tepat 15 menit sebelum diantar, dan sambal selalu dikemas terpisah agar teksturnya terjaga.</p>
-        </div>
+        <div class="detail-manifesto"><h4><i data-lucide="shield-check" class="icon-sm inline" style="margin-bottom:-2px;"></i> Komitmen Kesegaran</h4><p>Kerenyahan adalah prioritas kami. Buah dipotong tepat 15 menit sebelum diantar, dan sambal selalu dikemas terpisah agar teksturnya terjaga.</p></div>
       </div>
     </div>`;
   }).join('');
@@ -127,10 +101,7 @@ export function renderProductSwiper(drafts, trackId = 'productSwiperTrack') {
 
 export function renderCart(cart, badgeIds = ['cartBadgeNav']) {
   const totalQty = Object.values(cart).reduce((sum, entry) => sum + (entry.qty || 0), 0);
-  badgeIds.forEach(id => {
-    const badge = document.getElementById(id);
-    if (badge) { badge.textContent = totalQty; badge.style.display = totalQty > 0 ? 'flex' : 'none'; }
-  });
+  badgeIds.forEach(id => { const badge = document.getElementById(id); if (badge) { badge.textContent = totalQty; badge.style.display = totalQty > 0 ? 'flex' : 'none'; } });
 }
 
 export function renderMiniCart(cart, listId = 'miniCartList', subtotalId = 'cartSubtotalDisplay') {
@@ -138,17 +109,17 @@ export function renderMiniCart(cart, listId = 'miniCartList', subtotalId = 'cart
   const list = document.getElementById(listId);
   if (!list) return sum;
   list.innerHTML = sum.items.length === 0
-    ? `<div class="cart-empty">
-         <i data-lucide="shopping-bag" style="width:48px;height:48px;color:var(--gray-400);margin-bottom:16px;"></i>
-         <p style="font-weight:600;">Reservasi masih kosong</p>
-         <button class="btn-dark" id="emptyCartBrowse" style="margin-top:20px;">Lihat Koleksi</button>
+    ? `<div class="empty-state">
+         <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+           <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+         </svg>
+         <p class="empty-title">Belum ada reservasi</p>
+         <p class="empty-sub">Temukan rujak favorit Anda<br>dan rasakan segarnya.</p>
+         <button type="button" class="btn-gold empty-cta" id="emptyCartBrowse">Lihat Koleksi</button>
        </div>`
     : sum.items.map(i => `
       <div class="cart-item-row">
-        <div class="cart-item-info">
-          <h4>${escapeHTML(i.name)}${i.spice ? ' (Lv ' + i.spice + ')' : ''}</h4>
-          <p>${fmt(i.price)}</p>
-        </div>
+        <div class="cart-item-info"><h4>${escapeHTML(i.name)}${i.spice ? ' (Lv ' + i.spice + ')' : ''}</h4><p>${fmt(i.price)}</p></div>
         <div class="qty-minimal">
           <button data-action="decrease" data-id="${i.cartId}" aria-label="Kurangi jumlah">−</button>
           <span>${i.qty}</span>
