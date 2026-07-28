@@ -1,4 +1,4 @@
-// app.js – FINAL V3.0 (Logger + Retry + Offline Handler + Modular Architecture + Analytics + Slots)
+// app.js – FINAL (Logger + Retry + Offline + Analytics + Slots + Semua Bugfix)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM } from './data/config.js';
 import { fmt, showToast, getSupabase, escapeHTML } from './utils/helpers.js';
