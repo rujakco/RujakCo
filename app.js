@@ -1,4 +1,4 @@
-// app.js – FINAL V3.0 (Logger + Retry + Offline Handler + Modular Architecture)
+// app.js – FINAL V3.0 (Logger + Retry + Offline Handler + Modular Architecture + Analytics + Slots)
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM } from './data/config.js';
 import { fmt, showToast, getSupabase, escapeHTML } from './utils/helpers.js';
@@ -27,6 +27,9 @@ import { initEventBinderConfig, bindEvents } from './modules/event-binder.js';
 import { logError } from './utils/logger.js';
 import { supabaseQueryWithRetry } from './utils/fetchWithRetry.js';
 import { initOfflineHandler } from './utils/offlineHandler.js';
+import { generatePIN } from './modules/orderTracker.js';
+import { initAnalytics, trackBeginCheckout, trackPurchase } from './modules/analytics.js';
+import { getSlotUrgencyText, consumeSlot } from './modules/simulatedSlots.js';
 
 const state = {
   cart: {},
@@ -42,6 +45,7 @@ const state = {
   haversineUsed: false,
   lastViewedProductIndex: -1,
   currentOrderCode: null,
+  currentOrderPin: null,
   receiptUrl: null,
 };
 
@@ -180,7 +184,12 @@ async function sendReceiptToWhatsApp() {
   const shipCost = DOM.finalShipping?.textContent || '—';
   const totalCost = DOM.finalTotal?.textContent || '—';
   const distance = state.userDistance ? `${state.userDistance} km` : '—';
-  let msg = `🧾 *STRUK PESANAN RUJAK.CO*\n🆔 *Order ID:* ${state.currentOrderCode || '—'}\n\n👤 *Penerima:* ${name}\n📞 *HP:* ${phone}\n📍 *Alamat:* ${address}\n\n🗺️ *Jarak:* ${distance}\n🕒 *Pengantaran:* ${deliveryTime}\n📝 *Catatan:* ${notes}\n🚚 *Kurir:* ${logisticInfo}\n\n📦 *Pesanan:*\n`;
+
+  if (!state.currentOrderPin) state.currentOrderPin = generatePIN();
+
+  let msg = `🧾 *STRUK PESANAN RUJAK.CO*\n🆔 *Order ID:* ${state.currentOrderCode || '—'}\n🔑 *PIN Lacak:* ${state.currentOrderPin}\n\n`;
+  msg += `👤 *Penerima:* ${name}\n📞 *HP:* ${phone}\n📍 *Alamat:* ${address}\n`;
+  msg += `\n🗺️ *Jarak:* ${distance}\n🕒 *Pengantaran:* ${deliveryTime}\n📝 *Catatan:* ${notes}\n🚚 *Kurir:* ${logisticInfo}\n\n📦 *Pesanan:*\n`;
   summary.items.forEach(item => { const spiceText = item.spice ? ` (Lv ${item.spice})` : ''; msg += `• ${item.name}${spiceText} x${item.qty} = ${fmt(item.price * item.qty)}\n`; });
   msg += `\n💵 *Subtotal:* ${fmt(summary.subtotal)}\n🛵 *Ongkir:* ${shipCost}\n💰 *TOTAL TRANSFER:* *${totalCost}*\n\n📎 _Mohon lampirkan bukti transfer dan struk reservasi Anda._`;
 
@@ -189,25 +198,31 @@ async function sendReceiptToWhatsApp() {
     try {
       await supabaseQueryWithRetry(
         () => sb.from('orders').insert({
-          order_code: state.currentOrderCode, customer_name: name, customer_phone: phone, customer_address: address,
-          district: state.selectedDistrict, distance_km: state.userDistance, items: summary.items,
+          order_code: state.currentOrderCode, access_pin: state.currentOrderPin, customer_name: name, customer_phone: phone,
+          customer_address: address, district: state.selectedDistrict, distance_km: state.userDistance, items: summary.items,
           subtotal: summary.subtotal,
           shipping_cost: Number.isNaN(parseInt(shipCost.replace(/\D/g, ''))) ? null : parseInt(shipCost.replace(/\D/g, '')),
           total: Number.isNaN(parseInt(totalCost.replace(/\D/g, ''))) ? null : parseInt(totalCost.replace(/\D/g, '')),
           shipping_provider: logisticInfo, delivery_time: deliveryTime, notes, status: 'pending_payment'
         }),
-        'supabase-insert',
-        { orderCode: state.currentOrderCode }
+        'supabase-insert', { orderCode: state.currentOrderCode }
       );
       orderSaved = true;
     } catch (err) { logError('supabase', err, { orderCode: state.currentOrderCode }); }
   }
 
+  // Tracking & konsumsi slot
+  const slotWindow = deliveryTime.includes('Pagi') ? 'pagi' : deliveryTime.includes('Sore') ? 'sore' : 'siang';
+  consumeSlot(slotWindow);
+  trackPurchase(state.currentOrderCode, parseInt((totalCost).replace(/\D/g, '')), 'QRIS', summary.items);
+
   const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
   const newWindow = window.open(waUrl, '_blank', 'noopener');
   if (newWindow) {
-    if (orderSaved) { state.cart = {}; updateCartUI(); showToast('Pesanan terkirim.'); }
-    else showToast('⚠️ Pesan WhatsApp terkirim, tapi catatan gagal tersimpan.');
+    if (orderSaved) {
+      state.cart = {}; state.currentOrderPin = null;
+      updateCartUI(); showToast('Pesanan terkirim.');
+    } else showToast('⚠️ Pesan WhatsApp terkirim, tapi catatan gagal tersimpan.');
   } else {
     showWhatsAppFallback(SYSTEM.WA_NUMBER, msg);
     if (!orderSaved) showToast('Catatan belum tersimpan.');
@@ -263,6 +278,7 @@ function init() {
   initOnboardingConfig(DOM, state, APP_CONFIG);
   initEventBinderConfig(DOM, state, APP_CONFIG, { openProductPage, closeProductPage, showOrderConfirmation, sendReceiptToWhatsApp });
   initOfflineHandler({ syncCallback: async (action) => { console.log('Memproses aksi offline:', action); return true; } });
+  initAnalytics();
 
   try {
     if (!isStorageAvailable()) showToast('Penyimpanan tak tersedia.');
@@ -271,7 +287,15 @@ function init() {
     if (saved?.district) { state.selectedDistrictFull = saved.district; state.selectedDistrict = extractShortLocation(saved.district) || saved.district; }
     const cust = loadCustomer();
     if (cust) { state.customerPhone = cust.phone || ''; state.customerAddress = cust.address || ''; if (!state.selectedDistrict && cust.district) { state.selectedDistrictFull = cust.district; state.selectedDistrict = extractShortLocation(cust.district) || cust.district; } if (cust.distance !== null && cust.distance !== undefined && !isNaN(cust.distance)) state.userDistance = cust.distance; }
-    renderMenu(); renderProductSwiper(state.drafts); initCarousel(); initDetailGestures(); initAccessibility();
+    renderMenu(); renderProductSwiper(state.drafts);
+
+    // Banner urgensi
+    const urgencyBanner = document.createElement('div'); urgencyBanner.className = 'urgency-banner'; urgencyBanner.id = 'urgencyBanner';
+    document.querySelector('.carousel-container')?.prepend(urgencyBanner);
+    const updateUrgencyBanner = () => { const text = getSlotUrgencyText(); const banner = document.getElementById('urgencyBanner'); if (banner) { banner.textContent = text; banner.style.display = text ? 'block' : 'none'; } };
+    updateUrgencyBanner(); setInterval(updateUrgencyBanner, 60000);
+
+    initCarousel(); initDetailGestures(); initAccessibility();
     const updateWelcome = initAIChat(); if (updateWelcome) updateWelcome(state.customerName || 'Tamu');
     bindEvents(); initOnboarding(); initDrawerDistrictDropdown(); initTestimonials();
     updateCartUI(); applyPersonalization(); if (window.lucide) lucide.createIcons(); initHeroParallax();
@@ -282,7 +306,7 @@ function init() {
     window.addEventListener('popstate', (e) => { if (isProgrammaticBack) { setProgrammaticBack(false); return; } if (overlayStack.length > 0) { const topOverlay = overlayStack[overlayStack.length - 1]; if (e.state && e.state.id && e.state.id !== topOverlay.id) return; if (topOverlay.id === 'productPage') closeProductPage(true); else closeModal(topOverlay, true); } });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlayStack.length > 0) { const topOverlay = overlayStack[overlayStack.length - 1]; if (topOverlay.id === 'productPage') closeProductPage(false); else closeModal(topOverlay, false); } });
     syncBottomNav();
-    console.log('✅ RUJAK.Co siap (Modular Architecture v3.0).');
+    console.log('✅ RUJAK.Co siap (Modular Architecture v3.0 + Analytics + Slots).');
   } catch (err) { console.error('❌ Gagal inisialisasi:', err); showToast('Terjadi kesalahan sistem.'); }
 }
 
