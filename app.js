@@ -104,7 +104,7 @@ const cacheDOM = () => {
 };
 
 // ---------------------------------------------------------------------------
-// FUNGSI PEMBANTU (loadScript, downloadReceiptPNG, sendReceiptToTelegram)
+// FUNGSI PEMBANTU
 // ---------------------------------------------------------------------------
 function loadScript(src) {
   return new Promise((resolve, reject) => {
@@ -137,16 +137,11 @@ async function downloadReceiptPNG() {
     if (!blob) return null;
     const safeCode = state.currentOrderCode || `RJ-${new Date().getTime()}`;
     const fileName = `${safeCode.replace(/[^a-zA-Z0-9]/g, '-')}.png`;
-    const uploadResult = await supabaseQueryWithRetry(
+    await supabaseQueryWithRetry(
       () => sb.storage.from('receipts').upload(fileName, blob, { contentType: 'image/png', upsert: true }),
       'supabase-upload',
       { fileName }
     );
-    if (uploadResult.error) {
-      logError('receipt', new Error(uploadResult.error.message), { fileName });
-      showToast('Gagal simpan struk.');
-      return null;
-    }
     const { data: { publicUrl } } = sb.storage.from('receipts').getPublicUrl(fileName);
     state.receiptUrl = publicUrl;
     return publicUrl;
@@ -166,13 +161,11 @@ async function sendReceiptToTelegram() {
   try {
     await supabase.functions.invoke('send-telegram', { body: { order_code: state.currentOrderCode, receipt_url: state.receiptUrl, caption } });
     console.log('✅ Telegram terkirim');
-  } catch (err) {
-    logError('telegram', err, { orderCode: state.currentOrderCode });
-  }
+  } catch (err) { logError('telegram', err, { orderCode: state.currentOrderCode }); }
 }
 
 // ---------------------------------------------------------------------------
-// CHECKOUT & WHATSAPP (DENGAN RETRY & LOGGING)
+// CHECKOUT & WHATSAPP
 // ---------------------------------------------------------------------------
 async function sendReceiptToWhatsApp() {
   const summary = getCartSummary(state.cart);
@@ -183,65 +176,38 @@ async function sendReceiptToWhatsApp() {
   const deliveryTime = document.getElementById('deliveryTime')?.value || '—';
   const notes = document.getElementById('orderNotes')?.value.trim() || 'Tidak ada catatan';
   let logisticInfo = state.shippingProvider === 'paxel' ? 'Paxel Ekspres' : 'Kurir Lalamove';
-  if (state.shippingProvider === 'lalamove') {
-    logisticInfo += ` (${state.tier === 'prioritas' ? 'Prioritas' : 'Reguler'})`;
-  }
+  if (state.shippingProvider === 'lalamove') logisticInfo += ` (${state.tier === 'prioritas' ? 'Prioritas' : 'Reguler'})`;
   const shipCost = DOM.finalShipping?.textContent || '—';
   const totalCost = DOM.finalTotal?.textContent || '—';
   const distance = state.userDistance ? `${state.userDistance} km` : '—';
-  let msg = `🧾 *STRUK PESANAN RUJAK.CO*\n🆔 *Order ID:* ${state.currentOrderCode || '—'}\n\n`;
-  msg += `👤 *Penerima:* ${name}\n📞 *HP:* ${phone}\n📍 *Alamat:* ${address}\n`;
-  msg += `\n🗺️ *Jarak:* ${distance}\n🕒 *Pengantaran:* ${deliveryTime}\n📝 *Catatan:* ${notes}\n🚚 *Kurir:* ${logisticInfo}\n\n📦 *Pesanan:*\n`;
-  summary.items.forEach(item => {
-    const spiceText = item.spice ? ` (Lv ${item.spice})` : '';
-    msg += `• ${item.name}${spiceText} x${item.qty} = ${fmt(item.price * item.qty)}\n`;
-  });
-  msg += `\n💵 *Subtotal:* ${fmt(summary.subtotal)}\n🛵 *Ongkir:* ${shipCost}\n💰 *TOTAL TRANSFER:* *${totalCost}*\n\n`;
-  msg += `📎 _Mohon lampirkan bukti transfer dan struk reservasi Anda._`;
+  let msg = `🧾 *STRUK PESANAN RUJAK.CO*\n🆔 *Order ID:* ${state.currentOrderCode || '—'}\n\n👤 *Penerima:* ${name}\n📞 *HP:* ${phone}\n📍 *Alamat:* ${address}\n\n🗺️ *Jarak:* ${distance}\n🕒 *Pengantaran:* ${deliveryTime}\n📝 *Catatan:* ${notes}\n🚚 *Kurir:* ${logisticInfo}\n\n📦 *Pesanan:*\n`;
+  summary.items.forEach(item => { const spiceText = item.spice ? ` (Lv ${item.spice})` : ''; msg += `• ${item.name}${spiceText} x${item.qty} = ${fmt(item.price * item.qty)}\n`; });
+  msg += `\n💵 *Subtotal:* ${fmt(summary.subtotal)}\n🛵 *Ongkir:* ${shipCost}\n💰 *TOTAL TRANSFER:* *${totalCost}*\n\n📎 _Mohon lampirkan bukti transfer dan struk reservasi Anda._`;
 
   const sb = getSupabase(); let orderSaved = false;
   if (sb) {
     try {
-      const insertResult = await supabaseQueryWithRetry(
+      await supabaseQueryWithRetry(
         () => sb.from('orders').insert({
-          order_code: state.currentOrderCode,
-          customer_name: name,
-          customer_phone: phone,
-          customer_address: address,
-          district: state.selectedDistrict,
-          distance_km: state.userDistance,
-          items: summary.items,
+          order_code: state.currentOrderCode, customer_name: name, customer_phone: phone, customer_address: address,
+          district: state.selectedDistrict, distance_km: state.userDistance, items: summary.items,
           subtotal: summary.subtotal,
           shipping_cost: Number.isNaN(parseInt(shipCost.replace(/\D/g, ''))) ? null : parseInt(shipCost.replace(/\D/g, '')),
           total: Number.isNaN(parseInt(totalCost.replace(/\D/g, ''))) ? null : parseInt(totalCost.replace(/\D/g, '')),
-          shipping_provider: logisticInfo,
-          delivery_time: deliveryTime,
-          notes,
-          status: 'pending_payment'
+          shipping_provider: logisticInfo, delivery_time: deliveryTime, notes, status: 'pending_payment'
         }),
         'supabase-insert',
         { orderCode: state.currentOrderCode }
       );
-      if (insertResult.error) {
-        logError('supabase', new Error(insertResult.error.message), { orderCode: state.currentOrderCode });
-      } else {
-        orderSaved = true;
-      }
-    } catch (err) {
-      logError('supabase', err, { orderCode: state.currentOrderCode });
-    }
+      orderSaved = true;
+    } catch (err) { logError('supabase', err, { orderCode: state.currentOrderCode }); }
   }
 
   const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
   const newWindow = window.open(waUrl, '_blank', 'noopener');
   if (newWindow) {
-    if (orderSaved) {
-      state.cart = {};
-      updateCartUI();
-      showToast('Pesanan terkirim.');
-    } else {
-      showToast('⚠️ Pesan WhatsApp terkirim, tapi catatan gagal tersimpan.');
-    }
+    if (orderSaved) { state.cart = {}; updateCartUI(); showToast('Pesanan terkirim.'); }
+    else showToast('⚠️ Pesan WhatsApp terkirim, tapi catatan gagal tersimpan.');
   } else {
     showWhatsAppFallback(SYSTEM.WA_NUMBER, msg);
     if (!orderSaved) showToast('Catatan belum tersimpan.');
@@ -253,51 +219,20 @@ async function showOrderConfirmation() {
 }
 
 // ---------------------------------------------------------------------------
-// PRODUCT PAGE LOGIC
+// PRODUCT PAGE
 // ---------------------------------------------------------------------------
 function openProductPage(globalIndex) {
   if (!DOM.productPage) return;
-  if (!state._vipPeeked) {
-    setTimeout(() => {
-      document.getElementById('waVipSideTab')?.classList.add('peek');
-    }, APP_CONFIG.TIMING.VIP_PEEK);
-    state._vipPeeked = true;
-  }
-  if (DOM._productObserver) {
-    DOM._productObserver.disconnect();
-    DOM._productObserver = null;
-  }
+  if (!state._vipPeeked) { setTimeout(() => { document.getElementById('waVipSideTab')?.classList.add('peek'); }, APP_CONFIG.TIMING.VIP_PEEK); state._vipPeeked = true; }
+  if (DOM._productObserver) { DOM._productObserver.disconnect(); DOM._productObserver = null; }
   renderProductSwiper(state.drafts);
-  DOM.productPage.style.display = 'flex';
-  void DOM.productPage.offsetWidth;
-  DOM.productPage.classList.add('active');
-  DOM.bottomNav?.classList.add('nav-visible');
-  DOM.productPage.setAttribute('aria-hidden', 'false');
-  DOM.productPage.removeAttribute('inert');
-  document.body.style.overflow = 'hidden';
-  state.lastViewedProductIndex = globalIndex;
-  overlayStack.push(DOM.productPage);
-  history.pushState({ isOverlay: true, id: 'productPage' }, '');
+  DOM.productPage.style.display = 'flex'; void DOM.productPage.offsetWidth; DOM.productPage.classList.add('active');
+  DOM.bottomNav?.classList.add('nav-visible'); DOM.productPage.setAttribute('aria-hidden', 'false'); DOM.productPage.removeAttribute('inert');
+  document.body.style.overflow = 'hidden'; state.lastViewedProductIndex = globalIndex;
+  overlayStack.push(DOM.productPage); history.pushState({ isOverlay: true, id: 'productPage' }, '');
   const targetSlide = document.querySelector(`.product-slide[data-idx="${globalIndex}"]`);
-  if (targetSlide && DOM.productSwiperTrack) {
-    DOM.productSwiperTrack.style.scrollBehavior = 'auto';
-    DOM.productSwiperTrack.scrollLeft = targetSlide.offsetLeft;
-    DOM.productSwiperTrack.style.scrollBehavior = 'smooth';
-  }
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const img = entry.target.querySelector('.lazy-detail');
-        if (img && img.dataset.src) {
-          if (!img.src || img.src === window.location.href) {
-            img.src = img.dataset.src;
-            img.onload = () => img.classList.add('loaded');
-            img.onerror = () => img.classList.add('loaded');
-          }
-        }
-      }
-    });
-  }, { rootMargin: '0px 0px 200px 0px' });
+  if (targetSlide && DOM.productSwiperTrack) { DOM.productSwiperTrack.style.scrollBehavior = 'auto'; DOM.productSwiperTrack.scrollLeft = targetSlide.offsetLeft; DOM.productSwiperTrack.style.scrollBehavior = 'smooth'; }
+  const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { const img = entry.target.querySelector('.lazy-detail'); if (img && img.dataset.src) { if (!img.src || img.src === window.location.href) { img.src = img.dataset.src; img.onload = () => img.classList.add('loaded'); img.onerror = () => img.classList.add('loaded'); } } } }); }, { rootMargin: '0px 0px 200px 0px' });
   document.querySelectorAll('.product-slide').forEach(slide => observer.observe(slide));
   DOM._productObserver = observer;
   syncBottomNav();
@@ -305,131 +240,50 @@ function openProductPage(globalIndex) {
 
 function closeProductPage(fromPopState = false) {
   if (!DOM.productPage) return;
-  DOM.bottomNav?.classList.remove('nav-visible');
-  document.getElementById('navHomeBtn')?.focus();
-  DOM.productPage.classList.remove('active');
+  DOM.bottomNav?.classList.remove('nav-visible'); document.getElementById('navHomeBtn')?.focus(); DOM.productPage.classList.remove('active');
   setTimeout(() => {
-    DOM.productPage.style.display = 'none';
-    DOM.productPage.setAttribute('aria-hidden', 'true');
-    DOM.productPage.setAttribute('inert', '');
-    const index = overlayStack.indexOf(DOM.productPage);
-    if (index > -1) overlayStack.splice(index, 1);
-    if (overlayStack.length === 0) {
-      document.body.style.overflow = '';
-    }
+    DOM.productPage.style.display = 'none'; DOM.productPage.setAttribute('aria-hidden', 'true'); DOM.productPage.setAttribute('inert', '');
+    const index = overlayStack.indexOf(DOM.productPage); if (index > -1) overlayStack.splice(index, 1);
+    if (overlayStack.length === 0) document.body.style.overflow = '';
     document.getElementById('waVipSideTab')?.classList.remove('open');
-    if (DOM._productObserver) {
-      DOM._productObserver.disconnect();
-      DOM._productObserver = null;
-    }
+    if (DOM._productObserver) { DOM._productObserver.disconnect(); DOM._productObserver = null; }
     releaseInert();
-    if (!fromPopState) {
-      setProgrammaticBack(true);
-      history.back();
-    }
+    if (!fromPopState) { setProgrammaticBack(true); history.back(); }
     syncBottomNav();
   }, APP_CONFIG.TIMING.MODAL_TRANSITION);
 }
 
 // ---------------------------------------------------------------------------
-// MAIN BOOTSTRAP INIT
+// INIT
 // ---------------------------------------------------------------------------
 function init() {
   cacheDOM();
-
-  // --- Inisialisasi Dependency Injection Modul ---
-  initNavigation(DOM);
-  initModalManager(DOM);
-  initGesturesConfig(DOM, closeProductPage);
-  initPersonalizationConfig(DOM, state);
-  initShippingController(DOM, state, APP_CONFIG);
-  initCartController(DOM, state);
+  initNavigation(DOM); initModalManager(DOM); initGesturesConfig(DOM, closeProductPage); initPersonalizationConfig(DOM, state);
+  initShippingController(DOM, state, APP_CONFIG); initCartController(DOM, state);
   initOnboardingConfig(DOM, state, APP_CONFIG);
-  initEventBinderConfig(DOM, state, APP_CONFIG, {
-    openProductPage,
-    closeProductPage,
-    showOrderConfirmation,
-    sendReceiptToWhatsApp
-  });
-
-  // --- Inisialisasi Offline Handler ---
-  initOfflineHandler({
-    syncCallback: async (action) => {
-      console.log('Memproses aksi offline:', action);
-      return true;
-    }
-  });
+  initEventBinderConfig(DOM, state, APP_CONFIG, { openProductPage, closeProductPage, showOrderConfirmation, sendReceiptToWhatsApp });
+  initOfflineHandler({ syncCallback: async (action) => { console.log('Memproses aksi offline:', action); return true; } });
 
   try {
     if (!isStorageAvailable()) showToast('Penyimpanan tak tersedia.');
-    const saved = loadState();
-    state.cart = saved?.cart || {};
+    const saved = loadState(); state.cart = saved?.cart || {};
     if (saved?.name) state.customerName = saved.name;
-    if (saved?.district) {
-      state.selectedDistrictFull = saved.district;
-      state.selectedDistrict = extractShortLocation(saved.district) || saved.district;
-    }
+    if (saved?.district) { state.selectedDistrictFull = saved.district; state.selectedDistrict = extractShortLocation(saved.district) || saved.district; }
     const cust = loadCustomer();
-    if (cust) {
-      state.customerPhone = cust.phone || '';
-      state.customerAddress = cust.address || '';
-      if (!state.selectedDistrict && cust.district) {
-        state.selectedDistrictFull = cust.district;
-        state.selectedDistrict = extractShortLocation(cust.district) || cust.district;
-      }
-      if (cust.distance !== null && cust.distance !== undefined && !isNaN(cust.distance)) {
-        state.userDistance = cust.distance;
-      }
-    }
-    renderMenu();
-    renderProductSwiper(state.drafts);
-    initCarousel();
-    initDetailGestures();
-    initAccessibility();
-    const updateWelcome = initAIChat();
-    if (updateWelcome) updateWelcome(state.customerName || 'Tamu');
-    
-    bindEvents();
-    initOnboarding();
-    initDrawerDistrictDropdown();
-    initTestimonials();
-    updateCartUI();
-    applyPersonalization();
-    if (window.lucide) lucide.createIcons();
-    initHeroParallax();
+    if (cust) { state.customerPhone = cust.phone || ''; state.customerAddress = cust.address || ''; if (!state.selectedDistrict && cust.district) { state.selectedDistrictFull = cust.district; state.selectedDistrict = extractShortLocation(cust.district) || cust.district; } if (cust.distance !== null && cust.distance !== undefined && !isNaN(cust.distance)) state.userDistance = cust.distance; }
+    renderMenu(); renderProductSwiper(state.drafts); initCarousel(); initDetailGestures(); initAccessibility();
+    const updateWelcome = initAIChat(); if (updateWelcome) updateWelcome(state.customerName || 'Tamu');
+    bindEvents(); initOnboarding(); initDrawerDistrictDropdown(); initTestimonials();
+    updateCartUI(); applyPersonalization(); if (window.lucide) lucide.createIcons(); initHeroParallax();
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('product');
-    if (productId) {
-      const idx = getProductGlobalIndex(productId);
-      if (idx !== -1) setTimeout(() => openProductPage(idx), APP_CONFIG.TIMING.MODAL_TRANSITION);
-    }
+    const urlParams = new URLSearchParams(window.location.search); const productId = urlParams.get('product');
+    if (productId) { const idx = getProductGlobalIndex(productId); if (idx !== -1) setTimeout(() => openProductPage(idx), APP_CONFIG.TIMING.MODAL_TRANSITION); }
 
-    window.addEventListener('popstate', (e) => {
-      if (isProgrammaticBack) { setProgrammaticBack(false); return; }
-      if (overlayStack.length > 0) {
-        const topOverlay = overlayStack[overlayStack.length - 1];
-        if (e.state && e.state.id && e.state.id !== topOverlay.id) return;
-        if (topOverlay.id === 'productPage') closeProductPage(true);
-        else closeModal(topOverlay, true);
-      }
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && overlayStack.length > 0) {
-        const topOverlay = overlayStack[overlayStack.length - 1];
-        if (topOverlay.id === 'productPage') closeProductPage(false);
-        else closeModal(topOverlay, false);
-      }
-    });
-
+    window.addEventListener('popstate', (e) => { if (isProgrammaticBack) { setProgrammaticBack(false); return; } if (overlayStack.length > 0) { const topOverlay = overlayStack[overlayStack.length - 1]; if (e.state && e.state.id && e.state.id !== topOverlay.id) return; if (topOverlay.id === 'productPage') closeProductPage(true); else closeModal(topOverlay, true); } });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlayStack.length > 0) { const topOverlay = overlayStack[overlayStack.length - 1]; if (topOverlay.id === 'productPage') closeProductPage(false); else closeModal(topOverlay, false); } });
     syncBottomNav();
     console.log('✅ RUJAK.Co siap (Modular Architecture v3.0).');
-  } catch (err) {
-    console.error('❌ Gagal inisialisasi:', err);
-    showToast('Terjadi kesalahan sistem.');
-  }
+  } catch (err) { console.error('❌ Gagal inisialisasi:', err); showToast('Terjadi kesalahan sistem.'); }
 }
 
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-else init();
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
