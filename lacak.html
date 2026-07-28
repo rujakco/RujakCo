@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lacak Pesanan | RUJAK.Co</title>
+  <link rel="icon" type="image/webp" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{background:#082E21;font-family:'DM Sans',sans-serif;color:#FDFBF7;min-height:100vh}
+    body{display:flex;align-items:center;justify-content:center;padding:24px}
+    .track-container{width:100%;max-width:420px;text-align:center}
+    .track-logo{width:56px;height:56px;border-radius:50%;margin-bottom:24px}
+    .track-title{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:400;margin-bottom:8px}
+    .track-sub{color:rgba(253,251,247,0.5);font-size:0.85rem;margin-bottom:32px}
+    .track-form{display:flex;flex-direction:column;gap:16px}
+    .track-input{width:100%;padding:14px 18px;border:1px solid rgba(183,146,79,0.25);border-radius:12px;background:rgba(0,0,0,0.15);color:#FDFBF7;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;transition:border-color 0.3s}
+    .track-input:focus{border-color:#A67C3D}
+    .track-input::placeholder{color:rgba(253,251,247,0.3)}
+    .track-btn{width:100%;padding:14px;border:none;border-radius:12px;background:#A67C3D;color:white;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;cursor:pointer;transition:opacity 0.3s}
+    .track-btn:hover{opacity:0.9}
+    .track-btn:disabled{opacity:0.4;cursor:not-allowed}
+    .track-result{margin-top:32px;padding:24px;border:1px solid rgba(183,146,79,0.15);border-radius:16px;background:rgba(0,0,0,0.1);text-align:left;display:none}
+    .track-result.show{display:block;animation:fadeUp 0.4s ease}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .result-label{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;color:rgba(183,146,79,0.7);margin-bottom:4px}
+    .result-value{font-size:1rem;color:#FDFBF7;margin-bottom:16px}
+    .result-value:last-child{margin-bottom:0}
+    .status-badge{display:inline-block;padding:6px 14px;border-radius:8px;font-size:0.75rem;font-weight:600;margin-top:4px}
+    .status-pending_payment{background:rgba(201,168,104,0.1);color:#C9A868;border:1px solid rgba(201,168,104,0.2)}
+    .status-paid{background:rgba(100,200,150,0.1);color:#64C896;border:1px solid rgba(100,200,150,0.2)}
+    .status-prepping{background:rgba(100,150,200,0.1);color:#6496C8;border:1px solid rgba(100,150,200,0.2)}
+    .status-delivering{background:rgba(150,100,200,0.1);color:#9664C8;border:1px solid rgba(150,100,200,0.2)}
+    .status-completed{background:rgba(100,200,100,0.1);color:#64C864;border:1px solid rgba(100,200,100,0.2)}
+    .track-error{color:#E8A0A0;font-size:0.85rem;margin-top:16px;display:none}
+    .track-error.show{display:block}
+    .track-footer{margin-top:48px;font-size:0.75rem;color:rgba(253,251,247,0.3)}
+    .track-footer a{color:rgba(183,146,79,0.6);text-decoration:none}
+  </style>
+  <!-- Konfigurasi Supabase Global (sama dengan index.html) -->
+  <script>
+    window.__SUPABASE_URL__ = 'https://ghhnnfrmftttptcejizp.supabase.co';
+    window.__SUPABASE_KEY__ = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoaG5uZnJtZnR0dHB0Y2VqaXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNjA1ODksImV4cCI6MjA5NzgzNjU4OX0.FM-sPvJJzviX2kA0GEHnznOppivm4JNyC4IPFv_RkdE';
+  </script>
+</head>
+<body>
+  <div class="track-container">
+    <img class="track-logo" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="RUJAK.Co">
+    <h1 class="track-title">Lacak Pesanan</h1>
+    <p class="track-sub">Masukkan kode order dan PIN yang dikirim via WhatsApp</p>
+
+    <form class="track-form" id="trackForm">
+      <input type="text" class="track-input" id="orderCode" placeholder="Kode Order (contoh: RJ-123456)" required maxlength="20">
+      <input type="text" class="track-input" id="orderPin" placeholder="PIN (6 digit)" required maxlength="6" inputmode="numeric" pattern="[0-9]{6}">
+      <button type="submit" class="track-btn" id="trackBtn">Lacak</button>
+    </form>
+
+    <div class="track-error" id="trackError"></div>
+
+    <div class="track-result" id="trackResult">
+      <div class="result-label">Kode Order</div>
+      <div class="result-value" id="resCode"></div>
+
+      <div class="result-label">Status</div>
+      <div class="result-value"><span class="status-badge" id="resStatus"></span></div>
+
+      <div class="result-label">Nama</div>
+      <div class="result-value" id="resName"></div>
+
+      <div class="result-label">Total</div>
+      <div class="result-value" id="resTotal"></div>
+
+      <div class="result-label">Jumlah Item</div>
+      <div class="result-value" id="resItems"></div>
+
+      <div class="result-label">Jadwal Pengantaran</div>
+      <div class="result-value" id="resDelivery"></div>
+    </div>
+
+    <div class="track-footer">
+      <a href="/">← Kembali ke Beranda</a>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    // Gunakan kunci yang sudah didefinisikan di <head>
+    const sb = createClient(window.__SUPABASE_URL__, window.__SUPABASE_KEY__);
+
+    const form = document.getElementById('trackForm');
+    const btn = document.getElementById('trackBtn');
+    const errorEl = document.getElementById('trackError');
+    const resultEl = document.getElementById('trackResult');
+
+    const statusLabels = {
+      pending_payment: 'Menunggu Pembayaran',
+      paid: 'Dibayar — Dipersiapkan',
+      prepping: 'Fresh-Prep Sedang Berjalan',
+      delivering: 'Dalam Pengantaran',
+      completed: 'Selesai',
+      cancelled: 'Dibatalkan'
+    };
+
+    const statusClasses = {
+      pending_payment: 'status-pending_payment',
+      paid: 'status-paid',
+      prepping: 'status-prepping',
+      delivering: 'status-delivering',
+      completed: 'status-completed',
+      cancelled: 'status-completed'
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      btn.disabled = true;
+      btn.textContent = 'Mencari...';
+      errorEl.classList.remove('show');
+      resultEl.classList.remove('show');
+
+      const code = document.getElementById('orderCode').value.trim();
+      const pin = document.getElementById('orderPin').value.trim();
+
+      if (!/^\d{6}$/.test(pin)) {
+        errorEl.textContent = 'PIN harus terdiri dari 6 digit angka.';
+        errorEl.classList.add('show');
+        btn.disabled = false;
+        btn.textContent = 'Lacak';
+        return;
+      }
+
+      try {
+        // Gunakan .single() dan tangani error jika tidak ditemukan
+        const { data, error } = await sb
+          .from('orders')
+          .select('order_code, status, customer_name, total, items, delivery_time, shipping_provider')
+          .eq('order_code', code)
+          .eq('access_pin', pin)
+          .limit(1)
+          .single();
+
+        if (error) {
+          // Jika error karena tidak ditemukan (PGRST116), tampilkan pesan khusus
+          if (error.code === 'PGRST116') {
+            throw new Error('Kode order atau PIN tidak valid. Harap periksa kembali.');
+          }
+          console.error('Supabase error:', error);
+          throw new Error('Terjadi kesalahan sistem. Silakan coba lagi nanti.');
+        }
+
+        document.getElementById('resCode').textContent = data.order_code;
+        document.getElementById('resName').textContent = data.customer_name || '-';
+        document.getElementById('resTotal').textContent = 'Rp ' + (data.total || 0).toLocaleString('id-ID');
+        document.getElementById('resItems').textContent = (data.items?.length || 0) + ' item';
+        document.getElementById('resDelivery').textContent = (data.delivery_time || '-') + ' — ' + (data.shipping_provider || '-');
+
+        const statusBadge = document.getElementById('resStatus');
+        statusBadge.textContent = statusLabels[data.status] || data.status;
+        statusBadge.className = 'status-badge ' + (statusClasses[data.status] || '');
+
+        resultEl.classList.add('show');
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.classList.add('show');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Lacak';
+      }
+    });
+  </script>
+</body>
+</html>
