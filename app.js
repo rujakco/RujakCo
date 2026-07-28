@@ -1,4 +1,4 @@
-// app.js – FINAL V3.0 (Clean Architecture Bootstrap + All Functions)
+// app.js – FINAL V3.0 + Offline Handler, Retry & Logger
 import { PRODUCTS } from './data/products.js';
 import { SYSTEM } from './data/config.js';
 import { fmt, showToast, getSupabase, escapeHTML } from './utils/helpers.js';
@@ -20,6 +20,11 @@ import { initShippingController, extractShortLocation, updateShippingUI, initDra
 import { initCartController, updateCartUI } from './modules/cart-controller.js';
 import { initOnboardingConfig, initOnboarding } from './modules/onboarding.js';
 import { initEventBinderConfig, bindEvents } from './modules/event-binder.js';
+
+// --- Utilitas Baru ---
+import { logError } from './utils/logger.js';
+import { supabaseQueryWithRetry } from './utils/fetchWithRetry.js';
+import { initOfflineHandler } from './utils/offlineHandler.js';
 
 const state = {
   cart: {},
@@ -97,7 +102,7 @@ const cacheDOM = () => {
 };
 
 // ---------------------------------------------------------------------------
-// FUNGSI PEMBANTU (loadScript, downloadReceiptPNG, sendReceiptToTelegram)
+// FUNGSI PEMBANTU
 // ---------------------------------------------------------------------------
 function loadScript(src) {
   return new Promise((resolve, reject) => {
@@ -110,6 +115,9 @@ function loadScript(src) {
   });
 }
 
+// ---------------------------------------------------------------------------
+// DOWNLOAD STRUK & TELEGRAM (DENGAN RETRY & LOGGING)
+// ---------------------------------------------------------------------------
 async function downloadReceiptPNG() {
   const element = document.getElementById('orderConfirmContent');
   if (!element) return null;
@@ -130,12 +138,24 @@ async function downloadReceiptPNG() {
     if (!blob) return null;
     const safeCode = state.currentOrderCode || `RJ-${new Date().getTime()}`;
     const fileName = `${safeCode.replace(/[^a-zA-Z0-9]/g, '-')}.png`;
-    const { error } = await sb.storage.from('receipts').upload(fileName, blob, { contentType: 'image/png', upsert: true });
-    if (error) { showToast('Gagal simpan struk.'); return null; }
+
+    // Upload dengan retry
+    const uploadResult = await supabaseQueryWithRetry(
+      () => sb.storage.from('receipts').upload(fileName, blob, { contentType: 'image/png', upsert: true }),
+      'supabase-upload',
+      { fileName }
+    );
+    if (uploadResult.error) {
+      logError('receipt', new Error(uploadResult.error.message), { fileName });
+      showToast('Gagal simpan struk.');
+      return null;
+    }
+
     const { data: { publicUrl } } = sb.storage.from('receipts').getPublicUrl(fileName);
     state.receiptUrl = publicUrl;
     return publicUrl;
   } catch (err) {
+    logError('receipt', err, { orderCode: state.currentOrderCode });
     showToast('Gagal buat struk.');
     return null;
   } finally {
@@ -150,11 +170,94 @@ async function sendReceiptToTelegram() {
   try {
     await supabase.functions.invoke('send-telegram', { body: { order_code: state.currentOrderCode, receipt_url: state.receiptUrl, caption } });
     console.log('✅ Telegram terkirim');
-  } catch (err) { console.error('Gagal kirim Telegram:', err); }
+  } catch (err) {
+    logError('telegram', err, { orderCode: state.currentOrderCode });
+  }
 }
 
 // ---------------------------------------------------------------------------
-// PRODUCT PAGE LOGIC
+// CHECKOUT & WHATSAPP (DENGAN RETRY & LOGGING)
+// ---------------------------------------------------------------------------
+async function sendReceiptToWhatsApp() {
+  const summary = getCartSummary(state.cart);
+  if (summary.items.length === 0) { showToast('Reservasi kosong.'); return; }
+  const name = DOM.customerNameInput?.value || state.customerName || 'Tamu';
+  const phone = DOM.customerPhoneInput?.value || state.customerPhone || '—';
+  const address = DOM.customerAddressInput?.value || state.customerAddress || '—';
+  const deliveryTime = document.getElementById('deliveryTime')?.value || '—';
+  const notes = document.getElementById('orderNotes')?.value.trim() || 'Tidak ada catatan';
+  let logisticInfo = state.shippingProvider === 'paxel' ? 'Paxel Ekspres' : 'Kurir Lalamove';
+  if (state.shippingProvider === 'lalamove') {
+    logisticInfo += ` (${state.tier === 'prioritas' ? 'Prioritas' : 'Reguler'})`;
+  }
+  const shipCost = DOM.finalShipping?.textContent || '—';
+  const totalCost = DOM.finalTotal?.textContent || '—';
+  const distance = state.userDistance ? `${state.userDistance} km` : '—';
+  let msg = `🧾 *STRUK PESANAN RUJAK.CO*\n🆔 *Order ID:* ${state.currentOrderCode || '—'}\n\n`;
+  msg += `👤 *Penerima:* ${name}\n📞 *HP:* ${phone}\n📍 *Alamat:* ${address}\n`;
+  msg += `\n🗺️ *Jarak:* ${distance}\n🕒 *Pengantaran:* ${deliveryTime}\n📝 *Catatan:* ${notes}\n🚚 *Kurir:* ${logisticInfo}\n\n📦 *Pesanan:*\n`;
+  summary.items.forEach(item => {
+    const spiceText = item.spice ? ` (Lv ${item.spice})` : '';
+    msg += `• ${item.name}${spiceText} x${item.qty} = ${fmt(item.price * item.qty)}\n`;
+  });
+  msg += `\n💵 *Subtotal:* ${fmt(summary.subtotal)}\n🛵 *Ongkir:* ${shipCost}\n💰 *TOTAL TRANSFER:* *${totalCost}*\n\n`;
+  msg += `📎 _Mohon lampirkan bukti transfer dan struk reservasi Anda._`;
+
+  const sb = getSupabase(); let orderSaved = false;
+  if (sb) {
+    try {
+      const insertResult = await supabaseQueryWithRetry(
+        () => sb.from('orders').insert({
+          order_code: state.currentOrderCode,
+          customer_name: name,
+          customer_phone: phone,
+          customer_address: address,
+          district: state.selectedDistrict,
+          distance_km: state.userDistance,
+          items: summary.items,
+          subtotal: summary.subtotal,
+          shipping_cost: Number.isNaN(parseInt(shipCost.replace(/\D/g, ''))) ? null : parseInt(shipCost.replace(/\D/g, '')),
+          total: Number.isNaN(parseInt(totalCost.replace(/\D/g, ''))) ? null : parseInt(totalCost.replace(/\D/g, '')),
+          shipping_provider: logisticInfo,
+          delivery_time: deliveryTime,
+          notes,
+          status: 'pending_payment'
+        }),
+        'supabase-insert',
+        { orderCode: state.currentOrderCode }
+      );
+      if (insertResult.error) {
+        logError('supabase', new Error(insertResult.error.message), { orderCode: state.currentOrderCode });
+      } else {
+        orderSaved = true;
+      }
+    } catch (err) {
+      logError('supabase', err, { orderCode: state.currentOrderCode });
+    }
+  }
+
+  const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+  const newWindow = window.open(waUrl, '_blank', 'noopener');
+  if (newWindow) {
+    if (orderSaved) {
+      state.cart = {};
+      updateCartUI();
+      showToast('Pesanan terkirim.');
+    } else {
+      showToast('⚠️ Pesan WhatsApp terkirim, tapi catatan gagal tersimpan.');
+    }
+  } else {
+    showWhatsAppFallback(SYSTEM.WA_NUMBER, msg);
+    if (!orderSaved) showToast('Catatan belum tersimpan.');
+  }
+}
+
+async function showOrderConfirmation() {
+  return await launchProReceipt(state, DOM, overlayStack, openModal, closeModal, () => getCartSummary(state.cart), downloadReceiptPNG, sendReceiptToTelegram);
+}
+
+// ---------------------------------------------------------------------------
+// PRODUCT PAGE LOGIC (TIDAK BERUBAH)
 // ---------------------------------------------------------------------------
 function openProductPage(globalIndex) {
   if (!DOM.productPage) return;
@@ -233,79 +336,6 @@ function closeProductPage(fromPopState = false) {
 }
 
 // ---------------------------------------------------------------------------
-// CHECKOUT & WHATSAPP INTEGRATION
-// ---------------------------------------------------------------------------
-async function sendReceiptToWhatsApp() {
-  const summary = getCartSummary(state.cart);
-  if (summary.items.length === 0) { showToast('Reservasi kosong.'); return; }
-  const name = DOM.customerNameInput?.value || state.customerName || 'Tamu';
-  const phone = DOM.customerPhoneInput?.value || state.customerPhone || '—';
-  const address = DOM.customerAddressInput?.value || state.customerAddress || '—';
-  const deliveryTime = document.getElementById('deliveryTime')?.value || '—';
-  const notes = document.getElementById('orderNotes')?.value.trim() || 'Tidak ada catatan';
-  let logisticInfo = state.shippingProvider === 'paxel' ? 'Paxel Ekspres' : 'Kurir Lalamove';
-  if (state.shippingProvider === 'lalamove') {
-    logisticInfo += ` (${state.tier === 'prioritas' ? 'Prioritas' : 'Reguler'})`;
-  }
-  const shipCost = DOM.finalShipping?.textContent || '—';
-  const totalCost = DOM.finalTotal?.textContent || '—';
-  const distance = state.userDistance ? `${state.userDistance} km` : '—';
-  let msg = `🧾 *STRUK PESANAN RUJAK.CO*\n🆔 *Order ID:* ${state.currentOrderCode || '—'}\n\n`;
-  msg += `👤 *Penerima:* ${name}\n📞 *HP:* ${phone}\n📍 *Alamat:* ${address}\n`;
-  msg += `\n🗺️ *Jarak:* ${distance}\n🕒 *Pengantaran:* ${deliveryTime}\n📝 *Catatan:* ${notes}\n🚚 *Kurir:* ${logisticInfo}\n\n📦 *Pesanan:*\n`;
-  summary.items.forEach(item => {
-    const spiceText = item.spice ? ` (Lv ${item.spice})` : '';
-    msg += `• ${item.name}${spiceText} x${item.qty} = ${fmt(item.price * item.qty)}\n`;
-  });
-  msg += `\n💵 *Subtotal:* ${fmt(summary.subtotal)}\n🛵 *Ongkir:* ${shipCost}\n💰 *TOTAL TRANSFER:* *${totalCost}*\n\n`;
-  msg += `📎 _Mohon lampirkan bukti transfer dan struk reservasi Anda._`;
-
-  const sb = getSupabase(); let orderSaved = false;
-  if (sb) {
-    try {
-      const shipCostNum = parseInt(shipCost.replace(/\D/g, ''), 10);
-      const totalNum = parseInt(totalCost.replace(/\D/g, ''), 10);
-      const { error } = await sb.from('orders').insert({
-        order_code: state.currentOrderCode,
-        customer_name: name,
-        customer_phone: phone,
-        customer_address: address,
-        district: state.selectedDistrict,
-        distance_km: state.userDistance,
-        items: summary.items,
-        subtotal: summary.subtotal,
-        shipping_cost: Number.isNaN(shipCostNum) ? null : shipCostNum,
-        total: Number.isNaN(totalNum) ? null : totalNum,
-        shipping_provider: logisticInfo,
-        delivery_time: deliveryTime,
-        notes,
-        status: 'pending_payment'
-      });
-      if (!error) orderSaved = true;
-    } catch (err) { console.error("Gagal menyimpan ke database:", err); }
-  }
-
-  const waUrl = `https://wa.me/${SYSTEM.WA_NUMBER}?text=${encodeURIComponent(msg)}`;
-  const newWindow = window.open(waUrl, '_blank', 'noopener');
-  if (newWindow) {
-    if (orderSaved) {
-      state.cart = {};
-      updateCartUI();
-      showToast('Pesanan terkirim.');
-    } else {
-      showToast('⚠️ Pesan WhatsApp terkirim, tapi catatan gagal tersimpan.');
-    }
-  } else {
-    showWhatsAppFallback(SYSTEM.WA_NUMBER, msg);
-    if (!orderSaved) showToast('Catatan belum tersimpan.');
-  }
-}
-
-async function showOrderConfirmation() {
-  return await launchProReceipt(state, DOM, overlayStack, openModal, closeModal, () => getCartSummary(state.cart), downloadReceiptPNG, sendReceiptToTelegram);
-}
-
-// ---------------------------------------------------------------------------
 // MAIN BOOTSTRAP INIT
 // ---------------------------------------------------------------------------
 function init() {
@@ -325,7 +355,15 @@ function init() {
     showOrderConfirmation,
     sendReceiptToWhatsApp
   });
-  // -----------------------------------------------
+
+  // --- Inisialisasi Offline Handler ---
+  initOfflineHandler({
+    syncCallback: async (action) => {
+      console.log('Memproses aksi offline:', action);
+      // Di sini nanti bisa diisi logika sinkronisasi cart, dll.
+      return true;
+    }
+  });
 
   try {
     if (!isStorageAvailable()) showToast('Penyimpanan tak tersedia.');
