@@ -67,8 +67,8 @@ export function initOfflineHandler(options = {}) {
   const isOffline = !navigator.onLine;
   if (isOffline) { document.body.classList.add(config.offlineClass); document.body.classList.remove(config.onlineClass); updateBannerVisibility(banner, true); }
   else { document.body.classList.add(config.onlineClass); document.body.classList.remove(config.offlineClass); updateBannerVisibility(banner, false); if (config.autoSync && syncCallback) processOfflineQueue(); }
-  const handleOffline = () => { document.body.classList.add(config.offlineClass); document.body.classList.remove(config.onlineClass); updateBannerVisibility(banner, true); showToast('Koneksi terputus. Data disimpan secara lokal.', 'warning'); logInfo('network', 'User went offline'); };
-  const handleOnline = () => { document.body.classList.add(config.onlineClass); document.body.classList.remove(config.offlineClass); updateBannerVisibility(banner, false); showToast('Koneksi kembali. Sinkronisasi data...', 'success'); logInfo('network', 'User came back online'); if (config.autoSync && syncCallback) processOfflineQueue(); };
+  const handleOffline = () => { document.body.classList.add(config.offlineClass); document.body.classList.remove(config.onlineClass); updateBannerVisibility(banner, true); showToast('Koneksi terputus. Data disimpan secara lokal.'); logInfo('network', 'User went offline'); };
+  const handleOnline = () => { document.body.classList.add(config.onlineClass); document.body.classList.remove(config.offlineClass); updateBannerVisibility(banner, false); showToast('Koneksi kembali. Sinkronisasi data...'); logInfo('network', 'User came back online'); if (config.autoSync && syncCallback) processOfflineQueue(); };
   window.removeEventListener('offline', handleOffline);
   window.removeEventListener('online', handleOnline);
   window.addEventListener('offline', handleOffline);
@@ -79,7 +79,7 @@ export function initOfflineHandler(options = {}) {
 export function queueOfflineAction(action) {
   const queue = getQueue(); queue.push({ action, timestamp: new Date().toISOString() }); saveQueue(queue);
   logInfo('offline', 'Action queued', { action });
-  if (!navigator.onLine) showToast('Aksi disimpan lokal. Akan dikirim saat koneksi kembali.', 'info');
+  if (!navigator.onLine) showToast('Aksi disimpan lokal. Akan dikirim saat koneksi kembali.');
   else if (syncCallback && config.autoSync) processOfflineQueue();
 }
 
