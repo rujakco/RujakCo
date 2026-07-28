@@ -26,7 +26,9 @@ export function initOnboarding() {
     document.querySelector('.onb-label').textContent = 'Bagaimana kami boleh memanggil Anda?';
     DOM.onbName.placeholder = 'Nama panggilan Anda'; document.getElementById('onbNextBtn').textContent = 'Masuk'; document.getElementById('onbGuestBtn').textContent = 'Lihat Koleksi';
   }
+
   const enableBottomNav = () => { DOM.bottomNav?.removeAttribute('inert'); };
+
   document.getElementById('onbNextBtn').addEventListener('click', function handler() {
     if (this.disabled) return; this.disabled = true;
     if (document.activeElement) document.activeElement.blur();
@@ -38,7 +40,25 @@ export function initOnboarding() {
     requestAnimationFrame(() => { greeting.classList.add('show'); });
     setTimeout(() => { greeting.classList.remove('show'); setTimeout(() => { greeting.remove(); DOM.onboardingOverlay.classList.add('hidden'); enableBottomNav(); setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, APP_CONFIG.TIMING.ONBOARDING_GREETING); applyPersonalization(); initScrollReveal(); saveUser(state.customerName, ''); }, APP_CONFIG.TIMING.ONBOARDING_GREETING); }, APP_CONFIG.TIMING.ONBOARDING_DELAY);
   });
+
   document.getElementById('onbGuestBtn')?.addEventListener('click', () => { state.customerName = 'Tamu'; state.selectedDistrict = ''; DOM.onboardingOverlay.classList.add('hidden'); enableBottomNav(); setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, 600); applyPersonalization(); initScrollReveal(); });
   document.getElementById('onbEnterBtn')?.addEventListener('click', () => { if (document.activeElement) document.activeElement.blur(); DOM.onboardingOverlay.classList.add('hidden'); enableBottomNav(); setTimeout(() => { DOM.onboardingOverlay.style.display = 'none'; }, 600); applyPersonalization(); initScrollReveal(); });
-  document.getElementById('onbResetBtn')?.addEventListener('click', () => { if (document.activeElement) document.activeElement.blur(); clearUser(); state.cart = {}; updateCartUI(); state.customerName = ''; state.selectedDistrict = ''; state.selectedDistrictFull = ''; state.userDistance = null; DOM.onbReturningUser.style.display = 'none'; DOM.onbNewUser.style.display = 'block'; document.getElementById('onbNextBtn').disabled = false; DOM.onbName.value = ''; DOM.onbName.focus(); });
+
+  document.getElementById('onbResetBtn')?.addEventListener('click', () => {
+    if (document.activeElement) document.activeElement.blur();
+    clearUser();
+    state.cart = {};
+    state.customerName = '';
+    state.customerPhone = '';
+    state.customerAddress = '';
+    state.selectedDistrict = '';
+    state.selectedDistrictFull = '';
+    state.userDistance = null;
+    updateCartUI();
+    DOM.onbReturningUser.style.display = 'none';
+    DOM.onbNewUser.style.display = 'block';
+    document.getElementById('onbNextBtn').disabled = false;
+    DOM.onbName.value = '';
+    DOM.onbName.focus();
+  });
 }
