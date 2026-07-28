@@ -1,7 +1,6 @@
-// data/products.js
 export const PRODUCTS = [
   // ============================================
-  // LINI RUJAK (6 PRODUK LAMA + category)
+  // LINI RUJAK (6 PRODUK)
   // ============================================
   {
     id: 'p_m1',
