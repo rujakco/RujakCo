@@ -1,3 +1,4 @@
+// modules/onboarding.js – FINAL (reset phone/address + state)
 import { loadState, saveUser, clearUser } from './storage.js';
 import { showToast, escapeHTML } from '../utils/helpers.js';
 import { applyPersonalization, initScrollReveal } from './personalization.js';
@@ -55,6 +56,7 @@ export function initOnboarding() {
     state.selectedDistrictFull = '';
     state.userDistance = null;
     updateCartUI();
+    applyPersonalization();   // perbarui form input
     DOM.onbReturningUser.style.display = 'none';
     DOM.onbNewUser.style.display = 'block';
     document.getElementById('onbNextBtn').disabled = false;
