@@ -12,17 +12,26 @@ export function initAIChat(welcomeId = 'aiWelcomeMsg', messagesId = 'aiChatMessa
 
   const processMsg = async (txt) => {
     const lower = txt.toLowerCase();
-    let matched = null;
-    for (let q of faq) {
-      if (q.keywords.some(k => lower.includes(k))) { matched = q.answer; break; }
+    
+    // Cari FAQ dengan skor kecocokan tertinggi (jumlah kata kunci yang cocok)
+    let bestMatch = null;
+    let bestScore = 0;
+    for (const q of faq) {
+      const score = q.keywords.filter(k => lower.includes(k)).length;
+      if (score > bestScore) {
+        bestScore = score;
+        bestMatch = q.answer;
+      }
     }
+
+    // Tampilkan pesan user
     messages.insertAdjacentHTML('beforeend', `<div class="msg-user"><span>${escapeHTML(txt)}</span></div>`);
     input.value = '';
     messages.scrollTop = messages.scrollHeight;
 
-    if (matched) {
+    if (bestMatch) {
       setTimeout(() => {
-        messages.insertAdjacentHTML('beforeend', `<div class="msg-bot" style="margin-bottom:12px;"><span>${escapeHTML(matched)}</span></div>`);
+        messages.insertAdjacentHTML('beforeend', `<div class="msg-bot" style="margin-bottom:12px;"><span>${escapeHTML(bestMatch)}</span></div>`);
         messages.scrollTop = messages.scrollHeight;
       }, 600);
     } else {
