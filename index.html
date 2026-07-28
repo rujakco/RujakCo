@@ -17,93 +17,79 @@
   <meta name="twitter:image" content="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" />
   <meta name="theme-color" content="#082E21">
 
-  <link rel="preconnect" href="https://ghhnnfrmftttptcejizp.supabase.co" crossorigin />
-  <link rel="preload" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp" as="image" />
-  <link rel="prefetch" href="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" as="script" />
-
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Restaurant",
-    "name": "RUJAK.Co",
-    "description": "Rujak premium asli Bekasi. Asam, pedas, manis, segar.",
-    "url": "https://rujakco.biz.id",
-    "image": "https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/Banner.webp",
-    "servesCuisine": "Indonesian",
-    "areaServed": "Jabodetabek",
-    "telephone": "+6289677161680",
-    "priceRange": "Rp26.000 - Rp200.000",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Bekasi",
-      "addressRegion": "Jawa Barat",
-      "addressCountry": "ID"
-    },
-    "openingHoursSpecification": [
-      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "10:00", "closes": "20:00" },
-      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday","Sunday"], "opens": "09:00", "closes": "18:00" }
-    ],
-    "hasMenu": {
-      "@type": "Menu",
-      "name": "Menu Rujak Premium RUJAK.Co",
-      "hasMenuItem": [
-        {
-          "@type": "MenuItem",
-          "name": "Rujak Bangkok Premium",
-          "description": "Potongan buah segar renyah dengan balutan bumbu Bangkok khas racikan rahasia.",
-          "offers": { "@type": "Offer", "price": "26000", "priceCurrency": "IDR" }
-        },
-        {
-          "@type": "MenuItem",
-          "name": "Rujak Sambal Mete Eksklusif",
-          "description": "Sajian buah eksotis disandingkan dengan bumbu cocol kacang mete premium yang gurih dan pekat.",
-          "offers": { "@type": "Offer", "price": "32000", "priceCurrency": "IDR" }
-        }
-      ]
-    }
-  }
-  </script>
-
-  <link rel="icon" type="image/webp" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" />
-  <link rel="canonical" href="https://rujakco.biz.id" />
+  <!-- Font & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/webp" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" />
+  <link rel="canonical" href="https://rujakco.biz.id" />
 
-  <style>
-    *,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:rgba(0,0,0,0.08)}
-    html,body{margin:0;padding:0;background-color:#082E21;font-family:'DM Sans',sans-serif;font-size:16px;color:#FDFBF7;-webkit-font-smoothing:antialiased}
-    body { overflow-x: clip; }
-    #app{position:relative;width:100%;max-width:480px;min-height:100dvh;margin:0 auto;overflow-x:clip}
-    h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:350}
-    h2{font-size:clamp(1.5rem,5vw,1.75rem)}h3{font-size:clamp(1.25rem,4vw,1.5rem)}h4{font-size:clamp(1.125rem,3.5vw,1.25rem)}
-    .onboarding-overlay{position:fixed;inset:0;z-index:1100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;background:radial-gradient(circle at 50% 30%,rgba(183,146,79,0.08),transparent 60%),linear-gradient(180deg,#082E21,#020A07);text-align:center}
-    .onb-logo{width:76px;height:76px;margin-bottom:20px;padding:6px;background:rgba(0,0,0,0.15);border:1px solid rgba(183,146,79,0.3);border-radius:50%}
-    .onb-title{font-size:2.1rem;line-height:1.1;color:#FDFBF7;min-height:3.5rem;display:flex;align-items:center;justify-content:center}
-    .onb-subtitle,.onb-welcome-text{font-size:0.65rem;font-weight:600;color:#E8D5A8;text-transform:uppercase;letter-spacing:0.25em;min-height:1rem;margin-bottom:36px}
-    .btn-gold,.btn-dark{display:flex;align-items:center;justify-content:center;width:100%;min-height:48px;padding:0 32px;border:none;border-radius:12px;font-size:0.875rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;cursor:pointer}.btn-gold{background:#A67C3D;color:white}.btn-dark{background:#082E21;border:1px solid #C9A868;color:#FDFBF7}
-    .luxury-header{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;max-width:480px;margin:0 auto;padding:10px 20px;background:linear-gradient(180deg,rgba(2,10,7,0.75),rgba(8,46,33,0.55) 70%,transparent)}
-    .brand-logo img{width:28px;height:28px;border-radius:50%}
-    .brand-name{font-size:1rem;font-weight:600;color:white}
-    .content-wrapper{padding-bottom:120px}.hero-gold-frame{margin:64px 20px 0;border-radius:20px}.hero-img-wrap{position:relative;overflow:hidden;aspect-ratio:16/9;background:#051C14;border-radius:20px}.hero-img{display:block;width:100%;height:100%;object-fit:cover}
-    .hero-overlay-new{position:absolute;inset:auto 0 0 0;padding:30px 20px 18px;background:linear-gradient(to top,rgba(0,0,0,0.5),rgba(0,0,0,0.1),transparent)}.hero-title{font-size:clamp(1.4rem,5vw,1.85rem);line-height:1.1;color:white}.hero-title-em{color:#E8D5A8;font-style:italic}
-    .carousel-container{position:relative;width:100%;margin-top:16px}.carousel-track{display:flex;overflow-x:auto;padding:40px 20px 24px;scroll-snap-type:x mandatory;scrollbar-width:none;min-height:440px}.carousel-track::-webkit-scrollbar{display:none}
-    .skeleton-card{flex:0 0 100%;max-width:440px;margin:0 -12px;padding:32px 28px;background:white;border-radius:28px;text-align:center;display:flex;flex-direction:column;align-items:center}
-    .skeleton-img{width:100%;aspect-ratio:1/1;background:#E6E4DF;border-radius:12px;overflow:hidden}
-    .skeleton-text{height:14px;background:#E6E4DF;border-radius:4px;margin:20px auto 8px;overflow:hidden}.skeleton-text.w-60{width:60%}.skeleton-text.w-40{width:40%}.skeleton-text.w-80{width:80%}
-    .bottom-nav{position:fixed;right:0;bottom:0;left:0;z-index:600;display:flex;justify-content:space-around;max-width:480px;margin:0 auto;padding:5px 0 6px;background:rgba(5,28,20,0.92);border-top:1px solid rgba(183,146,79,0.2);border-radius:16px 16px 0 0}
-    .nav-item{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;min-height:48px;background:none;border:none;color:rgba(253,251,247,0.35);font-size:0.7rem;font-weight:600;cursor:pointer}.nav-item.active{color:#A67C3D}
-    .full-width{width:100%}.fade-up{opacity:0;transform:translateY(32px);transition:opacity 0.8s,transform 0.8s}.fade-up.visible{opacity:1;transform:translateY(0)}
-  </style>
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/improvements.css" />
 
-  <link rel="stylesheet" href="style.css" media="print" onload="this.media='all'" />
-  <noscript><link rel="stylesheet" href="style.css" /></noscript>
-
+  <!-- Scripts -->
   <script src="https://unpkg.com/lucide@0.378.0/dist/umd/lucide.min.js" defer></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2" defer></script>
+  <script>
+    // Konfigurasi Supabase global (digunakan oleh helpers.js)
+    window.__SUPABASE_URL__ = 'https://ghhnnfrmftttptcejizp.supabase.co';
+    window.__SUPABASE_KEY__ = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoaG5uZnJtZnR0dHB0Y2VqaXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNjA1ODksImV4cCI6MjA5NzgzNjU4OX0.FM-sPvJJzviX2kA0GEHnznOppivm4JNyC4IPFv_RkdE';
+  </script>
+
+  <!-- FAQ Schema.org -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Mengapa sambal dikemas terpisah?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Agar buah tetap segar dan renyah saat tiba di tangan Anda. Sambal dipisahkan agar tidak merusak tekstur buah selama perjalanan."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Mengapa pesanan dikirim keesokan harinya?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Kami menerapkan sistem Fresh-Prep: buah dipotong 15 menit sebelum pengantaran esok hari. Demi kesegaran maksimal."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Berapa biaya pengantarannya?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Biaya pengantaran dihitung berdasarkan jarak, mulai dari Rp8.000. Pengiriman internal menggunakan Lalamove, atau Paxel untuk jangkauan lebih luas."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana jika rujak tiba dalam kondisi tidak sempurna?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Kami akan menggantinya. Kami menerapkan Fresh-Lock System untuk memastikan kualitas tetap terjaga selama pengiriman."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Berapa lama rujak bisa disimpan?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Buah segar kami dikonsumsi paling baik pada hari pengantaran. Sambal Mete Premium dapat bertahan hingga 3 hari di dalam lemari es."
+        }
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 <div id="app">
-  <!-- ONBOARDING -->
+  <!-- ONBOARDING OVERLAY -->
   <div class="onboarding-overlay" id="onboardingOverlay" role="dialog" aria-modal="true" aria-labelledby="onbTitle">
     <div class="onb-content">
       <img class="onb-logo" src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" alt="RUJAK.Co" width="76" height="76" loading="lazy" />
@@ -144,6 +130,7 @@
 
   <!-- MAIN CONTENT -->
   <main class="content-wrapper" id="mainContent">
+    <!-- Hero, carousel, insight, testimoni, FAQ, footer (dari render.js & carousel.js) -->
     <div class="hero-editorial fade-up">
       <div class="hero-gold-frame">
         <div class="hero-img-wrap">
@@ -157,9 +144,17 @@
         </div>
       </div>
     </div>
-    
+
+    <!-- Category Filter Chips -->
+    <div class="category-filter" id="categoryFilter">
+      <button type="button" class="filter-chip active" data-cat="all">Semua</button>
+      <button type="button" class="filter-chip" data-cat="rujak">Rujak</button>
+      <button type="button" class="filter-chip" data-cat="asinan">Asinan</button>
+    </div>
+
     <div class="carousel-container fade-up">
       <div class="carousel-track" id="menuList">
+        <!-- Placeholder skeleton (akan diganti oleh render.js) -->
         <div class="skeleton-card">
           <div class="skeleton-img"></div>
           <div class="skeleton-text w-60"></div>
@@ -168,11 +163,11 @@
       </div>
       <div class="carousel-dots" id="carouselDots"></div>
     </div>
-    
+
     <div class="product-insight-container fade-up">
       <p id="productInsightText" class="typing-text"></p>
     </div>
-    
+
     <div class="testi-flip-container" id="testiFlipContainer" role="region" aria-roledescription="carousel" aria-label="Testimoni pelanggan">
       <button type="button" id="testiPauseBtn" class="testi-pause-btn" aria-label="Jeda testimoni otomatis" aria-pressed="false">
         <i data-lucide="pause" style="width:14px;height:14px;" aria-hidden="true"></i>
@@ -199,10 +194,10 @@
         <button type="button" class="testi-dot" data-dot="2" aria-label="Testimoni 3" aria-current="false"></button>
       </div>
     </div>
-    
+
     <div class="divider"></div>
     <div class="sec-header"><h2 class="sec-title">Pertanyaan Umum</h2></div>
-    
+
     <div class="faq-container" id="faqContainer">
       <div class="faq-item open">
         <button type="button" class="faq-question" data-toggle="faq" aria-expanded="true" aria-controls="faq-answer-1" id="faq-q-1">
@@ -250,7 +245,7 @@
         </div>
       </div>
     </div>
-    
+
     <footer class="luxury-footer fade-up">
       <div class="footer-row">
         <h3 class="footer-brand">RUJAK.Co</h3>
@@ -266,7 +261,7 @@
           <a href="https://www.tiktok.com/@rujakco" target="_blank" rel="noopener noreferrer" aria-label="TikTok RUJAK.Co" style="color: var(--gold-bright);">
             <svg class="icon-md" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" width="20" height="20"><path d="M16.6 5.82c-.9-.98-1.4-2.26-1.4-3.62h-3.13v13.44c0 1.62-1.32 2.94-2.94 2.94a2.94 2.94 0 0 1 0-5.88c.28 0 .55.04.8.11V9.72a6.13 6.13 0 0 0-.8-.05C5.5 9.67 2.4 12.77 2.4 16.4S5.5 23.13 9.13 23.13s6.73-3.1 6.73-6.73V9.4a9.14 9.14 0 0 0 5.34 1.71V8.07a5.6 5.6 0 0 1-4.6-2.25z"/></svg>
           </a>
-          <a href="https://www.instagram.com/rujakco.id?igsh=eXhyZjF5NmVmZnpi" target="_blank" rel="noopener noreferrer" aria-label="Instagram RUJAK.Co" style="color: var(--gold-bright);">
+          <a href="https://www.instagram.com/rujakco.id" target="_blank" rel="noopener noreferrer" aria-label="Instagram RUJAK.Co" style="color: var(--gold-bright);">
             <i data-lucide="instagram" class="icon-md" aria-hidden="true"></i>
           </a>
         </div>
@@ -326,7 +321,7 @@
           </div>
           <div id="drawerDistrictDropdown" class="minimal-dropdown" style="top:100%; left:0; right:0;" role="listbox" aria-label="Hasil pencarian alamat"></div>
           <div class="district-note">*Biaya pengiriman dihitung berdasarkan jarak tempuh aktual (km).</div>
-          
+
           <label class="tiny-text" for="deliveryTimeTrigger">Jadwal Pengantaran</label>
           <div style="position:relative;">
             <button type="button" id="deliveryTimeTrigger" class="custom-select" role="combobox" aria-haspopup="listbox" aria-controls="deliveryTimeDropdown" aria-expanded="false" style="margin-bottom:0; width:100%;">
@@ -340,11 +335,11 @@
             </div>
           </div>
           <input type="hidden" id="deliveryTime" value="Besok Pagi (09:00 - 11:00)" />
-          
+
           <label class="tiny-text" for="orderNotes">Catatan untuk Kurir (Opsional)</label>
           <textarea id="orderNotes" placeholder="Misal: warna pagar, lantai berapa" rows="1" class="input-minimal" maxlength="100"></textarea>
         </div>
-        
+
         <div id="shippingSection" class="checkout-forms" style="margin-top:40px;">
           <h4>Pilih Kurir</h4>
           <div class="logistic-options">
@@ -466,11 +461,7 @@
   <div id="cartLiveRegion" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 </div>
 
-<script src="https://unpkg.com/@supabase/supabase-js@2" defer></script>
-<script>
-  window.__SUPABASE_URL__ = 'https://ghhnnfrmftttptcejizp.supabase.co';
-  window.__SUPABASE_KEY__ = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoaG5uZnJtZnR0dHB0Y2VqaXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNjA1ODksImV4cCI6MjA5NzgzNjU4OX0.FM-sPvJJzviX2kA0GEHnznOppivm4JNyC4IPFv_RkdE';
-</script>
+<!-- Application Script -->
 <script src="app.js" type="module"></script>
 </body>
 </html>
