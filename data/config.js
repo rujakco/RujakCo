@@ -14,7 +14,7 @@ export const SPICE_LABELS = {
 };
 
 export const FAQ_DATA = [
-  { keywords: ["asinan", "beda", "rujak", "perbedaan"], answer: "Rujak pakai sambal kacang/mete, sedangkan asinan pakai kuah cair asam-manis-pedas khas Nusantara. Dua-duanya sama-sama pakai buah segar pilihan, cuma beda karakter rasa aja, Kak." },
+  { keywords: ["beda asinan", "perbedaan asinan", "asinan dan rujak", "rujak dan asinan"], answer: "Rujak pakai sambal kacang/mete, sedangkan asinan pakai kuah cair asam-manis-pedas khas Nusantara. Dua-duanya sama-sama pakai buah segar pilihan, cuma beda karakter rasa aja, Kak." },
   { keywords: ["kiamboy", "apa itu", "asinan kiamboy"], answer: "Kiamboy itu manisan dari buah plum kering yang punya rasa asam-asin khas. RUJAK.Co pakai kiamboy asli, dipadukan buah segar musiman dan kuah racikan sendiri — konsep yang lagi digandrungi banyak orang." },
   { keywords: ["mahkota", "mahal", "harga", "premium"], answer: "Asinan Mahkota pakai buah impor eksklusif — Shine Muscat, anggur Moondrop, ceri impor, dan delima — plus kuah premium beraroma ceri-delima. Ini varian limited yang cuma ada saat buah impornya lagi prima kualitasnya." },
   { keywords: ["asinan", "cabai", "kuah"], answer: "Level pedas asinan bisa Kakak atur sendiri, dari Ringan sampai Neraka — sama seperti rujak. Defaultnya kami set di level Pedas (level 3), tapi bebas disesuaikan pas pesan." },
