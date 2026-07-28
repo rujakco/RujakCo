@@ -1,4 +1,4 @@
-// modules/event-binder.js – FINAL (bugfix aria-selected + SYSTEM import)
+// modules/event-binder.js – FINAL (bugfix aria-selected + SYSTEM import + filter kategori)
 import { PRODUCTS } from '../data/products.js';
 import { SYSTEM } from '../data/config.js';
 import { fmt, showToast, animatePress, queuedSearch, escapeHTML } from '../utils/helpers.js';
@@ -10,6 +10,8 @@ import { openModal, closeModal, showConfirmModal, releaseInert } from './modal-m
 import { getWaktu } from './personalization.js';
 import { extractShortLocation, updateShippingUI } from './shipping-controller.js';
 import { updateCartUI, updateDraftUI } from './cart-controller.js';
+import { renderMenu } from './render.js';                // ← tambahan untuk filter
+import { trackFilterCategory } from './analytics.js';    // ← tambahan untuk tracking
 
 let DOM = {}; let state = {}; let APP_CONFIG = {};
 let openProductPageFn = null; let closeProductPageFn = null; let showOrderConfirmationFn = null; let sendReceiptToWhatsAppFn = null;
@@ -32,7 +34,7 @@ export function bindEvents() {
   document.getElementById('navProductBtn')?.addEventListener('click', () => { if (DOM.productPage?.classList.contains('active')) return; if (openProductPageFn) openProductPageFn(state.lastViewedProductIndex >= 0 ? state.lastViewedProductIndex : 0); });
   document.getElementById('navCartBtn')?.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); if (DOM.productPage?.classList.contains('active')) { closeProductPageFn(false); setTimeout(() => { openModal(DOM.miniCartModal); updateCartUI(); }, APP_CONFIG.TIMING.MODAL_TRANSITION); } else { openModal(DOM.miniCartModal); updateCartUI(); } });
 
-  // delivery time dropdown
+  // delivery time dropdown (tetap sama)
   const deliveryTrigger = document.getElementById('deliveryTimeTrigger');
   const deliveryDropdown = document.getElementById('deliveryTimeDropdown');
   const deliveryHidden = document.getElementById('deliveryTime');
@@ -70,9 +72,25 @@ export function bindEvents() {
   DOM.customerPhoneInput?.addEventListener('input', () => { DOM.customerPhoneInput.value = DOM.customerPhoneInput.value.replace(/\D/g, ''); state.customerPhone = DOM.customerPhoneInput.value; saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict, state.userDistance); });
   DOM.customerAddressInput?.addEventListener('input', () => { state.customerAddress = DOM.customerAddressInput.value; saveCustomer(state.customerPhone, state.customerAddress, state.selectedDistrict, state.userDistance); });
 
+  // MAIN CLICK LISTENER – semua event yang menggunakan document.click
   document.addEventListener('click', async (e) => {
     const drawerInput = DOM.districtInput; const drawerDropdown = DOM.drawerDistrictDropdown;
     if (drawerInput && drawerDropdown && !drawerInput.contains(e.target) && !drawerDropdown.contains(e.target)) { drawerDropdown.style.display = 'none'; drawerInput.setAttribute('aria-expanded', 'false'); }
+
+    // *** FILTER KATEGORI ***
+    const filterChip = e.target.closest('.filter-chip');
+    if (filterChip) {
+      const filterContainer = document.getElementById('categoryFilter');
+      if (filterContainer) {
+        filterContainer.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        filterChip.classList.add('active');
+        const cat = filterChip.dataset.cat;
+        renderMenu('menuList', cat === 'all' ? null : cat);
+        trackFilterCategory(cat);
+      }
+      return;
+    }
+
     const boutique = e.target.closest('.boutique-item'); if (boutique) { const idx = parseInt(boutique.dataset.idx); if (!isNaN(idx) && openProductPageFn) openProductPageFn(idx); return; }
     const step1Btn = e.target.closest('.step-1-btn'); if (step1Btn) { if (window.navigator.vibrate) window.navigator.vibrate(APP_CONFIG.HAPTIC.LIGHT); const idx = step1Btn.dataset.idx, pid = step1Btn.dataset.pid; const step1 = document.getElementById(`step1_${idx}_${pid}`), step2 = document.getElementById(`step2_${idx}_${pid}`); if (step1 && step2) { step1.style.transition = 'opacity 0.3s ease'; step1.style.opacity = '0'; setTimeout(() => { step1.style.display = 'none'; step2.style.display = 'block'; const firstOption = step2.querySelector('.spice-option'); if (firstOption) firstOption.focus(); }, APP_CONFIG.TIMING.STEP_TRANSITION); } return; }
     const spiceOption = e.target.closest('.spice-option'); if (spiceOption) { const pid = spiceOption.dataset.pid; if (state.drafts[pid]) { state.drafts[pid].spice = parseInt(spiceOption.dataset.spice); updateDraftUI(pid); } return; }
