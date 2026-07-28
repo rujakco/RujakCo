@@ -26,7 +26,7 @@ import { initEventBinderConfig, bindEvents } from './modules/event-binder.js';
 // --- Utilitas Baru ---
 import { logError } from './utils/logger.js';
 import { supabaseQueryWithRetry } from './utils/fetchWithRetry.js';
-import { initOfflineHandler } from './utils/offlineHandler.js';
+import { initOfflineHandler, queueOfflineAction } from './utils/offlineHandler.js';  // ✅ import queueOfflineAction
 import { generatePIN } from './modules/orderTracker.js';
 import { initAnalytics, trackBeginCheckout, trackPurchase } from './modules/analytics.js';
 import { getSlotUrgencyText, consumeSlot } from './modules/simulatedSlots.js';
@@ -208,7 +208,31 @@ async function sendReceiptToWhatsApp() {
         'supabase-insert', { orderCode: state.currentOrderCode }
       );
       orderSaved = true;
-    } catch (err) { logError('supabase', err, { orderCode: state.currentOrderCode }); }
+    } catch (err) {
+      logError('supabase', err, { orderCode: state.currentOrderCode });
+      // ✅ QUEUE OFFLINE — simpan agar dikirim ulang nanti
+      queueOfflineAction({
+        type: 'save-order',
+        orderCode: state.currentOrderCode,
+        payload: {
+          order_code: state.currentOrderCode,
+          access_pin: state.currentOrderPin,
+          customer_name: name,
+          customer_phone: phone,
+          customer_address: address,
+          district: state.selectedDistrict,
+          distance_km: state.userDistance,
+          items: summary.items,
+          subtotal: summary.subtotal,
+          shipping_cost: Number.isNaN(parseInt(shipCost.replace(/\D/g, ''))) ? null : parseInt(shipCost.replace(/\D/g, '')),
+          total: Number.isNaN(parseInt(totalCost.replace(/\D/g, ''))) ? null : parseInt(totalCost.replace(/\D/g, '')),
+          shipping_provider: logisticInfo,
+          delivery_time: deliveryTime,
+          notes,
+          status: 'pending_payment'
+        }
+      });
+    }
   }
 
   // Tracking & konsumsi slot
@@ -229,7 +253,19 @@ async function sendReceiptToWhatsApp() {
   }
 }
 
+// ---------------------------------------------------------------------------
+// PERBAIKAN: showOrderConfirmation dengan trackBeginCheckout
+// ---------------------------------------------------------------------------
 async function showOrderConfirmation() {
+  const summary = getCartSummary(state.cart);
+  const shipCostText = DOM.finalShipping?.textContent || '0';
+  const totalCostText = DOM.finalTotal?.textContent || '0';
+  trackBeginCheckout(
+    summary.items,
+    summary.subtotal,
+    parseInt(shipCostText.replace(/\D/g, '')) || 0,
+    parseInt(totalCostText.replace(/\D/g, '')) || 0
+  );
   return await launchProReceipt(state, DOM, overlayStack, openModal, closeModal, () => getCartSummary(state.cart), downloadReceiptPNG, sendReceiptToTelegram);
 }
 
@@ -277,7 +313,27 @@ function init() {
   initShippingController(DOM, state, APP_CONFIG); initCartController(DOM, state);
   initOnboardingConfig(DOM, state, APP_CONFIG);
   initEventBinderConfig(DOM, state, APP_CONFIG, { openProductPage, closeProductPage, showOrderConfirmation, sendReceiptToWhatsApp });
-  initOfflineHandler({ syncCallback: async (action) => { console.log('Memproses aksi offline:', action); return true; } });
+  
+  // ✅ Inisialisasi offline handler dengan syncCallback nyata
+  initOfflineHandler({
+    syncCallback: async (action) => {
+      if (action.type !== 'save-order') return true;
+      const sb = getSupabase();
+      if (!sb) return false;
+      try {
+        await supabaseQueryWithRetry(
+          () => sb.from('orders').insert(action.payload),
+          'offline-sync',
+          { orderCode: action.orderCode }
+        );
+        return true;
+      } catch (error) {
+        logError('offline-sync', error, { orderCode: action.orderCode });
+        return false;
+      }
+    }
+  });
+
   initAnalytics();
 
   try {
@@ -306,7 +362,7 @@ function init() {
     window.addEventListener('popstate', (e) => { if (isProgrammaticBack) { setProgrammaticBack(false); return; } if (overlayStack.length > 0) { const topOverlay = overlayStack[overlayStack.length - 1]; if (e.state && e.state.id && e.state.id !== topOverlay.id) return; if (topOverlay.id === 'productPage') closeProductPage(true); else closeModal(topOverlay, true); } });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlayStack.length > 0) { const topOverlay = overlayStack[overlayStack.length - 1]; if (topOverlay.id === 'productPage') closeProductPage(false); else closeModal(topOverlay, false); } });
     syncBottomNav();
-    console.log('✅ RUJAK.Co siap (Modular Architecture v3.0 + Analytics + Slots).');
+    console.log('✅ RUJAK.Co siap (Modular Architecture v3.0 + Analytics + Slots + Offline Queue Aktif).');
   } catch (err) { console.error('❌ Gagal inisialisasi:', err); showToast('Terjadi kesalahan sistem.'); }
 }
 
