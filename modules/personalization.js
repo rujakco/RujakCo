@@ -1,11 +1,17 @@
 let DOM = {};
 let state = {};
 
-export function initPersonalizationConfig(domConfig, appState) { DOM = domConfig; state = appState; }
+export function initPersonalizationConfig(domConfig, appState) {
+  DOM = domConfig;
+  state = appState;
+}
 
 export function getWaktu() {
   const jam = new Date().getHours();
-  if (jam >= 5 && jam < 12) return 'pagi'; if (jam >= 12 && jam < 17) return 'siang'; return 'sore';
+  if (jam >= 5 && jam < 12) return 'pagi';
+  if (jam >= 12 && jam < 15) return 'siang';
+  if (jam >= 15 && jam < 19) return 'sore';
+  return 'malam';
 }
 
 export function applyPersonalization() {
@@ -22,16 +28,35 @@ export function applyPersonalization() {
 }
 
 export function initScrollReveal() {
-  const observer = new IntersectionObserver((entries) => { entries.forEach((entry, index) => { if (entry.isIntersecting) { setTimeout(() => entry.target.classList.add('visible'), index * 100); observer.unobserve(entry.target); } }); }, { threshold: 0.1 });
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, index) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), index * 100);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 }
 
 export function initHeroParallax() {
-  const heroImg = document.querySelector('.hero-img'), heroOverlay = document.querySelector('.hero-overlay-new');
+  const heroImg = document.querySelector('.hero-img'),
+        heroOverlay = document.querySelector('.hero-overlay-new');
   if (!heroImg) return;
   let ticking = false;
   window.addEventListener('scroll', () => {
     if (DOM.header) DOM.header.classList.toggle('scrolled', window.scrollY > 50);
-    if (!ticking) { window.requestAnimationFrame(() => { const scrollY = window.scrollY; heroImg.style.transform = `translate3d(0, ${scrollY * 0.35}px, 0) scale(${1.02 + (scrollY * 0.0002)})`; if (heroOverlay) { heroOverlay.style.transform = `translate3d(0, ${-scrollY * 0.1}px, 0)`; heroOverlay.style.opacity = Math.max(0, 1 - (scrollY / 250)); } ticking = false; }); ticking = true; }
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        const scrollY = window.scrollY;
+        heroImg.style.transform = `translate3d(0, ${scrollY * 0.35}px, 0) scale(${1.02 + (scrollY * 0.0002)})`;
+        if (heroOverlay) {
+          heroOverlay.style.transform = `translate3d(0, ${-scrollY * 0.1}px, 0)`;
+          heroOverlay.style.opacity = Math.max(0, 1 - (scrollY / 250));
+        }
+        ticking = false;
+      });
+      ticking = true;
+    }
   }, { passive: true });
 }
