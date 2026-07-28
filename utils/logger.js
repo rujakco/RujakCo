@@ -45,9 +45,9 @@ function log(level, context, messageOrError, meta = {}) {
 }
 
 export async function logError(context, error, meta = {}) { log(LOG_LEVELS.ERROR, context, error, meta); }
-export async function logWarn(context, message, meta = {}) { log(LOG_LEVELS.WARN, context, message, meta); }
-export async function logInfo(context, message, meta = {}) { log(LOG_LEVELS.INFO, context, message, meta); }
-export async function logDebug(context, message, meta = {}) { if (isDevelopment()) log(LOG_LEVELS.DEBUG, context, message, meta); }
+export function logWarn(context, message, meta = {}) { log(LOG_LEVELS.WARN, context, message, meta); }
+export function logInfo(context, message, meta = {}) { log(LOG_LEVELS.INFO, context, message, meta); }
+export function logDebug(context, message, meta = {}) { if (isDevelopment()) log(LOG_LEVELS.DEBUG, context, message, meta); }
 
 export function withErrorLogging(fn, context, meta = {}) {
   if (typeof fn !== 'function') throw new Error('withErrorLogging expects a function');
