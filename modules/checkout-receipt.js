@@ -1,6 +1,7 @@
-// modules/checkout-receipt.js – FINAL V1.3 (Pro Receipt + Trust Badge)
+// modules/checkout-receipt.js – FINAL V1.3 (Pro Receipt + Trust Badge + PIN)
 import { SYSTEM } from '../data/config.js';
 import { fmt, showToast, escapeHTML, getSupabase } from '../utils/helpers.js';
+import { generatePIN } from './orderTracker.js';
 import { saveCustomer } from './storage.js';
 import { calculateShipping } from './shipping.js';
 
@@ -51,6 +52,7 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
   const dateStr = now.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
   const timeStr = now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' }) + ' WIB';
   state.currentOrderCode = `RJK-${now.toISOString().slice(2,10).replace(/-/g,'')}-${Math.floor(1000+Math.random()*9000)}`;
+  state.currentOrderPin = generatePIN();
   
   contentEl.innerHTML = `
     <div class="receipt-wrap" style="padding: 4px;">
@@ -65,6 +67,11 @@ export async function showOrderConfirmation(state, DOM, overlayStack, openModal,
       <div class="receipt-meta">
         <span class="code" style="font-size: 0.75rem;">${state.currentOrderCode}</span>
         <span>${dateStr} · ${timeStr}</span>
+      </div>
+      <div style="text-align:center; background: var(--bg-subtle); border: 1px dashed var(--gold-20); border-radius: 8px; padding: 8px 12px; margin: 8px 0 4px;">
+        <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-500);">PIN Lacak Pesanan</span><br>
+        <span style="font-size: 1.1rem; font-weight: 700; letter-spacing: 0.15em; color: var(--green);">${state.currentOrderPin}</span>
+        <div style="font-size: 0.65rem; color: var(--gray-500); margin-top: 2px;">Simpan PIN ini untuk cek status pesanan di rujakco.biz.id/lacak.html</div>
       </div>
       <div class="receipt-section">
         <div class="receipt-section-title">Data Pengantaran</div>
