@@ -4,20 +4,37 @@ import { fmt, escapeHTML } from '../utils/helpers.js';
 import { getCartSummary } from './checkout.js';
 
 const LOOP_MULTIPLIER = 3;
-const products = PRODUCTS || [];
-let loopedProducts = [];
-for (let i = 0; i < LOOP_MULTIPLIER; i++) { loopedProducts = loopedProducts.concat(products); }
 
 function getFlavorLabel(product) {
   if (product.category === 'asinan') return { label: 'Kuah', value: product.kuah };
   return { label: 'Sambal', value: product.sambal };
 }
 
-export function renderMenu(containerId = 'menuList') {
+/**
+ * Render menu dengan dukungan filter kategori.
+ * @param {string} containerId - ID elemen kontainer
+ * @param {string|null} category - Kategori produk ('rujak', 'asinan', dll.) atau null untuk semua
+ */
+export function renderMenu(containerId = 'menuList', category = null) {
   const container = document.getElementById(containerId);
   if (!container) return;
-  if (!loopedProducts.length) { container.innerHTML = '<p style="text-align:center;padding:40px 20px;color:var(--gray-500);">Belum ada produk tersedia.</p>'; return; }
-  container.innerHTML = loopedProducts.map((p, index) => `
+
+  // Filter produk berdasarkan kategori
+  const source = PRODUCTS || [];
+  const filtered = category ? source.filter(p => p.category === category) : source;
+
+  // Bangun array loop (carousel horizontal)
+  let looped = [];
+  for (let i = 0; i < LOOP_MULTIPLIER; i++) {
+    looped = looped.concat(filtered);
+  }
+
+  if (!looped.length) {
+    container.innerHTML = '<p style="text-align:center;padding:40px 20px;color:var(--gray-500);">Belum ada produk tersedia.</p>';
+    return;
+  }
+
+  container.innerHTML = looped.map((p, index) => `
     <div class="boutique-item" data-id="${p.id}" data-idx="${index}">
       <img class="btq-img" src="${p.thumbnail}" loading="lazy" alt="${escapeHTML(p.name)}" />
       <div class="btq-text-container">
@@ -27,6 +44,7 @@ export function renderMenu(containerId = 'menuList') {
       </div>
     </div>`).join('');
 
+  // Lazy-load & error handling untuk gambar
   container.querySelectorAll('img.btq-img').forEach(img => {
     if (img.complete && img.naturalWidth > 0) img.classList.add('loaded');
     else {
@@ -43,11 +61,25 @@ export function renderMenu(containerId = 'menuList') {
   });
 }
 
+/**
+ * Render product swiper (detail produk). Tetap menampilkan semua produk.
+ */
 export function renderProductSwiper(drafts, trackId = 'productSwiperTrack') {
   const track = document.getElementById(trackId);
   if (!track) return;
-  if (!loopedProducts.length) { track.innerHTML = '<p style="text-align:center;padding:40px 20px;color:var(--gray-500);">Belum ada produk tersedia.</p>'; return; }
-  track.innerHTML = loopedProducts.map((p, index) => {
+
+  const source = PRODUCTS || [];
+  let looped = [];
+  for (let i = 0; i < LOOP_MULTIPLIER; i++) {
+    looped = looped.concat(source);
+  }
+
+  if (!looped.length) {
+    track.innerHTML = '<p style="text-align:center;padding:40px 20px;color:var(--gray-500);">Belum ada produk tersedia.</p>';
+    return;
+  }
+
+  track.innerHTML = looped.map((p, index) => {
     const draft = drafts?.[p.id] || { spice: p.defaultSpice || 3, qty: 1 };
     const spiceLabel = SPICE_LABELS?.[draft.spice] ?? 'Sedang';
     const flavor = getFlavorLabel(p);
