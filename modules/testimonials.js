@@ -1,3 +1,4 @@
+// modules/testimonials.js – FINAL (null‑check on pauseBtn)
 export function initTestimonials() {
   const container = document.getElementById('testiFlipContainer');
   if (!container) return;
