@@ -1,0 +1,49 @@
+/* =========================================
+   BASE – Reset, Typography, Utility
+   ========================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: inherit;
+}
+
+html { margin: 0; padding: 0; }
+
+body {
+  margin: 0; padding: 0;
+  background-color: var(--green);
+  font-family: var(--font-body);
+  font-size: var(--font-base);
+  color: var(--ivory);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+h1, h2, h3, h4, .brand-name, .font-fraunces {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 350;
+}
+h1 { font-size: clamp(1.75rem, 6vw, 2.25rem); line-height: 1.08; letter-spacing: -0.04em; }
+h2 { font-size: clamp(1.5rem, 5vw, 1.75rem); line-height: 1.15; letter-spacing: -0.03em; }
+h3 { font-size: clamp(1.25rem, 4vw, 1.5rem); line-height: 1.2; letter-spacing: -0.02em; }
+h4 { font-size: clamp(1.125rem, 3.5vw, 1.25rem); line-height: 1.25; letter-spacing: -0.01em; }
+p, li, .body-text { font-size: clamp(0.9375rem, 3vw, 1rem); line-height: 1.7; }
+
+/* Utility */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+.full-width { width: 100%; }
+.icon-sm { width: 18px; height: 18px; }
+.icon-md { width: 20px; height: 20px; }
+
+/* Keyframes umum */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(var(--space-2)); } to { opacity: 1; transform: translateY(0); } }
+@keyframes luxuryFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
