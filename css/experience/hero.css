@@ -1,0 +1,98 @@
+/* =========================================
+   EXPERIENCE – Hero Section
+   ========================================= */
+.hero-editorial {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.hero-gold-frame {
+  position: relative;
+  margin-top: calc(var(--header-height) + var(--space-3) + env(safe-area-inset-top, 0px));
+  margin-right: var(--space-3);
+  margin-left: var(--space-3);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+}
+
+.hero-img-wrap {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  background-color: var(--dark-green-deep);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-hero-dark);
+  aspect-ratio: 16 / 6.3;
+}
+
+.hero-img-wrap::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  height: 154px;
+  background: linear-gradient(180deg, rgba(2,10,7,0.75) 0%, rgba(2,10,7,0.45) 55%, transparent 100%);
+  pointer-events: none;
+}
+
+.hero-img {
+  position: relative !important;
+  top: 0 !important;
+  display: block;
+  width: 100%;
+  height: 100% !important;
+  object-fit: cover;
+  object-position: center 80%;
+  transform: scale(1);
+  filter: contrast(1.15) saturate(1.2);
+}
+
+.hero-overlay-new {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: var(--space-4) var(--space-3) 24px;
+  background: linear-gradient(to top, rgba(2,10,7,0.78), rgba(2,10,7,0.35) 60%, transparent);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  gap: 2px;
+}
+
+.hero-title {
+  font-size: clamp(1.6rem, 6.5vw, 2.15rem);
+  font-weight: 400;
+  line-height: 1.08;
+  color: #FFFFFF;
+  text-shadow: 0 2px 8px rgba(2,10,7,0.65), 0 1px 2px rgba(2,10,7,0.8);
+}
+
+.hero-title-em {
+  display: inline;
+  color: var(--gold-bright);
+  text-shadow: 0 2px 8px rgba(2,10,7,0.65), 0 0 16px rgba(232,213,168,0.25);
+}
+
+.hero-subtitle {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  letter-spacing: 0.18em;
+  text-shadow: 0 1px 4px rgba(2,10,7,0.6);
+  opacity: 0.95;
+}
